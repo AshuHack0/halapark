@@ -1,0 +1,279 @@
+@import "tailwindcss";
+
+/* Polymath Font Face Declarations */
+@font-face {
+  font-family: "Polymath";
+  src: url("/fonts/PolymathDemo-Thin.otf") format("opentype");
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Polymath";
+  src: url("/fonts/PolymathDemo-ThinIt.otf") format("opentype");
+  font-weight: 100;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Polymath";
+  src: url("/fonts/PolymathDemo-XLight.otf") format("opentype");
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Polymath";
+  src: url("/fonts/PolymathDemo-XLightIt.otf") format("opentype");
+  font-weight: 200;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Polymath";
+  src: url("/fonts/PolymathDemo-Light.otf") format("opentype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Polymath";
+  src: url("/fonts/PolymathDemo-LightIt.otf") format("opentype");
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Polymath";
+  src: url("/fonts/PolymathDemo-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Polymath";
+  src: url("/fonts/PolymathDemo-Italic.otf") format("opentype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Polymath";
+  src: url("/fonts/PolymathDemo-Medium.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Polymath";
+  src: url("/fonts/PolymathDemo-MediumIt.otf") format("opentype");
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Polymath";
+  src: url("/fonts/PolymathDemo-Semibold.otf") format("opentype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Polymath";
+  src: url("/fonts/PolymathDemo-SemiboldIt.otf") format("opentype");
+  font-weight: 600;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Polymath";
+  src: url("/fonts/PolymathDemo-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Polymath";
+  src: url("/fonts/PolymathDemo-BoldIt.otf") format("opentype");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Polymath";
+  src: url("/fonts/PolymathDemo-Super.otf") format("opentype");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Polymath";
+  src: url("/fonts/PolymathDemo-SuperIt.otf") format("opentype");
+  font-weight: 800;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Polymath";
+  src: url("/fonts/PolymathDemo-Black.otf") format("opentype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Polymath";
+  src: url("/fonts/PolymathDemo-BlackIt.otf") format("opentype");
+  font-weight: 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --font-polymath:
+    "Polymath", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+    "Helvetica Neue", sans-serif;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-polymath);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #f6f6f6;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family:
+    var(--font-polymath),
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Roboto",
+    "Oxygen",
+    "Ubuntu",
+    "Cantarell",
+    "Fira Sans",
+    "Droid Sans",
+    "Helvetica Neue",
+    sans-serif;
+}
+
+html.has-scroll-smooth {
+  overflow: hidden;
+}
+
+html.has-scroll-smooth body {
+  overflow: hidden;
+}
+
+[data-scroll-container] {
+  min-height: 100vh;
+}
+
+/* Ensure Polymath font is applied to all elements */
+* {
+  font-family:
+    var(--font-polymath),
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Roboto",
+    "Oxygen",
+    "Ubuntu",
+    "Cantarell",
+    "Fira Sans",
+    "Droid Sans",
+    "Helvetica Neue",
+    sans-serif;
+}
+
+/* Explicitly apply to common text elements */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+span,
+div,
+a,
+button,
+input,
+textarea,
+select,
+label {
+  font-family:
+    var(--font-polymath),
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Roboto",
+    "Oxygen",
+    "Ubuntu",
+    "Cantarell",
+    "Fira Sans",
+    "Droid Sans",
+    "Helvetica Neue",
+    sans-serif;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Dark mode scrollbar */
+@media (prefers-color-scheme: dark) {
+  ::-webkit-scrollbar-track {
+    background: #1a1a1a;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #555;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #777;
+  }
+}

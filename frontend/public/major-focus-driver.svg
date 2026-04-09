@@ -1,0 +1,55 @@
+<svg width="720" height="960" viewBox="0 0 720 960" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="720" height="960" rx="48" fill="url(#bg)"/>
+  <circle cx="566" cy="170" r="128" fill="url(#sun)" fill-opacity="0.42"/>
+  <path d="M0 620C98 578 175 557 267 557C402 557 496 617 720 598V960H0V620Z" fill="url(#ground)"/>
+  <path d="M0 693C128 648 249 644 358 671C463 697 565 757 720 736V960H0V693Z" fill="#1E5167" fill-opacity="0.42"/>
+  <rect x="76" y="216" width="78" height="220" rx="18" fill="#DBF4FF" fill-opacity="0.58"/>
+  <rect x="164" y="170" width="94" height="266" rx="20" fill="#D7EEFA" fill-opacity="0.72"/>
+  <rect x="270" y="238" width="76" height="198" rx="16" fill="#DAF2FB" fill-opacity="0.58"/>
+  <rect x="382" y="142" width="112" height="294" rx="22" fill="#E6F6FD" fill-opacity="0.72"/>
+  <rect x="508" y="228" width="84" height="208" rx="18" fill="#D2EBF6" fill-opacity="0.62"/>
+  <rect x="610" y="188" width="42" height="248" rx="14" fill="#D8EEF9" fill-opacity="0.58"/>
+  <rect x="118" y="332" width="28" height="14" rx="7" fill="#A4D6EB"/>
+  <rect x="118" y="366" width="28" height="14" rx="7" fill="#A4D6EB"/>
+  <rect x="182" y="214" width="58" height="12" rx="6" fill="#B2DFF2"/>
+  <rect x="182" y="246" width="58" height="12" rx="6" fill="#B2DFF2"/>
+  <rect x="403" y="188" width="70" height="14" rx="7" fill="#B0DBEE"/>
+  <rect x="403" y="220" width="70" height="14" rx="7" fill="#B0DBEE"/>
+  <path d="M196 618C196 604.745 206.745 594 220 594H426C439.255 594 450 604.745 450 618V636H196V618Z" fill="#FDFEFE"/>
+  <path d="M178 636H470C483.255 636 494 646.745 494 660V740C494 753.255 483.255 764 470 764H178C164.745 764 154 753.255 154 740V660C154 646.745 164.745 636 178 636Z" fill="#FBFDFF"/>
+  <rect x="196" y="594" width="72" height="22" rx="11" fill="#F7FBFD"/>
+  <circle cx="232" cy="706" r="34" fill="#163647"/>
+  <circle cx="414" cy="706" r="34" fill="#163647"/>
+  <circle cx="232" cy="706" r="16" fill="#EAF8FE"/>
+  <circle cx="414" cy="706" r="16" fill="#EAF8FE"/>
+  <path d="M190 642H450L484 680H156L190 642Z" fill="#E8F7FD"/>
+  <rect x="222" y="652" width="68" height="32" rx="16" fill="#A9E1F2"/>
+  <rect x="312" y="652" width="90" height="32" rx="16" fill="#D0EFF9"/>
+  <path d="M103 583C150 546 176 492 176 432C176 412 190 396 208 396C224 396 238 409 240 427C245 487 224 556 171 608L103 583Z" fill="#FFF6EF" fill-opacity="0.94"/>
+  <path d="M159 621C202 576 230 522 237 466C240 444 259 428 280 428C303 428 322 446 322 469C322 547 281 628 207 688L159 621Z" fill="#FFF1E7" fill-opacity="0.94"/>
+  <path d="M171 608L207 688C191 704 167 700 156 681L129 636C119 618 128 593 147 585L171 608Z" fill="#F3B89D"/>
+  <path d="M328 474C334 458 352 448 370 452L465 474C491 480 508 506 503 532L493 586C489 611 466 629 441 627L336 618C311 616 291 593 292 567L296 521C296 505 304 488 318 479L328 474Z" fill="#F7C3AA"/>
+  <path d="M367 482C379 477 392 477 404 482L480 514C495 520 504 535 503 551V595C503 613 488 628 470 628H377C358 628 342 613 342 594V536C342 512 351 491 367 482Z" fill="#EDAD8F"/>
+  <path d="M349 520C349 506 360 495 374 495H470C484 495 495 506 495 520V571H349V520Z" fill="#CE5B57"/>
+  <path d="M362 472C374 462 389 456 405 456C428 456 450 469 462 490L428 513L362 472Z" fill="#C74D4E"/>
+  <rect x="329" y="572" width="196" height="28" rx="14" fill="#C44548"/>
+  <circle cx="389" cy="586" r="9" fill="#FFD7C7"/>
+  <circle cx="446" cy="586" r="9" fill="#FFD7C7"/>
+  <circle cx="552" cy="512" r="34" fill="#FFFFFF" fill-opacity="0.18"/>
+  <path d="M552 491L558 506H574L561 515L566 530L552 521L538 530L543 515L530 506H546L552 491Z" fill="white"/>
+  <defs>
+    <linearGradient id="bg" x1="118" y1="64" x2="620" y2="892" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#E9F7FD"/>
+      <stop offset="0.48" stop-color="#D1EFFA"/>
+      <stop offset="1" stop-color="#88C7DB"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(566 170) rotate(90) scale(128)">
+      <stop stop-color="white"/>
+      <stop offset="1" stop-color="white" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ground" x1="360" y1="557" x2="360" y2="960" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#63AFC4" stop-opacity="0.34"/>
+      <stop offset="1" stop-color="#2D91A8"/>
+    </linearGradient>
+  </defs>
+</svg>
