@@ -172,7 +172,7 @@ export default function Navbar() {
                   <Link
                     key={link.label}
                     href={resolveLinkHref(link.href)}
-                    className="inline-flex h-11 items-center justify-center rounded-full px-5 text-base font-bold text-slate-900 hover:bg-[#0088FF] hover:text-white"
+                    className="inline-flex h-11 items-center justify-center rounded-full px-5 text-base font-semibold text-slate-900 hover:bg-[#0088FF] hover:text-white"
                   >
                     <span className="block whitespace-nowrap">
                       {link.label}
@@ -186,20 +186,20 @@ export default function Navbar() {
             <div className="hidden lg:flex items-center gap-2.5 flex-shrink-0">
               <Link
                 href="/app"
-                className="inline-flex items-center gap-2 bg-[#0088FF] hover:brightness-95 active:bg-[#0088FF] text-white text-sm font-light px-5 py-2.5 rounded-full shadow-sm hover:shadow-md"
+                className="inline-flex items-center gap-2 bg-[#0088FF] hover:brightness-95 active:bg-[#0088FF] text-white text-sm font-semibold px-5 py-2.5 rounded-full shadow-sm hover:shadow-md"
               >
                 Download the App
                 <PhoneIcon />
               </Link>
               <Link
                 href="/pay"
-                className="inline-flex items-center justify-center bg-white border border-slate-200 text-slate-900 text-sm font-medium px-4 py-2.5 rounded-full hover:bg-slate-50"
+                className="inline-flex items-center justify-center bg-white border border-slate-200 text-slate-900 text-sm font-semibold px-4 py-2.5 rounded-full hover:bg-slate-50"
               >
                 Pay
               </Link>
               <Link
                 href="/contact"
-                className="inline-flex items-center justify-center bg-[#0088FF] hover:brightness-95 active:bg-[#0088FF] text-white text-sm font-medium px-5 py-2.5 rounded-full shadow-sm hover:shadow-md"
+                className="inline-flex items-center justify-center bg-[#0088FF] hover:brightness-95 active:bg-[#0088FF] text-white text-sm font-semibold px-5 py-2.5 rounded-full shadow-sm hover:shadow-md"
               >
                 Get In Touch
               </Link>
@@ -216,7 +216,7 @@ export default function Navbar() {
             <div className="flex lg:hidden items-center gap-2">
               <Link
                 href="/app"
-                className="inline-flex items-center gap-1.5 bg-[#0088FF] hover:brightness-95 text-white text-sm font-medium px-4 py-2 rounded-full"
+                className="inline-flex items-center gap-1.5 bg-[#0088FF] hover:brightness-95 text-white text-sm font-semibold px-4 py-2 rounded-full"
               >
                 <span className="hidden sm:inline">Download the App</span>
                 <span className="sm:hidden">Download</span>
@@ -224,13 +224,13 @@ export default function Navbar() {
               </Link>
               <Link
                 href="/contact"
-                className="inline-flex items-center gap-1.5 bg-[#0088FF] hover:brightness-95 text-white text-sm font-medium px-4 py-2 rounded-full"
+                className="inline-flex items-center gap-1.5 bg-[#0088FF] hover:brightness-95 text-white text-sm font-semibold px-4 py-2 rounded-full"
               >
                 Get In Touch
               </Link>
               <Link
                 href="/pay"
-                className="inline-flex items-center gap-1.5 bg-white border border-slate-200 text-slate-900 text-sm font-medium px-4 py-2 rounded-full"
+                className="inline-flex items-center gap-1.5 bg-white border border-slate-200 text-slate-900 text-sm font-semibold px-4 py-2 rounded-full"
               >
                 Pay
               </Link>
