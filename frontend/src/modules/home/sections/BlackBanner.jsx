@@ -1,10 +1,12 @@
+"use client";
+
 const featureCard = {
-  title: "AI-Powered Smart Parking Solutions",
+  title: "AI-Powered Smart Parking Solutions ",
   description:
     "Seamlessly manage parking for customers and landlords with intelligent automation and real-time insights.",
   ctas: [
     {
-      label: "View for Customers",
+      label: "View for Customers ",
       href: "/solutions?view=customers",
     },
     {
@@ -34,10 +36,10 @@ export default function BlackBanner() {
         <div className="relative overflow-hidden rounded-[24px] py-12 sm:py-16">
           <div className="relative flex min-h-[420px] items-center justify-center sm:min-h-[500px]">
             <article
-              className="relative isolate flex w-full flex-col overflow-hidden rounded-[24px] border border-white/10 px-6 py-8 sm:px-10 sm:py-10 lg:min-h-[390px] lg:px-[56px] lg:py-[46px] xl:px-[72px]"
+              className="black-banner-flow relative isolate flex w-full flex-col overflow-hidden rounded-[24px] border border-white/10 px-6 py-8 sm:px-10 sm:py-10 lg:min-h-[390px] lg:px-[56px] lg:py-[46px] xl:px-[72px]"
               style={{
                 background:
-                  "linear-gradient(180deg, rgba(9, 14, 30, 0.98) 0%, rgba(9, 13, 29, 0.98) 42%, rgba(11, 8, 24, 0.98) 100%)",
+                  "linear-gradient(135deg, #0088FF 0%, #163A63 100%)",
               }}
             >
               <div
@@ -57,15 +59,15 @@ export default function BlackBanner() {
                 />
                 <div
                   className="absolute left-[16%] top-[64%] h-[230px] w-[230px] rounded-full blur-[110px] sm:left-[26%]"
-                  style={{ background: "rgba(154, 66, 255, 0.54)" }}
+                  style={{ background: "rgba(189, 227, 255, 0.6)" }}
                 />
                 <div
                   className="absolute right-[-6%] top-[56%] h-[300px] w-[260px] rounded-full blur-[95px] sm:right-[0%]"
-                  style={{ background: "rgba(255, 178, 240, 0.74)" }}
+                  style={{ background: "rgba(22, 58, 99, 0.5)" }}
                 />
                 <div
                   className="absolute right-[12%] top-[18%] h-[140px] w-[140px] rounded-full blur-[90px]"
-                  style={{ background: "rgba(41, 65, 110, 0.14)" }}
+                  style={{ background: "rgba(189, 227, 255, 0.24)" }}
                 />
                 <div className="absolute inset-[1px] rounded-[23px] border border-white/5" />
                 <div
@@ -79,7 +81,7 @@ export default function BlackBanner() {
                   className="flex h-[58px] w-[58px] items-center justify-center rounded-full sm:h-[66px] sm:w-[66px]"
                   style={{
                     background:
-                      "radial-gradient(circle at 32% 28%, rgba(0,136,255,0.72) 0%, rgba(43, 52, 96, 0.95) 38%, rgba(11, 17, 34, 1) 100%)",
+                      "radial-gradient(circle at 32% 28%, rgba(189,227,255,0.92) 0%, rgba(0,136,255,0.78) 42%, rgba(22,58,99,1) 100%)",
                     boxShadow:
                       "inset 0 1px 1px rgba(255, 255, 255, 0.18), 0 18px 28px rgba(0, 0, 0, 0.28)",
                   }}
@@ -121,6 +123,30 @@ export default function BlackBanner() {
           </div>
         </div>
       </div>
+      <style jsx>{`
+        .black-banner-flow {
+          background-size: 180% 180%;
+          animation: blackBannerGradientFlow 10s ease-in-out infinite;
+        }
+
+        @keyframes blackBannerGradientFlow {
+          0% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
+          100% {
+            background-position: 0% 50%;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .black-banner-flow {
+            animation: none;
+          }
+        }
+      `}</style>
     </section>
   );
 }

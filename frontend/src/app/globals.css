@@ -185,6 +185,23 @@ body {
     sans-serif;
 }
 
+.max-w-7xl {
+  width: 100%;
+  max-width: calc(100% - 1.5rem);
+}
+
+@media (min-width: 640px) {
+  .max-w-7xl {
+    max-width: calc(100% - 3rem);
+  }
+}
+
+@media (min-width: 1024px) {
+  .max-w-7xl {
+    max-width: 90rem;
+  }
+}
+
 html.has-scroll-smooth {
   overflow: hidden;
 }

@@ -152,15 +152,15 @@ export default function Navbar() {
         }`}
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 lg:h-[70px]">
+          <div className="flex items-center justify-between h-16 lg:h-[78px]">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-1 flex-shrink-0">
               <Image
                 src="/logo-blue-11.svg"
                 alt="HalaPark"
-                width={160}
-                height={48}
-                className="sm:h-10 h-6 w-auto"
+                width={190}
+                height={58}
+                className="sm:h-12 h-7 w-auto"
                 priority
               />
             </Link>
@@ -172,7 +172,7 @@ export default function Navbar() {
                   <Link
                     key={link.label}
                     href={resolveLinkHref(link.href)}
-                    className="inline-flex h-10 items-center justify-center rounded-full px-5 text-sm font-medium text-slate-900 hover:bg-[#0088FF] hover:text-white"
+                    className="inline-flex h-11 items-center justify-center rounded-full px-5 text-base font-bold text-slate-900 hover:bg-[#0088FF] hover:text-white"
                   >
                     <span className="block whitespace-nowrap">
                       {link.label}
@@ -275,7 +275,7 @@ export default function Navbar() {
       </nav>
 
       {/* Spacer for fixed navbar */}
-      <div className="h-16 lg:h-[70px]" />
+      <div className="h-16 lg:h-[78px]" />
     </>
   );
 }
