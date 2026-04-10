@@ -36,7 +36,7 @@ export default function HomePage() {
       <AiPoweredParkingService />
       {/* <TrustedUsers /> */}
       {/* <MajorFocusHighlight /> */}
-      {/* <GlobalMomentumSection /> */}
+      <GlobalMomentumSection />
       {/* <ParkingJourneyScrollSection /> */}
       {/* <CertificationsSection /> */}
       {/* <ClientsPartners /> */}

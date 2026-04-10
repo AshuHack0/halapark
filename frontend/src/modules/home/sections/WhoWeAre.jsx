@@ -78,7 +78,7 @@ function MagicHeading({ text, reduced }) {
             key={`${word}-${i}`}
             className={`inline-block pr-[0.28em] [-webkit-box-decoration-break:clone] [box-decoration-break:clone] ${
               isAccent
-                ? "bg-gradient-to-r from-[#0088FF] via-[#0ea5e9] to-[#14B8A6] bg-[length:220%_100%] bg-clip-text text-transparent who-gradient-flow"
+                ? "bg-gradient-to-r from-[#0088FF] via-[#0ea5e9] to-[#2563EB] bg-[length:220%_100%] bg-clip-text text-transparent who-gradient-flow"
                 : "text-[#050A13]"
             }`}
             variants={
@@ -115,7 +115,7 @@ export default function WhoWeAre() {
   const smoothX = useSpring(mouseX, { stiffness: 45, damping: 35, mass: 0.4 });
   const smoothY = useSpring(mouseY, { stiffness: 45, damping: 35, mass: 0.4 });
 
-  const spotlight = useMotionTemplate`radial-gradient(42% 38% at ${smoothX}px ${smoothY}px, rgba(0,136,255,0.16), rgba(20,184,166,0.06) 38%, transparent 72%)`;
+  const spotlight = useMotionTemplate`radial-gradient(42% 38% at ${smoothX}px ${smoothY}px, rgba(0,136,255,0.16), rgba(37,99,235,0.08) 38%, transparent 72%)`;
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -256,7 +256,7 @@ export default function WhoWeAre() {
       <motion.div
         aria-hidden
         style={{ y: parallaxB }}
-        className="pointer-events-none absolute -right-36 bottom-[6%] z-0 h-[380px] w-[380px] rounded-full bg-[radial-gradient(circle_at_45%_45%,rgba(20,184,166,0.16),rgba(20,184,166,0)_64%)] blur-2xl"
+        className="pointer-events-none absolute -right-36 bottom-[6%] z-0 h-[380px] w-[380px] rounded-full bg-[radial-gradient(circle_at_45%_45%,rgba(37,99,235,0.14),rgba(37,99,235,0)_64%)] blur-2xl"
       />
       <motion.div
         aria-hidden
@@ -274,7 +274,7 @@ export default function WhoWeAre() {
           />
           <motion.div
             aria-hidden
-            className="pointer-events-none absolute left-[12%] bottom-[28%] z-0 h-2 w-2 rounded-full bg-[#14B8A6]/40 shadow-[0_0_18px_rgba(20,184,166,0.45)]"
+            className="pointer-events-none absolute left-[12%] bottom-[28%] z-0 h-2 w-2 rounded-full bg-[#2563EB]/35 shadow-[0_0_18px_rgba(37,99,235,0.38)]"
             animate={{ y: [0, 12, 0], opacity: [0.3, 0.75, 0.3] }}
             transition={{ duration: 4.1, repeat: Infinity, ease: "easeInOut", delay: 0.6 }}
           />
@@ -292,7 +292,7 @@ export default function WhoWeAre() {
         className={`pointer-events-none absolute left-1/2 top-[12%] z-0 h-[min(100vw,680px)] w-[min(100vw,680px)] -translate-x-1/2 opacity-[0.09] ${reduced ? "who-orbit-slow" : ""}`}
         style={{
           background:
-            "conic-gradient(from 180deg at 50% 50%, transparent, rgba(0,136,255,0.5), transparent, rgba(20,184,166,0.45), transparent)",
+            "conic-gradient(from 180deg at 50% 50%, transparent, rgba(0,136,255,0.5), transparent, rgba(37,99,235,0.4), transparent)",
           ...(reduced ? {} : { rotate: orbitRotate }),
         }}
       />
@@ -403,7 +403,7 @@ export default function WhoWeAre() {
           <motion.div className="relative lg:col-span-6" style={{ y: colRightY }}>
             <motion.div
               aria-hidden
-              className="pointer-events-none absolute -inset-6 rounded-[32px] bg-gradient-to-br from-[#0088FF]/15 via-transparent to-[#14B8A6]/12 blur-2xl sm:-inset-8"
+              className="pointer-events-none absolute -inset-6 rounded-[32px] bg-gradient-to-br from-[#0088FF]/15 via-transparent to-[#2563EB]/12 blur-2xl sm:-inset-8"
               initial={reduced ? false : { opacity: 0, scale: 0.88 }}
               whileInView={
                 reduced
@@ -450,7 +450,7 @@ export default function WhoWeAre() {
                     className="group/card relative"
                   >
                     <div className="relative overflow-hidden rounded-[20px] border border-white/70 bg-white/75 p-px shadow-[0_2px_16px_-6px_rgba(6,6,22,0.12),0_20px_48px_-24px_rgba(0,136,255,0.12)] backdrop-blur-md sm:rounded-[22px]">
-                      <div className="pointer-events-none absolute inset-0 rounded-[19px] bg-gradient-to-br from-[#0088FF]/[0.12] via-transparent to-[#14B8A6]/[0.1] opacity-0 transition-opacity duration-500 group-hover/card:opacity-100 sm:rounded-[21px]" />
+                      <div className="pointer-events-none absolute inset-0 rounded-[19px] bg-gradient-to-br from-[#0088FF]/[0.12] via-transparent to-[#2563EB]/[0.12] opacity-0 transition-opacity duration-500 group-hover/card:opacity-100 sm:rounded-[21px]" />
                       {!reduced && (
                         <span className="pointer-events-none absolute -left-1/2 top-0 h-full w-1/2 bg-gradient-to-r from-transparent via-white/40 to-transparent opacity-0 transition-opacity duration-300 group-hover/card:opacity-100">
                           <span
@@ -459,13 +459,13 @@ export default function WhoWeAre() {
                               animation: "who-shimmer 1.2s ease-in-out infinite",
                             }}
                           />
-                        </span>
+              </span>
                       )}
                       <div className="relative rounded-[18px] bg-white/92 p-5 sm:rounded-[20px] sm:p-6">
                         <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#0088FF]/30 to-transparent opacity-60" />
                         <div className="flex gap-4">
                           <motion.div
-                            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#0088FF]/15 to-[#14B8A6]/10 text-[#0088FF] ring-1 ring-[#0088FF]/15"
+                            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#0088FF]/15 to-[#2563EB]/10 text-[#0088FF] ring-1 ring-[#0088FF]/15"
                             whileHover={
                               reduced ? undefined : { rotate: [0, -6, 6, 0], scale: 1.06 }
                             }
@@ -479,8 +479,8 @@ export default function WhoWeAre() {
                             </h3>
                             <p className="mt-1.5 text-sm leading-relaxed text-slate-600 sm:text-[15px]">
                               {item.description}
-                            </p>
-                          </div>
+            </p>
+          </div>
                         </div>
                       </div>
                     </div>
@@ -494,7 +494,7 @@ export default function WhoWeAre() {
 
       <motion.div
         aria-hidden
-        className="pointer-events-none absolute bottom-0 left-0 right-0 z-[3] h-[3px] origin-left rounded-full bg-gradient-to-r from-[#0088FF] via-[#0ea5e9] to-[#14B8A6] opacity-90 shadow-[0_0_12px_rgba(0,136,255,0.35)]"
+        className="pointer-events-none absolute bottom-0 left-0 right-0 z-[3] h-[3px] origin-left rounded-full bg-gradient-to-r from-[#0088FF] via-[#0ea5e9] to-[#2563EB] opacity-90 shadow-[0_0_12px_rgba(0,136,255,0.35)]"
         style={{ scaleX: sectionReadProgress }}
       />
     </section>

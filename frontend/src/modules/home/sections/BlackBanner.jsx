@@ -76,24 +76,8 @@ export default function BlackBanner() {
                 />
               </div>
 
-              <div className="relative z-10 flex flex-1 flex-col justify-between gap-10 sm:gap-12">
-                <div
-                  className="flex h-[58px] w-[58px] items-center justify-center rounded-full sm:h-[66px] sm:w-[66px]"
-                  style={{
-                    background:
-                      "radial-gradient(circle at 32% 28%, rgba(189,227,255,0.92) 0%, rgba(0,136,255,0.78) 42%, rgba(22,58,99,1) 100%)",
-                    boxShadow:
-                      "inset 0 1px 1px rgba(255, 255, 255, 0.18), 0 18px 28px rgba(0, 0, 0, 0.28)",
-                  }}
-                >
-                  <img
-                    src="/hala.svg"
-                    alt="Hala Park logo"
-                    className="h-8 w-auto sm:h-9"
-                  />
-                </div>
-
-                <div className="max-w-[760px]">
+              <div className="relative z-10 grid flex-1 gap-10 sm:gap-12 lg:grid-cols-12 lg:items-center">
+                <div className="lg:col-span-8">
                   <h2 className="max-w-[14ch] text-[28px] font-semibold leading-[1.03] tracking-[-0.05em] text-white sm:text-[36px] lg:text-[44px]">
                     {featureCard.title}
                   </h2>
@@ -118,6 +102,17 @@ export default function BlackBanner() {
                     ))}
                   </div>
                 </div>
+
+                <div className="flex items-center justify-start lg:col-span-4 lg:justify-end lg:-translate-y-3">
+                  <div className="relative overflow-hidden">
+                    <div className="black-logo-shine absolute -left-1/2 top-0 h-full w-1/2 bg-gradient-to-r from-transparent via-white/50 to-transparent" />
+                    <img
+                      src="/layer_1.svg"
+                      alt="Hala Park logo"
+                      className="relative z-[1] h-44 w-auto sm:h-52 lg:h-64"
+                    />
+                  </div>
+                </div>
               </div>
             </article>
           </div>
@@ -127,6 +122,14 @@ export default function BlackBanner() {
         .black-banner-flow {
           background-size: 180% 180%;
           animation: blackBannerGradientFlow 10s ease-in-out infinite;
+        }
+
+        .black-logo-shine {
+          transform: skewX(-16deg) translateX(-180%);
+          animation: blackLogoShineLoop 3.2s ease-in-out infinite;
+          mix-blend-mode: screen;
+          opacity: 0.5;
+          filter: blur(0.5px);
         }
 
         @keyframes blackBannerGradientFlow {
@@ -141,9 +144,34 @@ export default function BlackBanner() {
           }
         }
 
+        @keyframes blackLogoShineLoop {
+          0% {
+            transform: skewX(-16deg) translateX(-180%);
+            opacity: 0;
+          }
+          16% {
+            opacity: 0.42;
+          }
+          44% {
+            transform: skewX(-16deg) translateX(360%);
+            opacity: 0.52;
+          }
+          56% {
+            opacity: 0;
+          }
+          100% {
+            transform: skewX(-16deg) translateX(360%);
+            opacity: 0;
+          }
+        }
+
         @media (prefers-reduced-motion: reduce) {
           .black-banner-flow {
             animation: none;
+          }
+          .black-logo-shine {
+            animation: none;
+            opacity: 0;
           }
         }
       `}</style>
