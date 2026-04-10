@@ -4,6 +4,7 @@ import BlackBanner from "./sections/BlackBanner";
 import SolutionIntegration from "./sections/SolutionIntegration";
 import WhyHalapark from "./sections/WhyHalapark";
 import EnterpriseSolutions from "./sections/EnterpriseSolutions";
+import GoodLookingServicesSection from "./sections/GoodLookingServicesSection";
 import TechnologySection from "./sections/TechnologySection";
 import TrustedUsers from "./sections/TrustedUsers";
 import AiPoweredParkingService from "./sections/AiPoweredParkingService";
@@ -27,7 +28,8 @@ export default function HomePage() {
       <WhoWeAre />
       <WhyHalapark />
       <BlackBanner />
-      <EnterpriseSolutions />
+      {/* <EnterpriseSolutions /> */}
+      <GoodLookingServicesSection />
       <SolutionIntegration />
 
       <TechnologySection />

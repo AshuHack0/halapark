@@ -1,0 +1,269 @@
+"use client";
+
+import Image from "next/image";
+import Link from "next/link";
+import { motion, useReducedMotion } from "framer-motion";
+import { ArrowUpRight } from "lucide-react";
+import { servicesData } from "@/modules/home/servicesData";
+
+const parkingIntegrations = [
+  { name: "Technical Support", bgcolor: "bg-[#EC4899]", img: "/Group11.svg" },
+  { name: "Operations", bgcolor: "bg-[#4A44FE]", img: "/Group66.png" },
+  { name: "Installation", bgcolor: "bg-[#EC4899]", img: "/Group22.svg" },
+  { name: "Equipment Supply", bgcolor: "bg-[#0088FF]", img: "/Group55.png" },
+  { name: "Advisory Services", bgcolor: "bg-[#FA4162]", img: "/Group33.svg" },
+  { name: "Management", bgcolor: "bg-[#923BE2]", img: "/Group44.svg" },
+];
+
+const duplicatedParkingIntegrations = [
+  ...parkingIntegrations,
+  ...parkingIntegrations,
+];
+
+function IntegrationsMotionHeader({ active = true }) {
+  return (
+    <div className="absolute inset-0 overflow-hidden bg-[#d2dae2]">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_16%_8%,rgba(255,255,255,0.52)_0%,rgba(255,255,255,0)_58%)]" />
+
+      <div className="relative z-10 flex h-full flex-col justify-center gap-3 px-2.5 sm:gap-4 sm:px-4 lg:px-5">
+        <div className="w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_14%,black_86%,transparent)] [-webkit-mask-image:linear-gradient(to_right,transparent,black_14%,black_86%,transparent)]">
+          <div
+            className={`gld-scroll-right flex w-max items-center gap-2.5 sm:gap-3.5 ${!active ? "[animation-play-state:paused]" : ""}`}
+          >
+            {duplicatedParkingIntegrations.map((integration, index) => (
+              <div
+                key={`top-${integration.name}-${index}`}
+                className="flex shrink-0 items-center gap-1.5 rounded-[11px] border border-white/80 bg-white px-2.5 py-1.5 shadow-[0_3px_10px_rgba(6,6,22,0.05)] sm:gap-2 sm:rounded-[12px] sm:px-3 sm:py-2"
+              >
+                <div
+                  className={`flex h-4 w-4 items-center justify-center rounded-[6px] sm:h-6 sm:w-6 ${integration.bgcolor}`}
+                >
+                  <Image
+                    src={integration.img}
+                    alt={integration.name}
+                    width={14}
+                    height={14}
+                    className="h-2 w-2 object-contain sm:h-3.5 sm:w-3.5"
+                  />
+                </div>
+                <span className="whitespace-nowrap text-[9px] font-medium text-black sm:text-sm">
+                  {integration.name}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_14%,black_86%,transparent)] [-webkit-mask-image:linear-gradient(to_right,transparent,black_14%,black_86%,transparent)]">
+          <div
+            className={`gld-scroll-left flex w-max items-center gap-2.5 sm:gap-3.5 ${!active ? "[animation-play-state:paused]" : ""}`}
+          >
+            {duplicatedParkingIntegrations.map((integration, index) => (
+              <div
+                key={`bottom-${integration.name}-${index}`}
+                className="flex shrink-0 items-center gap-1.5 rounded-[11px] border border-white/80 bg-white px-2.5 py-1.5 shadow-[0_3px_10px_rgba(6,6,22,0.05)] sm:gap-2 sm:rounded-[12px] sm:px-3 sm:py-2"
+              >
+                <div
+                  className={`flex h-4 w-4 items-center justify-center rounded-[6px] sm:h-6 sm:w-6 ${integration.bgcolor}`}
+                >
+                  <Image
+                    src={integration.img}
+                    alt={integration.name}
+                    width={14}
+                    height={14}
+                    className="h-2 w-2 object-contain sm:h-3.5 sm:w-3.5"
+                  />
+                </div>
+                <span className="whitespace-nowrap text-[9px] font-medium text-black sm:text-sm">
+                  {integration.name}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <style jsx>{`
+        @keyframes gldScrollLeft {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
+        }
+        @keyframes gldScrollRight {
+          0% {
+            transform: translateX(-50%);
+          }
+          100% {
+            transform: translateX(0);
+          }
+        }
+        .gld-scroll-left {
+          animation: gldScrollLeft 30s linear infinite;
+        }
+        .gld-scroll-right {
+          animation: gldScrollRight 30s linear infinite;
+        }
+      `}</style>
+    </div>
+  );
+}
+
+function ServiceCard({ service, index }) {
+  const prefersReducedMotion = useReducedMotion();
+
+  const highlights = Array.isArray(service.highlights)
+    ? service.highlights.slice(0, 5)
+    : [];
+
+  const scrollMotion = prefersReducedMotion
+    ? {}
+    : {
+        initial: { opacity: 0, y: 28 },
+        whileInView: { opacity: 1, y: 0 },
+        viewport: {
+          once: false,
+          amount: 0.15,
+          margin: "0px 0px -100px 0px",
+        },
+        transition: {
+          duration: 0.55,
+          ease: [0.22, 1, 0.36, 1],
+          delay: index * 0.06,
+        },
+      };
+
+  return (
+    <motion.article
+      {...scrollMotion}
+      className="group relative"
+    >
+      <Link
+        href={`/services/${service.slug}`}
+        className="block overflow-hidden rounded-[22px] bg-[#fbfdff] shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_1px_4px_rgba(6,6,22,0.1),0_10px_24px_-6px_rgba(6,6,22,0.14)] transition-transform duration-300 ease-out hover:-translate-y-1 sm:rounded-[26px] lg:rounded-[30px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0088FF] focus-visible:ring-offset-2"
+        aria-label={`Open service: ${service.name}`}
+      >
+        <div className="relative h-[190px] w-full bg-[#d2dae2] sm:h-[230px] lg:h-[260px]">
+          {service.mediaType === "video" && service.mediaSrc ? (
+            <video
+              src={service.mediaSrc}
+              autoPlay={!prefersReducedMotion}
+              loop
+              muted
+              playsInline
+              preload="metadata"
+              className="h-full w-full object-cover"
+            />
+          ) : service.mediaType === "integrations" ? (
+            <IntegrationsMotionHeader active={!prefersReducedMotion} />
+          ) : null}
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.72)_0%,rgba(255,255,255,0)_55%)] opacity-70" />
+        </div>
+
+        <div className="px-6 pb-7 pt-6 sm:px-7 sm:pb-8">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
+                Service 0{index + 1}
+              </p>
+              <h3 className="mt-2 text-[1.35rem] font-medium tracking-tight text-slate-950 sm:text-[1.6rem]">
+                {service.name}
+              </h3>
+              <p className="mt-3 text-sm leading-6 text-slate-600">
+                {service.summary}
+              </p>
+            </div>
+
+            <span className="mt-1 inline-flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full border border-slate-200 bg-[#fbfdff] text-slate-900 shadow-[0_4px_14px_rgba(6,6,22,0.06)] transition-transform duration-300 ease-out group-hover:rotate-12">
+              <ArrowUpRight className="h-5 w-5" aria-hidden="true" />
+            </span>
+          </div>
+
+          
+        </div>
+      </Link>
+    </motion.article>
+  );
+}
+
+export default function GoodLookingServicesSection() {
+  const featuredServices = servicesData.slice(0, 6);
+  const prefersReducedMotion = useReducedMotion();
+
+  return (
+    <section className="relative overflow-x-clip bg-[#f0f2f4] py-14 sm:py-16 md:py-20 lg:py-24">
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-24 bg-[linear-gradient(180deg,rgba(240,242,244,1)_0%,rgba(240,242,244,0)_100%)]" />
+      <div className="pointer-events-none absolute -left-24 top-10 z-[1] h-[420px] w-[420px] rounded-full bg-[radial-gradient(circle_at_30%_30%,rgba(0,136,255,0.22),rgba(0,136,255,0)_60%)] blur-2xl" />
+      <div className="pointer-events-none absolute -right-24 bottom-0 z-[1] h-[460px] w-[460px] rounded-full bg-[radial-gradient(circle_at_30%_30%,rgba(20,184,166,0.18),rgba(20,184,166,0)_60%)] blur-2xl" />
+
+      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start lg:gap-12 lg:pb-10">
+          <motion.div
+            className="max-w-xl lg:sticky lg:top-28 lg:self-start"
+            {...(prefersReducedMotion
+              ? {}
+              : {
+                  initial: { opacity: 0, y: 32 },
+                  whileInView: { opacity: 1, y: 0 },
+                  viewport: {
+                    once: false,
+                    amount: 0.2,
+                    margin: "0px 0px -80px 0px",
+                  },
+                  transition: {
+                    duration: 0.55,
+                    ease: [0.22, 1, 0.36, 1],
+                  },
+                })}
+          >
+            <p className="text-[15px] font-semibold uppercase tracking-[0.1em] text-[#0088FF] sm:text-[16px]">
+              Services
+            </p>
+            <h2 className="mt-4 text-[clamp(2.1rem,3.4vw,3.2rem)] font-medium leading-[1.03] tracking-[-0.06em] text-[#050A13]">
+            Everything Your Parking
+              <br className="hidden sm:block" /> Space Needs. In One Place.
+            </h2>
+            {/* <p className="mt-5 text-base leading-8 text-slate-600 sm:text-lg">
+              Core services designed to unlock utilization, reduce friction, and
+              elevate the full parking journey across your properties.
+            </p> */}
+
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link
+                href="/#what-we-do"
+                className="inline-flex min-h-[3.05rem] items-center justify-center rounded-full bg-[#0088FF] px-7 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(0,136,255,0.14)] transition hover:bg-[#0088FF]"
+              >
+                View All Services
+              </Link>
+              <Link
+                href="/contact"
+                className="inline-flex min-h-[3.05rem] items-center justify-center rounded-full border border-slate-300/70 bg-white/60 px-7 text-sm font-semibold text-slate-800 backdrop-blur transition hover:border-[#0088FF] hover:text-[#0088FF]"
+              >
+                Talk to us
+              </Link>
+            </div>
+          </motion.div>
+
+          <motion.div
+            className="flex flex-col gap-5 sm:grid sm:grid-cols-2 lg:flex lg:grid-cols-none lg:gap-6"
+          >
+            {featuredServices.map((service, index) => (
+              <ServiceCard
+                key={service.slug}
+                service={service}
+                index={index}
+              />
+            ))}
+          </motion.div>
+        </div>
+      </div>
+
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-40 bg-gradient-to-t from-[#f0f2f4] via-[#f0f2f4]/82 to-transparent backdrop-blur-md [mask-image:linear-gradient(180deg,transparent_0%,black_38%,black_100%)] [-webkit-mask-image:linear-gradient(180deg,transparent_0%,black_38%,black_100%)] sm:h-48 md:h-56"
+      />
+    </section>
+  );
+}
