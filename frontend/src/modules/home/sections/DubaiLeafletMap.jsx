@@ -11,14 +11,6 @@ import {
   getMapLabel,
 } from "../data/parkingSpacesMap";
 
-function escapeHtml(str) {
-  return String(str)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}
-
 function buildPillMarkerEl(label) {
   const root = document.createElement("div");
   root.className = "halapark-pill-marker";
@@ -88,20 +80,6 @@ export default function DubaiLeafletMap({ className = "" }) {
           rotationAlignment: "viewport",
         })
           .setLngLat([p.lng, p.lat])
-          .setPopup(
-            new maplibregl.Popup({
-              offset: 18,
-              maxWidth: "280px",
-              className: "halapark-map-popup-shell",
-              closeButton: true,
-              closeOnClick: true,
-            }).setHTML(
-              `<div class="halapark-map-popup">
-                <span class="halapark-map-popup__tag halapark-map-popup__tag--lot">Coverage</span>
-                <p class="halapark-map-popup__title">${escapeHtml(p.name)}</p>
-              </div>`,
-            ),
-          )
           .addTo(map);
       });
 
