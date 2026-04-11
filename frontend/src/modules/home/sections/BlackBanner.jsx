@@ -107,7 +107,7 @@ export default function BlackBanner() {
                   <div className="relative overflow-hidden">
                     <div className="black-logo-shine absolute -left-1/2 top-0 h-full w-1/2 bg-gradient-to-r from-transparent via-white/50 to-transparent" />
                     <img
-                      src="/layer_1.svg"
+                      src="/Layer_1.svg"
                       alt="Hala Park logo"
                       className="relative z-[1] h-44 w-auto sm:h-52 lg:h-64"
                     />
