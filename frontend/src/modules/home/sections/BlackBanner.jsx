@@ -16,24 +16,13 @@ const featureCard = {
   ],
 };
 
-function SparkIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 24 24"
-      className="h-7 w-7 text-white sm:h-8 sm:w-8"
-      fill="currentColor"
-    >
-      <path d="M13.08 2.15a1.18 1.18 0 0 0-2.16 0L9.18 6.79a1.2 1.2 0 0 1-.7.7l-4.64 1.74a1.18 1.18 0 0 0 0 2.16l4.64 1.74a1.2 1.2 0 0 1 .7.7l1.74 4.64a1.18 1.18 0 0 0 2.16 0l1.74-4.64a1.2 1.2 0 0 1 .7-.7l4.64-1.74a1.18 1.18 0 0 0 0-2.16l-4.64-1.74a1.2 1.2 0 0 1-.7-.7z" />
-    </svg>
-  );
-}
+ 
 
 export default function BlackBanner() {
   return (
-    <section className="bg-white py-4 font-sans sm:py-5 lg:py-6">
+    <section className="bg-white pb-4 pt-0 font-sans sm:pb-5 lg:pb-6">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="relative overflow-hidden rounded-[24px] py-12 sm:py-16">
+        <div className="relative overflow-hidden rounded-[24px] pb-12 pt-0 sm:pb-16">
           <div className="relative flex min-h-[420px] items-center justify-center sm:min-h-[500px]">
             <article
               className="black-banner-flow relative isolate flex w-full flex-col overflow-hidden rounded-[24px] border border-white/10 px-6 py-8 sm:px-10 sm:py-10 lg:min-h-[390px] lg:px-[56px] lg:py-[46px] xl:px-[72px]"

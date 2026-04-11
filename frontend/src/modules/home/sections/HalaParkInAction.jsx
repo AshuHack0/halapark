@@ -69,6 +69,22 @@ const badgeVariants = {
   }),
 };
 
+const previewImageVariants = {
+  hidden: {
+    opacity: 0,
+    y: 56,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.8,
+      delay: 0.14,
+      ease: sectionEase,
+    },
+  },
+};
+
 function StoreBadge({
   icon,
   alt,
@@ -183,7 +199,13 @@ export default function HalaParkInAction() {
               <div className="relative z-10 flex h-full w-full max-w-[600px] items-end lg:translate-x-10 xl:max-w-[680px]">
                 <div className="absolute bottom-[6%] left-[8%] right-[12%] h-10 rounded-full bg-[#0F172A]/12 blur-2xl sm:h-14" />
 
-                <div className="relative h-full w-full">
+                <motion.div
+                  variants={prefersReducedMotion ? undefined : previewImageVariants}
+                  initial={prefersReducedMotion ? false : "hidden"}
+                  whileInView={prefersReducedMotion ? undefined : "visible"}
+                  viewport={{ once: true, amount: 0.2 }}
+                  className="relative h-full w-full"
+                >
                   <Image
                     src="/UI/hf_20260401_051940_148a185a-d002-45bf-87b7-80e45dd5de5e 1.png"
                     alt="HalaPark mobile app preview"
@@ -191,7 +213,7 @@ export default function HalaParkInAction() {
                     height={1236}
                     className="relative h-full w-full object-contain object-bottom-right"
                   />
-                </div>
+                </motion.div>
               </div>
             </div>
           </div>
