@@ -10,7 +10,8 @@ import {
   useSpring,
   useTransform,
 } from "framer-motion";
-import { Building2, Layers, Sparkles, TrendingUp } from "lucide-react";
+import Image from "next/image";
+import { Building2, Layers, TrendingUp } from "lucide-react";
 
 const headingText = "Who We Are";
 const lineOneText = "Built to Redefine Parking as an Asset Class";
@@ -336,16 +337,21 @@ export default function WhoWeAre() {
                   </span>
                 )}
                 <motion.span
-                  aria-hidden
-                  className="relative text-[#0088FF]"
+                  className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#0088FF] sm:h-9 sm:w-9"
                   animate={
                     reduced
                       ? undefined
-                      : { rotate: [0, 12, -8, 0], scale: [1, 1.08, 1] }
+                      : { rotate: [0, 12, -8, 0], scale: [1, 1.06, 1] }
                   }
                   transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
                 >
-                  <Sparkles className="h-4 w-4 sm:h-[18px] sm:w-[18px]" />
+                  <Image
+                    src="/Layer_1.svg"
+                    alt="Hala Park"
+                    width={22}
+                    height={26}
+                    className="object-contain"
+                  />
                 </motion.span>
                 <p className="relative text-[12px] font-semibold uppercase tracking-[0.16em] text-[#0088FF] sm:text-[13px]">
                   {headingText}
