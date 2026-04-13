@@ -6,7 +6,7 @@
   );
   background-size: 20px 100%;
   will-change: background-position;
-  animation: connectorFlow 1.15s linear infinite;
+  animation: connectorFlow 0.72s linear infinite;
 }
 
 @keyframes connectorFlow {

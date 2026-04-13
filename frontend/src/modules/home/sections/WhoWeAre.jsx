@@ -136,12 +136,12 @@ export default function WhoWeAre() {
   const colLeftY = useTransform(
     smoothProgress,
     [0, 0.32, 0.55, 1],
-    reduced ? [0, 0, 0, 0] : [36, 0, 0, -32],
+    reduced ? [0, 0, 0, 0] : [12, 0, 0, -10],
   );
   const colRightY = useTransform(
     smoothProgress,
     [0, 0.38, 0.62, 1],
-    reduced ? [0, 0, 0, 0] : [-40, 0, 0, 40],
+    reduced ? [0, 0, 0, 0] : [-12, 0, 0, 10],
   );
   const gridFade = useTransform(
     smoothProgress,
@@ -206,7 +206,7 @@ export default function WhoWeAre() {
       aria-labelledby="who-we-are-heading"
       onPointerMove={onSectionPointerMove}
       onPointerLeave={onSectionPointerLeave}
-      className="group/who relative overflow-hidden bg-[#f5f7fa] py-16 sm:py-20 md:py-24 lg:py-28"
+      className="group/who relative overflow-hidden bg-[linear-gradient(180deg,#F6FAFF_0%,#FFFFFF_68%)] py-16 sm:py-20 md:py-24 lg:py-28"
     >
       <style>{`
         @keyframes who-gradient-flow {
@@ -235,10 +235,10 @@ export default function WhoWeAre() {
 
       <motion.div
         aria-hidden
-        className="pointer-events-none absolute inset-0 mix-blend-multiply"
+        className="pointer-events-none absolute inset-0"
         style={{ opacity: gridFade }}
       >
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.7)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.7)_1px,transparent_1px)] bg-[size:48px_48px] [mask-image:radial-gradient(ellipse_75%_60%_at_50%_40%,black,transparent)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(0,136,255,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(0,136,255,0.06)_1px,transparent_1px)] bg-[size:48px_48px] [mask-image:radial-gradient(ellipse_75%_60%_at_50%_40%,black,transparent)]" />
       </motion.div>
 
       {!reduced && (
@@ -252,30 +252,30 @@ export default function WhoWeAre() {
       <motion.div
         aria-hidden
         style={{ y: parallaxA }}
-        className="pointer-events-none absolute -left-28 top-[18%] z-0 h-[340px] w-[340px] rounded-full bg-[radial-gradient(circle_at_38%_38%,rgba(0,136,255,0.2),rgba(0,136,255,0)_66%)] blur-2xl sm:h-[400px] sm:w-[400px]"
+        className="pointer-events-none absolute -left-28 top-[18%] z-0 h-[340px] w-[340px] rounded-full bg-[radial-gradient(circle_at_38%_38%,rgba(0,136,255,0.14),rgba(0,136,255,0)_66%)] blur-2xl sm:h-[400px] sm:w-[400px]"
       />
       <motion.div
         aria-hidden
         style={{ y: parallaxB }}
-        className="pointer-events-none absolute -right-36 bottom-[6%] z-0 h-[380px] w-[380px] rounded-full bg-[radial-gradient(circle_at_45%_45%,rgba(37,99,235,0.14),rgba(37,99,235,0)_64%)] blur-2xl"
+        className="pointer-events-none absolute -right-36 bottom-[6%] z-0 h-[380px] w-[380px] rounded-full bg-[radial-gradient(circle_at_45%_45%,rgba(37,99,235,0.1),rgba(37,99,235,0)_64%)] blur-2xl"
       />
       <motion.div
         aria-hidden
         style={{ y: parallaxC }}
-        className="pointer-events-none absolute left-1/2 top-1/2 z-0 h-[min(90vw,520px)] w-[min(90vw,520px)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle_at_50%_50%,rgba(0,136,255,0.06),transparent_62%)] blur-3xl"
+        className="pointer-events-none absolute left-1/2 top-1/2 z-0 h-[min(90vw,520px)] w-[min(90vw,520px)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle_at_50%_50%,rgba(0,136,255,0.045),transparent_62%)] blur-3xl"
       />
 
       {!reduced && (
         <>
           <motion.div
             aria-hidden
-            className="pointer-events-none absolute right-[8%] top-[20%] z-0 h-3 w-3 rounded-full bg-[#0088FF]/35 shadow-[0_0_24px_rgba(0,136,255,0.5)]"
+            className="pointer-events-none absolute right-[8%] top-[20%] z-0 h-3 w-3 rounded-full bg-[#0088FF]/35"
             animate={{ y: [0, -14, 0], opacity: [0.35, 0.85, 0.35], scale: [1, 1.15, 1] }}
             transition={{ duration: 5.2, repeat: Infinity, ease: "easeInOut" }}
           />
           <motion.div
             aria-hidden
-            className="pointer-events-none absolute left-[12%] bottom-[28%] z-0 h-2 w-2 rounded-full bg-[#2563EB]/35 shadow-[0_0_18px_rgba(37,99,235,0.38)]"
+            className="pointer-events-none absolute left-[12%] bottom-[28%] z-0 h-2 w-2 rounded-full bg-[#2563EB]/35"
             animate={{ y: [0, 12, 0], opacity: [0.3, 0.75, 0.3] }}
             transition={{ duration: 4.1, repeat: Infinity, ease: "easeInOut", delay: 0.6 }}
           />
@@ -293,7 +293,7 @@ export default function WhoWeAre() {
         className={`pointer-events-none absolute left-1/2 top-[12%] z-0 h-[min(100vw,680px)] w-[min(100vw,680px)] -translate-x-1/2 opacity-[0.09] ${reduced ? "who-orbit-slow" : ""}`}
         style={{
           background:
-            "conic-gradient(from 180deg at 50% 50%, transparent, rgba(0,136,255,0.5), transparent, rgba(37,99,235,0.4), transparent)",
+            "conic-gradient(from 180deg at 50% 50%, transparent, rgba(0,136,255,0.26), transparent, rgba(37,99,235,0.2), transparent)",
           ...(reduced ? {} : { rotate: orbitRotate }),
         }}
       />
@@ -301,9 +301,9 @@ export default function WhoWeAre() {
       <div className="pointer-events-none absolute inset-x-0 top-0 z-[2] h-px bg-gradient-to-r from-transparent via-slate-300/70 to-transparent" />
 
       <div className="relative z-[2] mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-16">
+        <div className="grid items-start gap-12 lg:grid-cols-12 lg:gap-16">
           <motion.div
-            className="lg:col-span-6"
+            className="lg:col-span-6 lg:max-w-[560px]"
             style={{ y: colLeftY }}
             {...view}
             variants={
@@ -322,7 +322,7 @@ export default function WhoWeAre() {
           >
             <motion.div {...fadeUp}>
               <motion.div
-                className="relative inline-flex items-center gap-2.5 overflow-hidden rounded-full border border-[#0088FF]/25 bg-white/70 px-4 py-2 shadow-[0_2px_20px_-6px_rgba(0,136,255,0.25)] backdrop-blur-md sm:gap-3 sm:px-5"
+                className="relative inline-flex items-center gap-2.5 overflow-hidden rounded-full border border-[#0088FF]/25 bg-white/70 px-4 py-2 backdrop-blur-md sm:gap-3 sm:px-5"
                 whileHover={reduced ? undefined : { scale: 1.02 }}
                 transition={springSoft}
               >
@@ -406,7 +406,10 @@ export default function WhoWeAre() {
             </motion.div>
           </motion.div>
 
-          <motion.div className="relative lg:col-span-6" style={{ y: colRightY }}>
+          <motion.div
+            className="relative lg:col-span-6 lg:pt-1"
+            style={{ y: colRightY }}
+          >
             <motion.div
               aria-hidden
               className="pointer-events-none absolute -inset-6 rounded-[32px] bg-gradient-to-br from-[#0088FF]/15 via-transparent to-[#2563EB]/12 blur-2xl sm:-inset-8"

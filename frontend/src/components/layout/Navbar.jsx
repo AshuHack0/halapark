@@ -5,22 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const PhoneIcon = () => (
-  <svg
-    width="16"
-    height="16"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
-    <line x1="12" y1="18" x2="12.01" y2="18" />
-  </svg>
-);
-
 const HamburgerIcon = () => (
   <svg
     width="24"
@@ -172,7 +156,7 @@ export default function Navbar() {
                   <Link
                     key={link.label}
                     href={resolveLinkHref(link.href)}
-                    className="inline-flex h-11 items-center justify-center rounded-full px-5 text-base font-semibold text-slate-900 hover:bg-[#0088FF] hover:text-white"
+                    className="inline-flex h-12 items-center justify-center rounded-full px-6 text-[1.06rem] font-semibold text-slate-900 hover:bg-[#0088FF] hover:text-white"
                   >
                     <span className="block whitespace-nowrap">
                       {link.label}
@@ -184,19 +168,6 @@ export default function Navbar() {
 
             {/* Desktop CTA */}
             <div className="hidden lg:flex items-center gap-2.5 flex-shrink-0">
-              <Link
-                href="/app"
-                className="inline-flex items-center gap-2 bg-[#0088FF] hover:brightness-95 active:bg-[#0088FF] text-white text-sm font-semibold px-5 py-2.5 rounded-full shadow-sm hover:shadow-md"
-              >
-                Download the App
-                <PhoneIcon />
-              </Link>
-              <Link
-                href="/pay"
-                className="inline-flex items-center justify-center bg-white border border-slate-200 text-slate-900 text-sm font-semibold px-4 py-2.5 rounded-full hover:bg-slate-50"
-              >
-                Pay
-              </Link>
               <Link
                 href="/contact"
                 className="inline-flex items-center justify-center bg-[#0088FF] hover:brightness-95 active:bg-[#0088FF] text-white text-sm font-semibold px-5 py-2.5 rounded-full shadow-sm hover:shadow-md"
@@ -215,24 +186,10 @@ export default function Navbar() {
             {/* Mobile: compact CTA + Hamburger */}
             <div className="flex lg:hidden items-center gap-2">
               <Link
-                href="/app"
-                className="inline-flex items-center gap-1.5 bg-[#0088FF] hover:brightness-95 text-white text-sm font-semibold px-4 py-2 rounded-full"
-              >
-                <span className="hidden sm:inline">Download the App</span>
-                <span className="sm:hidden">Download</span>
-                <PhoneIcon />
-              </Link>
-              <Link
                 href="/contact"
                 className="inline-flex items-center gap-1.5 bg-[#0088FF] hover:brightness-95 text-white text-sm font-semibold px-4 py-2 rounded-full"
               >
                 Get In Touch
-              </Link>
-              <Link
-                href="/pay"
-                className="inline-flex items-center gap-1.5 bg-white border border-slate-200 text-slate-900 text-sm font-semibold px-4 py-2 rounded-full"
-              >
-                Pay
               </Link>
               <button
                 onClick={() => setMenuOpen((v) => !v)}
@@ -255,7 +212,7 @@ export default function Navbar() {
           <div className="bg-white border-t border-gray-100 px-4 pb-4 pt-2 space-y-1">
             <button
               type="button"
-              className="w-full flex items-center gap-2 px-3 py-2.5 text-[0.9375rem] font-medium text-gray-700 hover:text-[#0088FF] hover:bg-[rgba(0,136,255,0.08)] rounded-lg"
+              className="w-full flex items-center gap-2 px-3 py-3 text-[1.03rem] font-medium text-gray-700 hover:text-[#0088FF] hover:bg-[rgba(0,136,255,0.08)] rounded-lg"
             >
               <SearchIcon />
               Search
@@ -265,7 +222,7 @@ export default function Navbar() {
                 key={link.label}
                 href={resolveLinkHref(link.href)}
                 onClick={() => setMenuOpen(false)}
-                className="flex items-center px-3 py-2.5 text-[0.9375rem] font-medium text-gray-700 hover:text-[#0088FF] hover:bg-[rgba(0,136,255,0.08)] rounded-lg"
+                className="flex items-center px-3 py-3 text-[1.03rem] font-medium text-gray-700 hover:text-[#0088FF] hover:bg-[rgba(0,136,255,0.08)] rounded-lg"
               >
                 {link.label}
               </Link>

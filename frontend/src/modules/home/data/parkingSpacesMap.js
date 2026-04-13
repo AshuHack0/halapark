@@ -10,8 +10,8 @@ export const MAPLIBRE_STYLE_URL =
  * Leaflet cannot do this; MapLibre applies pitch + bearing on the same style.
  */
 export const MAP_STREET_CAMERA = {
-  pitch: 56,
-  bearing: -26,
+  pitch: 0,
+  bearing: 0,
 };
 
 /**

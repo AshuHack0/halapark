@@ -384,7 +384,7 @@ export default function WhyHalapark() {
               </div>
 
               <div className="relative">
-                <div className="relative mx-auto aspect-[0.95] w-full max-w-[39rem] overflow-hidden rounded-[24px] border border-slate-200/80 bg-slate-950 shadow-[0_36px_90px_rgba(15,23,42,0.18)]">
+                <div className="relative mx-auto aspect-[0.95] w-full max-w-[39rem] overflow-hidden rounded-[24px] bg-slate-950 shadow-[0_36px_90px_rgba(15,23,42,0.18)]">
                   <div className="pointer-events-none absolute inset-x-[12%] top-8 h-32 rounded-full bg-[#0088FF]/18 blur-3xl" />
 
                   {whyItems.map((item, index) => {

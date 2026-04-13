@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 const serviceAudienceCards = [
   {
     title: "For Customers",
+    audienceTag: "APP EXPERIENCE",
     description:
       "Easily locate available spaces, enter without delays, and complete payments through a smooth, fully digital experience.",
     href: "/app",
@@ -20,6 +21,7 @@ const serviceAudienceCards = [
   },
   {
     title: "For Businesses /\nProperty owners",
+    audienceTag: "BUSINESS SUITE",
     description:
       "Easily integrate with barriers, cameras, and payment systems to create a unified parking solution without disrupting your current setup.",
     href: "/business",
@@ -48,6 +50,7 @@ const gentleEase = { duration: 0.58, ease: [0.22, 1, 0.36, 1] };
 function AudienceCard({
   active,
   activeImageX,
+  audienceTag,
   description,
   desktopWeight,
   href,
@@ -64,7 +67,7 @@ function AudienceCard({
   return (
     <motion.article
       layout={!prefersReducedMotion}
-      className="relative isolate flex min-h-[420px] overflow-hidden rounded-[20px] bg-white p-4 will-change-transform sm:min-h-[520px] lg:min-h-[666px] lg:basis-0 lg:rounded-[12.5px] lg:p-[16.667px]"
+      className="relative isolate flex min-h-[360px] overflow-hidden rounded-[20px] border border-white/60 bg-white p-3.5 ring-1 ring-[#cfe5ff] will-change-transform sm:min-h-[430px] lg:min-h-[520px] lg:basis-0 lg:rounded-[16px] lg:p-3.5"
       style={{ backgroundColor }}
       animate={
         prefersReducedMotion
@@ -112,7 +115,7 @@ function AudienceCard({
       </motion.div>
 
       <motion.div
-        className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.86)_0%,rgba(255,255,255,0.32)_18%,rgba(255,255,255,0.08)_34%,rgba(255,255,255,0)_54%)]"
+        className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.95)_0%,rgba(255,255,255,0.4)_22%,rgba(255,255,255,0.14)_40%,rgba(255,255,255,0.02)_58%)]"
         animate={
           prefersReducedMotion
             ? undefined
@@ -121,7 +124,7 @@ function AudienceCard({
         transition={prefersReducedMotion ? { duration: 0 } : gentleEase}
       />
       <motion.div
-        className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0)_38%,rgba(255,255,255,0.08)_66%,rgba(255,255,255,0.14)_100%)]"
+        className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,22,40,0)_32%,rgba(10,22,40,0.12)_66%,rgba(10,22,40,0.36)_100%)]"
         animate={
           prefersReducedMotion
             ? undefined
@@ -131,20 +134,25 @@ function AudienceCard({
       />
 
       <div className="relative z-10 flex h-full w-full flex-col justify-between">
-        <motion.h3
-          className="whitespace-pre-line pr-6 text-[clamp(2.2rem,2.6vw,2.95rem)] font-normal leading-[1.1] tracking-[-0.058em] text-black lg:pr-10"
-          animate={
-            prefersReducedMotion
-              ? undefined
-              : { y: active && isDesktop ? 3 : 0 }
-          }
-          transition={prefersReducedMotion ? { duration: 0 } : contentSpring}
-        >
-          {title}
-        </motion.h3>
+        <div className="flex flex-col gap-2">
+          <span className="inline-flex w-fit items-center rounded-full border border-[#b9d9ff] bg-white/85 px-3 py-1 text-[10px] font-semibold tracking-[0.13em] text-[#006fd2] backdrop-blur-sm sm:text-[11px]">
+            {audienceTag}
+          </span>
+          <motion.h3
+            className="whitespace-pre-line pr-6 text-[clamp(1.95rem,2.35vw,2.6rem)] font-semibold leading-[1.05] tracking-[-0.045em] text-[#071221] lg:pr-8"
+            animate={
+              prefersReducedMotion
+                ? undefined
+                : { y: active && isDesktop ? 3 : 0 }
+            }
+            transition={prefersReducedMotion ? { duration: 0 } : contentSpring}
+          >
+            {title}
+          </motion.h3>
+        </div>
 
         <motion.div
-          className="relative flex flex-col gap-[11.667px] rounded-[18px] border border-white/25 bg-[rgba(217,217,217,0.20)] p-5 backdrop-blur-[12.5px] lg:rounded-[8.333px] lg:p-[16.667px]"
+          className="relative flex flex-col gap-3 rounded-[18px] border border-white/35 bg-[linear-gradient(135deg,rgba(255,255,255,0.78),rgba(210,230,255,0.38))] p-4 backdrop-blur-[13px] lg:rounded-[12px] lg:p-4"
           animate={
             prefersReducedMotion
               ? undefined
@@ -170,15 +178,16 @@ function AudienceCard({
             pointerEvents: !isDesktop || active ? "auto" : "none",
           }}
         >
-          <p className="max-w-[31ch] text-[0.95rem] leading-[1.4] tracking-[-0.02em] text-black sm:text-[1rem] lg:max-w-[500px] lg:text-[17px] lg:leading-[1.3]">
+          <p className="max-w-[31ch] text-[0.9rem] leading-[1.4] tracking-[-0.015em] text-black sm:text-[0.97rem] lg:max-w-[450px] lg:text-[15.5px] lg:leading-[1.34]">
             {description}
           </p>
 
           <Link
             href={href}
-            className={`inline-flex w-fit items-center justify-center rounded-full bg-black px-6 py-3 text-[1rem] leading-none tracking-[-0.035em] text-white transition-[transform,filter] duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:scale-[1.03] hover:brightness-105 focus-visible:scale-[1.03] focus-visible:outline-none lg:px-[18.333px] lg:py-[10px] lg:text-[19.167px] ${shellShadowClass}`}
+            className={`inline-flex w-fit items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#0a0f1d_0%,#0b63d7_100%)] px-5 py-2.5 text-[0.95rem] font-semibold leading-none tracking-[-0.02em] text-white transition-[transform,filter] duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:scale-[1.03] hover:brightness-105 focus-visible:scale-[1.03] focus-visible:outline-none lg:px-5 lg:py-2.5 lg:text-[16px] ${shellShadowClass}`}
           >
             Learn More
+            <span aria-hidden="true">-&gt;</span>
           </Link>
         </motion.div>
       </div>
@@ -209,27 +218,40 @@ export default function AiPoweredParkingService() {
   return (
     <section
       aria-labelledby="ai-powered-parking-service-title"
-      className="bg-[#F4F8FF] py-14 sm:py-16 lg:py-[94px] xl:py-[108px]"
+      className="relative isolate overflow-hidden bg-[linear-gradient(180deg,#F7FBFF_0%,#EAF4FF_100%)] py-10 sm:py-12 lg:py-14"
     >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="pointer-events-none absolute inset-0 bg-[repeating-linear-gradient(90deg,rgba(0,136,255,0.03)_0,rgba(0,136,255,0.03)_1px,transparent_1px,transparent_64px)] opacity-40" />
+      <div className="pointer-events-none absolute -left-20 top-14 h-64 w-64 rounded-full bg-[#0088FF]/15 blur-3xl" />
+      <div className="pointer-events-none absolute left-[42%] top-2 h-52 w-52 rounded-full bg-[#74D1FF]/25 blur-3xl" />
+      <div className="pointer-events-none absolute -right-24 bottom-4 h-72 w-72 rounded-full bg-[#6CC0FF]/20 blur-3xl" />
+
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-[980px] text-center">
-          <p className="text-[15px] font-semibold uppercase tracking-[0.1em] text-[#0088FF] sm:text-[16px]">
+          <p className="mx-auto inline-flex items-center rounded-full border border-[#7AB9FF]/45 bg-white/85 px-4 py-1.5 text-[12px] font-semibold uppercase tracking-[0.14em] text-[#0078E0] sm:text-[13px]">
             AI-POWERED PARKING SERVICE
           </p>
 
           <h2
             id="ai-powered-parking-service-title"
-            className="mx-auto mt-4 max-w-[900px] text-[clamp(2.25rem,4vw,3.55rem)] font-medium leading-[1.03] tracking-[-0.06em] text-[#050A13]"
+            className="mx-auto mt-4 max-w-[900px] text-[clamp(2rem,3.5vw,3.1rem)] font-semibold leading-[1.02] tracking-[-0.055em] text-[#050A13]"
           >
-            AI That Drives Smarter Parking Operations
+            AI That Drives{" "}
+            <span className="bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">
+              Smarter Parking
+            </span>{" "}
+            Operations
           </h2>
+          <p className="mx-auto mt-3 max-w-[690px] text-[0.95rem] leading-relaxed text-slate-600 sm:text-[1rem]">
+            Intelligent automation for users and businesses, designed to make
+            every parking interaction faster, simpler, and more reliable.
+          </p>
         </div>
 
         <div
-          className={`mx-auto mt-12 max-w-[1417px] rounded-[24px] bg-white p-4 ${shellShadowClass} sm:p-5 lg:mt-[88px] lg:rounded-[20px] lg:px-[25px] lg:py-[25px]`}
+          className={`mx-auto mt-8 max-w-[1417px] rounded-[22px] border border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.88),rgba(246,251,255,0.84))] p-3.5 backdrop-blur-sm ${shellShadowClass} sm:p-4 lg:mt-10 lg:rounded-[24px] lg:px-4 lg:py-4`}
         >
           <div
-            className="flex flex-col gap-[10px] lg:flex-row"
+            className="flex flex-col gap-3 lg:flex-row"
             onMouseLeave={() => setActiveCard(null)}
           >
             {serviceAudienceCards.map((card, index) => (

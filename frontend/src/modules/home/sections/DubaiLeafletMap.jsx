@@ -94,8 +94,8 @@ export default function DubaiLeafletMap({ className = "" }) {
           [hq.lng + dLng, hq.lat + dLat],
         ],
         {
-          padding: { top: 36, bottom: 44, left: 36, right: 36 },
-          maxZoom: 16,
+          padding: { top: 52, bottom: 52, left: 44, right: 44 },
+          maxZoom: 14.8,
           duration: 0,
         },
       );

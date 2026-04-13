@@ -1,6 +1,7 @@
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import FloatingActions from "@/components/layout/FloatingActions";
 import { AppProvider } from "@/context/AppContext";
 import SmoothScroll from "@/components/SmoothScroll";
 
@@ -22,6 +23,7 @@ export default function RootLayout({ children }) {
             <Navbar />
             <main className="grow">{children}</main>
             <Footer />
+            <FloatingActions />
           </AppProvider>
         </SmoothScroll>
       </body>

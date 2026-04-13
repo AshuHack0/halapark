@@ -75,24 +75,6 @@ function SystemsIcon({ className = "", stroke = "#111111" }) {
   );
 }
 
-function HalaParkMark({ className = "" }) {
-  return (
-    <svg
-      viewBox="0 0 96 116"
-      fill="none"
-      className={className}
-      aria-hidden="true"
-    >
-      <path
-        d="M48 10c-20.987 0-38 17.013-38 38 0 17.27 11.36 31.91 24.75 45.4L48 106l13.25-12.6C74.64 79.91 86 65.27 86 48 86 27.013 68.987 10 48 10Zm0 54c-8.837 0-16-7.163-16-16s7.163-16 16-16 16 7.163 16 16-7.163 16-16 16Z"
-        stroke="#0088FF"
-        strokeWidth="12"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
 function SolutionIcon({
   id,
   className = "",
@@ -187,9 +169,15 @@ function IntegrationDiagram() {
         </NodeCard>
       ))}
 
-      <div className="absolute right-[4%] top-[16%] flex h-[136px] w-[136px] items-center justify-center rounded-[20px] bg-[linear-gradient(180deg,rgba(0,136,255,0.12)_0%,rgba(0,136,255,0.20)_100%)] shadow-[0_20px_44px_rgba(0,136,255,0.14)] sm:h-[158px] sm:w-[158px] sm:rounded-[22px] lg:h-[192px] lg:w-[192px] lg:rounded-[24px] lg:shadow-[0_26px_64px_rgba(0,136,255,0.16)]">
+      <div className="absolute right-[4%] top-[16%] flex h-[136px] w-[136px] items-center justify-center overflow-hidden rounded-[20px] bg-[linear-gradient(180deg,#24A3FF_0%,#007EEA_100%)] shadow-[0_20px_44px_rgba(0,136,255,0.22)] sm:h-[158px] sm:w-[158px] sm:rounded-[22px] lg:h-[192px] lg:w-[192px] lg:rounded-[24px] lg:shadow-[0_26px_64px_rgba(0,136,255,0.25)]">
         <div className="absolute inset-0 rounded-[inherit] bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.55),transparent_58%)]" />
-        <HalaParkMark className="relative h-[76px] w-[60px] sm:h-[88px] sm:w-[70px] lg:h-[102px] lg:w-[80px]" />
+        <Image
+          src="/Layer_1.svg"
+          alt="HalaPark mark"
+          width={80}
+          height={102}
+          className="relative h-[76px] w-[60px] object-contain sm:h-[88px] sm:w-[70px] lg:h-[102px] lg:w-[80px]"
+        />
       </div>
     </div>
   );

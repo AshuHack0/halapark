@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { servicesData } from "@/modules/home/servicesData";
 
 const parkingIntegrations = [
@@ -111,7 +112,7 @@ function IntegrationsMotionHeader({ active = true }) {
   );
 }
 
-function ServiceCard({ service, index }) {
+function ServiceCard({ service, index, cardRef, isActive }) {
   const prefersReducedMotion = useReducedMotion();
 
   const highlights = Array.isArray(service.highlights)
@@ -137,12 +138,15 @@ function ServiceCard({ service, index }) {
 
   return (
     <motion.article
+      ref={cardRef}
       {...scrollMotion}
       className="group relative"
     >
       <Link
         href={`/services/${service.slug}`}
-        className="block overflow-hidden rounded-[22px] bg-[#fbfdff] shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_1px_4px_rgba(6,6,22,0.1),0_10px_24px_-6px_rgba(6,6,22,0.14)] transition-transform duration-300 ease-out hover:-translate-y-1 sm:rounded-[26px] lg:rounded-[30px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0088FF] focus-visible:ring-offset-2"
+        className={`block overflow-hidden rounded-[22px] bg-[#fbfdff] shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_1px_4px_rgba(6,6,22,0.1),0_10px_24px_-6px_rgba(6,6,22,0.14)] transition-transform duration-300 ease-out hover:-translate-y-1 sm:rounded-[26px] lg:rounded-[30px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0088FF] focus-visible:ring-offset-2 ${
+          isActive ? "ring-2 ring-[#0088FF]/45 ring-offset-2 ring-offset-[#f0f2f4]" : ""
+        }`}
         aria-label={`Open service: ${service.name}`}
       >
         <div className="relative h-[190px] w-full bg-[#d2dae2] sm:h-[230px] lg:h-[260px]">
@@ -189,8 +193,77 @@ function ServiceCard({ service, index }) {
 }
 
 export default function GoodLookingServicesSection() {
-  const featuredServices = servicesData.slice(0, 6);
+  const featuredServices = useMemo(() => servicesData.slice(0, 6), []);
   const prefersReducedMotion = useReducedMotion();
+  const [activeServiceIndex, setActiveServiceIndex] = useState(0);
+  const cardRefs = useRef([]);
+
+  useEffect(() => {
+    const scrollContainer = document.querySelector("[data-scroll-container]");
+    const scrollTarget =
+      scrollContainer instanceof HTMLElement ? scrollContainer : window;
+    let frameId = null;
+
+    const updateActiveService = () => {
+      frameId = null;
+
+      const cards = cardRefs.current.filter(Boolean);
+      if (!cards.length) {
+        return;
+      }
+
+      const viewportHeight =
+        scrollContainer instanceof HTMLElement
+          ? scrollContainer.clientHeight
+          : window.innerHeight;
+      const anchorY = viewportHeight * 0.48;
+      let nextIndex = null;
+      let nearestDistance = Number.POSITIVE_INFINITY;
+
+      cards.forEach((cardEl, index) => {
+        const rect = cardEl.getBoundingClientRect();
+        const isVisible = rect.bottom > 120 && rect.top < viewportHeight - 80;
+        if (!isVisible) {
+          return;
+        }
+
+        const cardCenterY = rect.top + rect.height / 2;
+        const distance = Math.abs(cardCenterY - anchorY);
+        if (distance < nearestDistance) {
+          nearestDistance = distance;
+          nextIndex = index;
+        }
+      });
+
+      if (nextIndex !== null) {
+        setActiveServiceIndex((prev) => (prev === nextIndex ? prev : nextIndex));
+      }
+    };
+
+    const requestUpdate = () => {
+      if (frameId !== null) {
+        return;
+      }
+      frameId = window.requestAnimationFrame(updateActiveService);
+    };
+
+    requestUpdate();
+    scrollTarget.addEventListener("scroll", requestUpdate, { passive: true });
+    window.addEventListener("resize", requestUpdate);
+
+    return () => {
+      if (frameId !== null) {
+        window.cancelAnimationFrame(frameId);
+      }
+      scrollTarget.removeEventListener("scroll", requestUpdate);
+      window.removeEventListener("resize", requestUpdate);
+    };
+  }, []);
+
+  const activeService = featuredServices[activeServiceIndex] ?? featuredServices[0];
+  const activeHighlights = Array.isArray(activeService?.highlights)
+    ? activeService.highlights.slice(0, 3)
+    : [];
 
   return (
     <section className="relative overflow-x-clip bg-[#f0f2f4] py-14 sm:py-16 md:py-20 lg:py-24">
@@ -221,21 +294,39 @@ export default function GoodLookingServicesSection() {
             <p className="text-[15px] font-semibold uppercase tracking-[0.1em] text-[#0088FF] sm:text-[16px]">
               Services
             </p>
-            <h2 className="mt-4 text-[clamp(2.1rem,3.4vw,3.2rem)] font-medium leading-[1.03] tracking-[-0.06em] text-[#050A13]">
-            Everything Your Parking
-              <br className="hidden sm:block" /> Space Needs. In One Place.
-            </h2>
-            {/* <p className="mt-5 text-base leading-8 text-slate-600 sm:text-lg">
-              Core services designed to unlock utilization, reduce friction, and
-              elevate the full parking journey across your properties.
-            </p> */}
+            <motion.div
+              key={activeService.slug}
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            >
+              {/* <p className="mt-5 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                Service 0{activeServiceIndex + 1}
+              </p> */}
+              <h2 className="mt-3 text-[clamp(2rem,3.2vw,3.05rem)] font-medium leading-[1.03] tracking-[-0.055em] text-[#050A13]">
+                {activeService.name}
+              </h2>
+              <p className="mt-5 text-base leading-8 text-slate-600 sm:text-lg">
+                {activeService.summary}
+              </p>
+              {/* <div className="mt-5 flex flex-wrap gap-2.5">
+                {activeHighlights.map((highlight) => (
+                  <span
+                    key={highlight}
+                    className="inline-flex items-center rounded-full border border-slate-300/70 bg-white/70 px-3.5 py-1.5 text-xs font-medium text-slate-700 backdrop-blur-sm"
+                  >
+                    {highlight}
+                  </span>
+                ))}
+              </div> */}
+            </motion.div>
 
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
-                href="/#what-we-do"
+                href={`/services/${activeService.slug}`}
                 className="inline-flex min-h-[3.05rem] items-center justify-center rounded-full bg-[#0088FF] px-7 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(0,136,255,0.14)] transition hover:bg-[#0088FF]"
               >
-                View All Services
+                Explore This Service
               </Link>
               <Link
                 href="/contact"
@@ -254,6 +345,10 @@ export default function GoodLookingServicesSection() {
                 key={service.slug}
                 service={service}
                 index={index}
+                isActive={activeServiceIndex === index}
+                cardRef={(node) => {
+                  cardRefs.current[index] = node;
+                }}
               />
             ))}
           </motion.div>
