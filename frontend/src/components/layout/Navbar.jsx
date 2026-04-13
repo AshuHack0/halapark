@@ -170,7 +170,7 @@ export default function Navbar() {
 
             {/* Desktop Nav Links */}
             <div className="hidden lg:flex items-center">
-              <div className="flex items-center rounded-full  bg-white p-1">
+              <div className="flex items-center gap-1">
                 {navLinks.map((link) => (
                   (() => {
                     const isActive = isLinkActive(link.href);
@@ -178,10 +178,10 @@ export default function Navbar() {
                   <Link
                     key={link.label}
                     href={resolveLinkHref(link.href)}
-                    className={`inline-flex h-12 items-center justify-center rounded-full px-6 text-[1.06rem] font-semibold transition ${
+                    className={`inline-flex h-11 items-center justify-center border-b-2 px-4 text-[1.02rem] font-semibold transition ${
                       isActive
-                        ? "bg-[#0088FF] text-white"
-                        : "text-slate-900 hover:bg-[#0088FF] hover:text-white"
+                        ? "border-[#0088FF] text-[#0078E0]"
+                        : "border-transparent text-slate-900 hover:text-[#0078E0]"
                     }`}
                   >
                     <span className="block whitespace-nowrap">

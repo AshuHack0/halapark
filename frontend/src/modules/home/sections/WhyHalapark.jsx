@@ -334,7 +334,7 @@ export default function WhyHalapark() {
                   </p>
                   <Link
                     href="/contact"
-                    className="mt-4 inline-flex items-center text-sm font-semibold text-black transition-colors hover:text-[#0088FF]"
+                    className="mt-4 inline-flex items-center text-sm font-semibold text-slate-400 transition-colors hover:text-[#0088FF]"
                   >
                     Learn More
                   </Link>
@@ -416,7 +416,7 @@ export default function WhyHalapark() {
                               href="/contact"
                               className={`mt-3 inline-flex items-center text-sm font-semibold transition-all duration-200 ${
                                 isActive
-                                  ? "translate-y-0 opacity-100 text-black hover:text-[#0088FF]"
+                                  ? "translate-y-0 opacity-100 text-slate-400 hover:text-[#0088FF]"
                                   : "pointer-events-none -translate-y-1 opacity-0"
                               }`}
                             >
