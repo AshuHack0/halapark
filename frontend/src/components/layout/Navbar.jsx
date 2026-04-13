@@ -131,7 +131,7 @@ export default function Navbar() {
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 bg-white ${
+        className={`fixed top-0 left-0 right-0 z-50 border-b border-[#CFE2FA]/70 bg-[linear-gradient(90deg,rgba(0,136,255,0.08)_0%,rgba(255,255,255,0.82)_22%,rgba(255,255,255,0.82)_78%,rgba(0,136,255,0.08)_100%)] backdrop-blur-md ${
           showShadow ? "shadow-md" : "shadow-none"
         }`}
       >
