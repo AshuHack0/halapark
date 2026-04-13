@@ -19,7 +19,10 @@ const whyItems = [
   {
     id: "01",
     icon: Gauge,
-    copy: "Optimize bay utilization with live occupancy, reservation controls, and smarter turnaround across every site.",
+    title: "Revenue Optimisation",
+    subtitle:
+      "Convert underutilised parking into consistent, trackable income streams.",
+    copy: "Convert underutilised parking into consistent, trackable income streams.",
     image: "/hf_20260327_061900_db12a62e-2867-44b6-83f0-ea7f1a5442ef.png",
     accent: "#0088FF",
     badge: "Live inventory",
@@ -31,7 +34,10 @@ const whyItems = [
   {
     id: "02",
     icon: ScanLine,
-    copy: "Reduce queue friction through ANPR, QR, and barrier-free entry workflows that keep cars moving.",
+    title: "Operational Efficiency",
+    subtitle:
+      "Eliminate manual processes with automation across access, billing, and management.",
+    copy: "Eliminate manual processes with automation across access, billing, and management.",
     image: "/hf_20260327_064457_c75923ba-dc06-4c6e-9b63-fa181e94bcfa (2).png",
     accent: "#0088FF",
     badge: "Barrier ready",
@@ -43,7 +49,10 @@ const whyItems = [
   {
     id: "03",
     icon: CircleDollarSign,
-    copy: "Turn unused private bays into dependable recurring revenue with secure booking and payout controls.",
+    title: "Full Visibility & Control",
+    subtitle:
+      "Access real-time dashboards, reporting, and performance insights across all locations.",
+    copy: "Access real-time dashboards, reporting, and performance insights across all locations.",
     image: "/hf_20260327_062407_6dca49c0-90dd-468a-96f9-b36bba13ea8b.png",
     accent: "#14B8A6",
     badge: "Revenue unlock",
@@ -55,7 +64,10 @@ const whyItems = [
   {
     id: "04",
     icon: Clock3,
-    copy: "Deliver premium guest experiences with on-demand valet and pre-arrival parking flows.",
+    title: "Seamless Infrastructure Integration",
+    subtitle:
+      "Deploy without replacing your existing systems, we enhance what you already have.",
+    copy: "Deploy without replacing your existing systems, we enhance what you already have.",
     image: "/hf_20260327_061010_f3bc038b-576f-4903-8896-5d998cc78527.png",
     accent: "#0088FF",
     badge: "Premium arrival",
@@ -100,7 +112,7 @@ function SectionIntro({ centered = false }) {
       className={`flex flex-col ${centered ? "items-center text-center" : "items-start text-left"}`}
     >
       <div className="mx-auto max-w-[980px] text-center">
-        <p className="text-[15px] font-semibold uppercase tracking-[0.1em] text-[#0088FF] sm:text-[16px]">
+        <p className="text-[15px] font-bold uppercase tracking-[0.1em] text-[#006EDC] sm:text-[16px]">
           Why Halapark
         </p>
 
@@ -212,6 +224,7 @@ function FeatureVisual({ item, compact = false }) {
 }
 
 export default function WhyHalapark() {
+  const visibleWhyItems = whyItems.slice(0, 4);
   const trackRef = useRef(null);
   const lineFillRef = useRef(null);
   const frameRef = useRef(null);
@@ -246,9 +259,9 @@ export default function WhyHalapark() {
       }
 
       const nextIndex = clamp(
-        Math.round(progress * (whyItems.length - 1)),
+        Math.round(progress * (visibleWhyItems.length - 1)),
         0,
-        whyItems.length - 1,
+        visibleWhyItems.length - 1,
       );
 
       setActiveIndex((current) =>
@@ -279,7 +292,7 @@ export default function WhyHalapark() {
         window.cancelAnimationFrame(frameRef.current);
       }
     };
-  }, []);
+  }, [visibleWhyItems.length]);
 
   return (
     <section className="bg-white py-10 sm:py-12 lg:py-16">
@@ -289,7 +302,7 @@ export default function WhyHalapark() {
       <div className="mx-auto mt-10 max-w-7xl px-4 sm:px-6 lg:px-8 lg:mt-12">
         <div className="lg:hidden">
           <div className="mt-10 grid gap-6">
-            {whyItems.map((item) => {
+            {visibleWhyItems.map((item) => {
               const Icon = item.icon;
 
               return (
@@ -312,8 +325,19 @@ export default function WhyHalapark() {
                   </div>
 
                   <p className="mt-5 text-[1rem] leading-7 text-slate-700">
-                    {item.copy}
+                    <span className="block text-[1.12rem] font-semibold leading-7 text-slate-900">
+                      {item.title || item.copy}
+                    </span>
+                    <span className="mt-1 block text-[1rem] leading-7 text-slate-700">
+                      {item.subtitle || item.copy}
+                    </span>
                   </p>
+                  <Link
+                    href="/contact"
+                    className="mt-4 inline-flex min-h-[2.6rem] items-center justify-center rounded-full bg-[#0088FF] px-5 text-sm font-semibold text-white transition hover:brightness-95"
+                  >
+                    Why HalaPark
+                  </Link>
                 </article>
               );
             })}
@@ -323,7 +347,7 @@ export default function WhyHalapark() {
         <div
           ref={trackRef}
           className="relative hidden lg:block"
-          style={{ height: `${whyItems.length * 100}svh` }}
+          style={{ height: `${visibleWhyItems.length * 100}svh` }}
         >
           <div className="sticky top-[70px] flex h-[calc(100svh-70px)] items-center">
             <div className="grid w-full items-center gap-14 xl:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] xl:gap-[4.5rem]">
@@ -341,7 +365,7 @@ export default function WhyHalapark() {
                   </div>
 
                   <div className="space-y-1">
-                    {whyItems.map((item, index) => {
+                    {visibleWhyItems.map((item, index) => {
                       const Icon = item.icon;
                       const isActive = index === activeIndex;
                       const isComplete = index < activeIndex;
@@ -365,17 +389,40 @@ export default function WhyHalapark() {
                             }}
                           />
 
-                          <p
-                            className={`mt-2 max-w-[31rem] text-[1.06rem] leading-7 tracking-[-0.015em] ${
-                              isActive
-                                ? "font-medium text-slate-950"
-                                : isComplete
-                                  ? "text-slate-600"
-                                  : "text-slate-400"
-                            }`}
-                          >
-                            {item.copy}
-                          </p>
+                          <div className="mt-1.5 max-w-[31rem]">
+                            <h3
+                              className={`text-[1.05rem] font-semibold leading-6 tracking-[-0.015em] ${
+                                isActive
+                                  ? "text-slate-950"
+                                  : isComplete
+                                    ? "text-slate-700"
+                                    : "text-slate-500"
+                              }`}
+                            >
+                              {item.title || item.copy}
+                            </h3>
+                            <p
+                              className={`mt-1 text-[1rem] leading-6 tracking-[-0.012em] ${
+                                isActive
+                                  ? "text-slate-950"
+                                  : isComplete
+                                    ? "text-slate-600"
+                                    : "text-slate-400"
+                              }`}
+                            >
+                              {item.subtitle || item.copy}
+                            </p>
+                            <Link
+                              href="/contact"
+                              className={`mt-3 inline-flex min-h-[2.4rem] items-center justify-center rounded-full px-4 text-sm font-semibold transition ${
+                                isActive
+                                  ? "bg-[#0088FF] text-white hover:brightness-95"
+                                  : "border border-slate-300 bg-white text-slate-700 hover:border-[#0088FF] hover:text-[#0088FF]"
+                              }`}
+                            >
+                              Why HalaPark
+                            </Link>
+                          </div>
                         </motion.div>
                       );
                     })}
@@ -387,7 +434,7 @@ export default function WhyHalapark() {
                 <div className="relative mx-auto aspect-[0.95] w-full max-w-[39rem] overflow-hidden rounded-[24px] bg-slate-950 shadow-[0_36px_90px_rgba(15,23,42,0.18)]">
                   <div className="pointer-events-none absolute inset-x-[12%] top-8 h-32 rounded-full bg-[#0088FF]/18 blur-3xl" />
 
-                  {whyItems.map((item, index) => {
+                  {visibleWhyItems.map((item, index) => {
                     const layerOffset = index - activeIndex;
                     const distance = Math.abs(layerOffset);
                     const isActive = index === activeIndex;
