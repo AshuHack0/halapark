@@ -61,7 +61,6 @@ const navLinks = [
   { href: "/business", label: "Business" },
   { href: "/about", label: "About Us" },
   { href: "/faqs", label: "FAQs" },
-  { href: "/contact", label: "Contact Us" },
 ];
 export default function Navbar() {
   const pathname = usePathname();
