@@ -67,6 +67,7 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [heroVisible, setHeroVisible] = useState(true);
+  const [hash, setHash] = useState("");
 
   useEffect(() => {
     const scrollContainer = document.querySelector("[data-scroll-container]");
@@ -125,8 +126,26 @@ export default function Navbar() {
     };
   }, [pathname]);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return undefined;
+
+    const syncHash = () => {
+      setHash(window.location.hash || "");
+    };
+
+    syncHash();
+    window.addEventListener("hashchange", syncHash);
+    return () => window.removeEventListener("hashchange", syncHash);
+  }, [pathname]);
+
   const showShadow = pathname === "/" ? scrolled && !heroVisible : scrolled;
   const resolveLinkHref = (href) => (href.startsWith("#") ? `/${href}` : href);
+  const isLinkActive = (href) => {
+    if (href.startsWith("#")) {
+      return pathname === "/" && hash === href;
+    }
+    return pathname === href;
+  };
 
   return (
     <>
@@ -153,15 +172,24 @@ export default function Navbar() {
             <div className="hidden lg:flex items-center">
               <div className="flex items-center rounded-full  bg-white p-1">
                 {navLinks.map((link) => (
+                  (() => {
+                    const isActive = isLinkActive(link.href);
+                    return (
                   <Link
                     key={link.label}
                     href={resolveLinkHref(link.href)}
-                    className="inline-flex h-12 items-center justify-center rounded-full px-6 text-[1.06rem] font-semibold text-slate-900 hover:bg-[#0088FF] hover:text-white"
+                    className={`inline-flex h-12 items-center justify-center rounded-full px-6 text-[1.06rem] font-semibold transition ${
+                      isActive
+                        ? "bg-[#0088FF] text-white"
+                        : "text-slate-900 hover:bg-[#0088FF] hover:text-white"
+                    }`}
                   >
                     <span className="block whitespace-nowrap">
                       {link.label}
                     </span>
                   </Link>
+                    );
+                  })()
                 ))}
               </div>
             </div>
@@ -218,14 +246,23 @@ export default function Navbar() {
               Search
             </button>
             {navLinks.map((link) => (
+              (() => {
+                const isActive = isLinkActive(link.href);
+                return (
               <Link
                 key={link.label}
                 href={resolveLinkHref(link.href)}
                 onClick={() => setMenuOpen(false)}
-                className="flex items-center px-3 py-3 text-[1.03rem] font-medium text-gray-700 hover:text-[#0088FF] hover:bg-[rgba(0,136,255,0.08)] rounded-lg"
+                className={`flex items-center rounded-lg px-3 py-3 text-[1.03rem] font-medium transition ${
+                  isActive
+                    ? "bg-[rgba(0,136,255,0.12)] text-[#0078E0]"
+                    : "text-gray-700 hover:text-[#0088FF] hover:bg-[rgba(0,136,255,0.08)]"
+                }`}
               >
                 {link.label}
               </Link>
+                );
+              })()
             ))}
           </div>
         </div>
