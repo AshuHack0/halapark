@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 
 const DESKTOP_NAV_OFFSET = 70;
+const DESKTOP_STEP_SCROLL_VH = 62;
 
 const whyItems = [
   {
@@ -347,7 +348,7 @@ export default function WhyHalapark() {
         <div
           ref={trackRef}
           className="relative hidden lg:block"
-          style={{ height: `${visibleWhyItems.length * 100}svh` }}
+          style={{ height: `${visibleWhyItems.length * DESKTOP_STEP_SCROLL_VH}svh` }}
         >
           <div className="sticky top-[70px] flex h-[calc(100svh-70px)] items-center">
             <div className="grid w-full items-center gap-14 xl:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] xl:gap-[4.5rem]">
