@@ -336,7 +336,7 @@ export default function WhyHalapark() {
                     href="/contact"
                     className="mt-4 inline-flex items-center text-sm font-semibold text-black transition-colors hover:text-[#0088FF]"
                   >
-                    Why HalaPark
+                    Learn More
                   </Link>
                 </article>
               );
@@ -420,7 +420,7 @@ export default function WhyHalapark() {
                                   : "pointer-events-none -translate-y-1 opacity-0"
                               }`}
                             >
-                              Why HalaPark
+                              Learn More
                             </Link>
                           </div>
                         </motion.div>
