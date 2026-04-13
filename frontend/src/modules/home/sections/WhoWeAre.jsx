@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import {
   motion,
   useMotionTemplate,
@@ -14,9 +14,16 @@ import Image from "next/image";
 import { Building2, Layers, TrendingUp } from "lucide-react";
 
 const headingText = "Who We Are";
-const lineOneText = "Built to Redefine Parking as an Asset Class";
-const bodyText =
-  "Hala Park is a smart parking infrastructure company focused on helping businesses unlock the full financial and operational potential of their parking spaces.";
+const audienceContent = {
+  business: {
+    heading: "Turning Parking into a Valuable Asset",
+    body: "Hala Park is a smart parking infrastructure company focused on helping businesses unlock the full financial and operational potential of their parking spaces.",
+  },
+  users: {
+    heading: "Parking Made Simple for Users",
+    body: "We make parking fast and stress-free for everyday drivers. Users can instantly see available parking in real time, reserve and pay within seconds, and move through entry and exit without tickets, delays, or manual steps. With automated access and barrier-free systems, parking becomes fast, predictable, and effortless from start to finish.",
+  },
+};
 
 const highlights = [
   {
@@ -55,54 +62,26 @@ function MagicHeading({ text, reduced }) {
   );
 
   return (
-    <motion.h2
+    <h2
       id="who-we-are-heading"
       className="mt-5 text-[clamp(2rem,4.2vw,3.15rem)] font-medium leading-[1.08] tracking-[-0.04em] [text-wrap:balance]"
-      variants={
-        reduced
-          ? undefined
-          : {
-              hidden: {},
-              visible: {
-                transition: {
-                  staggerChildren: 0.055,
-                  delayChildren: 0.08,
-                },
-              },
-            }
-      }
     >
       {words.map((word, i) => {
         const isAccent = accent.has(i);
         return (
-          <motion.span
+          <span
             key={`${word}-${i}`}
             className={`inline-block pr-[0.28em] [-webkit-box-decoration-break:clone] [box-decoration-break:clone] ${
               isAccent
-                ? "bg-gradient-to-r from-[#0088FF] via-[#0ea5e9] to-[#2563EB] bg-[length:220%_100%] bg-clip-text text-transparent who-gradient-flow"
+                ? "text-[#0078E0]"
                 : "text-[#050A13]"
             }`}
-            variants={
-              reduced
-                ? undefined
-                : {
-                    hidden: { opacity: 0, y: 36, rotateX: -12, filter: "blur(8px)" },
-                    visible: {
-                      opacity: 1,
-                      y: 0,
-                      rotateX: 0,
-                      filter: "blur(0px)",
-                      transition: springPop,
-                    },
-                  }
-            }
-            style={{ transformPerspective: 900 }}
           >
             {word}
-          </motion.span>
+          </span>
         );
       })}
-    </motion.h2>
+    </h2>
   );
 }
 
@@ -110,6 +89,8 @@ export default function WhoWeAre() {
   const sectionRef = useRef(null);
   const prefersReducedMotion = useReducedMotion();
   const reduced = !!prefersReducedMotion;
+  const [activeAudience, setActiveAudience] = useState("business");
+  const activeContent = audienceContent[activeAudience];
 
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -359,13 +340,45 @@ export default function WhoWeAre() {
               </motion.div>
             </motion.div>
 
-            <MagicHeading text={lineOneText} reduced={reduced} />
+            <motion.div
+              {...fadeUp}
+              className="mt-5 inline-flex items-center rounded-full border border-slate-200 bg-white/75 p-1 backdrop-blur-sm"
+            >
+              <button
+                type="button"
+                onClick={() => setActiveAudience("users")}
+                className={`rounded-full px-4 py-1.5 text-sm font-semibold transition ${
+                  activeAudience === "users"
+                    ? "bg-[#0088FF] text-white"
+                    : "text-slate-700 hover:text-[#0088FF]"
+                }`}
+              >
+                Users
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveAudience("business")}
+                className={`rounded-full px-4 py-1.5 text-sm font-semibold transition ${
+                  activeAudience === "business"
+                    ? "bg-[#0088FF] text-white"
+                    : "text-slate-700 hover:text-[#0088FF]"
+                }`}
+              >
+                Business
+              </button>
+            </motion.div>
+
+            <MagicHeading
+              key={activeAudience}
+              text={activeContent.heading}
+              reduced={reduced}
+            />
 
             <motion.p
               className="mt-6 max-w-xl text-base leading-relaxed text-slate-600 sm:text-lg"
               {...fadeUp}
             >
-              {bodyText}
+              {activeContent.body}
             </motion.p>
 
             <motion.div
@@ -381,7 +394,7 @@ export default function WhoWeAre() {
                     }
               }
             >
-              {chipLabels.map((label) => (
+              {/* {chipLabels.map((label) => (
                 <motion.span
                   key={label}
                   variants={
@@ -402,7 +415,7 @@ export default function WhoWeAre() {
                 >
                   {label}
                 </motion.span>
-              ))}
+              ))} */}
             </motion.div>
           </motion.div>
 
