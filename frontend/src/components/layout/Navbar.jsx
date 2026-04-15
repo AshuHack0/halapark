@@ -95,12 +95,26 @@ const navLinks = [
   { href: "/about", label: "About Us" },
   { href: "/faqs", label: "FAQs" },
 ];
+
+const LANGUAGE_STORAGE_KEY = "halapark-language";
+const SUPPORTED_LANGUAGES = ["en", "ar"];
+
+const getInitialLanguage = () => {
+  if (typeof window === "undefined") {
+    return "en";
+  }
+
+  const storedLanguage = window.localStorage.getItem(LANGUAGE_STORAGE_KEY);
+  return SUPPORTED_LANGUAGES.includes(storedLanguage) ? storedLanguage : "en";
+};
+
 export default function Navbar() {
   const DROPDOWN_CLOSE_DELAY_MS = 220;
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
+  const [language, setLanguage] = useState(getInitialLanguage);
   const [hash, setHash] = useState("");
   const servicesMenuRef = useRef(null);
   const servicesCloseTimerRef = useRef(null);
@@ -116,6 +130,13 @@ export default function Navbar() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  useEffect(() => {
+    const isArabic = language === "ar";
+    document.documentElement.lang = language;
+    document.documentElement.dir = isArabic ? "rtl" : "ltr";
+    window.localStorage.setItem(LANGUAGE_STORAGE_KEY, language);
+  }, [language]);
 
 
   useEffect(() => {
@@ -173,6 +194,13 @@ export default function Navbar() {
       setServicesOpen(false);
       servicesCloseTimerRef.current = null;
     }, DROPDOWN_CLOSE_DELAY_MS);
+  };
+
+  const handleLanguageChange = (nextLanguage) => {
+    if (nextLanguage === language || !SUPPORTED_LANGUAGES.includes(nextLanguage)) {
+      return;
+    }
+    setLanguage(nextLanguage);
   };
 
   const resolveLinkHref = (href) => (href.startsWith("#") ? `/${href}` : href);
@@ -284,6 +312,30 @@ export default function Navbar() {
 
             {/* Desktop CTA */}
             <div className="hidden lg:flex items-center gap-2.5 flex-shrink-0">
+              <div className="inline-flex items-center rounded-full border border-[#CFE2FA] bg-white/90 p-1 shadow-sm">
+                <button
+                  type="button"
+                  onClick={() => handleLanguageChange("en")}
+                  className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                    language === "en"
+                      ? "bg-[#0088FF] text-white shadow-[0_8px_18px_rgba(0,136,255,0.28)]"
+                      : "text-slate-700 hover:text-[#0078E0]"
+                  }`}
+                >
+                  EN
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleLanguageChange("ar")}
+                  className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                    language === "ar"
+                      ? "bg-[#0088FF] text-white shadow-[0_8px_18px_rgba(0,136,255,0.28)]"
+                      : "text-slate-700 hover:text-[#0078E0]"
+                  }`}
+                >
+                  AR
+                </button>
+              </div>
               <Link
                 href="/contact"
                 className="inline-flex items-center justify-center bg-[#0088FF] hover:brightness-95 active:bg-[#0088FF] text-white text-sm font-semibold px-5 py-2.5 rounded-full shadow-sm hover:shadow-md"
@@ -326,6 +378,33 @@ export default function Navbar() {
           }`}
         >
           <div className="bg-white border-t border-gray-100 px-4 pb-4 pt-2 space-y-1">
+            <div className="flex items-center justify-between rounded-lg border border-[#CFE2FA] bg-[rgba(0,136,255,0.04)] px-3 py-2.5">
+              <span className="text-sm font-medium text-slate-700">Language</span>
+              <div className="inline-flex items-center rounded-full border border-[#CFE2FA] bg-white p-1">
+                <button
+                  type="button"
+                  onClick={() => handleLanguageChange("en")}
+                  className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                    language === "en"
+                      ? "bg-[#0088FF] text-white shadow-[0_8px_18px_rgba(0,136,255,0.28)]"
+                      : "text-slate-700 hover:text-[#0078E0]"
+                  }`}
+                >
+                  EN
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleLanguageChange("ar")}
+                  className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                    language === "ar"
+                      ? "bg-[#0088FF] text-white shadow-[0_8px_18px_rgba(0,136,255,0.28)]"
+                      : "text-slate-700 hover:text-[#0078E0]"
+                  }`}
+                >
+                  AR
+                </button>
+              </div>
+            </div>
             <button
               type="button"
               className="w-full flex items-center gap-2 px-3 py-3 text-[1.03rem] font-medium text-gray-700 hover:text-[#0088FF] hover:bg-[rgba(0,136,255,0.08)] rounded-lg"
