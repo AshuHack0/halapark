@@ -86,18 +86,57 @@ const ArrowRightIcon = () => (
 );
 
 const navLinks = [
-  { href: "/", label: "Home" },
-  // { href: "/how-it-works", label: "How It Works" },
-  { href: "/app", label: "App" },
-  { href: "#services", label: "Services", hasDropdown: true },
-  { href: "/solutions", label: "Solutions" },
-  { href: "/business", label: "Business" },
-  { href: "/about", label: "About Us" },
-  { href: "/faqs", label: "FAQs" },
+  { href: "/", key: "home" },
+  // { href: "/how-it-works", key: "howItWorks" },
+  { href: "/app", key: "app" },
+  { href: "#services", key: "services", hasDropdown: true },
+  { href: "/solutions", key: "solutions" },
+  { href: "/business", key: "business" },
+  { href: "/about", key: "aboutUs" },
+  { href: "/faqs", key: "faqs" },
 ];
 
 const LANGUAGE_STORAGE_KEY = "halapark-language";
 const SUPPORTED_LANGUAGES = ["en", "ar"];
+const UI_TEXT = {
+  en: {
+    nav: {
+      home: "Home",
+      app: "App",
+      services: "Services",
+      solutions: "Solutions",
+      business: "Business",
+      aboutUs: "About Us",
+      faqs: "FAQs",
+    },
+    cta: "Get In Touch",
+    search: "Search",
+    language: "Language",
+  },
+  ar: {
+    nav: {
+      home: "الرئيسية",
+      app: "التطبيق",
+      services: "الخدمات",
+      solutions: "الحلول",
+      business: "الأعمال",
+      aboutUs: "من نحن",
+      faqs: "الأسئلة الشائعة",
+    },
+    cta: "تواصل معنا",
+    search: "بحث",
+    language: "اللغة",
+  },
+};
+
+const SERVICE_LABELS_AR = {
+  "smart-public-parking": "مواقف عامة ذكية",
+  "private-parking-rental": "تأجير المواقف الخاصة",
+  "ev-charging": "شحن المركبات الكهربائية",
+  "valet-on-demand": "خدمة صفّ السيارات عند الطلب",
+  "barrier-free-parking": "مواقف بدون حواجز",
+  "parking-management": "إدارة المواقف",
+};
 
 const getInitialLanguage = () => {
   if (typeof window === "undefined") {
@@ -116,11 +155,13 @@ export default function Navbar() {
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const [language, setLanguage] = useState(getInitialLanguage);
   const [hash, setHash] = useState("");
+  const isArabic = language === "ar";
+  const copy = UI_TEXT[language];
   const servicesMenuRef = useRef(null);
   const servicesCloseTimerRef = useRef(null);
   const serviceLinks = servicesData.map((service) => ({
     href: `/services/${service.slug}`,
-    label: service.name,
+    label: isArabic ? (SERVICE_LABELS_AR[service.slug] || service.name) : service.name,
   }));
 
   useEffect(() => {
@@ -132,11 +173,10 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    const isArabic = language === "ar";
     document.documentElement.lang = language;
     document.documentElement.dir = isArabic ? "rtl" : "ltr";
     window.localStorage.setItem(LANGUAGE_STORAGE_KEY, language);
-  }, [language]);
+  }, [isArabic, language]);
 
 
   useEffect(() => {
@@ -201,6 +241,9 @@ export default function Navbar() {
       return;
     }
     setLanguage(nextLanguage);
+    window.dispatchEvent(
+      new CustomEvent("halapark-language-change", { detail: nextLanguage }),
+    );
   };
 
   const resolveLinkHref = (href) => (href.startsWith("#") ? `/${href}` : href);
@@ -242,7 +285,7 @@ export default function Navbar() {
                   if (link.hasDropdown) {
                     return (
                       <div
-                        key={link.label}
+                        key={link.key}
                         ref={servicesMenuRef}
                         className="relative"
                         onMouseEnter={openServicesDropdown}
@@ -259,7 +302,9 @@ export default function Navbar() {
                           aria-expanded={servicesOpen}
                           onClick={() => setServicesOpen((v) => !v)}
                         >
-                          <span className="block whitespace-nowrap">{link.label}</span>
+                          <span className="block whitespace-nowrap">
+                            {copy.nav[link.key]}
+                          </span>
                           <ChevronDownIcon open={servicesOpen} />
                         </button>
 
@@ -295,7 +340,7 @@ export default function Navbar() {
 
                   return (
                     <Link
-                      key={link.label}
+                      key={link.key}
                       href={resolveLinkHref(link.href)}
                       className={`inline-flex h-11 items-center justify-center border-b-2 px-4 text-[1.02rem] font-semibold transition ${
                         isActive
@@ -303,7 +348,9 @@ export default function Navbar() {
                           : "border-transparent text-slate-900 hover:text-[#0078E0]"
                       }`}
                     >
-                      <span className="block whitespace-nowrap">{link.label}</span>
+                      <span className="block whitespace-nowrap">
+                        {copy.nav[link.key]}
+                      </span>
                     </Link>
                   );
                 })}
@@ -340,7 +387,7 @@ export default function Navbar() {
                 href="/contact"
                 className="inline-flex items-center justify-center bg-[#0088FF] hover:brightness-95 active:bg-[#0088FF] text-white text-sm font-semibold px-5 py-2.5 rounded-full shadow-sm hover:shadow-md"
               >
-                Get In Touch
+                {copy.cta}
               </Link>
               <button
                 type="button"
@@ -357,7 +404,7 @@ export default function Navbar() {
                 href="/contact"
                 className="inline-flex items-center gap-1.5 bg-[#0088FF] hover:brightness-95 text-white text-sm font-semibold px-4 py-2 rounded-full"
               >
-                Get In Touch
+                {copy.cta}
               </Link>
               <button
                 onClick={() => setMenuOpen((v) => !v)}
@@ -379,7 +426,7 @@ export default function Navbar() {
         >
           <div className="bg-white border-t border-gray-100 px-4 pb-4 pt-2 space-y-1">
             <div className="flex items-center justify-between rounded-lg border border-[#CFE2FA] bg-[rgba(0,136,255,0.04)] px-3 py-2.5">
-              <span className="text-sm font-medium text-slate-700">Language</span>
+              <span className="text-sm font-medium text-slate-700">{copy.language}</span>
               <div className="inline-flex items-center rounded-full border border-[#CFE2FA] bg-white p-1">
                 <button
                   type="button"
@@ -410,14 +457,14 @@ export default function Navbar() {
               className="w-full flex items-center gap-2 px-3 py-3 text-[1.03rem] font-medium text-gray-700 hover:text-[#0088FF] hover:bg-[rgba(0,136,255,0.08)] rounded-lg"
             >
               <SearchIcon />
-              Search
+              {copy.search}
             </button>
             {navLinks.map((link) => {
               const isActive = isLinkActive(link.href);
 
               if (link.hasDropdown) {
                 return (
-                  <div key={link.label} className="rounded-lg">
+                  <div key={link.key} className="rounded-lg">
                     <button
                       type="button"
                       onClick={() => setMobileServicesOpen((v) => !v)}
@@ -427,7 +474,7 @@ export default function Navbar() {
                           : "text-gray-700 hover:text-[#0088FF] hover:bg-[rgba(0,136,255,0.08)]"
                       }`}
                     >
-                      <span>{link.label}</span>
+                      <span>{copy.nav[link.key]}</span>
                       <ChevronDownIcon open={mobileServicesOpen} />
                     </button>
                     <div
@@ -464,7 +511,7 @@ export default function Navbar() {
 
               return (
                 <Link
-                  key={link.label}
+                  key={link.key}
                   href={resolveLinkHref(link.href)}
                   onClick={() => setMenuOpen(false)}
                   className={`flex items-center rounded-lg px-3 py-3 text-[1.03rem] font-medium transition ${
@@ -473,7 +520,7 @@ export default function Navbar() {
                       : "text-gray-700 hover:text-[#0088FF] hover:bg-[rgba(0,136,255,0.08)]"
                   }`}
                 >
-                  {link.label}
+                  {copy.nav[link.key]}
                 </Link>
               );
             })}
