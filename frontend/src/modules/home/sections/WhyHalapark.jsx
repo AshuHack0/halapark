@@ -119,7 +119,7 @@ function SectionIntro({ centered = false }) {
 
         <h2
           id="ai-powered-parking-service-title"
-          className="mx-auto mt-4 max-w-[900px] text-[clamp(2.25rem,4vw,3.55rem)] font-medium leading-[1.03] tracking-[-0.06em] text-[#050A13]"
+          className="mx-auto mt-4 max-w-[900px] text-[clamp(3rem,5.8vw,5rem)] font-medium leading-[1.03] tracking-[-0.06em] text-[#050A13]"
         >
           A complete ecosystem for smarter parking
         </h2>
@@ -140,7 +140,7 @@ function FeatureVisual({ item, compact = false }) {
 
   return (
     <div
-      className={`relative h-full w-full overflow-hidden bg-slate-950 ${
+      className={`relative h-full w-full overflow-hidden  ${
         compact ? "rounded-[2rem]" : "rounded-[24px]"
       }`}
     >
@@ -432,7 +432,7 @@ export default function WhyHalapark() {
               </div>
 
               <div className="relative">
-                <div className="relative mx-auto aspect-[0.95] w-full max-w-[39rem] overflow-hidden rounded-[24px] bg-slate-950 shadow-[0_36px_90px_rgba(15,23,42,0.18)]">
+                <div className="relative mx-auto aspect-[0.95] w-full max-w-[39rem] overflow-hidden rounded-[24px]  shadow-[0_36px_90px_rgba(15,23,42,0.18)]">
                   <div className="pointer-events-none absolute inset-x-[12%] top-8 h-32 rounded-full bg-[#0088FF]/18 blur-3xl" />
 
                   {visibleWhyItems.map((item, index) => {

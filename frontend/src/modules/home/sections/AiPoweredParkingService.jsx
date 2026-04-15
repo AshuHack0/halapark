@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 const serviceAudienceCards = [
   {
     title: "For Customers",
+    ctaLabel: "View for Customer",
     audienceTag: "APP EXPERIENCE",
     description:
       "Easily locate available spaces, enter without delays, and complete payments through a smooth, fully digital experience.",
@@ -21,6 +22,7 @@ const serviceAudienceCards = [
   },
   {
     title: "For Businesses /\nProperty owners",
+    ctaLabel: "View for Business",
     audienceTag: "BUSINESS SUITE",
     description:
       "Easily integrate with barriers, cameras, and payment systems to create a unified parking solution without disrupting your current setup.",
@@ -57,6 +59,7 @@ function AudienceCard({
   imageAlt,
   imageClassName,
   imageSrc,
+  ctaLabel,
   isDesktop,
   prefersReducedMotion,
   title,
@@ -139,7 +142,7 @@ function AudienceCard({
             {audienceTag}
           </span>
           <motion.h3
-            className="whitespace-pre-line pr-6 text-[clamp(1.95rem,2.35vw,2.6rem)] font-semibold leading-[1.05] tracking-[-0.045em] text-[#071221] lg:pr-8"
+            className="whitespace-pre-line pr-6 text-[clamp(2.2rem,2.7vw,3rem)] font-semibold leading-[1.05] tracking-[-0.045em] text-[#071221] lg:pr-8"
             animate={
               prefersReducedMotion
                 ? undefined
@@ -184,9 +187,9 @@ function AudienceCard({
 
           <Link
             href={href}
-            className={`inline-flex w-fit items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#0a0f1d_0%,#0b63d7_100%)] px-5 py-2.5 text-[0.95rem] font-semibold leading-none tracking-[-0.02em] text-white transition-[transform,filter] duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:scale-[1.03] hover:brightness-105 focus-visible:scale-[1.03] focus-visible:outline-none lg:px-5 lg:py-2.5 lg:text-[16px] ${shellShadowClass}`}
+            className={`inline-flex w-fit items-center justify-center gap-2 rounded-full border border-white/45 bg-[linear-gradient(135deg,#0750b9_0%,#0088FF_100%)] px-5 py-2.5 text-[0.96rem] font-semibold leading-none tracking-[-0.01em] text-white ring-1 ring-black/10 transition-[transform,filter,box-shadow] duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:scale-[1.03] hover:brightness-105 focus-visible:scale-[1.03] focus-visible:outline-none lg:px-5 lg:py-2.5 lg:text-[16px] ${shellShadowClass}`}
           >
-            Learn More
+            {ctaLabel}
             <span aria-hidden="true">-&gt;</span>
           </Link>
         </motion.div>
@@ -233,7 +236,7 @@ export default function AiPoweredParkingService() {
 
           <h2
             id="ai-powered-parking-service-title"
-            className="mx-auto mt-4 max-w-[900px] text-[clamp(2rem,3.5vw,3.1rem)] font-semibold leading-[1.02] tracking-[-0.055em] text-[#050A13]"
+            className="mx-auto mt-4 max-w-[900px] text-[clamp(2.35rem,3.9vw,3.45rem)] font-semibold leading-[1.02] tracking-[-0.055em] text-[#050A13]"
           >
             AI That Drives{" "}
             <span className="bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">

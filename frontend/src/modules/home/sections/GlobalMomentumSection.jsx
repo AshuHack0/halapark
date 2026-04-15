@@ -412,7 +412,7 @@ export default function GlobalMomentumSection() {
 
             <h2
               id="ai-powered-parking-service-title"
-              className="mx-auto mt-4 max-w-[900px] text-[clamp(2.25rem,4vw,3.55rem)] font-normal leading-[1.03] tracking-[-0.06em] text-[#050A13]"
+              className="mx-auto mt-4 max-w-[900px] text-[clamp(2.6rem,4.4vw,3.95rem)] font-normal leading-[1.03] tracking-[-0.06em] text-[#050A13]"
             >
               Smart Parking Is the Future and the UAE Is Leading It
             </h2>

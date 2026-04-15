@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { servicesData } from "@/modules/home/servicesData";
 
 const HamburgerIcon = () => (
   <svg
@@ -52,11 +53,27 @@ const SearchIcon = () => (
   </svg>
 );
 
+const ChevronDownIcon = ({ open = false }) => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={`transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+  >
+    <polyline points="6 9 12 15 18 9" />
+  </svg>
+);
+
 const navLinks = [
   { href: "/", label: "Home" },
   // { href: "/how-it-works", label: "How It Works" },
   { href: "/app", label: "App" },
-  { href: "#services", label: "Services" },
+  { href: "#services", label: "Services", hasDropdown: true },
   { href: "/solutions", label: "Solutions" },
   { href: "/business", label: "Business" },
   { href: "/about", label: "About Us" },
@@ -65,26 +82,14 @@ const navLinks = [
 export default function Navbar() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [heroVisible, setHeroVisible] = useState(true);
+  const [servicesOpen, setServicesOpen] = useState(false);
+  const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const [hash, setHash] = useState("");
-
-  useEffect(() => {
-    const scrollContainer = document.querySelector("[data-scroll-container]");
-    const scrollTarget = scrollContainer ?? window;
-    const getScrollTop = () =>
-      scrollContainer instanceof HTMLElement
-        ? scrollContainer.scrollTop
-        : window.scrollY;
-    const handleScroll = () => setScrolled(getScrollTop() > 8);
-
-    handleScroll();
-    scrollTarget.addEventListener("scroll", handleScroll, { passive: true });
-
-    return () => {
-      scrollTarget.removeEventListener("scroll", handleScroll);
-    };
-  }, [pathname]);
+  const servicesMenuRef = useRef(null);
+  const serviceLinks = servicesData.map((service) => ({
+    href: `/services/${service.slug}`,
+    label: service.name,
+  }));
 
   useEffect(() => {
     const handleResize = () => {
@@ -94,37 +99,6 @@ export default function Navbar() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  useEffect(() => {
-    if (pathname !== "/") {
-      return;
-    }
-
-    const hero = document.getElementById("hero-section");
-    if (!hero) {
-      const frameId = window.requestAnimationFrame(() => {
-        setHeroVisible(false);
-      });
-
-      return () => window.cancelAnimationFrame(frameId);
-    }
-
-    const initialFrameId = window.requestAnimationFrame(() => {
-      setHeroVisible(true);
-    });
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setHeroVisible(entry.isIntersecting);
-      },
-      { threshold: 0.12 },
-    );
-
-    observer.observe(hero);
-    return () => {
-      window.cancelAnimationFrame(initialFrameId);
-      observer.disconnect();
-    };
-  }, [pathname]);
 
   useEffect(() => {
     if (typeof window === "undefined") return undefined;
@@ -138,9 +112,35 @@ export default function Navbar() {
     return () => window.removeEventListener("hashchange", syncHash);
   }, [pathname]);
 
-  const showShadow = pathname === "/" ? scrolled && !heroVisible : scrolled;
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        servicesMenuRef.current &&
+        !servicesMenuRef.current.contains(event.target)
+      ) {
+        setServicesOpen(false);
+      }
+    };
+
+    const handleEsc = (event) => {
+      if (event.key === "Escape") {
+        setServicesOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEsc);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEsc);
+    };
+  }, []);
+
   const resolveLinkHref = (href) => (href.startsWith("#") ? `/${href}` : href);
   const isLinkActive = (href) => {
+    if (href === "#services") {
+      return pathname.startsWith("/services") || (pathname === "/" && hash === "#services");
+    }
     if (href.startsWith("#")) {
       return pathname === "/" && hash === href;
     }
@@ -150,9 +150,7 @@ export default function Navbar() {
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 border-b border-[#CFE2FA]/70 bg-[linear-gradient(90deg,rgba(0,136,255,0.08)_0%,rgba(255,255,255,0.82)_22%,rgba(255,255,255,0.82)_78%,rgba(0,136,255,0.08)_100%)] backdrop-blur-md ${
-          showShadow ? "shadow-md" : "shadow-none"
-        }`}
+        className="fixed top-0 left-0 right-0 z-50 border-b border-[#CFE2FA]/70 bg-[linear-gradient(90deg,rgba(0,136,255,0.08)_0%,rgba(255,255,255,0.82)_22%,rgba(255,255,255,0.82)_78%,rgba(0,136,255,0.08)_100%)] backdrop-blur-md shadow-none"
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 lg:h-[78px]">
@@ -171,26 +169,82 @@ export default function Navbar() {
             {/* Desktop Nav Links */}
             <div className="hidden lg:flex items-center">
               <div className="flex items-center gap-1">
-                {navLinks.map((link) => (
-                  (() => {
-                    const isActive = isLinkActive(link.href);
+                {navLinks.map((link) => {
+                  const isActive = isLinkActive(link.href);
+
+                  if (link.hasDropdown) {
                     return (
-                  <Link
-                    key={link.label}
-                    href={resolveLinkHref(link.href)}
-                    className={`inline-flex h-11 items-center justify-center border-b-2 px-4 text-[1.02rem] font-semibold transition ${
-                      isActive
-                        ? "border-[#0088FF] text-[#0078E0]"
-                        : "border-transparent text-slate-900 hover:text-[#0078E0]"
-                    }`}
-                  >
-                    <span className="block whitespace-nowrap">
-                      {link.label}
-                    </span>
-                  </Link>
+                      <div
+                        key={link.label}
+                        ref={servicesMenuRef}
+                        className="relative"
+                        onMouseEnter={() => setServicesOpen(true)}
+                        onMouseLeave={() => setServicesOpen(false)}
+                      >
+                        <button
+                          type="button"
+                          className={`inline-flex h-11 items-center justify-center gap-1 border-b-2 px-4 text-[1.02rem] font-semibold transition ${
+                            isActive
+                              ? "border-[#0088FF] text-[#0078E0]"
+                              : "border-transparent text-slate-900 hover:text-[#0078E0]"
+                          }`}
+                          aria-haspopup="menu"
+                          aria-expanded={servicesOpen}
+                          onClick={() => setServicesOpen((v) => !v)}
+                        >
+                          <span className="block whitespace-nowrap">{link.label}</span>
+                          <ChevronDownIcon open={servicesOpen} />
+                        </button>
+
+                        <div
+                          className={`absolute left-1/2 top-full z-[60] mt-2 w-[320px] -translate-x-1/2 rounded-2xl border border-[#CFE2FA]/75 bg-white/95 p-2 shadow-[0_24px_60px_rgba(15,23,42,0.16)] backdrop-blur-sm transition ${
+                            servicesOpen
+                              ? "pointer-events-auto opacity-100 translate-y-0"
+                              : "pointer-events-none opacity-0 -translate-y-1"
+                          }`}
+                          role="menu"
+                        >
+                          <Link
+                            href="/#services"
+                            className="flex items-center rounded-xl px-3 py-2.5 text-sm font-semibold text-[#0078E0] transition hover:bg-[rgba(0,136,255,0.08)]"
+                            onClick={() => setServicesOpen(false)}
+                          >
+                            View All Services
+                          </Link>
+                          <div className="my-1 h-px bg-slate-200" />
+                          {serviceLinks.map((service) => (
+                            <Link
+                              key={service.href}
+                              href={service.href}
+                              className={`flex items-center rounded-xl px-3 py-2.5 text-sm transition ${
+                                pathname === service.href
+                                  ? "bg-[rgba(0,136,255,0.12)] font-semibold text-[#0078E0]"
+                                  : "text-slate-700 hover:bg-[rgba(0,136,255,0.08)] hover:text-[#0078E0]"
+                              }`}
+                              onClick={() => setServicesOpen(false)}
+                            >
+                              {service.label}
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
                     );
-                  })()
-                ))}
+                  }
+
+                  return (
+                    <Link
+                      key={link.label}
+                      href={resolveLinkHref(link.href)}
+                      className={`inline-flex h-11 items-center justify-center border-b-2 px-4 text-[1.02rem] font-semibold transition ${
+                        isActive
+                          ? "border-[#0088FF] text-[#0078E0]"
+                          : "border-transparent text-slate-900 hover:text-[#0078E0]"
+                      }`}
+                    >
+                      <span className="block whitespace-nowrap">{link.label}</span>
+                    </Link>
+                  );
+                })}
               </div>
             </div>
 
@@ -234,7 +288,7 @@ export default function Navbar() {
         {/* Mobile Dropdown */}
         <div
           className={`lg:hidden overflow-hidden ${
-            menuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+            menuOpen ? "max-h-[80vh] opacity-100" : "max-h-0 opacity-0"
           }`}
         >
           <div className="bg-white border-t border-gray-100 px-4 pb-4 pt-2 space-y-1">
@@ -245,25 +299,78 @@ export default function Navbar() {
               <SearchIcon />
               Search
             </button>
-            {navLinks.map((link) => (
-              (() => {
-                const isActive = isLinkActive(link.href);
+            {navLinks.map((link) => {
+              const isActive = isLinkActive(link.href);
+
+              if (link.hasDropdown) {
                 return (
-              <Link
-                key={link.label}
-                href={resolveLinkHref(link.href)}
-                onClick={() => setMenuOpen(false)}
-                className={`flex items-center rounded-lg px-3 py-3 text-[1.03rem] font-medium transition ${
-                  isActive
-                    ? "bg-[rgba(0,136,255,0.12)] text-[#0078E0]"
-                    : "text-gray-700 hover:text-[#0088FF] hover:bg-[rgba(0,136,255,0.08)]"
-                }`}
-              >
-                {link.label}
-              </Link>
+                  <div key={link.label} className="rounded-lg">
+                    <button
+                      type="button"
+                      onClick={() => setMobileServicesOpen((v) => !v)}
+                      className={`flex w-full items-center justify-between rounded-lg px-3 py-3 text-[1.03rem] font-medium transition ${
+                        isActive || mobileServicesOpen
+                          ? "bg-[rgba(0,136,255,0.12)] text-[#0078E0]"
+                          : "text-gray-700 hover:text-[#0088FF] hover:bg-[rgba(0,136,255,0.08)]"
+                      }`}
+                    >
+                      <span>{link.label}</span>
+                      <ChevronDownIcon open={mobileServicesOpen} />
+                    </button>
+                    <div
+                      className={`overflow-hidden transition-all duration-200 ${
+                        mobileServicesOpen ? "max-h-[420px] opacity-100" : "max-h-0 opacity-0"
+                      }`}
+                    >
+                      <div className="mt-1 space-y-1 rounded-lg border border-slate-200 bg-slate-50 p-2">
+                        <Link
+                          href="/#services"
+                          onClick={() => {
+                            setMenuOpen(false);
+                            setMobileServicesOpen(false);
+                          }}
+                          className="flex items-center rounded-md px-3 py-2 text-sm font-semibold text-[#0078E0] hover:bg-[rgba(0,136,255,0.08)]"
+                        >
+                          View All Services
+                        </Link>
+                        {serviceLinks.map((service) => (
+                          <Link
+                            key={service.href}
+                            href={service.href}
+                            onClick={() => {
+                              setMenuOpen(false);
+                              setMobileServicesOpen(false);
+                            }}
+                            className={`flex items-center rounded-md px-3 py-2 text-sm transition ${
+                              pathname === service.href
+                                ? "bg-[rgba(0,136,255,0.12)] font-semibold text-[#0078E0]"
+                                : "text-slate-700 hover:bg-[rgba(0,136,255,0.08)] hover:text-[#0078E0]"
+                            }`}
+                          >
+                            {service.label}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
                 );
-              })()
-            ))}
+              }
+
+              return (
+                <Link
+                  key={link.label}
+                  href={resolveLinkHref(link.href)}
+                  onClick={() => setMenuOpen(false)}
+                  className={`flex items-center rounded-lg px-3 py-3 text-[1.03rem] font-medium transition ${
+                    isActive
+                      ? "bg-[rgba(0,136,255,0.12)] text-[#0078E0]"
+                      : "text-gray-700 hover:text-[#0088FF] hover:bg-[rgba(0,136,255,0.08)]"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
           </div>
         </div>
       </nav>

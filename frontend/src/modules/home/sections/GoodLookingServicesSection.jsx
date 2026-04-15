@@ -140,13 +140,15 @@ function ServiceCard({ service, index, cardRef, isActive }) {
     <motion.article
       ref={cardRef}
       {...scrollMotion}
-      className="group relative"
+      className={`group relative rounded-[22px] transition-shadow duration-300 sm:rounded-[26px] lg:rounded-[30px] ${
+        isActive
+          ? "shadow-[0_0_34px_rgba(0,136,255,0.42)]"
+          : ""
+      }`}
     >
       <Link
         href={`/services/${service.slug}`}
-        className={`block overflow-hidden rounded-[22px] bg-[#fbfdff] shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_1px_4px_rgba(6,6,22,0.1),0_10px_24px_-6px_rgba(6,6,22,0.14)] transition-transform duration-300 ease-out hover:-translate-y-1 sm:rounded-[26px] lg:rounded-[30px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0088FF] focus-visible:ring-offset-2 ${
-          isActive ? "ring-2 ring-[#0088FF]/45 ring-offset-2 ring-offset-[#f0f2f4]" : ""
-        }`}
+        className="block overflow-hidden rounded-[22px] bg-[#fbfdff] shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_1px_4px_rgba(6,6,22,0.1),0_10px_24px_-6px_rgba(6,6,22,0.14)] transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-1 sm:rounded-[26px] lg:rounded-[30px] focus-visible:outline-none focus-visible:shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_1px_4px_rgba(6,6,22,0.1),0_10px_24px_-6px_rgba(6,6,22,0.14),0_0_34px_rgba(0,136,255,0.42)]"
         aria-label={`Open service: ${service.name}`}
       >
         <div className="relative h-[190px] w-full bg-[#d2dae2] sm:h-[230px] lg:h-[260px]">
@@ -303,7 +305,7 @@ export default function GoodLookingServicesSection() {
               {/* <p className="mt-5 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
                 Service 0{activeServiceIndex + 1}
               </p> */}
-              <h2 className="mt-3 text-[clamp(2rem,3.2vw,3.05rem)] font-medium leading-[1.03] tracking-[-0.055em] text-[#050A13]">
+              <h2 className="mt-3 text-[clamp(2.3rem,3.6vw,3.45rem)] font-medium leading-[1.03] tracking-[-0.055em] text-[#050A13]">
                 {activeService.name}
               </h2>
               <p className="mt-5 text-base leading-8 text-slate-600 sm:text-lg">

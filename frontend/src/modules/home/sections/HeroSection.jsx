@@ -204,7 +204,7 @@ export default function HeroSection() {
 
           <div className="relative flex min-h-125 w-full flex-col justify-center px-8 py-14 sm:px-12 md:min-h-[620px] lg:px-20">
             <div className="relative z-10 w-full max-w-lg">
-              <h1 className="text-4xl font-semibold  text-white sm:text-5xl md:text-6xl">
+              <h1 className="text-5xl font-semibold text-white sm:text-6xl md:text-7xl">
                 {currentSlide.tag}
               </h1>
 

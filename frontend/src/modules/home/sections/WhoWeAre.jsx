@@ -64,7 +64,7 @@ function MagicHeading({ text, reduced }) {
   return (
     <h2
       id="who-we-are-heading"
-      className="mt-5 text-[clamp(2rem,4.2vw,3.15rem)] font-medium leading-[1.08] tracking-[-0.04em] [text-wrap:balance]"
+      className="mt-5 text-[clamp(2.35rem,4.6vw,3.6rem)] font-medium leading-[1.06] tracking-[-0.04em] [text-wrap:balance]"
     >
       {words.map((word, i) => {
         const isAccent = accent.has(i);

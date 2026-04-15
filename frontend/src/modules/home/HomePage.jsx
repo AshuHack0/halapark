@@ -27,13 +27,14 @@ export default function HomePage() {
       <HeroSection />
       <WhoWeAre />
       <WhyHalapark />
+        <AiPoweredParkingService />
       <BlackBanner />
       {/* <EnterpriseSolutions /> */}
       <GoodLookingServicesSection />
       <SolutionIntegration />
 
       <TechnologySection />
-      <AiPoweredParkingService />
+    
       {/* <TrustedUsers /> */}
       {/* <MajorFocusHighlight /> */}
       <GlobalMomentumSection />

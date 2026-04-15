@@ -28,7 +28,7 @@ export default function BlackBanner() {
               className="black-banner-flow relative isolate flex w-full flex-col overflow-hidden rounded-[24px] border border-white/10 px-6 py-8 sm:px-10 sm:py-10 lg:min-h-[390px] lg:px-[56px] lg:py-[46px] xl:px-[72px]"
               style={{
                 background:
-                  "linear-gradient(135deg, #0088FF 0%, #163A63 100%)",
+                  "linear-gradient(135deg, #0088FF 0%, #163A63 900%)",
               }}
             >
               <div
@@ -58,7 +58,7 @@ export default function BlackBanner() {
                   className="absolute right-[12%] top-[18%] h-[140px] w-[140px] rounded-full blur-[90px]"
                   style={{ background: "rgba(189, 227, 255, 0.24)" }}
                 />
-                <div className="absolute inset-[1px] rounded-[23px] border border-white/5" />
+                <div className="absolute inset-[1px] rounded-[24px] border border-white/5" />
                 <div
                   className="absolute inset-x-[8%] bottom-[-72px] h-[140px] rounded-full border border-white/40"
                   style={{ filter: "blur(0.25px)" }}
@@ -67,7 +67,7 @@ export default function BlackBanner() {
 
               <div className="relative z-10 grid flex-1 gap-10 sm:gap-12 lg:grid-cols-12 lg:items-center">
                 <div className="lg:col-span-8">
-                  <h2 className="max-w-[14ch] text-[28px] font-semibold leading-[1.03] tracking-[-0.05em] text-white sm:text-[36px] lg:text-[44px]">
+                  <h2 className="max-w-[14ch] text-[32px] font-semibold leading-[1.03] tracking-[-0.05em] text-white sm:text-[42px] lg:text-[50px]">
                     {featureCard.title}
                   </h2>
 

@@ -150,7 +150,7 @@ export default function HalaParkInAction() {
               <div className="max-w-[560px]">
                 <motion.h1
                   variants={prefersReducedMotion ? undefined : copyItemVariants}
-                  className="max-w-[520px] text-[35px] font-semibold leading-[0.94] text-[#050A13]"
+                  className="max-w-[520px] text-[40px] font-semibold leading-[0.94] text-[#050A13]"
                 >
                   Park Smarter with the <br /> HalaPark App
                 </motion.h1>
@@ -164,16 +164,7 @@ export default function HalaParkInAction() {
                   experience.
                 </motion.p>
 
-                <motion.div
-                  variants={prefersReducedMotion ? undefined : copyItemVariants}
-                >
-                  <button
-                    type="button"
-                    className="mt-8 inline-flex min-h-[36px] min-w-[196px] items-center justify-center rounded-full bg-[#0088FF] px-10 text-[13.7px] font-medium text-white transition-transform duration-200 hover:-translate-y-0.5"
-                  >
-                    Get in touch
-                  </button>
-                </motion.div>
+               
               </div>
 
               <motion.div
