@@ -2,7 +2,7 @@ import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import FloatingActions from "@/components/layout/FloatingActions";
-import GooglePageTranslateBridge from "@/components/layout/GooglePageTranslateBridge";
+import AutoTranslateBridge from "@/components/layout/AutoTranslateBridge";
 import { AppProvider } from "@/context/AppContext";
 import SmoothScroll from "@/components/SmoothScroll";
 
@@ -21,7 +21,7 @@ export default function RootLayout({ children }) {
       >
         <SmoothScroll>
           <AppProvider>
-            <GooglePageTranslateBridge />
+            <AutoTranslateBridge />
             <Navbar />
             <main className="grow">{children}</main>
             <Footer />

@@ -240,6 +240,16 @@ export default function Navbar() {
     if (nextLanguage === language || !SUPPORTED_LANGUAGES.includes(nextLanguage)) {
       return;
     }
+
+    if (nextLanguage === "ar") {
+      window.localStorage.setItem(LANGUAGE_STORAGE_KEY, nextLanguage);
+      window.dispatchEvent(
+        new CustomEvent("halapark-language-change", { detail: nextLanguage }),
+      );
+      window.location.reload();
+      return;
+    }
+
     setLanguage(nextLanguage);
     window.dispatchEvent(
       new CustomEvent("halapark-language-change", { detail: nextLanguage }),

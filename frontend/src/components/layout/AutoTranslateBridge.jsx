@@ -3,17 +3,16 @@
 import { useEffect, useRef } from "react";
 
 const STORAGE_KEY = "halapark-language";
+const EVENT_NAME = "halapark-language-change";
 
-function setGoogleTranslateCookie(language) {
+function setTranslateCookie(language) {
   const targetLanguage = language === "ar" ? "ar" : "en";
-  const value = targetLanguage === "en" ? "/en/en" : `/en/${targetLanguage}`;
-  document.cookie = `googtrans=${value}; path=/`;
-  document.cookie = `googtrans=${value}; path=/; domain=${window.location.hostname}`;
+  const cookieValue = targetLanguage === "en" ? "/en/en" : `/en/${targetLanguage}`;
+  document.cookie = `googtrans=${cookieValue}; path=/`;
+  document.cookie = `googtrans=${cookieValue}; path=/; domain=${window.location.hostname}`;
 }
 
-function applyTranslateLanguage(language) {
-  setGoogleTranslateCookie(language);
-
+function applyViaCombo(language) {
   const combo = document.querySelector(".goog-te-combo");
   if (!(combo instanceof HTMLSelectElement)) {
     return false;
@@ -29,30 +28,30 @@ function applyTranslateLanguage(language) {
   return true;
 }
 
-export default function GooglePageTranslateBridge() {
+export default function AutoTranslateBridge() {
   const retryTimerRef = useRef(null);
-  const observerRef = useRef(null);
 
   useEffect(() => {
     if (typeof window === "undefined") return undefined;
 
-    const clearRetryTimer = () => {
+    const clearTimer = () => {
       if (retryTimerRef.current) {
         window.clearTimeout(retryTimerRef.current);
         retryTimerRef.current = null;
       }
     };
 
-    const tryApplyWithRetry = (language, attemptsLeft = 20) => {
-      clearRetryTimer();
-      const applied = applyTranslateLanguage(language);
+    const applyWithRetry = (language, attemptsLeft = 20) => {
+      clearTimer();
+      setTranslateCookie(language);
+      const applied = applyViaCombo(language);
       if (applied || attemptsLeft <= 0) {
         return;
       }
 
       retryTimerRef.current = window.setTimeout(() => {
-        tryApplyWithRetry(language, attemptsLeft - 1);
-      }, 250);
+        applyWithRetry(language, attemptsLeft - 1);
+      }, 200);
     };
 
     if (!window.googleTranslateElementInit) {
@@ -72,42 +71,40 @@ export default function GooglePageTranslateBridge() {
         );
 
         const initialLanguage = window.localStorage.getItem(STORAGE_KEY) || "en";
-        tryApplyWithRetry(initialLanguage);
+        applyWithRetry(initialLanguage);
       };
     }
 
-    const hasScript = document.querySelector('script[data-google-translate="true"]');
-    if (!hasScript) {
+    if (!document.querySelector('script[data-google-translate="true"]')) {
       const script = document.createElement("script");
       script.src =
         "https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
       script.async = true;
       script.dataset.googleTranslate = "true";
       document.body.appendChild(script);
-    } else if (window.google?.translate?.TranslateElement) {
+    } else {
       const currentLanguage = window.localStorage.getItem(STORAGE_KEY) || "en";
-      tryApplyWithRetry(currentLanguage);
+      applyWithRetry(currentLanguage);
     }
 
-    const handleLanguageChange = (event) => {
+    const onLanguageChange = (event) => {
       const nextLanguage = event?.detail || window.localStorage.getItem(STORAGE_KEY) || "en";
-      tryApplyWithRetry(nextLanguage);
+      setTranslateCookie(nextLanguage);
+
+      const applied = applyViaCombo(nextLanguage);
+      if (!applied) {
+        window.location.reload();
+        return;
+      }
+
+      applyWithRetry(nextLanguage);
     };
 
-    observerRef.current = new MutationObserver(() => {
-      const currentLanguage = window.localStorage.getItem(STORAGE_KEY) || "en";
-      applyTranslateLanguage(currentLanguage);
-    });
-    observerRef.current.observe(document.body, { childList: true, subtree: true });
+    window.addEventListener(EVENT_NAME, onLanguageChange);
 
-    window.addEventListener("halapark-language-change", handleLanguageChange);
     return () => {
-      clearRetryTimer();
-      if (observerRef.current) {
-        observerRef.current.disconnect();
-        observerRef.current = null;
-      }
-      window.removeEventListener("halapark-language-change", handleLanguageChange);
+      clearTimer();
+      window.removeEventListener(EVENT_NAME, onLanguageChange);
     };
   }, []);
 
@@ -119,3 +116,4 @@ export default function GooglePageTranslateBridge() {
     />
   );
 }
+
