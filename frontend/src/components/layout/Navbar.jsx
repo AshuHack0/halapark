@@ -69,6 +69,22 @@ const ChevronDownIcon = ({ open = false }) => (
   </svg>
 );
 
+const ArrowRightIcon = () => (
+  <svg
+    width="15"
+    height="15"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M5 12h14" />
+    <path d="m12 5 7 7-7 7" />
+  </svg>
+);
+
 const navLinks = [
   { href: "/", label: "Home" },
   // { href: "/how-it-works", label: "How It Works" },
@@ -80,12 +96,14 @@ const navLinks = [
   { href: "/faqs", label: "FAQs" },
 ];
 export default function Navbar() {
+  const DROPDOWN_CLOSE_DELAY_MS = 220;
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const [hash, setHash] = useState("");
   const servicesMenuRef = useRef(null);
+  const servicesCloseTimerRef = useRef(null);
   const serviceLinks = servicesData.map((service) => ({
     href: `/services/${service.slug}`,
     label: service.name,
@@ -131,10 +149,31 @@ export default function Navbar() {
     document.addEventListener("mousedown", handleClickOutside);
     document.addEventListener("keydown", handleEsc);
     return () => {
+      if (servicesCloseTimerRef.current) {
+        window.clearTimeout(servicesCloseTimerRef.current);
+      }
       document.removeEventListener("mousedown", handleClickOutside);
       document.removeEventListener("keydown", handleEsc);
     };
   }, []);
+
+  const openServicesDropdown = () => {
+    if (servicesCloseTimerRef.current) {
+      window.clearTimeout(servicesCloseTimerRef.current);
+      servicesCloseTimerRef.current = null;
+    }
+    setServicesOpen(true);
+  };
+
+  const closeServicesDropdownWithDelay = () => {
+    if (servicesCloseTimerRef.current) {
+      window.clearTimeout(servicesCloseTimerRef.current);
+    }
+    servicesCloseTimerRef.current = window.setTimeout(() => {
+      setServicesOpen(false);
+      servicesCloseTimerRef.current = null;
+    }, DROPDOWN_CLOSE_DELAY_MS);
+  };
 
   const resolveLinkHref = (href) => (href.startsWith("#") ? `/${href}` : href);
   const isLinkActive = (href) => {
@@ -178,8 +217,8 @@ export default function Navbar() {
                         key={link.label}
                         ref={servicesMenuRef}
                         className="relative"
-                        onMouseEnter={() => setServicesOpen(true)}
-                        onMouseLeave={() => setServicesOpen(false)}
+                        onMouseEnter={openServicesDropdown}
+                        onMouseLeave={closeServicesDropdownWithDelay}
                       >
                         <button
                           type="button"
@@ -204,26 +243,21 @@ export default function Navbar() {
                           }`}
                           role="menu"
                         >
-                          <Link
-                            href="/#services"
-                            className="flex items-center rounded-xl px-3 py-2.5 text-sm font-semibold text-[#0078E0] transition hover:bg-[rgba(0,136,255,0.08)]"
-                            onClick={() => setServicesOpen(false)}
-                          >
-                            View All Services
-                          </Link>
-                          <div className="my-1 h-px bg-slate-200" />
                           {serviceLinks.map((service) => (
                             <Link
                               key={service.href}
                               href={service.href}
-                              className={`flex items-center rounded-xl px-3 py-2.5 text-sm transition ${
+                              className={`flex items-center justify-between rounded-xl px-3 py-3.5 text-sm transition ${
                                 pathname === service.href
                                   ? "bg-[rgba(0,136,255,0.12)] font-semibold text-[#0078E0]"
                                   : "text-slate-700 hover:bg-[rgba(0,136,255,0.08)] hover:text-[#0078E0]"
                               }`}
                               onClick={() => setServicesOpen(false)}
                             >
-                              {service.label}
+                              <span>{service.label}</span>
+                              <span className="shrink-0 opacity-80">
+                                <ArrowRightIcon />
+                              </span>
                             </Link>
                           ))}
                         </div>
@@ -323,16 +357,6 @@ export default function Navbar() {
                       }`}
                     >
                       <div className="mt-1 space-y-1 rounded-lg border border-slate-200 bg-slate-50 p-2">
-                        <Link
-                          href="/#services"
-                          onClick={() => {
-                            setMenuOpen(false);
-                            setMobileServicesOpen(false);
-                          }}
-                          className="flex items-center rounded-md px-3 py-2 text-sm font-semibold text-[#0078E0] hover:bg-[rgba(0,136,255,0.08)]"
-                        >
-                          View All Services
-                        </Link>
                         {serviceLinks.map((service) => (
                           <Link
                             key={service.href}
@@ -341,13 +365,16 @@ export default function Navbar() {
                               setMenuOpen(false);
                               setMobileServicesOpen(false);
                             }}
-                            className={`flex items-center rounded-md px-3 py-2 text-sm transition ${
+                            className={`flex items-center justify-between rounded-md px-3 py-3 text-sm transition ${
                               pathname === service.href
                                 ? "bg-[rgba(0,136,255,0.12)] font-semibold text-[#0078E0]"
                                 : "text-slate-700 hover:bg-[rgba(0,136,255,0.08)] hover:text-[#0078E0]"
                             }`}
                           >
-                            {service.label}
+                            <span>{service.label}</span>
+                            <span className="shrink-0 opacity-80">
+                              <ArrowRightIcon />
+                            </span>
                           </Link>
                         ))}
                       </div>
