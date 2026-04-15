@@ -147,6 +147,13 @@ const getInitialLanguage = () => {
   return SUPPORTED_LANGUAGES.includes(storedLanguage) ? storedLanguage : "en";
 };
 
+const setTranslateCookie = (language) => {
+  const targetLanguage = language === "ar" ? "ar" : "en";
+  const cookieValue = targetLanguage === "en" ? "/en/en" : `/en/${targetLanguage}`;
+  document.cookie = `googtrans=${cookieValue}; path=/`;
+  document.cookie = `googtrans=${cookieValue}; path=/; domain=${window.location.hostname}`;
+};
+
 export default function Navbar() {
   const DROPDOWN_CLOSE_DELAY_MS = 220;
   const pathname = usePathname();
@@ -241,12 +248,11 @@ export default function Navbar() {
       return;
     }
 
+    window.localStorage.setItem(LANGUAGE_STORAGE_KEY, nextLanguage);
+    setTranslateCookie(nextLanguage);
+
     if (nextLanguage === "ar") {
-      window.localStorage.setItem(LANGUAGE_STORAGE_KEY, nextLanguage);
-      window.dispatchEvent(
-        new CustomEvent("halapark-language-change", { detail: nextLanguage }),
-      );
-      window.location.reload();
+      window.location.href = window.location.href;
       return;
     }
 
