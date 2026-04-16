@@ -17,7 +17,7 @@ const desktopLayouts = [
     finalY: 0,
     finalRotate: 0,
     finalScale: 1,
-    fromX: -745,
+    fromX: -820,
     fromY: 100,
     fromRotate: 0,
     fromScale: 1,
@@ -29,7 +29,7 @@ const desktopLayouts = [
     finalY: 0,
     finalRotate: 0,
     finalScale: 1,
-    fromX: -405,
+    fromX: -470,
     fromY: 80,
     fromRotate: 0,
     fromScale: 1,
@@ -53,7 +53,7 @@ const desktopLayouts = [
     finalY: 0,
     finalRotate: 0,
     finalScale: 1,
-    fromX: 405,
+    fromX: 470,
     fromY: 80,
     fromRotate: 0,
     fromScale: 1,
@@ -65,7 +65,7 @@ const desktopLayouts = [
     finalY: 0,
     finalRotate: 0,
     finalScale: 1,
-    fromX: 745,
+    fromX: 820,
     fromY: 100,
     fromRotate: 0,
     fromScale: 1,
@@ -144,8 +144,8 @@ export default function AppScreenshots() {
   const reduceMotion = useReducedMotion();
 
   const { scrollYProgress } = useScroll({
-    target: desktopStageRef,
-    offset: ["start 96%", "start 52%"],
+    target: sectionRef,
+    offset: ["start 88%", "end 30%"],
   });
 
   const smoothedProgress = useSpring(scrollYProgress, {
