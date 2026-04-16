@@ -22,7 +22,7 @@ export default function AppHero() {
   };
 
   return (
-    <section className="relative pt-32 pb-20 lg:pt-40 lg:pb-32 max-md:pt-24 max-md:pb-16 max-sm:pt-20 max-sm:pb-14 overflow-hidden bg-white max-w-full mx-auto">
+    <section className="relative pt-10 pb-20 lg:pb-32 max-md:pt-24 max-md:pb-16 max-sm:pt-20 max-sm:pb-14 overflow-hidden bg-white max-w-full mx-auto">
       <div className="container mx-auto sm:px-0 px-4">
         <motion.div
           variants={containerVariants}
