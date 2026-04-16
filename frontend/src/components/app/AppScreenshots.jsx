@@ -73,6 +73,7 @@ const desktopLayouts = [
     opacity: 1,
   },
 ];
+const phoneFrameSrc = "/Mock.png";
 
 function HeroPhone({ screen, layout, progress, priority = false }) {
   const reduceMotion = useReducedMotion();
@@ -111,21 +112,15 @@ function HeroPhone({ screen, layout, progress, priority = false }) {
       ? [layout.finalScale, layout.finalScale, layout.finalScale]
       : [layout.fromScale, layout.finalScale, layout.finalScale * 1.015],
   );
-  const opacity = useTransform(
-    progress,
-    [0, 0.22, 1],
-    [0, layout.opacity, layout.opacity],
-  );
-
   return (
     <motion.div
-      style={{ x, y, rotate, scale, opacity, zIndex: layout.zIndex }}
+      style={{ x, y, rotate, scale, opacity: layout.opacity, zIndex: layout.zIndex }}
       className="absolute left-1/2 top-0 w-[180px] -translate-x-1/2 xl:w-[280px]"
     >
       <div className="absolute inset-x-[22%] bottom-6 h-10 rounded-full bg-black/10 blur-2xl" />
 
       <div className="relative aspect-[1439/2920] drop-shadow-[0_26px_50px_rgba(15,23,42,0.18)]">
-        <div className="absolute left-[3.1%] right-[3.1%] top-[2.05%] bottom-[2.55%] overflow-hidden rounded-[2rem] bg-white">
+        <div className="absolute left-[3.1%] right-[3.1%] top-[2.05%] bottom-[2.55%] z-[2] overflow-hidden rounded-[2rem] bg-white">
           <Image
             src={screen.image}
             alt={screen.title}
@@ -137,11 +132,11 @@ function HeroPhone({ screen, layout, progress, priority = false }) {
         </div>
 
         <Image
-          src="/H2xOBKfRU2M06U4j9LF5WN8z6pA.avif"
+          src={phoneFrameSrc}
           alt=""
           fill
           sizes="(min-width: 1280px) 208px, 180px"
-          className="pointer-events-none select-none object-contain"
+          className="pointer-events-none select-none object-contain z-[1]"
           priority={priority}
         />
       </div>
@@ -162,7 +157,7 @@ export default function AppScreenshots() {
       className="overflow-hidden px-4 py-20 sm:px-0 lg:px-0 lg:py-28"
     >
       <div className="w-full">
-        <div className="mx-auto max-w-4xl text-center">
+        <div className="mx-auto max-w-4xl text-center mb-10">
           <p className="text-sm font-medium tracking-[0.14em] text-[#7C8597]">
             Built for a cleaner parking flow
           </p>
@@ -175,7 +170,7 @@ export default function AppScreenshots() {
           </p>
         </div>
 
-        <div className="mt-7 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[13px] font-medium text-[#6B7280]">
+        <div className="mt-9 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[13px] font-medium text-[#6B7280]">
           {appScreenshots.map((screen) => (
             <span key={screen.id} className="inline-flex items-center gap-2">
               <span className="h-1.5 w-1.5 rounded-full bg-[#CBD5E1]" />
@@ -184,7 +179,7 @@ export default function AppScreenshots() {
           ))}
         </div>
 
-        <div className="relative mt-14 hidden max-h-[150vh] lg:block w-full">
+        <div className="relative mt-20 hidden max-h-[150vh] w-full lg:mt-24 lg:block">
           <div className="sticky top-10 h-[calc(100vh-2.5rem)]">
             <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-white via-white/90 to-transparent" />
 
@@ -204,7 +199,7 @@ export default function AppScreenshots() {
           </div>
         </div>
 
-        <div className="mt-14 grid gap-6 lg:hidden">
+        <div className="mt-20 grid gap-6 lg:hidden">
           {appScreenshots.map((screen, index) => (
             <motion.article
               key={screen.id}
@@ -240,7 +235,7 @@ export default function AppScreenshots() {
                 <div className="absolute inset-x-[24%] bottom-6 h-10 rounded-full bg-black/10 blur-2xl" />
 
                 <div className="relative aspect-[1439/2920] drop-shadow-[0_22px_48px_rgba(15,23,42,0.14)]">
-                  <div className="absolute left-[3.1%] right-[3.1%] top-[2.05%] bottom-[2.55%] overflow-hidden rounded-[2rem] bg-white">
+                  <div className="absolute left-[3.1%] right-[3.1%] top-[2.05%] bottom-[2.55%] z-[2] overflow-hidden rounded-[2rem] bg-white">
                     <Image
                       src={screen.image}
                       alt={screen.title}
@@ -251,11 +246,11 @@ export default function AppScreenshots() {
                   </div>
 
                   <Image
-                    src="/Mock.png"
+                    src={phoneFrameSrc}
                     alt=""
                     fill
                     sizes="260px"
-                    className="pointer-events-none select-none object-contain"
+                    className="pointer-events-none select-none object-contain z-[1]"
                   />
                 </div>
               </div>

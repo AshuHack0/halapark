@@ -303,7 +303,7 @@ export default function WhoWeAre() {
           >
             <motion.div {...fadeUp}>
               <motion.div
-                className="relative inline-flex items-center gap-2.5 overflow-hidden rounded-full border border-[#0088FF]/25 bg-white/70 px-4 py-2 backdrop-blur-md sm:gap-3 sm:px-5"
+                className="relative inline-flex items-center gap-1.5 overflow-hidden rounded-full border border-[#0088FF]/25 bg-white/70 px-2.5 py-1 backdrop-blur-md sm:gap-2 sm:px-3"
                 whileHover={reduced ? undefined : { scale: 1.02 }}
                 transition={springSoft}
               >
@@ -318,7 +318,7 @@ export default function WhoWeAre() {
                   </span>
                 )}
                 <motion.span
-                  className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#0088FF] sm:h-9 sm:w-9"
+                  className="relative flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#0088FF] sm:h-7 sm:w-7"
                   animate={
                     reduced
                       ? undefined
@@ -329,12 +329,12 @@ export default function WhoWeAre() {
                   <Image
                     src="/Layer_1.svg"
                     alt="Hala Park"
-                    width={22}
-                    height={26}
+                    width={14}
+                    height={18}
                     className="object-contain"
                   />
                 </motion.span>
-                <p className="relative text-[12px] font-semibold uppercase tracking-[0.16em] text-[#0088FF] sm:text-[13px]">
+                <p className="relative text-[10px] font-semibold uppercase tracking-[0.12em] text-[#0088FF] sm:text-[11px]">
                   {headingText}
                 </p>
               </motion.div>
