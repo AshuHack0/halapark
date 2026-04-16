@@ -74,7 +74,7 @@ const desktopLayouts = [
   },
 ];
 
-const phoneFrameSrc = "/37ea36b9e2f10ae7848280afbc3236af.jpg.avif";
+const phoneFrameSrc = "/THis.avif";
 
 function HeroPhone({ screen, layout, progress, priority = false }) {
   const reduceMotion = useReducedMotion();
