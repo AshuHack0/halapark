@@ -13,24 +13,24 @@ import { appScreenshots } from "./appContent";
 
 const desktopLayouts = [
   {
-    finalX: -700,
-    finalY: 122,
+    finalX: -665,
+    finalY: 0,
     finalRotate: 0,
     finalScale: 1,
-    fromX: -700,
-    fromY: 244,
+    fromX: -745,
+    fromY: 100,
     fromRotate: 0,
     fromScale: 1,
     zIndex: 10,
     opacity: 1,
   },
   {
-    finalX: -365,
-    finalY: 28,
+    finalX: -345,
+    finalY: 0,
     finalRotate: 0,
     finalScale: 1,
-    fromX: -365,
-    fromY: 208,
+    fromX: -405,
+    fromY: 80,
     fromRotate: 0,
     fromScale: 1,
     zIndex: 20,
@@ -38,89 +38,81 @@ const desktopLayouts = [
   },
   {
     finalX: 0,
-    finalY: 8,
+    finalY: 0,
     finalRotate: 0,
-    finalScale: 1.2,
+    finalScale: 1.18,
     fromX: 0,
-    fromY: 0,
+    fromY: 50,
     fromRotate: 0,
-    fromScale: 1.2,
+    fromScale: 1.18,
     zIndex: 40,
     opacity: 1,
   },
   {
-    finalX: 365,
-    finalY: 28,
+    finalX: 345,
+    finalY: 0,
     finalRotate: 0,
     finalScale: 1,
-    fromX: 365,
-    fromY: 208,
+    fromX: 405,
+    fromY: 80,
     fromRotate: 0,
     fromScale: 1,
     zIndex: 20,
     opacity: 1,
   },
   {
-    finalX: 700,
-    finalY: 122,
+    finalX: 665,
+    finalY: 0,
     finalRotate: 0,
     finalScale: 1,
-    fromX: 700,
-    fromY: 244,
+    fromX: 745,
+    fromY: 100,
     fromRotate: 0,
     fromScale: 1,
     zIndex: 10,
     opacity: 1,
   },
 ];
-const phoneFrameSrc = "/Mock.png";
+
+const phoneFrameSrc = "/37ea36b9e2f10ae7848280afbc3236af.jpg.avif";
 
 function HeroPhone({ screen, layout, progress, priority = false }) {
   const reduceMotion = useReducedMotion();
 
   const x = useTransform(
     progress,
-    [0, 0.38, 1],
-    reduceMotion
-      ? [layout.finalX, layout.finalX, layout.finalX]
-      : [layout.fromX, layout.finalX, layout.finalX],
+    [0, 1],
+    reduceMotion ? [layout.finalX, layout.finalX] : [layout.fromX, layout.finalX],
   );
-  const rawY = useTransform(
+  const y = useTransform(
     progress,
-    [0, 0.38, 1],
-    reduceMotion
-      ? [layout.finalY, layout.finalY, layout.finalY]
-      : [layout.fromY, layout.finalY, layout.finalY - 28],
-  );
-  const y = useSpring(
-    rawY,
-    reduceMotion
-      ? { stiffness: 1000, damping: 120, mass: 0.2 }
-      : { stiffness: 180, damping: 34, mass: 0.42 },
+    [0, 1],
+    reduceMotion ? [layout.finalY, layout.finalY] : [layout.fromY, layout.finalY],
   );
   const rotate = useTransform(
     progress,
-    [0, 0.38, 1],
+    [0, 1],
     reduceMotion
-      ? [layout.finalRotate, layout.finalRotate, layout.finalRotate]
-      : [layout.fromRotate, layout.finalRotate, layout.finalRotate],
+      ? [layout.finalRotate, layout.finalRotate]
+      : [layout.fromRotate, layout.finalRotate],
   );
   const scale = useTransform(
     progress,
-    [0, 0.38, 1],
+    [0, 1],
     reduceMotion
-      ? [layout.finalScale, layout.finalScale, layout.finalScale]
-      : [layout.fromScale, layout.finalScale, layout.finalScale * 1.015],
+      ? [layout.finalScale, layout.finalScale]
+      : [layout.fromScale, layout.finalScale],
   );
+
   return (
     <motion.div
       style={{ x, y, rotate, scale, opacity: layout.opacity, zIndex: layout.zIndex }}
-      className="absolute left-1/2 top-0 w-[180px] -translate-x-1/2 xl:w-[280px]"
+      className="absolute left-1/2 top-0 w-[180px] -translate-x-1/2 transform-gpu will-change-transform xl:w-[280px]"
     >
       <div className="absolute inset-x-[22%] bottom-6 h-10 rounded-full bg-black/10 blur-2xl" />
 
-      <div className="relative aspect-[1439/2920] drop-shadow-[0_26px_50px_rgba(15,23,42,0.18)]">
-        <div className="absolute left-[3.1%] right-[3.1%] top-[2.05%] bottom-[2.55%] z-[2] overflow-hidden rounded-[2rem] bg-white">
+      <div className="relative isolate aspect-[1439/2920] drop-shadow-[0_26px_50px_rgba(15,23,42,0.18)]">
+        <div className="absolute left-[4.4%] right-[4.4%] top-[1.8%] bottom-[2.2%] z-10 overflow-hidden rounded-[2.4rem] bg-white">
           <Image
             src={screen.image}
             alt={screen.title}
@@ -131,14 +123,16 @@ function HeroPhone({ screen, layout, progress, priority = false }) {
           />
         </div>
 
-        <Image
-          src={phoneFrameSrc}
-          alt=""
-          fill
-          sizes="(min-width: 1280px) 208px, 180px"
-          className="pointer-events-none select-none object-contain z-[1]"
-          priority={priority}
-        />
+        <div className="pointer-events-none absolute inset-0 z-30">
+          <Image
+            src={phoneFrameSrc}
+            alt=""
+            fill
+            sizes="(min-width: 1280px) 208px, 180px"
+            className="select-none object-contain"
+            priority={priority}
+          />
+        </div>
       </div>
     </motion.div>
   );
@@ -146,9 +140,19 @@ function HeroPhone({ screen, layout, progress, priority = false }) {
 
 export default function AppScreenshots() {
   const sectionRef = useRef(null);
+  const desktopStageRef = useRef(null);
+  const reduceMotion = useReducedMotion();
+
   const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start 85%", "end 20%"],
+    target: desktopStageRef,
+    offset: ["start 96%", "start 52%"],
+  });
+
+  const smoothedProgress = useSpring(scrollYProgress, {
+    stiffness: reduceMotion ? 1000 : 230,
+    damping: reduceMotion ? 120 : 34,
+    mass: reduceMotion ? 0.2 : 0.32,
+    restDelta: 0.0008,
   });
 
   return (
@@ -157,7 +161,7 @@ export default function AppScreenshots() {
       className="overflow-hidden px-4 py-20 sm:px-0 lg:px-0 lg:py-28"
     >
       <div className="w-full">
-        <div className="mx-auto max-w-4xl text-center mb-10">
+        <div className="mx-auto mb-10 max-w-4xl text-center">
           <p className="text-sm font-medium tracking-[0.14em] text-[#7C8597]">
             Built for a cleaner parking flow
           </p>
@@ -179,23 +183,22 @@ export default function AppScreenshots() {
           ))}
         </div>
 
-        <div className="relative mt-20 hidden max-h-[150vh] w-full lg:mt-24 lg:block">
-          <div className="sticky top-10 h-[calc(100vh-2.5rem)]">
-            <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-white via-white/90 to-transparent" />
+        <div
+          ref={desktopStageRef}
+          className="relative mt-20 hidden w-full lg:mt-24 lg:block"
+        >
+          <div className="relative mx-auto h-[46rem] max-w-full">
+            <div className="pointer-events-none absolute left-1/2 top-[62%] h-28 w-[54rem] -translate-x-1/2 rounded-full bg-[#E5EEF9] blur-[42px]" />
 
-            <div className="relative mx-auto h-full max-w-full">
-              <div className="pointer-events-none absolute left-1/2 top-[46%] h-28 w-[54rem] -translate-x-1/2 rounded-full bg-[#E5EEF9] blur-[42px]" />
-
-              {appScreenshots.map((screen, index) => (
-                <HeroPhone
-                  key={screen.id}
-                  screen={screen}
-                  layout={desktopLayouts[index]}
-                  progress={scrollYProgress}
-                  priority={index === 2}
-                />
-              ))}
-            </div>
+            {appScreenshots.map((screen, index) => (
+              <HeroPhone
+                key={screen.id}
+                screen={screen}
+                layout={desktopLayouts[index]}
+                progress={smoothedProgress}
+                priority={index === 2}
+              />
+            ))}
           </div>
         </div>
 
@@ -231,11 +234,11 @@ export default function AppScreenshots() {
                 {screen.description}
               </p>
 
-              <div className="relative mt-6 mx-auto w-full max-w-[260px]">
+              <div className="relative mx-auto mt-6 w-full max-w-[260px]">
                 <div className="absolute inset-x-[24%] bottom-6 h-10 rounded-full bg-black/10 blur-2xl" />
 
-                <div className="relative aspect-[1439/2920] drop-shadow-[0_22px_48px_rgba(15,23,42,0.14)]">
-                  <div className="absolute left-[3.1%] right-[3.1%] top-[2.05%] bottom-[2.55%] z-[2] overflow-hidden rounded-[2rem] bg-white">
+                <div className="relative isolate aspect-[1439/2920] drop-shadow-[0_22px_48px_rgba(15,23,42,0.14)]">
+                  <div className="absolute left-[4.4%] right-[4.4%] top-[1.8%] bottom-[2.2%] z-10 overflow-hidden rounded-[2.4rem] bg-white">
                     <Image
                       src={screen.image}
                       alt={screen.title}
@@ -245,13 +248,15 @@ export default function AppScreenshots() {
                     />
                   </div>
 
-                  <Image
-                    src={phoneFrameSrc}
-                    alt=""
-                    fill
-                    sizes="260px"
-                    className="pointer-events-none select-none object-contain z-[1]"
-                  />
+                  <div className="pointer-events-none absolute inset-0 z-30">
+                    <Image
+                      src={phoneFrameSrc}
+                      alt=""
+                      fill
+                      sizes="260px"
+                      className="select-none object-contain"
+                    />
+                  </div>
                 </div>
               </div>
             </motion.article>
