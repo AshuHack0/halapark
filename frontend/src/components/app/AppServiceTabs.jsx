@@ -87,7 +87,7 @@ function PhonePreview({ screen, label }) {
       <div className="absolute inset-x-[18%] bottom-3 h-12 rounded-full bg-[#0F172A]/14 blur-[28px]" />
 
       <div className="relative isolate aspect-[1439/2920] drop-shadow-[0_28px_60px_-28px_rgba(15,23,42,0.45)]">
-        <div className="absolute left-[4.4%] right-[4.4%] top-[0.95%] bottom-[1.45%] z-10 translate-y-[1px] overflow-hidden rounded-[3rem] bg-white">
+        <div className="absolute left-[4.4%] right-[4.4%] top-[1.2%] bottom-[1.45%] z-10 translate-y-[1px] overflow-hidden rounded-[2.7rem] bg-white">
           <AnimatePresence mode="wait">
             <motion.div
               key={screen}
@@ -95,7 +95,7 @@ function PhonePreview({ screen, label }) {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -12, scale: 0.985 }}
               transition={{ duration: 0.45, ease: "easeOut" }}
-              className="absolute top-px -bottom-[2.5%] left-0 right-0"
+              className="absolute top-0 -bottom-[2.5%] left-0 right-0"
             >
               <Image
                 src={screen}

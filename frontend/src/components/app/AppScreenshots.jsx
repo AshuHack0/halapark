@@ -277,8 +277,8 @@ function HeroPhone({
           <div className="absolute inset-x-[22%] bottom-6 h-10 rounded-full bg-black/10 blur-2xl" />
 
           <div className="relative isolate aspect-[1439/2920] drop-shadow-[0_26px_50px_rgba(15,23,42,0.18)]">
-            <div className="absolute left-[4.4%] right-[4.4%] top-[0.95%] bottom-[1.45%] z-10 translate-y-[1px] overflow-hidden rounded-[2.4rem] bg-white">
-              <div className="absolute top-px -bottom-[2.5%] left-0 right-0">
+            <div className="absolute left-[4.4%] right-[4.4%] top-[1.2%] bottom-[1.45%] z-10 translate-y-[1px] overflow-hidden rounded-[2.7rem] bg-white">
+              <div className="absolute top-0 -bottom-[2.5%] left-0 right-0">
                 <Image
                   src={screen.image}
                   alt={screen.title}
@@ -324,8 +324,8 @@ function MobilePhoneFrame({ screen, bobProgress, reduceMotion, index }) {
       <div className="absolute inset-x-[24%] bottom-6 h-10 rounded-full bg-black/10 blur-2xl" />
 
       <div className="relative isolate aspect-[1439/2920] drop-shadow-[0_22px_48px_rgba(15,23,42,0.14)]">
-        <div className="absolute left-[4.4%] right-[4.4%] top-[0.95%] bottom-[1.45%] z-10 translate-y-[1px] overflow-hidden rounded-[2.4rem] bg-white">
-          <div className="absolute top-px -bottom-[2.5%] left-0 right-0">
+        <div className="absolute left-[4.4%] right-[4.4%] top-[1.2%] bottom-[1.45%] z-10 translate-y-[1px] overflow-hidden rounded-[2.7rem] bg-white">
+          <div className="absolute top-0 -bottom-[2.5%] left-0 right-0">
             <Image
               src={screen.image}
               alt={screen.title}
