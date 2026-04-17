@@ -8,7 +8,8 @@ import {
   useSpring,
   useTransform,
 } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
+import { ScrollContainerRefContext } from "@/components/SmoothScroll";
 import { appScreenshots } from "./appContent";
 
 const desktopLayoutsLg = [
@@ -226,23 +227,28 @@ function HeroPhone({
   screen,
   layout,
   progress,
+  bobProgress,
   priority = false,
-  floatDelay = 0,
+  floatPhase = 0,
   enableFloat = true,
 }) {
   const reduceMotion = useReducedMotion();
-  const shouldFloat = enableFloat && !reduceMotion;
 
   const x = useTransform(
     progress,
     [0, 1],
     reduceMotion ? [layout.finalX, layout.finalX] : [layout.fromX, layout.finalX],
   );
-  const y = useTransform(
+  const yLayout = useTransform(
     progress,
     [0, 1],
     reduceMotion ? [layout.finalY, layout.finalY] : [layout.fromY, layout.finalY],
   );
+  const yBob = useTransform(bobProgress, (p) => {
+    if (reduceMotion || !enableFloat) return 0;
+    return Math.sin((p + floatPhase) * Math.PI * 2) * 34;
+  });
+  const y = useTransform([yLayout, yBob], ([layoutY, bob]) => Number(layoutY) + Number(bob));
   const rotate = useTransform(
     progress,
     [0, 1],
@@ -267,20 +273,7 @@ function HeroPhone({
         style={{ x, y, rotate, scale, opacity: layout.opacity }}
         className="relative transform-gpu will-change-transform"
       >
-        <motion.div
-          className="relative"
-          animate={shouldFloat ? { y: [0, -14, 0] } : { y: 0 }}
-          transition={
-            shouldFloat
-              ? {
-                  duration: 4.2,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: floatDelay,
-                }
-              : { duration: 0 }
-          }
-        >
+        <div className="relative">
           <div className="absolute inset-x-[22%] bottom-6 h-10 rounded-full bg-black/10 blur-2xl" />
 
           <div className="relative isolate aspect-[1439/2920] drop-shadow-[0_26px_50px_rgba(15,23,42,0.18)]">
@@ -306,9 +299,50 @@ function HeroPhone({
               />
             </div>
           </div>
-        </motion.div>
+        </div>
       </motion.div>
     </div>
+  );
+}
+
+function MobilePhoneFrame({ screen, bobProgress, reduceMotion, index }) {
+  const enableBob = index !== 2 && !reduceMotion;
+  const floatPhase = index * 0.16;
+
+  const scrollBobY = useTransform(bobProgress, (p) => {
+    if (!enableBob) return 0;
+    return Math.sin((p + floatPhase) * Math.PI * 2) * 22;
+  });
+
+  return (
+    <motion.div
+      className="relative mx-auto mt-6 w-full max-w-[260px]"
+      style={{ y: scrollBobY }}
+    >
+      <div className="absolute inset-x-[24%] bottom-6 h-10 rounded-full bg-black/10 blur-2xl" />
+
+      <div className="relative isolate aspect-[1439/2920] drop-shadow-[0_22px_48px_rgba(15,23,42,0.14)]">
+        <div className="absolute left-[4.4%] right-[4.4%] top-[1.8%] bottom-[2.2%] z-10 overflow-hidden rounded-[2.4rem] bg-white">
+          <Image
+            src={screen.image}
+            alt={screen.title}
+            fill
+            sizes="260px"
+            className="object-cover object-top"
+          />
+        </div>
+
+        <div className="pointer-events-none absolute inset-0 z-30">
+          <Image
+            src={phoneFrameSrc}
+            alt=""
+            fill
+            sizes="260px"
+            className="select-none object-contain"
+          />
+        </div>
+      </div>
+    </motion.div>
   );
 }
 
@@ -317,10 +351,21 @@ export default function AppScreenshots() {
   const desktopStageRef = useRef(null);
   const reduceMotion = useReducedMotion();
   const desktopLayouts = useDesktopLayouts();
+  const scrollContainerRef = useContext(ScrollContainerRefContext);
+
+  const scrollOpts = {
+    target: sectionRef,
+    ...(scrollContainerRef ? { container: scrollContainerRef } : {}),
+  };
 
   const { scrollYProgress } = useScroll({
-    target: sectionRef,
+    ...scrollOpts,
     offset: ["start 88%", "end 30%"],
+  });
+
+  const { scrollYProgress: scrollYProgressBob } = useScroll({
+    ...scrollOpts,
+    offset: ["start end", "end start"],
   });
 
   const smoothedProgress = useSpring(scrollYProgress, {
@@ -328,6 +373,13 @@ export default function AppScreenshots() {
     damping: reduceMotion ? 120 : 34,
     mass: reduceMotion ? 0.2 : 0.32,
     restDelta: 0.0008,
+  });
+
+  const smoothedBobProgress = useSpring(scrollYProgressBob, {
+    stiffness: reduceMotion ? 1000 : 90,
+    damping: reduceMotion ? 120 : 22,
+    mass: reduceMotion ? 0.2 : 0.45,
+    restDelta: 0.001,
   });
 
   return (
@@ -371,8 +423,9 @@ export default function AppScreenshots() {
                 screen={screen}
                 layout={desktopLayouts[index]}
                 progress={smoothedProgress}
+                bobProgress={smoothedBobProgress}
                 priority={index === 2}
-                floatDelay={index * 0.22}
+                floatPhase={index * 0.14}
                 enableFloat={index !== 2}
               />
             ))}
@@ -411,46 +464,12 @@ export default function AppScreenshots() {
                 {screen.description}
               </p>
 
-              <motion.div
-                className="relative mx-auto mt-6 w-full max-w-[260px]"
-                animate={
-                  reduceMotion || index === 2 ? { y: 0 } : { y: [0, -10, 0] }
-                }
-                transition={
-                  reduceMotion || index === 2
-                    ? { duration: 0 }
-                    : {
-                        duration: 3.8,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                        delay: index * 0.2,
-                      }
-                }
-              >
-                <div className="absolute inset-x-[24%] bottom-6 h-10 rounded-full bg-black/10 blur-2xl" />
-
-                <div className="relative isolate aspect-[1439/2920] drop-shadow-[0_22px_48px_rgba(15,23,42,0.14)]">
-                  <div className="absolute left-[4.4%] right-[4.4%] top-[1.8%] bottom-[2.2%] z-10 overflow-hidden rounded-[2.4rem] bg-white">
-                    <Image
-                      src={screen.image}
-                      alt={screen.title}
-                      fill
-                      sizes="260px"
-                      className="object-cover object-top"
-                    />
-                  </div>
-
-                  <div className="pointer-events-none absolute inset-0 z-30">
-                    <Image
-                      src={phoneFrameSrc}
-                      alt=""
-                      fill
-                      sizes="260px"
-                      className="select-none object-contain"
-                    />
-                  </div>
-                </div>
-              </motion.div>
+              <MobilePhoneFrame
+                screen={screen}
+                bobProgress={smoothedBobProgress}
+                reduceMotion={reduceMotion}
+                index={index}
+              />
             </motion.article>
           ))}
         </div>

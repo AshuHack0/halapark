@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useEffectEvent, useRef } from "react";
+import { createContext, useEffect, useEffectEvent, useRef } from "react";
 import { usePathname } from "next/navigation";
 import "locomotive-scroll/dist/locomotive-scroll.css";
+
+export const ScrollContainerRefContext = createContext(null);
 
 const LOCOMOTIVE_CONFIG = {
   smooth: true,
@@ -142,7 +144,9 @@ export default function SmoothScroll({ children }) {
       className="h-screen overflow-x-hidden overflow-y-auto"
     >
       <div ref={contentRef} className="min-h-full">
-        {children}
+        <ScrollContainerRefContext.Provider value={containerRef}>
+          {children}
+        </ScrollContainerRefContext.Provider>
       </div>
     </div>
   );
