@@ -31,7 +31,7 @@ export default function AppUserSection() {
             <div className="pointer-events-none absolute -bottom-16 right-[-14px] h-44 w-44 rounded-full bg-[rgba(0,136,255,0.08)] blur-2xl sm:h-56 sm:w-56" />
 
             <div className="relative flex h-full flex-col">
-              <div className="max-w-[30rem]">
+              <div className="max-w-[30rem] ">
                 <h3 className="text-[2rem] font-semibold tracking-[-0.05em] text-slate-900 sm:text-[2.6rem] sm:leading-[0.98]">
                   <span className="text-[#0088FF]">{accentWord}</span>
                   {rest ? <span>{` ${rest}`}</span> : null}
@@ -48,19 +48,17 @@ export default function AppUserSection() {
                   className="inline-flex w-fit items-center gap-2 rounded-full border border-[#0088FF] bg-white px-5 py-3 text-sm font-semibold text-[#0088FF] transition-colors duration-200 hover:bg-[rgba(0,136,255,0.06)] sm:px-6 sm:text-base"
                 >
                   {quickActions[index] || item.title}
-                  {/* <span aria-hidden="true" className="text-lg leading-none">
-                    {"->"}
-                  </span> */}
+                 
                 </button>
 
                 <div className="flex justify-end">
-                  <div className="relative w-full max-w-[230px] sm:max-w-[270px]">
+                  <div className="relative flex h-[170px] w-full max-w-[230px] items-end justify-end sm:h-[210px] sm:max-w-[270px]">
                     <Image
                       src={cardImage}
                       alt={item.title}
                       width={270}
                       height={220}
-                      className="h-auto w-full object-contain object-bottom-right"
+                      className="h-auto max-h-full w-full object-contain object-bottom-right"
                     />
                   </div>
                 </div>

@@ -79,16 +79,15 @@ const serviceShowcase = {
   },
 };
 
+const phoneFrameSrc = "/THis.avif";
+
 function PhonePreview({ screen, label }) {
   return (
     <div className="relative mx-auto w-[156px] scale-95 sm:w-[228px] sm:scale-100 lg:w-[320px]">
-      <div className="absolute inset-x-[14%] bottom-3 h-12 rounded-full bg-[#0F172A]/14 blur-[28px]" />
+      <div className="absolute inset-x-[18%] bottom-3 h-12 rounded-full bg-[#0F172A]/14 blur-[28px]" />
 
-      <div className="relative aspect-[375/812] rounded-[44px] border-[6px] border-[#151515] bg-[#111111] p-[7px] shadow-[0_28px_60px_-28px_rgba(15,23,42,0.45)]">
-        <div className="absolute left-1/2 top-[13px] z-20 h-[30px] w-[112px] -translate-x-1/2 rounded-full bg-black" />
-        <div className="absolute right-[62px] top-[23px] z-20 h-2.5 w-2.5 rounded-full bg-[#171717]" />
-
-        <div className="relative h-full overflow-hidden rounded-[36px] bg-[rgba(0,136,255,0.08)]">
+      <div className="relative isolate aspect-[1439/2920] drop-shadow-[0_28px_60px_-28px_rgba(15,23,42,0.45)]">
+        <div className="absolute left-[4.4%] right-[4.4%] top-[1.8%] bottom-[2.2%] z-10 overflow-hidden rounded-[2.4rem] bg-white">
           <AnimatePresence mode="wait">
             <motion.div
               key={screen}
@@ -108,6 +107,17 @@ function PhonePreview({ screen, label }) {
               />
             </motion.div>
           </AnimatePresence>
+        </div>
+
+        <div className="pointer-events-none absolute inset-0 z-30">
+          <Image
+            src={phoneFrameSrc}
+            alt=""
+            fill
+            sizes="(min-width: 1024px) 320px, (min-width: 640px) 228px, 156px"
+            className="select-none object-contain"
+            priority
+          />
         </div>
       </div>
     </div>

@@ -385,7 +385,7 @@ export default function AppScreenshots() {
   return (
     <section
       ref={sectionRef}
-      className="overflow-hidden px-4 py-20 sm:px-0 lg:px-6 lg:py-28 xl:px-8"
+      className="overflow-hidden px-4 pt-20 pb-0 sm:px-0 lg:px-6 xl:px-8"
     >
       <div className="w-full">
         <div className="mx-auto mb-10 max-w-4xl text-center">

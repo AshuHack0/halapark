@@ -35,7 +35,7 @@ export default function AppHero() {
             <RatingBadge
               rating="4.9"
               totalReviews="4268"
-              textColor="transparent"
+          
             />
           </motion.div>
 
