@@ -1,11 +1,14 @@
 export default function RatingBadge({
   rating = "4.9",
   totalReviews = "4268",
-  textColor = "#ffffff",
+  textColor = "#0F172A",
   shadow = "xl",
   border = true,
   className,
 }) {
+  const textClassName =
+    typeof className === "object" ? className?.text : "";
+
   return (
     <div
       className={`flex items-center gap-2 sm:gap-3 md:gap-4 lg:gap-6 px-2 sm:px-2.5 md:px-3 py-2 sm:py-2.5 md:py-3 z-20 rounded-full ${
@@ -33,7 +36,8 @@ export default function RatingBadge({
 
       {/* Text */}
       <p
-        className={`text-[${textColor}] text-[10px] sm:text-xs md:text-sm lg:text-[14px] font-normal whitespace-nowrap ${className?.text}`}
+        style={{ color: textColor }}
+        className={`text-[10px] sm:text-xs md:text-sm lg:text-[14px] font-normal whitespace-nowrap ${textClassName}`}
       >
         <span className="font-semibold">{rating}/5</span>{" "}
         <span className="hidden sm:inline">from {totalReviews} customers</span>

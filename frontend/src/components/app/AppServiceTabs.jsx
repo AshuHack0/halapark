@@ -79,7 +79,7 @@ const serviceShowcase = {
   },
 };
 
-const phoneFrameSrc = "/THis.avif";
+const phoneFrameSrc = "/mobileframe.png";
 
 function PhonePreview({ screen, label }) {
   return (
@@ -87,7 +87,7 @@ function PhonePreview({ screen, label }) {
       <div className="absolute inset-x-[18%] bottom-3 h-12 rounded-full bg-[#0F172A]/14 blur-[28px]" />
 
       <div className="relative isolate aspect-[1439/2920] drop-shadow-[0_28px_60px_-28px_rgba(15,23,42,0.45)]">
-        <div className="absolute left-[4.4%] right-[4.4%] top-[1.8%] bottom-[2.2%] z-10 overflow-hidden rounded-[2.4rem] bg-white">
+        <div className="absolute left-[4.4%] right-[4.4%] top-[0.95%] bottom-[1.45%] z-10 translate-y-[1px] overflow-hidden rounded-[3rem] bg-white">
           <AnimatePresence mode="wait">
             <motion.div
               key={screen}
@@ -95,21 +95,21 @@ function PhonePreview({ screen, label }) {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -12, scale: 0.985 }}
               transition={{ duration: 0.45, ease: "easeOut" }}
-              className="absolute inset-0"
+              className="absolute top-px -bottom-[2.5%] left-0 right-0"
             >
               <Image
                 src={screen}
                 alt={`${label} screen preview`}
                 fill
                 sizes="(min-width: 1024px) 320px, (min-width: 640px) 228px, 156px"
-                className="object-cover object-top"
+                className="object-cover object-center"
                 priority
               />
             </motion.div>
           </AnimatePresence>
         </div>
 
-        <div className="pointer-events-none absolute inset-0 z-30">
+        <div className="pointer-events-none absolute inset-0 z-0">
           <Image
             src={phoneFrameSrc}
             alt=""
@@ -274,7 +274,34 @@ export default function AppServiceTabs() {
               {activeService.description}
             </p>
 
-            <div className="mt-8 rounded-[28px] border border-[#E5E7EB] bg-[linear-gradient(180deg,#FFFFFF_0%,#F8FAFC_100%)] p-4  sm:p-5">
+            <div className="mt-5 flex flex-wrap items-center gap-3">
+              <span className="inline-flex items-center rounded-full border border-[#D7E7FF] bg-[#F3F8FF] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#0F4B86]">
+                {activeShowcase.cardKicker}
+              </span>
+              <span className="inline-flex items-center rounded-full border border-[#E4E7EC] bg-white px-3 py-1 text-xs font-medium text-[#667085]">
+                Step {activeStepIndex + 1} of {activeService.steps.length}: {activeStep}
+              </span>
+              <button
+                type="button"
+                className="inline-flex items-center rounded-full border border-[#CFE3FF] bg-white px-3 py-1 text-xs font-semibold text-[#0F62C7] transition-colors duration-200 hover:bg-[#F5F9FF]"
+              >
+                {activeShowcase.cta}
+              </button>
+            </div>
+
+            <div className="mt-4 flex flex-wrap gap-2">
+              <span className="inline-flex items-center rounded-full border border-[#E4E7EC] bg-white px-3 py-1 text-xs font-medium text-[#475467]">
+                Real-time updates
+              </span>
+              <span className="inline-flex items-center rounded-full border border-[#E4E7EC] bg-white px-3 py-1 text-xs font-medium text-[#475467]">
+                Seamless checkout
+              </span>
+              <span className="inline-flex items-center rounded-full border border-[#E4E7EC] bg-white px-3 py-1 text-xs font-medium text-[#475467]">
+                Mobile-first flow
+              </span>
+            </div>
+
+            <div className="mt-8 rounded-[36px] border border-[#E5E7EB] bg-[linear-gradient(180deg,#FFFFFF_0%,#F8FAFC_100%)] p-4  sm:p-5">
               <div className="flex gap-3">
                 {activeService.steps.map((step, index) => {
                   const isCompleted = index < displayStepIndex;
@@ -294,7 +321,7 @@ export default function AppServiceTabs() {
                         setActiveStep(step);
                       }}
                       aria-pressed={isActive}
-                      className="min-w-0 flex-1 rounded-[22px] p-2 text-left transition-transform duration-200 hover:-translate-y-0.5"
+                      className="min-w-0 flex-1 rounded-[28px] p-2 text-left transition-transform duration-200 hover:-translate-y-0.5"
                     >
                       <span className="flex items-center">
                         <StepStatusIcon state={state} stepNumber={index + 1} />

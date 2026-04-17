@@ -221,7 +221,7 @@ function useDesktopLayouts() {
   return desktopLayoutsLg;
 }
 
-const phoneFrameSrc = "/THis.avif";
+const phoneFrameSrc = "/mobileframe.png";
 
 function HeroPhone({
   screen,
@@ -277,18 +277,20 @@ function HeroPhone({
           <div className="absolute inset-x-[22%] bottom-6 h-10 rounded-full bg-black/10 blur-2xl" />
 
           <div className="relative isolate aspect-[1439/2920] drop-shadow-[0_26px_50px_rgba(15,23,42,0.18)]">
-            <div className="absolute left-[4.4%] right-[4.4%] top-[1.8%] bottom-[2.2%] z-10 overflow-hidden rounded-[2.4rem] bg-white">
-              <Image
-                src={screen.image}
-                alt={screen.title}
-                fill
-                sizes="(min-width: 1280px) 208px, 180px"
-                className="object-cover object-top"
-                priority={priority}
-              />
+            <div className="absolute left-[4.4%] right-[4.4%] top-[0.95%] bottom-[1.45%] z-10 translate-y-[1px] overflow-hidden rounded-[2.4rem] bg-white">
+              <div className="absolute top-px -bottom-[2.5%] left-0 right-0">
+                <Image
+                  src={screen.image}
+                  alt={screen.title}
+                  fill
+                  sizes="(min-width: 1280px) 208px, 180px"
+                  className="object-cover object-center"
+                  priority={priority}
+                />
+              </div>
             </div>
 
-            <div className="pointer-events-none absolute inset-0 z-30">
+            <div className="pointer-events-none absolute inset-0 z-0">
               <Image
                 src={phoneFrameSrc}
                 alt=""
@@ -322,17 +324,19 @@ function MobilePhoneFrame({ screen, bobProgress, reduceMotion, index }) {
       <div className="absolute inset-x-[24%] bottom-6 h-10 rounded-full bg-black/10 blur-2xl" />
 
       <div className="relative isolate aspect-[1439/2920] drop-shadow-[0_22px_48px_rgba(15,23,42,0.14)]">
-        <div className="absolute left-[4.4%] right-[4.4%] top-[1.8%] bottom-[2.2%] z-10 overflow-hidden rounded-[2.4rem] bg-white">
-          <Image
-            src={screen.image}
-            alt={screen.title}
-            fill
-            sizes="260px"
-            className="object-cover object-top"
-          />
+        <div className="absolute left-[4.4%] right-[4.4%] top-[0.95%] bottom-[1.45%] z-10 translate-y-[1px] overflow-hidden rounded-[2.4rem] bg-white">
+          <div className="absolute top-px -bottom-[2.5%] left-0 right-0">
+            <Image
+              src={screen.image}
+              alt={screen.title}
+              fill
+              sizes="260px"
+              className="object-cover object-center"
+            />
+          </div>
         </div>
 
-        <div className="pointer-events-none absolute inset-0 z-30">
+        <div className="pointer-events-none absolute inset-0 z-0">
           <Image
             src={phoneFrameSrc}
             alt=""

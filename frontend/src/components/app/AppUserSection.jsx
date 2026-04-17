@@ -42,7 +42,7 @@ export default function AppUserSection() {
                 </p>
               </div>
 
-              <div className="mt-8 flex flex-1 flex-col justify-end gap-6 sm:mt-10">
+              <div className="mt-4 flex flex-1 flex-col justify-end gap-6 sm:mt-6">
                 <button
                   type="button"
                   className="inline-flex w-fit items-center gap-2 rounded-full border border-[#0088FF] bg-white px-5 py-3 text-sm font-semibold text-[#0088FF] transition-colors duration-200 hover:bg-[rgba(0,136,255,0.06)] sm:px-6 sm:text-base"
