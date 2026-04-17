@@ -274,12 +274,18 @@ export default function AppServiceTabs() {
               {activeService.description}
             </p>
 
+            <p className="mt-3 text-[15px] leading-[1.7] text-[#7A8599] sm:text-[16px]">
+              <span className="font-semibold text-[#344054]">
+                {activeShowcase.cardTitle}
+              </span>{" "}
+              is built for {activeShowcase.cardCaption.toLowerCase()}, helping users
+              move from {activeService.steps[0]} to{" "}
+              {activeService.steps[activeService.steps.length - 1]} with fewer taps.
+            </p>
+
             <div className="mt-5 flex flex-wrap items-center gap-3">
               <span className="inline-flex items-center rounded-full border border-[#D7E7FF] bg-[#F3F8FF] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#0F4B86]">
                 {activeShowcase.cardKicker}
-              </span>
-              <span className="inline-flex items-center rounded-full border border-[#E4E7EC] bg-white px-3 py-1 text-xs font-medium text-[#667085]">
-                Step {activeStepIndex + 1} of {activeService.steps.length}: {activeStep}
               </span>
               <button
                 type="button"
