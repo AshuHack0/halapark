@@ -195,7 +195,7 @@ function ServiceCard({ service, index, cardRef, isActive }) {
 }
 
 export default function GoodLookingServicesSection() {
-  const featuredServices = useMemo(() => servicesData.slice(0, 6), []);
+  const featuredServices = useMemo(() => servicesData.slice(0, 7), []);
   const prefersReducedMotion = useReducedMotion();
   const [activeServiceIndex, setActiveServiceIndex] = useState(0);
   const cardRefs = useRef([]);

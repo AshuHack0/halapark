@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef } from "react";
 import {
   motion,
   useMotionTemplate,
@@ -10,19 +10,19 @@ import {
   useSpring,
   useTransform,
 } from "framer-motion";
+import Link from "next/link";
 import Image from "next/image";
 import { Building2, Layers, TrendingUp } from "lucide-react";
 
-const headingText = "Who We Are";
-const audienceContent = {
-  business: {
-    heading: "Turning Parking into a Valuable Asset",
-    body: "Hala Park is a smart parking infrastructure company focused on helping businesses unlock the full financial and operational potential of their parking spaces.",
-  },
-  users: {
-    heading: "Parking Made Simple for Users",
-    body: "We make parking fast and stress-free for everyday drivers. Users can instantly see available parking in real time, reserve and pay within seconds, and move through entry and exit without tickets, delays, or manual steps. With automated access and barrier-free systems, parking becomes fast, predictable, and effortless from start to finish.",
-  },
+const whoWeAreContent = {
+  heading: "Who We Are",
+  paragraphs: [
+    "HalaPark is a smart parking company building the future of how cities park, move, and operate.",
+    "We turn everyday parking struggles into smooth, digital experiences where finding a space is fast, simple, and stress-free.",
+    "Behind the scenes, we connect drivers, businesses, and property owners on one powerful platform that makes parking smarter and easier to manage.",
+    "HalaPark brings real-time control, clear insights, and better efficiency.",
+    "We are here to transform parking from a daily challenge into a seamless part of modern urban life by maximizing space, improving operations, and building smarter cities for the future.",
+  ],
 };
 
 const highlights = [
@@ -53,35 +53,25 @@ const chipLabels = [
   "Monetisation-ready",
 ];
 
-function MagicHeading({ text, reduced }) {
+function MagicHeading({ text }) {
   const words = text.split(" ");
-  const accent = new Set(
-    words
-      .map((w, i) => (["Parking", "Asset", "Class"].includes(w) ? i : null))
-      .filter((i) => i != null),
-  );
-
+  const lastWord = words[words.length - 1];
+  const firstWords = words.slice(0, -1).join(" ");
   return (
-    <h2
-      id="who-we-are-heading"
-      className="mt-5 text-[clamp(2.35rem,4.6vw,3.6rem)] font-medium leading-[1.06] tracking-[-0.04em] [text-wrap:balance]"
-    >
-      {words.map((word, i) => {
-        const isAccent = accent.has(i);
-        return (
-          <span
-            key={`${word}-${i}`}
-            className={`inline-block pr-[0.28em] [-webkit-box-decoration-break:clone] [box-decoration-break:clone] ${
-              isAccent
-                ? "text-[#0078E0]"
-                : "text-[#050A13]"
-            }`}
-          >
-            {word}
-          </span>
-        );
-      })}
-    </h2>
+    <>
+      <p className="inline-flex items-center rounded-full border border-[#7AB9FF]/45 bg-white/85 px-4 py-1.5 text-[12px] font-semibold uppercase tracking-[0.14em] text-[#0078E0] sm:text-[13px]">
+        WHO WE ARE
+      </p>
+      <h2
+        id="who-we-are-heading"
+        className="mt-4 max-w-[900px] text-[clamp(2.35rem,3.9vw,3.45rem)] font-semibold leading-[1.02] tracking-[-0.055em] text-[#050A13]"
+      >
+        {firstWords}{" "}
+        <span className="bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">
+          {lastWord}
+        </span>
+      </h2>
+    </>
   );
 }
 
@@ -89,8 +79,6 @@ export default function WhoWeAre() {
   const sectionRef = useRef(null);
   const prefersReducedMotion = useReducedMotion();
   const reduced = !!prefersReducedMotion;
-  const [activeAudience, setActiveAudience] = useState("business");
-  const activeContent = audienceContent[activeAudience];
 
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -301,7 +289,7 @@ export default function WhoWeAre() {
                   }
             }
           >
-            <motion.div {...fadeUp}>
+            {/* <motion.div {...fadeUp}>
               <motion.div
                 className="relative inline-flex items-center gap-1.5 overflow-hidden rounded-full border border-[#0088FF]/25 bg-white/70 px-2.5 py-1 backdrop-blur-md sm:gap-2 sm:px-3"
                 whileHover={reduced ? undefined : { scale: 1.02 }}
@@ -338,48 +326,38 @@ export default function WhoWeAre() {
                   {headingText}
                 </p>
               </motion.div>
-            </motion.div>
+            </motion.div> */}
 
-            <motion.div
-              {...fadeUp}
-              className="mt-5 inline-flex items-center rounded-full border border-slate-200 bg-white/75 p-1 backdrop-blur-sm"
-            >
-              <button
-                type="button"
-                onClick={() => setActiveAudience("users")}
-                className={`rounded-full px-4 py-1.5 text-sm font-semibold transition ${
-                  activeAudience === "users"
-                    ? "bg-[#0088FF] text-white"
-                    : "text-slate-700 hover:text-[#0088FF]"
-                }`}
+            {/* Direction: Keep the Who We Are copy simple and unified (no Users/Business split). */}
+            {/* Preserved reference:
+              <motion.div
+                {...fadeUp}
+                className="mt-5 inline-flex items-center rounded-full border border-slate-200 bg-white/75 p-1 backdrop-blur-sm"
               >
-                Users
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveAudience("business")}
-                className={`rounded-full px-4 py-1.5 text-sm font-semibold transition ${
-                  activeAudience === "business"
-                    ? "bg-[#0088FF] text-white"
-                    : "text-slate-700 hover:text-[#0088FF]"
-                }`}
-              >
-                Business
-              </button>
-            </motion.div>
-
+                <button type="button" className="rounded-full px-4 py-1.5 text-sm font-semibold">
+                  Users
+                </button>
+                <button type="button" className="rounded-full px-4 py-1.5 text-sm font-semibold">
+                  Business
+                </button>
+              </motion.div>
+            */}
             <MagicHeading
-              key={activeAudience}
-              text={activeContent.heading}
+              text={whoWeAreContent.heading}
               reduced={reduced}
             />
 
-            <motion.p
-              className="mt-6 max-w-xl text-base leading-relaxed text-slate-600 sm:text-lg"
-              {...fadeUp}
-            >
-              {activeContent.body}
-            </motion.p>
+            <div className="mt-6 max-w-xl space-y-4">
+              {whoWeAreContent.paragraphs.map((paragraph) => (
+                <motion.p
+                  key={paragraph}
+                  className="text-base leading-relaxed text-slate-600 sm:text-md"
+                  {...fadeUp}
+                >
+                  {paragraph}
+                </motion.p>
+              ))}
+            </div>
 
             <motion.div
               className="mt-8 flex flex-wrap gap-3"
@@ -394,6 +372,27 @@ export default function WhoWeAre() {
                     }
               }
             >
+              <motion.div
+                variants={
+                  reduced
+                    ? undefined
+                    : {
+                        hidden: { opacity: 0, y: 10 },
+                        visible: {
+                          opacity: 1,
+                          y: 0,
+                          transition: { duration: 0.4, ease: containerEase },
+                        },
+                      }
+                }
+              >
+                <Link
+                  href="/about-us"
+                  className="inline-flex items-center rounded-full bg-[#0088FF] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#0078E0]"
+                >
+                  Know More
+                </Link>
+              </motion.div>
               {/* {chipLabels.map((label) => (
                 <motion.span
                   key={label}
@@ -419,6 +418,8 @@ export default function WhoWeAre() {
             </motion.div>
           </motion.div>
 
+          {/* Direction: Preserve this right-side block for now.
+              Future option from design note: replace/expand this with a business-focused visual section and related image. */}
           <motion.div
             className="relative lg:col-span-6 lg:pt-1"
             style={{ y: colRightY }}
@@ -439,77 +440,35 @@ export default function WhoWeAre() {
               viewport={{ once: true, amount: 0.25 }}
             />
 
-            <ul className="relative flex flex-col gap-4 sm:gap-5">
-              {highlights.map((item, index) => {
-                const Icon = item.icon;
-                return (
-                  <motion.li
-                    key={item.title}
-                    initial={
-                      reduced ? false : { opacity: 0, x: 48, rotateY: -10, filter: "blur(6px)" }
+            {/* Preserved reference: right-side cards section kept here for direction.
+              <ul className="relative flex flex-col gap-4 sm:gap-5"> ... </ul>
+            */}
+            <motion.div
+              initial={reduced ? false : { opacity: 0, x: 36, filter: "blur(6px)" }}
+              whileInView={
+                reduced
+                  ? undefined
+                  : {
+                      opacity: 1,
+                      x: 0,
+                      filter: "blur(0px)",
+                      transition: { duration: 0.72, ease: containerEase },
                     }
-                    whileInView={
-                      reduced
-                        ? undefined
-                        : {
-                            opacity: 1,
-                            x: 0,
-                            rotateY: 0,
-                            filter: "blur(0px)",
-                            transition: {
-                              ...springPop,
-                              delay: index * 0.12,
-                            },
-                          }
-                    }
-                    viewport={{ once: true, amount: 0.3, margin: "0px 0px -36px 0px" }}
-                    whileHover={
-                      reduced
-                        ? undefined
-                        : { y: -6, scale: 1.015, transition: springSoft }
-                    }
-                    style={{ transformPerspective: 1200 }}
-                    className="group/card relative"
-                  >
-                    <div className="relative overflow-hidden rounded-[20px] border border-white/70 bg-white/75 p-px shadow-[0_2px_16px_-6px_rgba(6,6,22,0.12),0_20px_48px_-24px_rgba(0,136,255,0.12)] backdrop-blur-md sm:rounded-[22px]">
-                      <div className="pointer-events-none absolute inset-0 rounded-[19px] bg-gradient-to-br from-[#0088FF]/[0.12] via-transparent to-[#2563EB]/[0.12] opacity-0 transition-opacity duration-500 group-hover/card:opacity-100 sm:rounded-[21px]" />
-                      {!reduced && (
-                        <span className="pointer-events-none absolute -left-1/2 top-0 h-full w-1/2 bg-gradient-to-r from-transparent via-white/40 to-transparent opacity-0 transition-opacity duration-300 group-hover/card:opacity-100">
-                          <span
-                            className="absolute inset-0"
-                            style={{
-                              animation: "who-shimmer 1.2s ease-in-out infinite",
-                            }}
-                          />
-              </span>
-                      )}
-                      <div className="relative rounded-[18px] bg-white/92 p-5 sm:rounded-[20px] sm:p-6">
-                        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#0088FF]/30 to-transparent opacity-60" />
-                        <div className="flex gap-4">
-                          <motion.div
-                            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#0088FF]/15 to-[#2563EB]/10 text-[#0088FF] ring-1 ring-[#0088FF]/15"
-                            whileHover={
-                              reduced ? undefined : { rotate: [0, -6, 6, 0], scale: 1.06 }
-                            }
-                            transition={{ duration: 0.45 }}
-                          >
-                            <Icon className="h-6 w-6" strokeWidth={1.75} aria-hidden />
-                          </motion.div>
-                          <div className="min-w-0">
-                            <h3 className="text-base font-semibold text-[#050A13] sm:text-[17px]">
-                              {item.title}
-                            </h3>
-                            <p className="mt-1.5 text-sm leading-relaxed text-slate-600 sm:text-[15px]">
-                              {item.description}
-            </p>
-          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </motion.li>
-                );
-              })}
-            </ul>
+              }
+              viewport={{ once: true, amount: 0.3, margin: "0px 0px -36px 0px" }}
+              className="relative overflow-hidden rounded-[24px] border border-white/70 bg-white/80 p-2 shadow-[0_2px_16px_-6px_rgba(6,6,22,0.12),0_20px_48px_-24px_rgba(0,136,255,0.12)] backdrop-blur-md"
+            >
+              <div className="relative overflow-hidden rounded-[18px]">
+                <Image
+                  src="/hf_20260327_065515_cd3808b8-d99d-4faa-817d-e3f772726da6.png"
+                  alt="HalaPark business parking overview"
+                  width={900}
+                  height={640}
+                  className="h-auto w-full object-cover"
+                  priority={false}
+                />
+              </div>
+            </motion.div>
           </motion.div>
         </div>
       </div>

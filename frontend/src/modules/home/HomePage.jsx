@@ -20,29 +20,37 @@ import Testimonials from "./sections/Testimonials";
 import BlogSection from "./sections/BlogSection";
 import HalaParkInAction from "./sections/HalaParkInAction";
 import SupportContactCTA from "./sections/SupportContactCTA";
+import HowItWorksDemoSection from "./sections/HowItWorksDemoSection";
+import BecomePartnerSection from "./sections/BecomePartnerSection";
+import SmartParkingEcosystemSection from "./sections/SmartParkingEcosystemSection";
 
 export default function HomePage() {
   return (
     <div className="min-h-screen font-sans">
       <HeroSection />
       <WhoWeAre />
-      <WhyHalapark />
-        <AiPoweredParkingService />
-      <BlackBanner />
+       <HowItWorksDemoSection />
+      {/* <WhyHalapark /> */}
+            <SmartParkingEcosystemSection />
+        <BecomePartnerSection />
+
+
+      {/* <BlackBanner /> */}
       {/* <EnterpriseSolutions /> */}
       <GoodLookingServicesSection />
-      <SolutionIntegration />
-
+      {/* <SolutionIntegration /> */}
+        <AiPoweredParkingService />
       <TechnologySection />
     
       {/* <TrustedUsers /> */}
       {/* <MajorFocusHighlight /> */}
-      <GlobalMomentumSection />
+      {/* <GlobalMomentumSection /> */}
       {/* <ParkingJourneyScrollSection /> */}
       {/* <CertificationsSection /> */}
       {/* <ClientsPartners /> */}
       {/* <SmartFeatures /> */}
       {/* <SupportContactCTA /> */}
+    
       <HalaParkInAction />
     </div>
   );

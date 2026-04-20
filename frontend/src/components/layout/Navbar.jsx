@@ -88,9 +88,9 @@ const ArrowRightIcon = () => (
 const navLinks = [
   { href: "/", key: "home" },
   // { href: "/how-it-works", key: "howItWorks" },
-  { href: "/app", key: "app" },
-  { href: "#services", key: "services", hasDropdown: true },
-  { href: "/solutions", key: "solutions" },
+  { href: "/app", key: "parkuser", dropdownType: "parkuser" },
+  { href: "#services", key: "services", dropdownType: "services" },
+  // { href: "/solutions", key: "solutions" },
   { href: "/business", key: "business" },
   { href: "/about", key: "aboutUs" },
   { href: "/faqs", key: "faqs" },
@@ -102,7 +102,9 @@ const UI_TEXT = {
   en: {
     nav: {
       home: "Home",
-      app: "App",
+      parkuser: "Park User",
+      parkLocation: "Park Location",
+      mobileApp: "Mobile App",
       services: "Services",
       solutions: "Solutions",
       business: "Business",
@@ -116,7 +118,9 @@ const UI_TEXT = {
   ar: {
     nav: {
       home: "الرئيسية",
-      app: "التطبيق",
+      parkuser: "مستخدم بارك",
+      parkLocation: "موقع الموقف",
+      mobileApp: "تطبيق الجوال",
       services: "الخدمات",
       solutions: "الحلول",
       business: "الأعمال",
@@ -159,17 +163,25 @@ export default function Navbar() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
+  const [parkuserOpen, setParkuserOpen] = useState(false);
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
+  const [mobileParkuserOpen, setMobileParkuserOpen] = useState(false);
   const [language, setLanguage] = useState(getInitialLanguage);
   const [hash, setHash] = useState("");
   const isArabic = language === "ar";
   const copy = UI_TEXT[language];
   const servicesMenuRef = useRef(null);
+  const parkuserMenuRef = useRef(null);
   const servicesCloseTimerRef = useRef(null);
+  const parkuserCloseTimerRef = useRef(null);
   const serviceLinks = servicesData.map((service) => ({
     href: `/services/${service.slug}`,
     label: isArabic ? (SERVICE_LABELS_AR[service.slug] || service.name) : service.name,
   }));
+  const parkuserLinks = [
+    { href: "/app#park-location", label: copy.nav.parkLocation },
+    { href: "/app#mobile-app", label: copy.nav.mobileApp },
+  ];
 
   useEffect(() => {
     const handleResize = () => {
@@ -206,11 +218,18 @@ export default function Navbar() {
       ) {
         setServicesOpen(false);
       }
+      if (
+        parkuserMenuRef.current &&
+        !parkuserMenuRef.current.contains(event.target)
+      ) {
+        setParkuserOpen(false);
+      }
     };
 
     const handleEsc = (event) => {
       if (event.key === "Escape") {
         setServicesOpen(false);
+        setParkuserOpen(false);
       }
     };
 
@@ -219,6 +238,9 @@ export default function Navbar() {
     return () => {
       if (servicesCloseTimerRef.current) {
         window.clearTimeout(servicesCloseTimerRef.current);
+      }
+      if (parkuserCloseTimerRef.current) {
+        window.clearTimeout(parkuserCloseTimerRef.current);
       }
       document.removeEventListener("mousedown", handleClickOutside);
       document.removeEventListener("keydown", handleEsc);
@@ -240,6 +262,24 @@ export default function Navbar() {
     servicesCloseTimerRef.current = window.setTimeout(() => {
       setServicesOpen(false);
       servicesCloseTimerRef.current = null;
+    }, DROPDOWN_CLOSE_DELAY_MS);
+  };
+
+  const openParkuserDropdown = () => {
+    if (parkuserCloseTimerRef.current) {
+      window.clearTimeout(parkuserCloseTimerRef.current);
+      parkuserCloseTimerRef.current = null;
+    }
+    setParkuserOpen(true);
+  };
+
+  const closeParkuserDropdownWithDelay = () => {
+    if (parkuserCloseTimerRef.current) {
+      window.clearTimeout(parkuserCloseTimerRef.current);
+    }
+    parkuserCloseTimerRef.current = window.setTimeout(() => {
+      setParkuserOpen(false);
+      parkuserCloseTimerRef.current = null;
     }, DROPDOWN_CLOSE_DELAY_MS);
   };
 
@@ -266,6 +306,10 @@ export default function Navbar() {
   const isLinkActive = (href) => {
     if (href === "#services") {
       return pathname.startsWith("/services") || (pathname === "/" && hash === "#services");
+    }
+    if (href.includes("#") && !href.startsWith("#")) {
+      const [hrefPath, hrefHash] = href.split("#");
+      return pathname === hrefPath && hash === `#${hrefHash}`;
     }
     if (href.startsWith("#")) {
       return pathname === "/" && hash === href;
@@ -298,7 +342,7 @@ export default function Navbar() {
                 {navLinks.map((link) => {
                   const isActive = isLinkActive(link.href);
 
-                  if (link.hasDropdown) {
+                  if (link.dropdownType === "services") {
                     return (
                       <div
                         key={link.key}
@@ -344,6 +388,63 @@ export default function Navbar() {
                               onClick={() => setServicesOpen(false)}
                             >
                               <span>{service.label}</span>
+                              <span className="shrink-0 opacity-80">
+                                <ArrowRightIcon />
+                              </span>
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  }
+
+                  if (link.dropdownType === "parkuser") {
+                    const parkuserActive = pathname === "/app";
+                    return (
+                      <div
+                        key={link.key}
+                        ref={parkuserMenuRef}
+                        className="relative"
+                        onMouseEnter={openParkuserDropdown}
+                        onMouseLeave={closeParkuserDropdownWithDelay}
+                      >
+                        <button
+                          type="button"
+                          className={`inline-flex h-11 items-center justify-center gap-1 border-b-2 px-4 text-[1.02rem] font-semibold transition ${
+                            parkuserActive
+                              ? "border-[#0088FF] text-[#0078E0]"
+                              : "border-transparent text-slate-900 hover:text-[#0078E0]"
+                          }`}
+                          aria-haspopup="menu"
+                          aria-expanded={parkuserOpen}
+                          onClick={() => setParkuserOpen((v) => !v)}
+                        >
+                          <span className="block whitespace-nowrap">
+                            {copy.nav[link.key]}
+                          </span>
+                          <ChevronDownIcon open={parkuserOpen} />
+                        </button>
+
+                        <div
+                          className={`absolute left-1/2 top-full z-[60] mt-2 w-[250px] -translate-x-1/2 rounded-2xl border border-[#CFE2FA]/75 bg-white/95 p-2 shadow-[0_24px_60px_rgba(15,23,42,0.16)] backdrop-blur-sm transition ${
+                            parkuserOpen
+                              ? "pointer-events-auto opacity-100 translate-y-0"
+                              : "pointer-events-none opacity-0 -translate-y-1"
+                          }`}
+                          role="menu"
+                        >
+                          {parkuserLinks.map((item) => (
+                            <Link
+                              key={item.href}
+                              href={item.href}
+                              className={`flex items-center justify-between rounded-xl px-3 py-3.5 text-sm transition ${
+                                isLinkActive(item.href)
+                                  ? "bg-[rgba(0,136,255,0.12)] font-semibold text-[#0078E0]"
+                                  : "text-slate-700 hover:bg-[rgba(0,136,255,0.08)] hover:text-[#0078E0]"
+                              }`}
+                              onClick={() => setParkuserOpen(false)}
+                            >
+                              <span>{item.label}</span>
                               <span className="shrink-0 opacity-80">
                                 <ArrowRightIcon />
                               </span>
@@ -478,7 +579,7 @@ export default function Navbar() {
             {navLinks.map((link) => {
               const isActive = isLinkActive(link.href);
 
-              if (link.hasDropdown) {
+              if (link.dropdownType === "services") {
                 return (
                   <div key={link.key} className="rounded-lg">
                     <button
@@ -514,6 +615,54 @@ export default function Navbar() {
                             }`}
                           >
                             <span>{service.label}</span>
+                            <span className="shrink-0 opacity-80">
+                              <ArrowRightIcon />
+                            </span>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
+              if (link.dropdownType === "parkuser") {
+                const parkuserActive = pathname === "/app";
+                return (
+                  <div key={link.key} className="rounded-lg">
+                    <button
+                      type="button"
+                      onClick={() => setMobileParkuserOpen((v) => !v)}
+                      className={`flex w-full items-center justify-between rounded-lg px-3 py-3 text-[1.03rem] font-medium transition ${
+                        parkuserActive || mobileParkuserOpen
+                          ? "bg-[rgba(0,136,255,0.12)] text-[#0078E0]"
+                          : "text-gray-700 hover:text-[#0088FF] hover:bg-[rgba(0,136,255,0.08)]"
+                      }`}
+                    >
+                      <span>{copy.nav[link.key]}</span>
+                      <ChevronDownIcon open={mobileParkuserOpen} />
+                    </button>
+                    <div
+                      className={`overflow-hidden transition-all duration-200 ${
+                        mobileParkuserOpen ? "max-h-[240px] opacity-100" : "max-h-0 opacity-0"
+                      }`}
+                    >
+                      <div className="mt-1 space-y-1 rounded-lg border border-slate-200 bg-slate-50 p-2">
+                        {parkuserLinks.map((item) => (
+                          <Link
+                            key={item.href}
+                            href={item.href}
+                            onClick={() => {
+                              setMenuOpen(false);
+                              setMobileParkuserOpen(false);
+                            }}
+                            className={`flex items-center justify-between rounded-md px-3 py-3 text-sm transition ${
+                              isLinkActive(item.href)
+                                ? "bg-[rgba(0,136,255,0.12)] font-semibold text-[#0078E0]"
+                                : "text-slate-700 hover:bg-[rgba(0,136,255,0.08)] hover:text-[#0078E0]"
+                            }`}
+                          >
+                            <span>{item.label}</span>
                             <span className="shrink-0 opacity-80">
                               <ArrowRightIcon />
                             </span>

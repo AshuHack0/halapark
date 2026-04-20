@@ -13,9 +13,13 @@ export default function AppPage() {
     <div className="min-h-screen bg-white">
       <AppHero />
       <AppUserSection />
-      <AppServiceTabs />
+      <section id="park-location">
+        <AppServiceTabs />
+      </section>
 
-      <AppScreenshots />
+      <section id="mobile-app">
+        <AppScreenshots />
+      </section>
 
       {/* <AppFeatureHighlights /> */}
       <AboutFeatures data={featureHighlights} />

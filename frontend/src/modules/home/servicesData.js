@@ -247,6 +247,52 @@ export const servicesData = [
       "https://framerusercontent.com/assets/lYtF9CvnSQ87rJssRO4TBGeHuM.mp4",
   },
   {
+    slug: "airport-parking-service",
+    name: "Airport Parking Service",
+    summary:
+      "Seamless drop-off, pickup, and long-term parking management at airports.",
+    detailHeadline: "Airport Parking, Without the Rush.",
+    detailBody:
+      "HalaPark streamlines airport parking journeys with coordinated drop-off, pickup, and long-term parking operations designed for predictable flow and minimal delays.",
+    detailCtaLabel: "Learn More",
+    detailCtaHref: "/contact",
+    detailIntro:
+      "Airport Parking Service helps operators and travelers manage high-volume airport traffic with smoother access, better timing, and clearer control.",
+    detailSections: [
+      {
+        title: "What It Does",
+        body:
+          "Supports structured drop-off and pickup zones while organizing long-term parking inventory in one connected operational flow.",
+      },
+      {
+        title: "Why It Matters",
+        body:
+          "Airports reduce congestion and improve traveler experience by making each parking stage more predictable and easier to manage.",
+      },
+      {
+        title: "Placeholder Scope",
+        body:
+          "Dummy detail content for now: this page can later include terminal mappings, zone configurations, and airport operations views.",
+      },
+    ],
+    highlights: [
+      "Faster drop-off and pickup coordination",
+      "Long-term parking inventory visibility",
+      "Smoother traffic flow around airport zones",
+    ],
+    useCases: [
+      "Airport terminal drop-off lanes",
+      "Scheduled pickup coordination zones",
+      "Long-stay airport parking facilities",
+    ],
+    outcomes: [
+      "Lower congestion in peak airport windows",
+      "Improved traveler parking experience",
+      "Better operational control for airport teams",
+    ],
+    mediaType: "integrations",
+  },
+  {
     slug: "parking-management",
     name: "Parking Management",
     summary:

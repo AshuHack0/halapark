@@ -8,11 +8,11 @@ const slides = [
   {
     id: 1,
     cardImg: "/hf_20260327_065515_cd3808b8-d99d-4faa-817d-e3f772726da6.png",
-    tag: "Transform Parking Into a Scalable Revenue Engine",
+    tag: "Smart Parking Solutions Connecting Drivers, Operators, and Property Owners",
     title:
-      "Hala Park enables property owners, developers, and operators to convert parking infrastructure into fully automated, revenue-generating assets powered by smart technology and AI-driven operations.",
+      "HalaPark is a unified platform that enables drivers to find parking easily while helping operators and property owners manage, optimize, and increase revenue from parking spaces through a connected digital system",
     subtitle:
-      "Hala Park enables property owners, developers, and operators to convert parking infrastructure into fully automated, revenue-generating assets powered by smart technology and AI-driven operations.",
+      "HalaPark is a unified platform that enables drivers to find parking easily while helping operators and property owners manage, optimize, and increase revenue from parking spaces through a connected digital system",
     description:
       "Real-time availability helps you lock in your spot before you even step out. No circling, no guessing, just smooth, predictable parking every time.",
     image: "/hf_20260327_061900_db12a62e-2867-44b6-83f0-ea7f1a5442ef.png",
@@ -21,9 +21,9 @@ const slides = [
   {
     id: 2,
     cardImg: "/3ca506f760b463d2f3eb686fb08621c5.jpg.jpeg",
-    tag: "Seamlessly Connect Your Parking Ecosystem",
+    tag: "Turn Parking Spaces into a Reliable Revenue Stream",
     title:
-      "Integrate hardware, software, and operations into one unified system for smarter, more efficient parking management.",
+      "With HalaPark, Property owners, developer and operators can efficiently manage parking spaces, improve utilization, and increase revenue through a unified smart parking system",
 
     subtitle:
       "From single properties to large portfolios, Hala Park enables you to grow revenue streams, reduce operational costs, and future-proof your parking ecosystem.",
@@ -34,9 +34,9 @@ const slides = [
   {
     id: 3,
     cardImg: "/hf_20260327_071129_800d49da-6fb8-4b7e-a1ba-b32db4c31565.png",
-    tag: "Scale Effortlessly. Earn Continuously.",
+    tag: "Find and book parking in seconds.",
     title:
-      "From single properties to large portfolios, Hala Park enables you to grow revenue streams, reduce operational costs, and future-proof your parking ecosystem.",
+      "Quickly discover available parking, reserve your spot, and park stress-free with HalaPark",
     subtitle: "Charging that fits your routine.",
     description:
       "Locate and reserve charging-enabled parking in one go. Power up while you go about your day, no extra stops needed.",
@@ -204,11 +204,11 @@ export default function HeroSection() {
 
           <div className="relative flex min-h-125 w-full flex-col justify-center px-8 py-14 sm:px-12 md:min-h-[620px] lg:px-20">
             <div className="relative z-10 w-full max-w-lg">
-              <h1 className="text-5xl font-semibold text-white sm:text-6xl md:text-7xl">
+              <h1 className="text-5xl font-semibold text-white sm:text-4xl md:text-5xl">
                 {currentSlide.tag}
               </h1>
 
-              <p className="mt-5 max-w-sm text-sm leading-relaxed text-white/90 sm:text-base">
+              <p className="mt-5 max-w-sm text-sm leading-relaxed text-white/90 sm:text-md">
                 {currentSlide.title}
               </p>
 

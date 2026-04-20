@@ -103,6 +103,21 @@ const whyItems = [
   },
 ];
 
+const whyStats = [
+  {
+    icon: Clock3,
+    text: "Save up to 30% of parking time",
+  },
+  {
+    icon: CircleDollarSign,
+    text: "Earn passive income from unused spaces",
+  },
+  {
+    icon: Gauge,
+    text: "Thousands of parking slots available",
+  },
+];
+
 function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
 }
@@ -119,7 +134,7 @@ function SectionIntro({ centered = false }) {
 
         <h2
           id="ai-powered-parking-service-title"
-          className="mx-auto mt-4 max-w-[900px] text-[clamp(3rem,5.8vw,5rem)] font-medium leading-[1.03] tracking-[-0.06em] text-[#050A13]"
+          className="mx-auto mt-4 max-w-[900px] text-[clamp(2.4rem,4.8vw,4rem)] font-medium leading-[1.03] tracking-[-0.06em] text-[#050A13]"
         >
           A complete ecosystem for smarter parking
         </h2>
@@ -468,6 +483,28 @@ export default function WhyHalapark() {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      <div className="mx-auto mt-10 max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto grid max-w-[980px] gap-3 sm:grid-cols-3 sm:gap-4">
+          {whyStats.map((item) => {
+            const Icon = item.icon;
+
+            return (
+              <div
+                key={item.text}
+                className="flex items-center gap-2.5 rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-left"
+              >
+                <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#0088FF]/10 text-[#0088FF]">
+                  <Icon className="h-4 w-4" aria-hidden="true" />
+                </span>
+                <p className="text-sm font-medium leading-5 text-slate-700">
+                  {item.text}
+                </p>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>
