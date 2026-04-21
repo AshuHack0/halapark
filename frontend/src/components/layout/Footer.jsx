@@ -1,5 +1,13 @@
 "use client";
 import Link from "next/link";
+import {
+  FaFacebookF,
+  FaInstagram,
+  FaLinkedinIn,
+  FaTiktok,
+  FaXTwitter,
+  FaYoutube,
+} from "react-icons/fa6";
 
 export default function Footer() {
   const appDownloadUrl = "https://halapark.com/app";
@@ -16,6 +24,13 @@ export default function Footer() {
     { name: "Blog", href: "/blog" },
     { name: "FAQS", href: "/faqs" },
   ];
+
+  const socialLinks = [
+    { name: "LinkedIn", href: "https://www.linkedin.com/company/hala-car-park-rental-management-llc", icon: FaLinkedinIn },
+    { name: "Instagram", href: "https://www.instagram.com/halapark.info/", icon: FaInstagram },
+    { name: "Facebook", href: "https://www.facebook.com/Halapark.Info", icon: FaFacebookF },
+  ];
+
   return (
     <footer className="relative mt-12 w-full overflow-hidden border-t border-[#DCE8F7] bg-[linear-gradient(180deg,#F4F8FF_0%,#EEF5FF_100%)] text-black font-sans">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#E2EEFF] to-transparent" />
@@ -52,14 +67,30 @@ export default function Footer() {
 
         <div className="mt-8 grid gap-7 border-b border-[#C8D9EE] pb-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
           <div>
-           
+             <Link href="/" className="inline-flex items-center gap-1">
+              <img src="/logo-blue-11.svg" alt="HalaPark" className="h-10 w-auto  " />
+            </Link>
             <p className="mt-3 max-w-xs text-sm leading-6 text-black/70">
               Smart parking technology built for drivers, properties, and cities
               across the UAE.
             </p>
-             <Link href="/" className="inline-flex items-center gap-1">
-              <img src="/logo-blue-11.svg" alt="HalaPark" className="h-10 w-auto mt-5" />
-            </Link>
+            <div className="mt-4 flex flex-wrap items-center gap-2.5">
+              {socialLinks.map((social) => {
+                const Icon = social.icon;
+                return (
+                  <Link
+                    key={social.name}
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={social.name}
+                    className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#C9DCF3] bg-white text-[#0088FF] transition hover:border-[#0088FF] hover:bg-[#0088FF] hover:text-white"
+                  >
+                    <Icon className="h-4 w-4" aria-hidden="true" />
+                  </Link>
+                );
+              })}
+            </div>
           </div>
 
           <div>
