@@ -21,7 +21,7 @@ export default function Footer() {
       <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#E2EEFF] to-transparent" />
 
       <div className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-12">
-        <div className="rounded-2xl border border-[#CDE0F7] bg-white/80 p-5 shadow-[0_14px_34px_rgba(0,136,255,0.08)] backdrop-blur-sm sm:p-6">
+        {/* <div className="rounded-2xl border border-[#CDE0F7] bg-white/80 p-5 shadow-[0_14px_34px_rgba(0,136,255,0.08)] backdrop-blur-sm sm:p-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#0088FF]">
@@ -48,17 +48,18 @@ export default function Footer() {
               </Link>
             </div>
           </div>
-        </div>
+        </div> */}
 
         <div className="mt-8 grid gap-7 border-b border-[#C8D9EE] pb-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
           <div>
-            <Link href="/" className="inline-flex items-center gap-1">
-              <img src="/logo-blue-11.svg" alt="HalaPark" className="h-10 w-auto" />
-            </Link>
+           
             <p className="mt-3 max-w-xs text-sm leading-6 text-black/70">
               Smart parking technology built for drivers, properties, and cities
               across the UAE.
             </p>
+             <Link href="/" className="inline-flex items-center gap-1">
+              <img src="/logo-blue-11.svg" alt="HalaPark" className="h-10 w-auto mt-5" />
+            </Link>
           </div>
 
           <div>
@@ -161,7 +162,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-6 border-t border-[#D8E5F4] pt-4 text-xs text-black/60 sm:text-sm">
+        <div className="mt-6   pt-4 text-xs text-black/60 sm:text-sm">
           <p>© {new Date().getFullYear()} HalaPark. All rights reserved.</p>
         </div>
       </div>
