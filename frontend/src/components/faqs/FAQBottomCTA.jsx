@@ -13,7 +13,7 @@ export default function FAQBottomCTA() {
               Need More Help?
             </p>
             <h2 className="mt-2 text-2xl font-bold sm:text-[2rem]">
-              Still have questions?
+                Need More Help?
             </h2>
             <p className="mt-2 max-w-2xl text-sm leading-7 text-[#CFDDEF] sm:text-base">
               Our team can help with bookings, onboarding, account access, and
@@ -28,14 +28,7 @@ export default function FAQBottomCTA() {
             >
               Contact Us
             </Link>
-            <a
-              href={whatsappHref}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center rounded-full border border-white/20 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
-            >
-              WhatsApp Us
-            </a>
+           
           </div>
         </div>
       </div>
