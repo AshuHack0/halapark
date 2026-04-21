@@ -20,6 +20,7 @@ import Testimonials from "./sections/Testimonials";
 import BlogSection from "./sections/BlogSection";
 import HalaParkInAction from "./sections/HalaParkInAction";
 import SupportContactCTA from "./sections/SupportContactCTA";
+import HowItWorksDemoSection from "./sections/HowItWorksDemoSection";
 
 export default function HomePage() {
   return (
@@ -28,6 +29,7 @@ export default function HomePage() {
       <WhoWeAre />
       <WhyHalapark />
         <AiPoweredParkingService />
+            <HowItWorksDemoSection />
       <BlackBanner />
       {/* <EnterpriseSolutions /> */}
       <GoodLookingServicesSection />
