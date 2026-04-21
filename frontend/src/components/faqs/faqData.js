@@ -8,13 +8,13 @@ export const faqCategories = [
         id: "what-is-halapark",
         question: "What is HalaPark?",
         answer:
-          "HalaPark is a smart parking platform that lets users find, book, and manage parking spaces through a seamless digital experience.",
+          "HalaPark is a smart parking platform that enables users to find, book, and manage parking spaces seamlessly through a digital experience.",
       },
       {
         id: "why-use-halapark",
         question: "Why should I use HalaPark?",
         answer:
-          "HalaPark helps you save time, reduce parking stress, and access convenient locations with a cashless and user-friendly flow.",
+          "HalaPark helps you save time, reduce parking stress, and access convenient parking locations while offering a fully cashless and user-friendly experience.",
       },
       {
         id: "where-operates",
@@ -25,7 +25,7 @@ export const faqCategories = [
         id: "who-can-use",
         question: "Who can use HalaPark?",
         answer:
-          "HalaPark is available to individual drivers, businesses, and property owners.",
+          "HalaPark is available to individual drivers, businesses, and property owners looking to access or monetize parking spaces.",
       },
     ],
   },
@@ -38,34 +38,34 @@ export const faqCategories = [
         id: "book-in-advance",
         question: "Can I book parking in advance?",
         answer:
-          "Yes, you can search and reserve available parking spaces in advance.",
+          "Yes, you can search and reserve available parking spaces in advance based on your preferred location and time.",
       },
       {
         id: "how-far-advance",
         question: "How far in advance can I reserve a space?",
         answer:
-          "This depends on the location and provider. Available slots are shown during booking.",
+          "Booking availability depends on the specific location and parking provider. Available time slots will be displayed during booking.",
       },
       {
         id: "book-for-another",
         question: "Can I book parking for another person?",
-        answer: "Yes, by entering the correct vehicle details.",
+        answer: "Yes, you can make a booking on behalf of another driver by entering the correct vehicle details.",
       },
       {
         id: "recurring-longterm",
         question: "Are recurring or long-term bookings available?",
-        answer: "Yes, at selected locations.",
+        answer: "Yes, selected locations may offer recurring or long-term parking options, subject to availability.",
       },
       {
         id: "arrive-early-late",
-        question: "What happens if I arrive earlier or later?",
+        question: "What happens if I arrive earlier or later than my booking time?",
         answer:
-          "It may affect your booking and extra charges may apply based on location policy.",
+          "Early or late arrival may affect your booking depending on availability and location policies. Additional charges may apply if your parking exceeds the reserved time.",
       },
       {
         id: "space-guaranteed",
-        question: "Is my parking space guaranteed?",
-        answer: "Yes, once your booking is confirmed.",
+        question: "Is my parking space guaranteed once booked?",
+        answer: "Yes, confirmed bookings secure your parking space for the selected time, subject to the terms of the specific location.",
       },
     ],
   },
@@ -76,36 +76,36 @@ export const faqCategories = [
     items: [
       {
         id: "how-parking-works",
-        question: "How does parking work?",
+        question: "How does parking work on HalaPark?",
         answer:
-          "Search, book, and then follow access instructions for the selected location.",
+          "Simply search for a location, book your space, and follow the provided access instructions to park.",
       },
       {
         id: "access-location",
         question: "How do I access the parking location?",
         answer:
-          "Access is provided via QR code, license plate recognition, or location-specific instructions.",
+          "Access methods vary by location and may include QR code entry, license plate recognition, or access instructions provided in your booking confirmation.",
       },
       {
         id: "entry-after-booking",
-        question: "How does entry work after booking?",
+        question: "After making the booking, how can I enter the parking?",
         answer:
-          "ANPR (Automatic Number Plate Recognition) can open barriers automatically at supported sites.",
+          "Once your vehicle is successfully registered, the gate barrier will open automatically upon entry, as our system is equipped with ANPR (Automatic Number Plate Recognition)..",
       },
       {
         id: "cannot-access",
-        question: "What if I cannot access parking?",
-        answer: "Contact support immediately for assistance.",
+        question: "What should I do if I cannot access the parking area?",
+        answer: "Please contact HalaPark support immediately for assistance.",
       },
       {
         id: "spot-occupied",
-        question: "What if someone occupies my spot?",
-        answer: "Report it through support so the team can resolve it quickly.",
+        question: "What if another vehicle is occupying my reserved space?",
+        answer: "Report the issue through support, and our team will assist in resolving it as quickly as possible.",
       },
       {
         id: "multiple-entries",
-        question: "Are multiple entries allowed?",
-        answer: "Yes, within your booking validity and location rules.",
+        question: "Are multiple entries and exits allowed during a booking?",
+        answer: "Yes, multiple entries and exits are allowed as long as your booking remains valid within the reserved time period.",
       },
     ],
   },
@@ -118,12 +118,17 @@ export const faqCategories = [
         id: "fees-calculated",
         question: "How are parking fees calculated?",
         answer:
-          "Fees are based on location, duration, and applicable tariff.",
+          "FParking fees are based on location, duration, and the applicable parking tariff.",
       },
       {
         id: "payment-methods",
         question: "What payment methods are accepted?",
-        answer: "Credit and debit cards are accepted.",
+        answer: "HalaPark supports secure digital payments, including credit/debit cards.",
+      },
+        {
+        id: "payment-methods",
+        question: "Suggestion for Monthly/Yearly Booking – Will I receive invoices or receipts?",
+        answer: "Yes, a digital receipt is provided for every completed transaction.",
       },
       {
         id: "receive-invoices",
@@ -140,12 +145,12 @@ export const faqCategories = [
         id: "duplicate-charges",
         question: "Can duplicate charges occur?",
         answer:
-          "They should not occur. If you notice one, contact support for review.",
+          "Duplicate charges are not expected. If you notice an issue, please contact support for review.",
       },
       {
         id: "payment-fails",
-        question: "What if payment fails?",
-        answer: "The booking will not be confirmed until payment succeeds.",
+        question: "What happens if a payment fails?",
+        answer: "Your booking will not be confirmed until payment is successfully completed.",
       },
     ],
   },
@@ -156,14 +161,14 @@ export const faqCategories = [
     items: [
       {
         id: "cancel-booking",
-        question: "How can I cancel a booking?",
-        answer: "Email accounts@halapark.com to request cancellation.",
+        question: "What if I want to cancel my booking??",
+        answer: "If you wish to cancel your booking, you may send your request to our Accounts Team at accounts@halapark.com for assistance.",
       },
       {
         id: "refund-policy",
-        question: "What is the refund policy?",
+        question: "How long does it take to process refunds?",
         answer:
-          "Refunds can take up to 60 days and a 10% service charge is deducted.",
+          "Refund will be process within 60days and 10% will be deducted for service charge.",
       },
     ],
   },
@@ -174,13 +179,13 @@ export const faqCategories = [
     items: [
       {
         id: "extend-parking",
-        question: "Can I extend my parking time?",
-        answer: "Yes, if extension is available for your active booking.",
+        question: "Can I extend my parking duration?",
+        answer: "Yes, you may extend your parking duration provided that the parking space is still available in the application at the time of extension.",
       },
       {
         id: "exceed-time",
-        question: "What if I exceed my booked time?",
-        answer: "Additional charges may apply.",
+        question: "What happens if I exceed my booked time?",
+        answer: "Additional charges will apply based on the applicable parking tariff.",
       },
     ],
   },
@@ -191,19 +196,19 @@ export const faqCategories = [
     items: [
       {
         id: "rates-vary",
-        question: "Do rates vary by location?",
-        answer: "Yes, rates vary based on location and demand.",
+        question: "Do parking rates vary by location?",
+        answer: "Yes, pricing depends on the location, demand, and service type.",
       },
       {
         id: "specific-rules",
-        question: "Are there specific parking rules?",
-        answer: "Yes, rule details are shown during booking.",
+        question: "Are there specific rules for each parking facility?",
+        answer: "Yes, each location may have its own rules, which will be shared during booking.",
       },
       {
         id: "improper-parking",
         question: "What are the consequences of improper parking?",
         answer:
-          "It may result in penalties, extra charges, or restricted access.",
+          "Improper parking may result in penalties, additional charges, or restricted access.",
       },
     ],
   },
@@ -214,29 +219,29 @@ export const faqCategories = [
     items: [
       {
         id: "account-required",
-        question: "Is an account required?",
-        answer: "Yes, an account is required.",
+        question: "Is an account required to use HalaPark?",
+        answer: "Yes, an account is required to book and manage parking.",
       },
       {
         id: "multiple-vehicles",
-        question: "Can I add multiple vehicles?",
-        answer: "Yes.",
+        question: "Can I register multiple vehicles under one account?",
+        answer: "Yes, you may add and manage multiple vehicles under a single account. However, you will need to select the specific vehicle you intend to use.",
       },
       {
         id: "change-vehicle",
-        question: "Can I change my vehicle after booking?",
-        answer: "Only before entering the parking location.",
+        question: "Can I change the vehicle after booking?",
+        answer: "Vehicle changes are allowed only if the vehicle has not yet entered the parking premises. Once the vehicle is inside the facility, changes will no longer be permitted.",
       },
       {
         id: "booking-not-visible",
-        question: "My booking is not visible. What should I do?",
+        question: "What should I do if my booking is not visible?",
         answer:
-          "Refresh the app first. If the issue continues, contact support.",
+          "Please refresh the app or contact support if the issue persists.",
       },
       {
         id: "app-issues",
-        question: "What if the app is not working correctly?",
-        answer: "Update the app or contact support.",
+        question: "How do I resolve technical issues with the app?",
+        answer: "Ensure your app is updated. If the issue continues, contact support for assistance.",
       },
     ],
   },
@@ -247,18 +252,18 @@ export const faqCategories = [
     items: [
       {
         id: "incorrect-plate",
-        question: "What if my plate number is incorrect?",
-        answer: "Report it immediately to support.",
+        question: "What if my vehicle plate is recorded incorrectly?",
+        answer: "Please report the issue to support immediately to avoid incorrect charges.",
       },
       {
         id: "system-error",
-        question: "What if I face a system error?",
-        answer: "Contact support for troubleshooting.",
+        question: "What should I do in case of a system error?",
+        answer: "Report the issue through support with relevant details for prompt assistance.",
       },
       {
         id: "session-not-recorded",
-        question: "What if my parking session was not recorded?",
-        answer: "Support will investigate and help resolve it.",
+        question: "What if my parking session is not properly recorded?",
+        answer: "Contact support, and the issue will be investigated and corrected if necessary.",
       },
     ],
   },
@@ -270,12 +275,12 @@ export const faqCategories = [
       {
         id: "secure-locations",
         question: "Are parking locations secure?",
-        answer: "Yes, locations are monitored and managed.",
+        answer: "Yes, we ensure that all parking locations are secure, well-managed, and regularly monitored for safety and compliance.",
       },
       {
         id: "vehicle-monitored",
-        question: "Is my vehicle monitored at all times?",
-        answer: "Monitoring depends on the selected location.",
+        question: "Is my vehicle monitored while parked?",
+        answer: "Some locations offer surveillance or security services, depending on the facility.",
       },
     ],
   },
@@ -286,25 +291,25 @@ export const faqCategories = [
     items: [
       {
         id: "list-space",
-        question: "How do I list my parking space?",
+        question: "How can I list my parking space on HalaPark?",
         answer:
-          "Register and submit your parking details on the platform.",
+          "You can register as a partner and submit your parking space details through the platform.",
       },
       {
         id: "owner-earnings",
-        question: "How much can I earn?",
-        answer: "Earnings depend on location, demand, and usage.",
+        question: "What earning potential can I expect?",
+        answer: "Earnings depend on location, demand, and availability of your parking space.",
       },
       {
         id: "owner-fees",
-        question: "Are there listing or service fees?",
-        answer: "Fees depend on your agreement with HalaPark.",
+        question: "Are there any fees for listing my parking space?",
+        answer: "Fees and revenue-sharing models may apply depending on your agreement with HalaPark. Fulldetails are provided during onboarding.",
       },
       {
         id: "owner-payouts",
-        question: "How are payouts processed?",
+        question: "How and when are payments received?",
         answer:
-          "Payouts are processed securely after booking completion.",
+          "Payments are processed securely and released based on the agreed payout schedule, once the booking has been successfully completed.",
       },
     ],
   },
@@ -316,17 +321,17 @@ export const faqCategories = [
       {
         id: "booking-confirmations",
         question: "Will I receive booking confirmations?",
-        answer: "Yes, confirmations are sent instantly.",
+        answer: "Yes, confirmations are sent immediately after successful booking.",
       },
       {
         id: "expiry-reminders",
-        question: "Will I get reminders before expiry?",
-        answer: "Yes, reminder notifications are provided.",
+        question: "Are reminders sent before my parking expires?",
+        answer: "Yes, notifications may be sent to help you manage your parking time.",
       },
       {
         id: "parking-history",
         question: "Can I view my parking history?",
-        answer: "Yes, it is available in your account section.",
+        answer: "Yes, all past and active bookings are available in your account.",
       },
     ],
   },
@@ -338,17 +343,17 @@ export const faqCategories = [
       {
         id: "contact-support",
         question: "How can I contact support?",
-        answer: "Use the app or official support channels.",
+        answer: "You can reach support through the HalaPark app or official contact channels.",
       },
       {
         id: "dispute-process",
-        question: "How do I submit a dispute?",
-        answer: "Submit a request with the full booking details.",
+        question: "How do I dispute a charge or report an issue?",
+        answer: "Submit a request with relevant details, and the support team will investigate.",
       },
       {
         id: "resolution-time",
-        question: "How long does resolution take?",
-        answer: "Timelines vary, but requests are handled promptly.",
+        question: "What is the typical resolution time for support requests?",
+        answer: "Response times may vary, but most issues are addressed promptly.",
       },
     ],
   },
@@ -360,17 +365,17 @@ export const faqCategories = [
       {
         id: "verify-payments",
         question: "How do I verify payment requests?",
-        answer: "Use only official HalaPark platform channels.",
+        answer: "Only use payments within the HalaPark platform or official channels.",
       },
       {
         id: "payment-links",
-        question: "Does HalaPark send payment links?",
-        answer: "Only through verified channels.",
+        question: "Does HalaPark send payment links via SMS or email?",
+        answer: "HalaPark communicates only through verified channels. Always ensure the source is official.",
       },
       {
         id: "suspect-fraud",
-        question: "What should I do if I suspect fraud?",
-        answer: "Report it to HalaPark support immediately.",
+        question: "What should I do if I suspect fraudulent activity?",
+        answer: "Report the incident immediately to HalaPark support for investigation.",
       },
     ],
   },
