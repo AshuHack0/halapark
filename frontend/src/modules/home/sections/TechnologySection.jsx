@@ -152,14 +152,14 @@ export default function TechnologySection() {
           </h2> */}
           <div className="mx-auto max-w-[980px] text-center">
             <p className="text-[15px] font-semibold uppercase tracking-[0.1em] text-[#0088FF] sm:text-[16px]">
-              All-in-One System
+            All-in-One Intelligent System
             </p>
 
             <h2
               id="ai-powered-parking-service-title"
               className="mx-auto mt-4 max-w-[900px] text-[clamp(2.6rem,4.4vw,3.95rem)] font-medium leading-[1.03] tracking-[-0.06em] text-[#050A13]"
             >
-              Redefining Luxury Parking Management
+            Redefining the Future of Smart Parking Management
             </h2>
           </div>
           {/* <p className="text-sm sm:text-base lg:text-[16px] font-medium text-[#6D6D6D] max-w-2xl mx-auto px-4 sm:px-0">

@@ -10,7 +10,7 @@ export const servicesData = [
     slug: "smart-public-parking",
     name: "Smart Public Parking",
     summary:
-      "Find available parking near you in real time, reserve ahead, and pay digitally in one flow.",
+      "HalaPark lets you easily find and reserve nearby parking in advance. It offers a seamless digital experience with secure cashless payments and instant booking confirmation. From search to payment, everything is managed in one smoth flow for a fast, simple, and stress-free parking experience.",
     detailHeadline: "Find Available Parking. Book It. Drive In.",
     detailBody:
       "Real-time availability across the UAE's smartest parking network. Search by location, reserve your spot, and pay entirely through the app — no tickets, no cash, no queues.",
@@ -58,7 +58,7 @@ export const servicesData = [
     slug: "private-parking-rental",
     name: "Private Parking Rental",
     summary:
-      "List unused parking bays, accept bookings, and earn recurring income through managed rentals.",
+      "HalaPark helps owners and businesses rent out unused parking spaces for steady income. It provides real-time control of availability, pricing, and access through an easy dashboard. Secure payments and automated bookings ensure smooth, efficient operations.",
     detailHeadline: "Your Empty Bay Is Worth Money.",
     detailBody:
       "List your unused parking space on HalaPark in minutes. We handle all bookings, payments, and support. Earn hourly, daily, or monthly — completely hands-free.",
@@ -106,7 +106,7 @@ export const servicesData = [
     slug: "ev-charging",
     name: "EV Charging",
     summary:
-      "Combine parking and charging in one app-led journey for electric vehicle drivers.",
+      "HalaPark offers integrated EV charging for modern electric mobility. Users can easily find and use charging stations while parking. Operators manage availability and usage from a central platform. Smart scheduling and secure payments ensure a simple, efficient experience..",
     detailHeadline: "Park and Charge — Together.",
     detailBody:
       "Select HalaPark facilities offering integrated EV charging points. Find a spot, plug in, and manage your session through the same app you use for everything else.",
@@ -154,7 +154,7 @@ export const servicesData = [
     slug: "valet-on-demand",
     name: "Valet On Demand",
     summary:
-      "Request, track, and retrieve valet service through a single real-time digital workflow.",
+      "HalaPark offers a premium valet parking service for users and businesses. Customers can instantly request pickup, parking, and return. It ensures smooth coordination, real-time tracking, and secure vehicle handling. Ideal for hotels, malls, and commercial spaces, it enhances convenience and efficiency..",
     detailHeadline: "Professional Valet. One Tap.",
     detailBody:
       "Request a valet through the app. A certified professional collects your vehicle, parks it securely, and returns it exactly when you need it — with live tracking throughout.",
@@ -202,7 +202,7 @@ export const servicesData = [
     slug: "barrier-free-parking",
     name: "Barrier-Free Parking",
     summary:
-      "Use plate recognition and automated access rules to remove tickets, barriers, and manual validation.",
+      "A fully automated barrier-free parking system using smart recognition technology. Vehicles enter and exit without tickets or barriers through real-time identification and digital validation. It ensures fast, secure access while reducing congestion and improving traffic flow for users and operators.",
     detailHeadline: "Your Plate Is Your Ticket.",
     detailBody:
       "Our licence plate recognition system means zero stops at barriers. Drive in, get detected, park, drive out — and payment is processed automatically.",
@@ -250,7 +250,191 @@ export const servicesData = [
     slug: "parking-management",
     name: "Parking Management",
     summary:
-      "Run cameras, operators, access rules, payments, and reporting from one unified system.",
+      "A complete parking management solution with real-time monitoring, dynamic pricing, and automated bookings. Centralized dashboards and analytics provide full visibility into occupancy, revenue, and performance. It streamlines operations, reduces manual effort, and improves efficiency across all facilities.",
+    detailHeadline: "Full Parking Operations — Handled.",
+    detailBody:
+      "HalaPark provides end-to-end parking management for residential, commercial, and enterprise properties — including installation, maintenance, operations, and reporting.",
+    detailCtaLabel: "Talk to Our Team",
+    detailCtaHref: "/contact",
+    detailIntro:
+      "Parking Management is the operator-facing control layer for running end-to-end parking operations across one site or an entire portfolio.",
+    detailSections: [
+      {
+        title: "What It Does",
+        body:
+          "It centralizes equipment integrations, operator tools, real-time monitoring, and reporting so teams can manage sites without fragmented software.",
+      },
+      {
+        title: "Why It Matters",
+        body:
+          "Enterprises get operational consistency, better visibility, and less manual overhead across access, support, incidents, and payment handling.",
+      },
+      {
+        title: "Placeholder Scope",
+        body:
+          "Dummy detail content for now: later this page can include dashboard screenshots, permissions, reports, and multi-site controls.",
+      },
+    ],
+    highlights: [
+      "Single control layer for parking operations",
+      "Connected operator tools and reporting",
+      "Integrated payment and access workflows",
+    ],
+    useCases: [
+      "Portfolio-wide parking oversight",
+      "Multi-operator enterprise environments",
+      "Sites with mixed hardware integrations",
+    ],
+    outcomes: [
+      "Better operational consistency",
+      "Centralized visibility across sites",
+      "Lower manual workload for teams",
+    ],
+    mediaType: "integrations",
+  },
+  {
+    slug: "Airport Services",
+    name: "Airport Services",
+    summary:
+      " HalaPark offers seamless airport mobility solutions for passengers and visitors. It provides convenient terminal parking, fast drop-off and pick-up, and optional valet support. Users can pre-book spaces, reduce waiting time, and enjoy smooth, hassle-free airport access.",
+    detailHeadline: "Full Parking Operations — Handled.",
+    detailBody:
+      "HalaPark provides end-to-end parking management for residential, commercial, and enterprise properties — including installation, maintenance, operations, and reporting.",
+    detailCtaLabel: "Talk to Our Team",
+    detailCtaHref: "/contact",
+    detailIntro:
+      "Parking Management is the operator-facing control layer for running end-to-end parking operations across one site or an entire portfolio.",
+    detailSections: [
+      {
+        title: "What It Does",
+        body:
+          "It centralizes equipment integrations, operator tools, real-time monitoring, and reporting so teams can manage sites without fragmented software.",
+      },
+      {
+        title: "Why It Matters",
+        body:
+          "Enterprises get operational consistency, better visibility, and less manual overhead across access, support, incidents, and payment handling.",
+      },
+      {
+        title: "Placeholder Scope",
+        body:
+          "Dummy detail content for now: later this page can include dashboard screenshots, permissions, reports, and multi-site controls.",
+      },
+    ],
+    highlights: [
+      "Single control layer for parking operations",
+      "Connected operator tools and reporting",
+      "Integrated payment and access workflows",
+    ],
+    useCases: [
+      "Portfolio-wide parking oversight",
+      "Multi-operator enterprise environments",
+      "Sites with mixed hardware integrations",
+    ],
+    outcomes: [
+      "Better operational consistency",
+      "Centralized visibility across sites",
+      "Lower manual workload for teams",
+    ],
+    mediaType: "integrations",
+  },
+  {
+    slug: "Car Wash Services (Interior & Exterior)",
+    name: "Car Wash Services (Interior & Exterior)",
+    summary:
+      "On-demand car wash services for interior and exterior cleaning at parking locations or service zones. It includes washing, polishing, vacuuming, anddeep cleaning for a full vehicle refresh. Fast, eco-friendly, and efficient, itimproves vehicle appearance and hygiene while saving time.",
+    detailHeadline: "Full Parking Operations — Handled.",
+    detailBody:
+      "HalaPark provides end-to-end parking management for residential, commercial, and enterprise properties — including installation, maintenance, operations, and reporting.",
+    detailCtaLabel: "Talk to Our Team",
+    detailCtaHref: "/contact",
+    detailIntro:
+      "Parking Management is the operator-facing control layer for running end-to-end parking operations across one site or an entire portfolio.",
+    detailSections: [
+      {
+        title: "What It Does",
+        body:
+          "It centralizes equipment integrations, operator tools, real-time monitoring, and reporting so teams can manage sites without fragmented software.",
+      },
+      {
+        title: "Why It Matters",
+        body:
+          "Enterprises get operational consistency, better visibility, and less manual overhead across access, support, incidents, and payment handling.",
+      },
+      {
+        title: "Placeholder Scope",
+        body:
+          "Dummy detail content for now: later this page can include dashboard screenshots, permissions, reports, and multi-site controls.",
+      },
+    ],
+    highlights: [
+      "Single control layer for parking operations",
+      "Connected operator tools and reporting",
+      "Integrated payment and access workflows",
+    ],
+    useCases: [
+      "Portfolio-wide parking oversight",
+      "Multi-operator enterprise environments",
+      "Sites with mixed hardware integrations",
+    ],
+    outcomes: [
+      "Better operational consistency",
+      "Centralized visibility across sites",
+      "Lower manual workload for teams",
+    ],
+    mediaType: "integrations",
+  },
+  {
+    slug: "Air Tyre Service",
+    name: "Air Tyre Service",
+    summary:
+      "On-demand tyre inflation and pressure-check service that ensures optimal tyre performance, safety, and fuel efficiency without needing a workshop visit. Available at parking hubs and through mobile support units, it provides quick and convenient assistance while helping maintain vehicle safety and extend tyre lifespan..",
+    detailHeadline: "Full Parking Operations — Handled.",
+    detailBody:
+      "HalaPark provides end-to-end parking management for residential, commercial, and enterprise properties — including installation, maintenance, operations, and reporting.",
+    detailCtaLabel: "Talk to Our Team",
+    detailCtaHref: "/contact",
+    detailIntro:
+      "Parking Management is the operator-facing control layer for running end-to-end parking operations across one site or an entire portfolio.",
+    detailSections: [
+      {
+        title: "What It Does",
+        body:
+          "It centralizes equipment integrations, operator tools, real-time monitoring, and reporting so teams can manage sites without fragmented software.",
+      },
+      {
+        title: "Why It Matters",
+        body:
+          "Enterprises get operational consistency, better visibility, and less manual overhead across access, support, incidents, and payment handling.",
+      },
+      {
+        title: "Placeholder Scope",
+        body:
+          "Dummy detail content for now: later this page can include dashboard screenshots, permissions, reports, and multi-site controls.",
+      },
+    ],
+    highlights: [
+      "Single control layer for parking operations",
+      "Connected operator tools and reporting",
+      "Integrated payment and access workflows",
+    ],
+    useCases: [
+      "Portfolio-wide parking oversight",
+      "Multi-operator enterprise environments",
+      "Sites with mixed hardware integrations",
+    ],
+    outcomes: [
+      "Better operational consistency",
+      "Centralized visibility across sites",
+      "Lower manual workload for teams",
+    ],
+    mediaType: "integrations",
+  },
+  {
+    slug: "Battery Replacement Service",
+    name: "Battery Replacement Service",
+    summary:
+      "Fast on-demand battery replacement service to keep vehicles running without delays. Available at parking facilities and service zones, it offers quick diagnosis and safe installation. Fully integrated with smart parking for convenient and efficient mobility support.",
     detailHeadline: "Full Parking Operations — Handled.",
     detailBody:
       "HalaPark provides end-to-end parking management for residential, commercial, and enterprise properties — including installation, maintenance, operations, and reporting.",

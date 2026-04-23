@@ -8,22 +8,22 @@ const slides = [
   {
     id: 1,
     cardImg: "/hf_20260327_065515_cd3808b8-d99d-4faa-817d-e3f772726da6.png",
-    tag: "Transform Parking Into a Scalable Revenue Engine",
+    tag: "Smart Parking Made Simple",
     title:
-      "Hala Park enables property owners, developers, and operators to convert parking infrastructure into fully automated, revenue-generating assets powered by smart technology and AI-driven operations.",
+      " Find, book, and manage parking spaces with HalaPark, the smart platform for drivers, businesses, and property owners",
     subtitle:
       "Hala Park enables property owners, developers, and operators to convert parking infrastructure into fully automated, revenue-generating assets powered by smart technology and AI-driven operations.",
     description:
-      "Real-time availability helps you lock in your spot before you even step out. No circling, no guessing, just smooth, predictable parking every time.",
+      "Find, book, and manage parking spaces with HalaPark, the smart platform for drivers, businesses, and property owners.",
     image: "/hf_20260327_061900_db12a62e-2867-44b6-83f0-ea7f1a5442ef.png",
     video: "/HalaParkVideo.mp4",
   },
   {
     id: 2,
     cardImg: "/3ca506f760b463d2f3eb686fb08621c5.jpg.jpeg",
-    tag: "Seamlessly Connect Your Parking Ecosystem",
+    tag: "The Future of Parking Starts Here",
     title:
-      "Integrate hardware, software, and operations into one unified system for smarter, more efficient parking management.",
+      "Experience seamless, cashless parking with real-time availability and smart access, all in one powerful platform",
 
     subtitle:
       "From single properties to large portfolios, Hala Park enables you to grow revenue streams, reduce operational costs, and future-proof your parking ecosystem.",
@@ -34,9 +34,9 @@ const slides = [
   {
     id: 3,
     cardImg: "/hf_20260327_071129_800d49da-6fb8-4b7e-a1ba-b32db4c31565.png",
-    tag: "Scale Effortlessly. Earn Continuously.",
+    tag: "No More Parking Hassles.",
     title:
-      "From single properties to large portfolios, Hala Park enables you to grow revenue streams, reduce operational costs, and future-proof your parking ecosystem.",
+      "Quickly discover available parking, reserve your spot, and park stress-free with HalaPark.",
     subtitle: "Charging that fits your routine.",
     description:
       "Locate and reserve charging-enabled parking in one go. Power up while you go about your day, no extra stops needed.",

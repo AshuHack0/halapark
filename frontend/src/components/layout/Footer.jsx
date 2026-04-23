@@ -26,9 +26,14 @@ export default function Footer() {
   ];
 
   const socialLinks = [
-    { name: "LinkedIn", href: "https://www.linkedin.com/company/hala-car-park-rental-management-llc", icon: FaLinkedinIn },
-    { name: "Instagram", href: "https://www.instagram.com/halapark.info/", icon: FaInstagram },
-    { name: "Facebook", href: "https://www.facebook.com/Halapark.Info", icon: FaFacebookF },
+    { name: "LinkedIn", href: "https://www.linkedin.com/company/109206771/admin/dashboard/", icon: FaLinkedinIn },
+    { name: "Instagram", href: "https://www.instagram.com/halapark.ai/", icon: FaInstagram },
+    { name: "Facebook", href: "https://www.facebook.com/profile.php?id=61571036017442", icon: FaFacebookF },
+    // add the ticktok 
+    { name: "TikTok", href: "https://www.tiktok.com/@halapark.ai", icon: FaTiktok },
+    //add snapchat
+    { name: "Snapchat", href: "https://www.snapchat.com/@halapark.ai", icon: FaTiktok  },
+
   ];
 
   return (
@@ -71,8 +76,7 @@ export default function Footer() {
               <img src="/logo-blue-11.svg" alt="HalaPark" className="h-10 w-auto  " />
             </Link>
             <p className="mt-3 max-w-xs text-sm leading-6 text-black/70">
-              Smart parking technology built for drivers, properties, and cities
-              across the UAE.
+            Smart parking solutions across the UAE, making parking simple and efficient.
             </p>
             <div className="mt-4 flex flex-wrap items-center gap-2.5">
               {socialLinks.map((social) => {
@@ -121,7 +125,7 @@ export default function Footer() {
                   href="mailto:info@halapark.com"
                   className="transition hover:text-[#0088FF]"
                 >
-                  info@halapark.com
+                    support@halapark.com
                 </a>
               </li>
               <li>
@@ -145,7 +149,7 @@ export default function Footer() {
               Get The App
             </h4>
             <p className="mt-3 text-sm text-black/70">
-              Scan to open the HalaPark app download page.
+            Scan the QR code to download the HalaPark app.
             </p>
             <Link
               href={appDownloadUrl}

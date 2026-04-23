@@ -20,9 +20,9 @@ const whyItems = [
   {
     id: "01",
     icon: Gauge,
-    title: "Revenue Optimisation",
+    title: "Smart & Seamless Experience",
     subtitle:
-      "Convert underutilised parking into consistent, trackable income streams.",
+      " Easily find, book, and manage parking in just a few taps with a user-friendly platform.",
     copy: "Convert underutilised parking into consistent, trackable income streams.",
     image: "/hf_20260327_061900_db12a62e-2867-44b6-83f0-ea7f1a5442ef.png",
     accent: "#0088FF",
@@ -35,9 +35,9 @@ const whyItems = [
   {
     id: "02",
     icon: ScanLine,
-    title: "Operational Efficiency",
+    title: "Cashless s Secure Payments",
     subtitle:
-      "Eliminate manual processes with automation across access, billing, and management.",
+      "Enjoy a fully digital payment system that is fast, reliable, and safe for every transaction.",
     copy: "Eliminate manual processes with automation across access, billing, and management.",
     image: "/hf_20260327_064457_c75923ba-dc06-4c6e-9b63-fa181e94bcfa (2).png",
     accent: "#0088FF",
@@ -50,9 +50,9 @@ const whyItems = [
   {
     id: "03",
     icon: CircleDollarSign,
-    title: "Full Visibility & Control",
+    title: "Automated Smart Access",
     subtitle:
-      "Access real-time dashboards, reporting, and performance insights across all locations.",
+      " Benefit from advanced entry and exit systems powered by camera and barrier technology.",
     copy: "Access real-time dashboards, reporting, and performance insights across all locations.",
     image: "/hf_20260327_062407_6dca49c0-90dd-468a-96f9-b36bba13ea8b.png",
     accent: "#14B8A6",
@@ -65,9 +65,9 @@ const whyItems = [
   {
     id: "04",
     icon: Clock3,
-    title: "Seamless Infrastructure Integration",
+    title: "Maximize Parking Value",
     subtitle:
-      "Deploy without replacing your existing systems, we enhance what you already have.",
+      "Optimize space usage and generate additional revenue from underutilized parking areas.",
     copy: "Deploy without replacing your existing systems, we enhance what you already have.",
     image: "/hf_20260327_061010_f3bc038b-576f-4903-8896-5d998cc78527.png",
     accent: "#0088FF",
@@ -79,28 +79,43 @@ const whyItems = [
   },
   {
     id: "05",
-    icon: BarChart3,
-    copy: "Act on real-time payments, occupancy, and site performance from one operator dashboard.",
-    image: "/hf_20260327_064316_9c7b1a28-dbfa-456e-b88a-0087cb567a61.png",
-    accent: "#0F172A",
-    badge: "Operator view",
-    stat: "24/7",
-    statLabel: "reporting access",
-    visualTitle: "Teams, sites, and performance stay visible in one dashboard.",
-    chips: ["Payments", "Occupancy", "Alerts"],
+    icon: Clock3,
+    title: " AI-Driven Parking Intelligence",
+    subtitle:
+      "Leverage advanced AI technology for faster access, intelligent space allocation, automated operations, and a seamless parking experience for both users and operators.",
+    copy: "Deploy without replacing your existing systems, we enhance what you already have.",
+    image: "/hf_20260327_061010_f3bc038b-576f-4903-8896-5d998cc78527.png",
+    accent: "#0088FF",
+    badge: "Premium arrival",
+    stat: "2 taps",
+    statLabel: "to reserve and extend",
+    visualTitle: "Guest arrivals stay smooth even when demand spikes fast.",
+    chips: ["Valet", "Pre-book", "Extend stay"],
   },
-  {
-    id: "06",
-    icon: Zap,
-    copy: "Bundle EV-ready parking into the same booking journey so drivers can reserve, park, and charge seamlessly.",
-    image: "/hf_20260327_060926_cbb82448-441c-42ee-9589-785e7acd7565.png",
-    accent: "#22C55E",
-    badge: "EV-ready journey",
-    stat: "1 flow",
-    statLabel: "from booking to charging",
-    visualTitle: "Parking and charging stay connected in a single journey.",
-    chips: ["Charge-ready", "Unified checkout", "Driver guidance"],
-  },
+  // {
+  //   id: "05",
+  //   icon: BarChart3,
+  //   copy: "Act on real-time payments, occupancy, and site performance from one operator dashboard.",
+  //   image: "/hf_20260327_064316_9c7b1a28-dbfa-456e-b88a-0087cb567a61.png",
+  //   accent: "#0F172A",
+  //   badge: "Operator view",
+  //   stat: "24/7",
+  //   statLabel: "reporting access",
+  //   visualTitle: "Teams, sites, and performance stay visible in one dashboard.",
+  //   chips: ["Payments", "Occupancy", "Alerts"],
+  // },
+  // {
+  //   id: "06",
+  //   icon: Zap,
+  //   copy: "Bundle EV-ready parking into the same booking journey so drivers can reserve, park, and charge seamlessly.",
+  //   image: "/hf_20260327_060926_cbb82448-441c-42ee-9589-785e7acd7565.png",
+  //   accent: "#22C55E",
+  //   badge: "EV-ready journey",
+  //   stat: "1 flow",
+  //   statLabel: "from booking to charging",
+  //   visualTitle: "Parking and charging stay connected in a single journey.",
+  //   chips: ["Charge-ready", "Unified checkout", "Driver guidance"],
+  // },
 ];
 
 function clamp(value, min, max) {
@@ -121,7 +136,7 @@ function SectionIntro({ centered = false }) {
           id="ai-powered-parking-service-title"
           className="mx-auto mt-4 max-w-[900px] text-[clamp(3rem,5.8vw,5rem)] font-medium leading-[1.03] tracking-[-0.06em] text-[#050A13]"
         >
-          A complete ecosystem for smarter parking
+         Next-generation platform for intelligent parking solutions
         </h2>
       </div>
 
@@ -225,7 +240,7 @@ function FeatureVisual({ item, compact = false }) {
 }
 
 export default function WhyHalapark() {
-  const visibleWhyItems = whyItems.slice(0, 4);
+  const visibleWhyItems = whyItems.slice(0, 5);
   const trackRef = useRef(null);
   const lineFillRef = useRef(null);
   const frameRef = useRef(null);

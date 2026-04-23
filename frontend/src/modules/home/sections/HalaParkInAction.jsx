@@ -152,16 +152,16 @@ export default function HalaParkInAction() {
                   variants={prefersReducedMotion ? undefined : copyItemVariants}
                   className="max-w-[520px] text-[40px] font-semibold leading-[0.94] text-[#050A13]"
                 >
-                  Park Smarter with the <br /> HalaPark App
+                 Next-Gen Parking at Your Fingertips
                 </motion.h1>
 
                 <motion.p
                   variants={prefersReducedMotion ? undefined : copyItemVariants}
                   className="mt-6 max-w-[500px] text-[13.7px] font-light leading-[1.55] text-[#8A94A6]"
                 >
-                  Book, extend, and manage parking in seconds with live
-                  availability, seamless entry, and one streamlined mobile
-                  experience.
+                 Find, book, and manage parking easily from your phone. Get real-
+time availability, quick booking, and a smooth, hassle-free experience
+anytime, anywhere.
                 </motion.p>
 
                

@@ -4,20 +4,38 @@ import styles from "./SolutionIntegration.module.css";
 const solutionCards = [
   {
     id: "barrier",
-    title: "Barrier Installation",
-    description: "Automated entry and exit systems for controlled access.",
+    title: "All-in-One Barrier Integration",
+    description: "All-in-one compact system with barriers, AI cameras, and lighting for efficient parking.",
   },
   {
     id: "camera",
-    title: "Camera Integration (ANPR / CCTV)",
+    title: "ANPR & AI Camera Integration",
     description:
-      "Licence plate recognition and surveillance for security and automation.",
+      "ANPR and AI cameras enable secure, real-time parking detection.  ",
   },
   {
     id: "systems",
-    title: "All-in-One Parking Systems",
+    title: "Guidance Display Integration",
     description:
-      "End-to-end setup combining hardware, software, and operational management.",
+      "Smart displays show real-time parking info for better user experience.",
+  },
+  {
+    id: "Software & Kiosk Integration",
+    title: "Software & Kiosk Integration",
+    description:
+      "Unified system with apps, operations, and kiosks for quick payments and access.  ",
+  },
+  {
+    id: "Sensor-Based Parking Management",
+    title: "Sensor-Based Parking Management",
+    description:
+      "Smart displays show real-time parking info for better user experience.",
+  },
+  {
+    id: "End-to-End System Integration",
+    title: "End-to-End System Integration",
+    description:
+      "Integrated platform for scalable, automated parking operations.",
   },
 ];
 
@@ -227,7 +245,7 @@ export default function SolutionIntegration() {
             id="ai-powered-parking-service-title"
             className="mx-auto mt-4 max-w-[900px] text-[clamp(2.6rem,4.4vw,3.95rem)] font-medium leading-[1.03] tracking-[-0.06em] text-[#050A13]"
           >
-            Unify Hardware, Software, and Operations
+            End-to-End Integrated Parking Solution
           </h2>
         </div>
 

@@ -407,14 +407,14 @@ export default function GlobalMomentumSection() {
           </h2> */}
           <div className="mx-auto max-w-[980px] text-center">
             <p className="text-[13px] font-medium uppercase tracking-[0.08em] text-[#0088FF] sm:text-[14px]">
-              Global Momentum
+            Global Parking Locations
             </p>
 
             <h2
               id="ai-powered-parking-service-title"
               className="mx-auto mt-4 max-w-[900px] text-[clamp(2.6rem,4.4vw,3.95rem)] font-normal leading-[1.03] tracking-[-0.06em] text-[#050A13]"
             >
-              Smart Parking Is the Future and the UAE Is Leading It
+             Shaping the Future of Smart Parking from the UAE to the World
             </h2>
           </div>
           {/* <p className="text-sm sm:text-base lg:text-[16px] font-medium text-[#6D6D6D] max-w-2xl mx-auto px-4 sm:px-0">

@@ -7,11 +7,11 @@ import { useEffect, useState } from "react";
 
 const serviceAudienceCards = [
   {
-    title: "For Customers",
+    title: "For User",
     ctaLabel: "View for Customer",
     audienceTag: "APP EXPERIENCE",
     description:
-      "Easily locate available spaces, enter without delays, and complete payments through a smooth, fully digital experience.",
+      "Intelligent automation helps you find and access available parking faster, reducing wait time and making every journey smooth and stress-free.",
     href: "/app",
     imageSrc: "/ForCustomers.png",
     imageAlt: "Parking service for customers",
@@ -25,7 +25,7 @@ const serviceAudienceCards = [
     ctaLabel: "View for Business",
     audienceTag: "BUSINESS SUITE",
     description:
-      "Easily integrate with barriers, cameras, and payment systems to create a unified parking solution without disrupting your current setup.",
+      "Advanced automation streamlines parking management, improves space utilization, and delivers real-time insights to increase efficiency and revenue.",
     href: "/business",
     imageSrc: "/ForEnterprises.png",
     imageAlt: "Parking service for businesses and property owners",
@@ -238,15 +238,16 @@ export default function AiPoweredParkingService() {
             id="ai-powered-parking-service-title"
             className="mx-auto mt-4 max-w-[900px] text-[clamp(2.35rem,3.9vw,3.45rem)] font-semibold leading-[1.02] tracking-[-0.055em] text-[#050A13]"
           >
-            AI That Drives{" "}
+       Smarter Parking Operations with {"  "}
             <span className="bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">
-              Smarter Parking
+               AI
             </span>{" "}
-            Operations
+            Intelligence
           </h2>
           <p className="mx-auto mt-3 max-w-[690px] text-[0.95rem] leading-relaxed text-slate-600 sm:text-[1rem]">
-            Intelligent automation for users and businesses, designed to make
-            every parking interaction faster, simpler, and more reliable.
+          AI-powered automation that enhances the parking experience for both users
+and operators. It enables faster access, smoother operations, and more
+reliable parking management at every step.
           </p>
         </div>
 

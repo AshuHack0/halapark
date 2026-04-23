@@ -3,7 +3,7 @@
 const featureCard = {
   title: "AI-Powered Smart Parking Solutions ",
   description:
-    "Seamlessly manage parking for customers and landlords with intelligent automation and real-time insights.",
+    "Seamlessly manage parking experiences for both customers and landlords through intelligent automation, real-time insights, and optimized operations designed to improve efficiency and performance.",
   ctas: [
     {
       label: "View for Customers ",

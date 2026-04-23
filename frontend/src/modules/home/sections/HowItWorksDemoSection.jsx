@@ -43,8 +43,8 @@ export default function HowItWorksDemoSection() {
               
             </h2>
             <p className="mx-auto mt-3 max-w-[690px] text-[0.95rem] leading-relaxed text-slate-600 sm:text-[1rem]">
-              Watch the quick demo showing how easy it is to discover an open
-              spot, reserve instantly, and complete payment inside HalaPark.
+            Watch the quick demo showing how easy it is to discover an open spot, reserve
+instantly, and complete payment inside HalaPark.
             </p>
           </div>
 
@@ -84,9 +84,9 @@ export default function HowItWorksDemoSection() {
                 >
                   Find Parking
                 </Link>
-                <span className="text-sm font-medium text-slate-500">
+                {/* <span className="text-sm font-medium text-slate-500">
                   Takes less than a minute
-                </span>
+                </span> */}
               </div>
             </div>
 
