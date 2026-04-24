@@ -30,7 +30,7 @@ const capabilities = [
 ];
 
 const impactStats = [
-  { value: "2+", label: "UAE Cities Connected", icon: "globe" },
+  // { value: "2+", label: "UAE Cities Connected", icon: "globe" },
   { value: "10K+", label: "Parking Zones Powered", icon: "building" },
   { value: "1M+", label: "Users Served", icon: "users" },
   { value: "100%", label: "Cashless Experience", icon: "card" },
