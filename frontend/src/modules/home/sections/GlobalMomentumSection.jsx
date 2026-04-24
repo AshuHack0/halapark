@@ -425,9 +425,87 @@ export default function GlobalMomentumSection() {
           </p> */}
         </div>
         <div className="relative overflow-hidden p-5 sm:p-7 md:p-8">
-          <div className="relative">
-            <div className="mx-auto mt-10 w-full max-w-6xl">
+          <div className="relative mx-auto mt-10 grid w-full max-w-6xl gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.45fr)] lg:items-start">
+            <div className="rounded-2xl border border-[rgba(15,23,42,0.08)] bg-white p-6 shadow-[0_16px_40px_rgba(15,23,42,0.06)] sm:p-7">
+          
+              <h3 className="mt-3 text-[clamp(1.55rem,2.3vw,2.1rem)] font-medium leading-[1.15] tracking-[-0.03em] text-[#050A13]">
+                United by Mobility. Connected Globally.
+              </h3>
+
+              <div className="mt-7">
+                <h4 className="text-[1rem] font-semibold text-[#050A13]">
+                  Key Capabilities
+                </h4>
+                <ul className="mt-4 space-y-4 text-[0.96rem] leading-[1.55] text-[#334155]">
+                  <li>
+                    <span className="font-semibold text-[#0F172A]">
+                      Unified Ecosystem
+                    </span>{" "}
+                    Seamless integration with leading industry partners across
+                    the UAE.
+                  </li>
+                  <li>
+                    <span className="font-semibold text-[#0F172A]">
+                      Global Reach
+                    </span>{" "}
+                    Designed to connect with third-party and toll systems
+                    across the UAE.
+                  </li>
+                  <li>
+                    <span className="font-semibold text-[#0F172A]">
+                      Cashless &amp; Flexible
+                    </span>{" "}
+                    Pay-later options with secure online payments via encrypted
+                    links.
+                  </li>
+                </ul>
+              </div>
+
+            </div>
+
+            <div>
+             
               <GlobalMomentumMapSection />
+            </div>
+
+            <div className="rounded-2xl border border-[rgba(15,23,42,0.08)] bg-white p-6 shadow-[0_16px_40px_rgba(15,23,42,0.06)] sm:p-7 lg:col-span-2">
+              <h4 className="text-[1rem] font-semibold text-[#050A13]">
+                Impact at a Glance
+              </h4>
+              <ul className="mt-4 grid gap-3 text-[#0F172A] sm:grid-cols-2 lg:grid-cols-4">
+                <li className="rounded-xl bg-[#F8FBFF] px-4 py-3">
+                  <p className="text-[1.5rem] font-semibold leading-none tracking-[-0.02em] text-[#050A13]">
+                    10K+
+                  </p>
+                  <p className="mt-2 text-[0.88rem] font-medium leading-[1.45] text-[#475569]">
+                    Parking Zones Powered
+                  </p>
+                </li>
+                <li className="rounded-xl bg-[#F8FBFF] px-4 py-3">
+                  <p className="text-[1.5rem] font-semibold leading-none tracking-[-0.02em] text-[#050A13]">
+                    1M+
+                  </p>
+                  <p className="mt-2 text-[0.88rem] font-medium leading-[1.45] text-[#475569]">
+                    Users Served
+                  </p>
+                </li>
+                <li className="rounded-xl bg-[#F8FBFF] px-4 py-3">
+                  <p className="text-[1.5rem] font-semibold leading-none tracking-[-0.02em] text-[#050A13]">
+                    100%
+                  </p>
+                  <p className="mt-2 text-[0.88rem] font-medium leading-[1.45] text-[#475569]">
+                    Cashless Experience
+                  </p>
+                </li>
+                <li className="rounded-xl bg-[#F8FBFF] px-4 py-3">
+                  <p className="text-[1.5rem] font-semibold leading-none tracking-[-0.02em] text-[#050A13]">
+                    1 Vision
+                  </p>
+                  <p className="mt-2 text-[0.88rem] font-medium leading-[1.45] text-[#475569]">
+                    Partnering for a Smarter Tomorrow
+                  </p>
+                </li>
+              </ul>
             </div>
 
             {/* <div className="grid gap-4">

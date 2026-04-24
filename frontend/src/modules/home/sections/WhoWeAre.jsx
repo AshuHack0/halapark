@@ -16,8 +16,8 @@ import { Building2, Layers, TrendingUp } from "lucide-react";
 const headingText = "Who We Are";
 const audienceContent = {
   business: {
-    heading: "Turning Parking into a Valuable Asset",
-    body: "Hala Park is a smart parking infrastructure company focused on helping businesses unlock the full financial and operational potential of their parking spaces.",
+    heading: "Who We Are",
+    body: "HalaPark is a smart parking company transforming urban parking in the UAE. We deliver fast, seamless digital solutions that connect drivers, businesses, and property owners to improve efficiency, save time, and optimize space.",
   },
   users: {
     heading: "Parking Made Simple for Users",
@@ -28,18 +28,18 @@ const audienceContent = {
 const highlights = [
   {
     icon: Layers,
-    title: "Full-stack infrastructure",
-    description: "Hardware, software, and operations in one coherent system.",
+    title: "All-in-One Infrastructure",
+    description: "A fully unified ecosystem that seamlessly combines hardware, software, and operational workflows into one intelligent platform.",
   },
   {
     icon: TrendingUp,
-    title: "Revenue & utilization",
-    description: "Turn underused bays into measurable, recurring value.",
+    title: "Maximize Revenue & Utilization",
+    description: "Transform underutilized parking assets into optimized, data-driven revenue streams with measurable performance and efficiency.",
   },
   {
     icon: Building2,
-    title: "Built for real portfolios",
-    description: "From single sites to multi-property operators at scale.",
+    title: "Scalable by Design",
+    description: "Designed to support both single-site operations and large-scale enterprise parking networks with ease, flexibility, and reliability.",
   },
 ];
 
@@ -301,7 +301,7 @@ export default function WhoWeAre() {
                   }
             }
           >
-            <motion.div {...fadeUp}>
+            {/* <motion.div {...fadeUp}>
               <motion.div
                 className="relative inline-flex items-center gap-1.5 overflow-hidden rounded-full border border-[#0088FF]/25 bg-white/70 px-2.5 py-1 backdrop-blur-md sm:gap-2 sm:px-3"
                 whileHover={reduced ? undefined : { scale: 1.02 }}
@@ -338,9 +338,9 @@ export default function WhoWeAre() {
                   {headingText}
                 </p>
               </motion.div>
-            </motion.div>
+            </motion.div> */}
 
-            <motion.div
+            {/* <motion.div
               {...fadeUp}
               className="mt-5 inline-flex items-center rounded-full border border-slate-200 bg-white/75 p-1 backdrop-blur-sm"
             >
@@ -366,7 +366,7 @@ export default function WhoWeAre() {
               >
                 Business
               </button>
-            </motion.div>
+            </motion.div> */}
 
             <MagicHeading
               key={activeAudience}

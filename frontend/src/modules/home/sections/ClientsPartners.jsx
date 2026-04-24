@@ -38,15 +38,15 @@ export default function ClientsPartners() {
               </h2> */}
               <div className="mx-auto max-w-[980px] text-center">
                 <p className="text-[13px] font-medium uppercase tracking-[0.08em] text-[#0088FF] sm:text-[14px]">
-                  Our Clients & Partners
+                Clients We've Partnered With
                 </p>
 
                 <h2
                   id="ai-powered-parking-service-title"
                   className="mx-auto mt-4 max-w-[900px] text-[clamp(2.25rem,4vw,3.55rem)] font-normal leading-[1.03] tracking-[-0.06em] text-[#050A13]"
                 >
-                  Trusted Across Properties, Retail Spaces, and Enterprise
-                  Networks
+                 Trusted by leading partners and clients through <br/>  strong collaborations, shared 
+                 success, <br/> and long-term commitment.
                 </h2>
               </div>
             </div>

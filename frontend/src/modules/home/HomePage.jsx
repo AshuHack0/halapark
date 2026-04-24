@@ -42,7 +42,7 @@ export default function HomePage() {
       <GlobalMomentumSection />
       {/* <ParkingJourneyScrollSection /> */}
       {/* <CertificationsSection /> */}
-      {/* <ClientsPartners /> */}
+      <ClientsPartners />
       {/* <SmartFeatures /> */}
       {/* <SupportContactCTA /> */}
       <HalaParkInAction />
