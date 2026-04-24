@@ -10,6 +10,7 @@ import TrustedUsers from "./sections/TrustedUsers";
 import AiPoweredParkingService from "./sections/AiPoweredParkingService";
 import MajorFocusHighlight from "./sections/MajorFocusHighlight";
 import GlobalMomentumSection from "./sections/GlobalMomentumSection";
+import GlobalMobilityNetworkSection from "./sections/GlobalMobilityNetworkSection";
 import CertificationsSection from "./sections/CertificationsSection";
 import ClientsPartners from "./sections/ClientsPartners";
 import SmartIntegrations from "./sections/SmartIntegrations";
@@ -28,21 +29,23 @@ export default function HomePage() {
       <HeroSection />
       <WhoWeAre />
       <WhyHalapark />
-        <AiPoweredParkingService />
-            <HowItWorksDemoSection />
+      <AiPoweredParkingService />
+      <HowItWorksDemoSection />
       <BlackBanner />
       {/* <EnterpriseSolutions /> */}
       <GoodLookingServicesSection />
       <SolutionIntegration />
 
       <TechnologySection />
-    
+
       {/* <TrustedUsers /> */}
       {/* <MajorFocusHighlight /> */}
-      <GlobalMomentumSection />
+      {/* <GlobalMomentumSection /> */}
+
       {/* <ParkingJourneyScrollSection /> */}
       {/* <CertificationsSection /> */}
       <ClientsPartners />
+      <GlobalMobilityNetworkSection />
       {/* <SmartFeatures /> */}
       {/* <SupportContactCTA /> */}
       <HalaParkInAction />
