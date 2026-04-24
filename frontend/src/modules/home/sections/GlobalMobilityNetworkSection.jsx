@@ -222,14 +222,12 @@ export default function GlobalMobilityNetworkSection() {
           </div> */}
 
           <div className="relative z-10 mt-8 isolate min-h-[560px] overflow-hidden sm:min-h-[620px]">
-            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(1,6,23,0.66)_0%,rgba(1,6,23,0.22)_34%,rgba(1,6,23,0.72)_100%)]" />
             <div className="relative flex min-h-[560px] flex-col sm:min-h-[620px]">
               <img
                 src="/map_6824dc8ea581a9958227b98c_map.svg"
                 alt="Global mobility map"
                 className="absolute inset-0 h-full w-full object-cover"
               />
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_56%_58%,rgba(196,181,253,0.42)_0%,rgba(167,139,250,0.18)_11%,rgba(167,139,250,0)_28%)]" />
               <svg
                 className="absolute inset-0 h-full w-full"
                 viewBox="0 0 100 100"
@@ -279,7 +277,7 @@ export default function GlobalMobilityNetworkSection() {
                   <span className="gm-city-label">ABU DHABI</span>
                 </div>
               </div>
-              <div className="absolute left-0 top-0 z-20 h-full w-full max-w-[360px] bg-[linear-gradient(90deg,rgba(1,6,23,0.92)_0%,rgba(1,6,23,0.78)_70%,rgba(1,6,23,0)_100%)] px-4 pt-12 sm:max-w-[390px] sm:px-6 sm:pt-14">
+              <div className="absolute left-0 top-[14%] z-20 w-full max-w-[360px] px-4 sm:max-w-[390px] sm:px-6">
                 <h3 className="text-[1.45rem] font-semibold uppercase leading-[1.18] tracking-[0.02em] text-white sm:text-[1.85rem]">
                   United by Mobility.
                   <br />
