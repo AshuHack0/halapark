@@ -204,7 +204,7 @@ function IntegrationDiagram() {
 function SolutionCard({ id, title, description }) {
   return (
     <article
-      className={`${styles.solutionCard} w-full rounded-[24px] border border-[#E7EAF0] bg-white p-5 sm:p-6`}
+      className={`${styles.solutionCard} h-full w-full rounded-[24px] border border-[#E7EAF0] bg-white p-5 sm:p-6`}
     >
       <SolutionIcon
         id={id}
@@ -223,10 +223,50 @@ function SolutionCard({ id, title, description }) {
   );
 }
 
+function SolutionCardsCarousel() {
+  const loop = [...solutionCards, ...solutionCards];
+
+  return (
+    <div
+      className="mx-auto mt-10 w-full overflow-x-hidden pb-2 lg:mt-12 [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)] [-webkit-mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]"
+      aria-label="Solution integrations, scrolling"
+    >
+      <style>{`
+        @keyframes solutionMarquee {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
+        }
+        .solution-cards-marquee {
+          animation: solutionMarquee 45s linear infinite;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .solution-cards-marquee {
+            animation: none;
+          }
+        }
+      `}</style>
+      <div className="flex w-max gap-4 sm:gap-5 md:gap-6 solution-cards-marquee">
+        {loop.map((card, index) => (
+          <div
+            key={`${card.id}-${index}`}
+            className="w-[min(88vw,380px)] shrink-0 sm:w-[min(45vw,420px)] md:w-[min(38vw,440px)] lg:w-[360px]"
+          >
+            <SolutionCard {...card} />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function SolutionIntegration() {
   return (
     <section className="bg-white py-12 sm:py-14 lg:py-16">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-[min(100%,1400px)] px-4 sm:px-6 lg:px-8">
         {/* <div className="mx-auto max-w-[980px] text-center">
           <p className="text-[16px] font-medium tracking-[-0.03em] text-[#0088FF]">
             Solution Integration
@@ -251,11 +291,7 @@ export default function SolutionIntegration() {
 
         <IntegrationDiagram />
 
-        <div className="mx-auto mt-10 grid max-w-[1080px] gap-4 sm:grid-cols-2 sm:gap-6 lg:mt-12 lg:grid-cols-3 lg:gap-8">
-          {solutionCards.map((card) => (
-            <SolutionCard key={card.id} {...card} />
-          ))}
-        </div>
+        <SolutionCardsCarousel />
       </div>
     </section>
   );
