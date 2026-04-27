@@ -37,30 +37,30 @@ export default function ClientsPartners() {
                 Networks
               </h2> */}
               <div className="mx-auto max-w-[980px] text-center">
-                <p className="text-[13px] font-medium uppercase tracking-[0.08em] text-[#0088FF] sm:text-[14px]">
+                {/* <p className="text-[13px] font-medium uppercase tracking-[0.08em] text-[#0088FF] sm:text-[14px]">
                 Clients We've Partnered With
-                </p>
+                </p> */}
 
                 <h2
                   id="ai-powered-parking-service-title"
                   className="mx-auto mt-4 max-w-[900px] text-[clamp(2.25rem,4vw,3.55rem)] font-normal leading-[1.03] tracking-[-0.06em] text-[#050A13]"
                 >
-                 Trusted by leading partners and clients through <br/>  strong collaborations, shared 
-                 success, <br/> and long-term commitment.
+                 Built Together with Our <br/>  Clients & Partners
+
                 </h2>
               </div>
             </div>
           </div>
           {/* ========================= from right to left to right =============================== */}
-          <div className="relative mt-6 overflow-hidden py-2">
+          <div className="relative mt-8 overflow-hidden py-4">
             <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-white via-white/90 to-transparent sm:w-24" />
             <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-white via-white/90 to-transparent sm:w-24" />
 
-            <div className="clients-ticker flex w-max items-center gap-2.5 sm:gap-3">
+            <div className="clients-ticker flex w-max items-center gap-5 sm:gap-7">
               {tickerItems.map((name, index) => (
                 <div
                   key={`${name}-${index}`}
-                  className="flex min-w-[160px] items-center justify-center rounded-xl border border-dashed border-slate-300 bg-white/80 px-4 py-5 text-center text-sm font-medium text-slate-500 sm:min-w-[190px] sm:text-base"
+                  className="flex min-w-[180px] items-center justify-center rounded-xl border border-dashed border-slate-300 bg-white/80 px-6 py-6 text-center text-sm font-medium text-slate-500 sm:min-w-[220px] sm:px-8 sm:text-base"
                 >
                   {name}
                 </div>
