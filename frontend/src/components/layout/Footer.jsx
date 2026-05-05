@@ -1,13 +1,13 @@
 "use client";
 import Link from "next/link";
+import { ShieldCheck } from "lucide-react";
 import {
-  FaFacebookF,
-  FaInstagram,
-  FaLinkedinIn,
-  FaTiktok,
-  FaXTwitter,
-  FaYoutube,
-} from "react-icons/fa6";
+  SiFacebook,
+  SiInstagram,
+  SiSnapchat,
+  SiTiktok,
+} from "react-icons/si";
+import { SlSocialLinkedin } from "react-icons/sl";
 
 export default function Footer() {
   const appDownloadUrl = "https://halapark.com/app";
@@ -17,28 +17,32 @@ export default function Footer() {
 
   const quickLinks = [
     { name: "Home", href: "/" },
-    { name: "Services", href: "/solutions" },
-    { name: "About Us", href: "/about" },
     { name: "App", href: "/app" },
+    { name: "Services", href: "/solutions" },
+    { name: "Solutions", href: "/solutions" },
     { name: "Business", href: "/business" },
-    { name: "Blog", href: "/blog" },
-    { name: "FAQS", href: "/faqs" },
+    { name: "Terms & Conditions", href: "/terms-and-conditions" },
+    { name: "Privacy Policy", href: "/privacy-policy" },
+    { name: "Refund Policy", href: "/refund-policy" },
+    { name: "About Us", href: "/about" },
+    { name: "FAQ", href: "/faqs" },
   ];
 
   const socialLinks = [
-    { name: "LinkedIn", href: "https://www.linkedin.com/company/109206771/admin/dashboard/", icon: FaLinkedinIn },
-    { name: "Instagram", href: "https://www.instagram.com/halapark.ai/", icon: FaInstagram },
-    { name: "Facebook", href: "https://www.facebook.com/profile.php?id=61571036017442", icon: FaFacebookF },
+    { name: "LinkedIn", href: "https://www.linkedin.com/company/109206771/admin/dashboard/", icon: SlSocialLinkedin },
+    { name: "Instagram", href: "https://www.instagram.com/halapark.ai/", icon: SiInstagram },
+    { name: "Facebook", href: "https://www.facebook.com/profile.php?id=61571036017442", icon: SiFacebook },
     // add the ticktok 
-    { name: "TikTok", href: "https://www.tiktok.com/@halapark.ai", icon: FaTiktok },
+    { name: "TikTok", href: "https://www.tiktok.com/@halapark.ai", icon: SiTiktok },
     //add snapchat
-    { name: "Snapchat", href: "https://www.snapchat.com/@halapark.ai", icon: FaTiktok  },
+    { name: "Snapchat", href: "https://www.snapchat.com/@halapark.ai", icon: SiSnapchat  },
 
   ];
 
   return (
-    <footer className="relative mt-12 w-full overflow-hidden border-t border-[#DCE8F7] bg-[linear-gradient(180deg,#F4F8FF_0%,#EEF5FF_100%)] text-black font-sans">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#E2EEFF] to-transparent" />
+    <footer className="relative   w-full overflow-hidden border-t border-[#E4EAF2] bg-[linear-gradient(180deg,#FFFFFF_0%,#FBFDFF_52%,#F6FAFF_100%)] text-[#050A13] font-sans">
+      <div className="pointer-events-none absolute -left-28 top-8 h-72 w-72 rounded-full bg-[#0088FF]/[0.06] blur-3xl" />
+      <div className="pointer-events-none absolute -right-28 bottom-0 h-80 w-80 rounded-full bg-[#0088FF]/[0.08] blur-3xl" />
 
       <div className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-12">
         {/* <div className="rounded-2xl border border-[#CDE0F7] bg-white/80 p-5 shadow-[0_14px_34px_rgba(0,136,255,0.08)] backdrop-blur-sm sm:p-6">
@@ -70,15 +74,52 @@ export default function Footer() {
           </div>
         </div> */}
 
-        <div className="mt-8 grid gap-7 border-b border-[#C8D9EE] pb-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
-          <div>
-             <Link href="/" className="inline-flex items-center gap-1">
-              <img src="/logo-blue-11.svg" alt="HalaPark" className="h-10 w-auto  " />
+        <div className="mt-8 grid items-start gap-10 border-b border-[#E4EAF2] pb-10 md:grid-cols-3 md:gap-8 lg:gap-12">
+          <div className="space-y-6 md:justify-self-start">
+            <div>
+              <Link href="/" className="inline-flex items-center gap-1">
+                <img src="/logo-blue-11.svg" alt="HalaPark" className="h-10 w-auto" />
             </Link>
-            <p className="mt-3 max-w-xs text-sm leading-6 text-black/70">
-            Smart parking solutions across the UAE, making parking simple and efficient.
-            </p>
-            <div className="mt-4 flex flex-wrap items-center gap-2.5">
+              <p className="mt-3 max-w-xs text-sm leading-6 text-[#667085]">
+                Smart parking solutions across the UAE, making parking simple and
+                efficient.
+              </p>
+            </div>
+
+            <div>
+              <h4 className="text-sm font-semibold uppercase tracking-[0.1em] text-[#050A13]">
+                Support
+              </h4>
+              <ul className="mt-3 space-y-2.5 text-sm text-[#667085]">
+                <li>
+                  <a
+                    href="mailto:info@halapark.com"
+                    className="transition hover:text-[#0088FF]"
+                  >
+                    support@halapark.com
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="tel:+97143782022"
+                    className="transition hover:text-[#0088FF]"
+                  >
+                    +971 4 378 2022
+                  </a>
+                </li>
+                <li>
+                  <Link href="/contact" className="transition hover:text-[#0088FF]">
+                    Contact Us
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="text-sm font-semibold uppercase tracking-[0.1em] text-[#050A13]">
+                Follow Us
+              </h4>
+              <div className="mt-3 flex flex-wrap items-center gap-2.5">
               {socialLinks.map((social) => {
                 const Icon = social.icon;
                 return (
@@ -88,25 +129,26 @@ export default function Footer() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={social.name}
-                    className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#C9DCF3] bg-white text-[#0088FF] transition hover:border-[#0088FF] hover:bg-[#0088FF] hover:text-white"
+                    className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[#D8E6F7] bg-[#F2F8FF] text-[#0088FF] shadow-[0_8px_20px_rgba(15,23,42,0.04)] transition hover:border-[#0088FF] hover:bg-[#0088FF] hover:text-white hover:shadow-[0_10px_24px_rgba(0,136,255,0.18)]"
                   >
-                    <Icon className="h-4 w-4" aria-hidden="true" />
+                    <Icon className="h-[1.05rem] w-[1.05rem]" aria-hidden="true" />
                   </Link>
                 );
               })}
+              </div>
             </div>
           </div>
 
-          <div>
-            <h4 className="text-sm font-semibold uppercase tracking-[0.1em] text-[#0A1728]">
+          <div className="w-full md:justify-self-center md:text-center">
+            <h4 className="text-sm font-semibold uppercase tracking-[0.1em] text-[#050A13]">
               Quick Links
             </h4>
-            <ul className="mt-3 space-y-2.5">
+            <ul className="mt-3 grid grid-flow-col grid-rows-5 gap-x-7 gap-y-2.5 text-left md:justify-center md:gap-x-8">
               {quickLinks.map((link) => (
                 <li key={link.name}>
                   <Link
                     href={link.href}
-                    className="text-sm text-black/75 transition hover:text-[#0088FF]"
+                    className="text-sm text-[#667085] transition hover:text-[#0088FF]"
                   >
                     {link.name}
                   </Link>
@@ -115,90 +157,73 @@ export default function Footer() {
             </ul>
           </div>
 
-          <div>
-            <h4 className="text-sm font-semibold uppercase tracking-[0.1em] text-[#0A1728]">
-              Support
-            </h4>
-            <ul className="mt-3 space-y-2.5 text-sm text-black/75">
-              <li>
-                <a
-                  href="mailto:info@halapark.com"
-                  className="transition hover:text-[#0088FF]"
-                >
-                    support@halapark.com
-                </a>
-              </li>
-              <li>
-                <a
-                  href="tel:+97143782022"
-                  className="transition hover:text-[#0088FF]"
-                >
-                  +971 4 378 2022
-                </a>
-              </li>
-              <li>
-                <Link href="/contact" className="transition hover:text-[#0088FF]">
-                  Contact Us
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="text-sm font-semibold uppercase tracking-[0.1em] text-[#0A1728]">
+          <div className="w-full md:max-w-[22.5rem] md:justify-self-end md:text-right">
+            <h4 className="text-sm font-semibold uppercase tracking-[0.1em] text-[#050A13] md:text-right">
               Get The App
             </h4>
-            <p className="mt-3 text-sm text-black/70">
-            Scan the QR code to download the HalaPark app.
+            <p className="mt-3 max-w-sm text-sm leading-6 text-[#667085] md:ml-auto md:text-right">
+              Scan the QR code to download the HalaPark app.
             </p>
-            <Link
-              href={appDownloadUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-3 inline-block"
-            >
-              <img
-                src={qrCodeSrc}
-                alt="QR code for HalaPark app download"
-                className="h-28 w-28 rounded-xl border border-[#D7E5F6] bg-white p-2"
-              />
-            </Link>
-            <div className="mt-3 flex items-center gap-2">
-              <img
-                src="/google-play.svg"
-                alt="Get it on Google Play"
-                className="h-8 w-auto"
-              />
-              <img
-                src="/app-store.svg"
-                alt="Download on the App Store"
-                className="h-8 w-auto"
-              />
+            <div className="mt-4 flex flex-col gap-4 min-[420px]:flex-row min-[420px]:items-start md:justify-end">
               <Link
                 href={appDownloadUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex h-8 items-center gap-1.5 rounded-2xl border-2 border-black bg-black px-3"
-                aria-label="Download on Huawei AppGallery"
+                className="shrink-0"
               >
                 <img
-                  src="/channels4_profile.jpg"
-                  alt="Huawei AppGallery"
-                  className="h-4 w-4 rounded-sm object-cover"
+                  src={qrCodeSrc}
+                  alt="QR code for HalaPark app download"
+                  className="h-36 w-36 rounded-xl border border-[#D7E5F6] bg-white p-2.5 shadow-[0_10px_24px_rgba(15,23,42,0.05)]"
                 />
-                <span className="flex flex-col leading-none text-white">
-                  <span className="text-[7px] font-medium opacity-90">
-                    Get it on
-                  </span>
-                  <span className="mt-0.5 text-[10px] font-semibold">Huawei</span>
-                </span>
               </Link>
+              <div className="flex min-w-[9.5rem] flex-col items-start gap-2 md:items-end">
+                <img
+                  src="/google-play.svg"
+                  alt="Get it on Google Play"
+                  className="h-9 w-auto"
+                />
+                <img
+                  src="/app-store.svg"
+                  alt="Download on the App Store"
+                  className="h-9 w-auto"
+                />
+                <Link
+                  href={appDownloadUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex h-9 items-center gap-1.5 rounded-2xl border-2 border-black bg-black px-3"
+                  aria-label="Download on Huawei AppGallery"
+                >
+                  <img
+                    src="/channels4_profile.jpg"
+                    alt="Huawei AppGallery"
+                    className="h-4 w-4 rounded-sm object-cover"
+                  />
+                  <span className="flex flex-col leading-none text-white">
+                    <span className="text-[7px] font-medium opacity-90">
+                      Get it on
+                    </span>
+                    <span className="mt-0.5 text-[10px] font-semibold">Huawei</span>
+                  </span>
+                </Link>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="mt-6   pt-4 text-xs text-black/60 sm:text-sm">
-          <p>© {new Date().getFullYear()} HalaPark. All rights reserved.</p>
+        <div className="mt-6 flex flex-col gap-3 pt-4 text-sm font-medium text-[#667085] sm:text-base md:flex-row md:items-center md:justify-between">
+          <p className="text-left">© {new Date().getFullYear()} HalaPark. All rights reserved.</p>
+          <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-left text-[#050A13] md:justify-end md:text-right">
+            <span className="inline-flex items-center gap-1.5">
+              <ShieldCheck className="h-4 w-4 text-[#0088FF]" aria-hidden="true" />
+              Your data is safe with us.
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span className="text-base leading-none" aria-hidden="true">🇦🇪</span>
+              UAE made, UAE proud.
+            </span>
+          </p>
         </div>
       </div>
     </footer>

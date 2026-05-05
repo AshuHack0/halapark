@@ -238,12 +238,6 @@ export default function HeroSection() {
 
   return (
     <section className="relative overflow-hidden bg-[linear-gradient(118deg,#FFFFFF_0%,#F8FBFF_42%,#EAF3FF_100%)]">
-      <div aria-hidden="true" className="absolute inset-0">
-        <div className="absolute right-[-16%] top-[-22%] h-[620px] w-[620px] rounded-full bg-[#CFE3FF]/60" />
-        <div className="absolute bottom-[-30%] right-[-12%] h-[470px] w-[660px] rotate-[-18deg] rounded-[50%] border-[56px] border-white/55" />
-        <div className="absolute bottom-0 right-0 h-[34%] w-[52%] rounded-tl-[100%] bg-[linear-gradient(135deg,rgba(0,136,255,0.08),rgba(0,136,255,0.18))]" />
-      </div>
-
       <CityBackdrop />
 
       <div className="relative mx-auto grid min-h-[640px] max-w-7xl items-center gap-8 px-4 pb-8 pt-10 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8 lg:pb-28 lg:pt-12 xl:min-h-[690px]">
@@ -286,13 +280,31 @@ export default function HeroSection() {
           transition={{ duration: 0.7, ease: "easeOut", delay: 0.08 }}
           className="relative z-10 flex min-h-[430px] items-center justify-center lg:min-h-[570px]"
         >
+          <motion.div
+            aria-hidden="true"
+            animate={
+              prefersReducedMotion ? undefined : { scale: [1, 1.025, 1] }
+            }
+            transition={{
+              duration: 10,
+              repeat: Number.POSITIVE_INFINITY,
+              ease: "easeInOut",
+            }}
+            className="pointer-events-none absolute bottom-[-32%] left-[-28%] right-[-18%] top-[-16%] z-0 opacity-75 sm:bottom-[-36%] sm:left-[-24%] sm:right-[-18%] sm:top-[-18%] lg:bottom-[-42%] lg:left-[-20%] lg:right-[-18%] lg:top-[-22%]"
+          >
+            <Image
+              src="/j3.png"
+              alt=""
+              fill
+              sizes="(min-width: 1024px) 1240px, 155vw"
+              className="object-cover object-center"
+              priority
+            />
+          </motion.div>
+
           <FloatingCards prefersReducedMotion={prefersReducedMotion} />
           <HeroPhone />
 
-          <div
-            aria-hidden="true"
-            className="absolute bottom-5 right-4 hidden h-24 w-44 rounded-[36px] bg-[linear-gradient(135deg,#1E4D8F,#5D9DE8)] blur-[1px] opacity-45 lg:block"
-          />
         </motion.div>
 
         <StatStrip />
