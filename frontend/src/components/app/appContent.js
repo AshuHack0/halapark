@@ -23,7 +23,7 @@ export const serviceFlows = [
   },
   {
     key: "private",
-    label: "Private Rental",
+    label: "Private Parking",
     steps: ["List", "Manage", "Earn"],
     description:
       "Property owners can publish bays, control availability, and turn unused inventory into steady revenue.",

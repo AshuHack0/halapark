@@ -221,7 +221,7 @@ export default function AppServiceTabs() {
   }, [activeTab, activeStep, showLastStepTick]);
 
   return (
-    <section className="w-full bg-white mt-10">
+    <section className="w-full bg-white px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
       <div className="max-w-7xl mx-auto overflow-hidden">
         <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
           <div
@@ -283,6 +283,7 @@ export default function AppServiceTabs() {
               {activeService.steps[activeService.steps.length - 1]} with fewer taps.
             </p>
 
+
             <div className="mt-5 flex flex-wrap items-center gap-3">
               <span className="inline-flex items-center rounded-full border border-[#D7E7FF] bg-[#F3F8FF] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#0F4B86]">
                 {activeShowcase.cardKicker}
@@ -305,8 +306,18 @@ export default function AppServiceTabs() {
               <span className="inline-flex items-center rounded-full border border-[#E4E7EC] bg-white px-3 py-1 text-xs font-medium text-[#475467]">
                 Mobile-first flow
               </span>
+              
             </div>
 
+            <button
+              type="button"
+              className="mt-6 inline-flex items-center gap-3 rounded-xl bg-[#1F6BFF] px-5 py-3 text-sm font-semibold text-white shadow-[0_14px_28px_rgba(31,107,255,0.28)] transition-colors duration-200 hover:bg-[#0F62C7]"
+            >
+              Find My Parking
+              <span aria-hidden className="text-base leading-none">
+                →
+              </span>
+            </button>
             <div className="mt-8 rounded-[36px] border border-[#E5E7EB] bg-[linear-gradient(180deg,#FFFFFF_0%,#F8FAFC_100%)] p-4  sm:p-5">
               <div className="flex gap-3">
                 {activeService.steps.map((step, index) => {

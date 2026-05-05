@@ -1,348 +1,118 @@
 "use client";
 
 import Image from "next/image";
-import {
-  motion,
-  useReducedMotion,
-  useScroll,
-  useSpring,
-  useTransform,
-} from "framer-motion";
-import { useContext, useEffect, useRef, useState } from "react";
-import { ScrollContainerRefContext } from "@/components/SmoothScroll";
+import { motion, useReducedMotion } from "framer-motion";
+import { CalendarCheck, Check, MapPin, Send, WalletCards } from "lucide-react";
 import { appScreenshots } from "./appContent";
-
-const desktopLayoutsLg = [
-  {
-    finalX: -405,
-    finalY: 0,
-    finalRotate: 0,
-    finalScale: 1,
-    fromX: -428,
-    fromY: 100,
-    fromRotate: 0,
-    fromScale: 1,
-    zIndex: 10,
-    opacity: 1,
-  },
-  {
-    finalX: -210,
-    finalY: 0,
-    finalRotate: 0,
-    finalScale: 1,
-    fromX: -228,
-    fromY: 80,
-    fromRotate: 0,
-    fromScale: 1,
-    zIndex: 20,
-    opacity: 1,
-  },
-  {
-    finalX: 0,
-    finalY: 0,
-    finalRotate: 0,
-    finalScale: 1.18,
-    fromX: 0,
-    fromY: 50,
-    fromRotate: 0,
-    fromScale: 1.18,
-    zIndex: 40,
-    opacity: 1,
-  },
-  {
-    finalX: 210,
-    finalY: 0,
-    finalRotate: 0,
-    finalScale: 1,
-    fromX: 228,
-    fromY: 80,
-    fromRotate: 0,
-    fromScale: 1,
-    zIndex: 20,
-    opacity: 1,
-  },
-  {
-    finalX: 405,
-    finalY: 0,
-    finalRotate: 0,
-    finalScale: 1,
-    fromX: 428,
-    fromY: 100,
-    fromRotate: 0,
-    fromScale: 1,
-    zIndex: 10,
-    opacity: 1,
-  },
-];
-
-const desktopLayoutsXl = [
-  {
-    finalX: -472,
-    finalY: 0,
-    finalRotate: 0,
-    finalScale: 1,
-    fromX: -496,
-    fromY: 100,
-    fromRotate: 0,
-    fromScale: 1,
-    zIndex: 10,
-    opacity: 1,
-  },
-  {
-    finalX: -244,
-    finalY: 0,
-    finalRotate: 0,
-    finalScale: 1,
-    fromX: -264,
-    fromY: 80,
-    fromRotate: 0,
-    fromScale: 1,
-    zIndex: 20,
-    opacity: 1,
-  },
-  {
-    finalX: 0,
-    finalY: 0,
-    finalRotate: 0,
-    finalScale: 1.18,
-    fromX: 0,
-    fromY: 50,
-    fromRotate: 0,
-    fromScale: 1.18,
-    zIndex: 40,
-    opacity: 1,
-  },
-  {
-    finalX: 244,
-    finalY: 0,
-    finalRotate: 0,
-    finalScale: 1,
-    fromX: 264,
-    fromY: 80,
-    fromRotate: 0,
-    fromScale: 1,
-    zIndex: 20,
-    opacity: 1,
-  },
-  {
-    finalX: 472,
-    finalY: 0,
-    finalRotate: 0,
-    finalScale: 1,
-    fromX: 496,
-    fromY: 100,
-    fromRotate: 0,
-    fromScale: 1,
-    zIndex: 10,
-    opacity: 1,
-  },
-];
-
-const desktopLayouts2xl = [
-  {
-    finalX: -598,
-    finalY: 0,
-    finalRotate: 0,
-    finalScale: 1,
-    fromX: -628,
-    fromY: 100,
-    fromRotate: 0,
-    fromScale: 1,
-    zIndex: 10,
-    opacity: 1,
-  },
-  {
-    finalX: -310,
-    finalY: 0,
-    finalRotate: 0,
-    finalScale: 1,
-    fromX: -332,
-    fromY: 80,
-    fromRotate: 0,
-    fromScale: 1,
-    zIndex: 20,
-    opacity: 1,
-  },
-  {
-    finalX: 0,
-    finalY: 0,
-    finalRotate: 0,
-    finalScale: 1.18,
-    fromX: 0,
-    fromY: 50,
-    fromRotate: 0,
-    fromScale: 1.18,
-    zIndex: 40,
-    opacity: 1,
-  },
-  {
-    finalX: 310,
-    finalY: 0,
-    finalRotate: 0,
-    finalScale: 1,
-    fromX: 332,
-    fromY: 80,
-    fromRotate: 0,
-    fromScale: 1,
-    zIndex: 20,
-    opacity: 1,
-  },
-  {
-    finalX: 598,
-    finalY: 0,
-    finalRotate: 0,
-    finalScale: 1,
-    fromX: 628,
-    fromY: 100,
-    fromRotate: 0,
-    fromScale: 1,
-    zIndex: 10,
-    opacity: 1,
-  },
-];
-
-function useDesktopLayouts() {
-  const [tier, setTier] = useState("lg");
-
-  useEffect(() => {
-    const pick = () => {
-      const w = window.innerWidth;
-      if (w >= 1536) setTier("2xl");
-      else if (w >= 1280) setTier("xl");
-      else setTier("lg");
-    };
-    pick();
-    window.addEventListener("resize", pick);
-    return () => window.removeEventListener("resize", pick);
-  }, []);
-
-  if (tier === "2xl") return desktopLayouts2xl;
-  if (tier === "xl") return desktopLayoutsXl;
-  return desktopLayoutsLg;
-}
 
 const phoneFrameSrc = "/mobileframe.png";
 
-function HeroPhone({
-  screen,
-  layout,
-  progress,
-  bobProgress,
-  priority = false,
-  floatPhase = 0,
-  enableFloat = true,
-}) {
-  const reduceMotion = useReducedMotion();
+const processSteps = [
+  {
+    title: "Find",
+    text: "Set your location and get started",
+    icon: Send,
+  },
+  {
+    title: "Explore",
+    text: "Find parking near you",
+    icon: MapPin,
+  },
+  {
+    title: "Book",
+    text: "Choose your spot and duration",
+    icon: CalendarCheck,
+  },
+  {
+    title: "Pay",
+    text: "Secure and flexible payment options",
+    icon: WalletCards,
+  },
+  {
+    title: "Confirm",
+    text: "Instant confirmation in your inbox",
+    icon: Check,
+  },
+];
 
-  const x = useTransform(
-    progress,
-    [0, 1],
-    reduceMotion ? [layout.finalX, layout.finalX] : [layout.fromX, layout.finalX],
-  );
-  const yLayout = useTransform(
-    progress,
-    [0, 1],
-    reduceMotion ? [layout.finalY, layout.finalY] : [layout.fromY, layout.finalY],
-  );
-  const yBob = useTransform(bobProgress, (p) => {
-    if (reduceMotion || !enableFloat) return 0;
-    return Math.sin((p + floatPhase) * Math.PI * 2) * 34;
-  });
-  const y = useTransform([yLayout, yBob], ([layoutY, bob]) => Number(layoutY) + Number(bob));
-  const rotate = useTransform(
-    progress,
-    [0, 1],
-    reduceMotion
-      ? [layout.finalRotate, layout.finalRotate]
-      : [layout.fromRotate, layout.finalRotate],
-  );
-  const scale = useTransform(
-    progress,
-    [0, 1],
-    reduceMotion
-      ? [layout.finalScale, layout.finalScale]
-      : [layout.fromScale, layout.finalScale],
-  );
+const phoneLayouts = [
+  "lg:mt-12 lg:w-[18%]",
+  "lg:mt-4 lg:w-[19%]",
+  "lg:z-20 lg:w-[22.5%]",
+  "lg:mt-5 lg:w-[19%]",
+  "lg:mt-12 lg:w-[18%]",
+];
 
-  return (
-    <div
-      className="absolute left-1/2 top-0 w-[180px] -translate-x-1/2 xl:w-[280px]"
-      style={{ zIndex: layout.zIndex }}
-    >
-      <motion.div
-        style={{ x, y, rotate, scale, opacity: layout.opacity }}
-        className="relative transform-gpu will-change-transform"
-      >
-        <div className="relative">
-          <div className="absolute inset-x-[22%] bottom-6 h-10 rounded-full bg-black/10 blur-2xl" />
-
-          <div className="relative isolate aspect-[1439/2920] drop-shadow-[0_26px_50px_rgba(15,23,42,0.18)]">
-            <div className="absolute left-[4.4%] right-[4.4%] top-[1.2%] bottom-[1.45%] z-10 translate-y-[1px] overflow-hidden rounded-[2.7rem] bg-white">
-              <div className="absolute top-0 -bottom-[2.5%] left-0 right-0">
-                <Image
-                  src={screen.image}
-                  alt={screen.title}
-                  fill
-                  sizes="(min-width: 1280px) 208px, 180px"
-                  className="object-cover object-center"
-                  priority={priority}
-                />
-              </div>
-            </div>
-
-            <div className="pointer-events-none absolute inset-0 z-0">
-              <Image
-                src={phoneFrameSrc}
-                alt=""
-                fill
-                sizes="(min-width: 1280px) 208px, 180px"
-                className="select-none object-contain"
-                priority={priority}
-              />
-            </div>
-          </div>
-        </div>
-      </motion.div>
-    </div>
-  );
-}
-
-function MobilePhoneFrame({ screen, bobProgress, reduceMotion, index }) {
-  const enableBob = index !== 2 && !reduceMotion;
-  const floatPhase = index * 0.16;
-
-  const scrollBobY = useTransform(bobProgress, (p) => {
-    if (!enableBob) return 0;
-    return Math.sin((p + floatPhase) * Math.PI * 2) * 22;
-  });
+function StepItem({ step, index, prefersReducedMotion }) {
+  const Icon = step.icon;
 
   return (
     <motion.div
-      className="relative mx-auto mt-6 w-full max-w-[260px]"
-      style={{ y: scrollBobY }}
+      initial={prefersReducedMotion ? false : { opacity: 0, y: 14 }}
+      whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.45 }}
+      transition={{ duration: 0.4, ease: "easeOut", delay: index * 0.05 }}
+      className="flex w-full min-w-0 items-center gap-3 md:min-w-[172px]"
     >
-      <div className="absolute inset-x-[24%] bottom-6 h-10 rounded-full bg-black/10 blur-2xl" />
+      <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[16px] border border-[#E4EAF2] bg-white text-[#0088FF] shadow-[0_10px_26px_rgba(15,23,42,0.05)] sm:h-[52px] sm:w-[52px]">
+        <Icon aria-hidden="true" className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2.4} />
+      </span>
+      <span className="min-w-0 text-left">
+        <span className="block text-sm font-semibold leading-none text-[#050A13] sm:text-[15px]">
+          {step.title}
+        </span>
+        <span className="mt-1.5 block max-w-[11rem] text-[11px] font-medium leading-[1.25] text-[#6B7280] md:max-w-[106px]">
+          {step.text}
+        </span>
+      </span>
+    </motion.div>
+  );
+}
 
-      <div className="relative isolate aspect-[1439/2920] drop-shadow-[0_22px_48px_rgba(15,23,42,0.14)]">
-        <div className="absolute left-[4.4%] right-[4.4%] top-[1.2%] bottom-[1.45%] z-10 translate-y-[1px] overflow-hidden rounded-[2.7rem] bg-white">
-          <div className="absolute top-0 -bottom-[2.5%] left-0 right-0">
-            <Image
-              src={screen.image}
-              alt={screen.title}
-              fill
-              sizes="260px"
-              className="object-cover object-center"
-            />
-          </div>
+function PhoneFrame({ screen, index, prefersReducedMotion }) {
+  let screenBounds =
+    "left-[4.4%] right-[4.4%] top-[1.2%] bottom-[1.45%] rounded-[2.55rem]";
+
+  if (index === 0 || index === 4) {
+    screenBounds =
+      "left-[3.2%] right-[3.2%] top-[0.8%] bottom-[1%] rounded-[2.35rem]";
+  } else if (index === 1 || index === 3) {
+    screenBounds =
+      "left-[3.7%] right-[3.7%] top-[1%] bottom-[1.2%] rounded-[2.45rem]";
+  }
+
+  return (
+    <motion.div
+      initial={prefersReducedMotion ? false : { opacity: 0, y: 34 }}
+      whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.22 }}
+      transition={{ duration: 0.52, ease: "easeOut", delay: 0.12 + index * 0.05 }}
+      className={`relative mx-auto w-full max-w-[230px] sm:max-w-[250px] md:max-w-[260px] lg:max-w-[270px] ${phoneLayouts[index] || ""}`}
+    >
+      <div className="absolute inset-x-[18%] bottom-3 h-10 rounded-full bg-[#0F172A]/14 blur-[28px]" />
+
+      <div className="relative isolate aspect-[1439/2920] drop-shadow-[0_26px_52px_rgba(15,23,42,0.18)]">
+        <div
+          className={`absolute z-30 translate-y-[1px] overflow-hidden bg-white ${screenBounds}`}
+        >
+          <Image
+            src={screen.image}
+            alt={screen.title}
+            fill
+            sizes="(min-width: 1280px) 260px, (min-width: 1024px) 220px, (min-width: 640px) 250px, 230px"
+            className="object-cover object-center"
+            priority={index === 2}
+          />
         </div>
 
-        <div className="pointer-events-none absolute inset-0 z-0">
+        <div className="pointer-events-none absolute inset-0 z-10">
           <Image
             src={phoneFrameSrc}
             alt=""
             fill
-            sizes="260px"
+            sizes="(min-width: 1280px) 260px, (min-width: 1024px) 220px, (min-width: 640px) 250px, 230px"
             className="select-none object-contain"
+            priority={index === 2}
           />
         </div>
       </div>
@@ -351,131 +121,80 @@ function MobilePhoneFrame({ screen, bobProgress, reduceMotion, index }) {
 }
 
 export default function AppScreenshots() {
-  const sectionRef = useRef(null);
-  const desktopStageRef = useRef(null);
-  const reduceMotion = useReducedMotion();
-  const desktopLayouts = useDesktopLayouts();
-  const scrollContainerRef = useContext(ScrollContainerRefContext);
-
-  const scrollOpts = {
-    target: sectionRef,
-    ...(scrollContainerRef ? { container: scrollContainerRef } : {}),
-  };
-
-  const { scrollYProgress } = useScroll({
-    ...scrollOpts,
-    offset: ["start 88%", "end 30%"],
-  });
-
-  const { scrollYProgress: scrollYProgressBob } = useScroll({
-    ...scrollOpts,
-    offset: ["start end", "end start"],
-  });
-
-  const smoothedProgress = useSpring(scrollYProgress, {
-    stiffness: reduceMotion ? 1000 : 230,
-    damping: reduceMotion ? 120 : 34,
-    mass: reduceMotion ? 0.2 : 0.32,
-    restDelta: 0.0008,
-  });
-
-  const smoothedBobProgress = useSpring(scrollYProgressBob, {
-    stiffness: reduceMotion ? 1000 : 90,
-    damping: reduceMotion ? 120 : 22,
-    mass: reduceMotion ? 0.2 : 0.45,
-    restDelta: 0.001,
-  });
+  const prefersReducedMotion = useReducedMotion();
 
   return (
-    <section
-      ref={sectionRef}
-      className="overflow-hidden px-4 pt-20 pb-0 sm:px-0 lg:px-6 xl:px-8"
-    >
-      <div className="w-full">
-        <div className="mx-auto mb-10 max-w-4xl text-center">
-          <p className="text-sm font-medium tracking-[0.14em] text-[#7C8597]">
+    <section className="overflow-hidden bg-white px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+      <div className="mx-auto max-w-7xl">
+        <motion.div
+          initial={prefersReducedMotion ? false : { opacity: 0, y: 18 }}
+          whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.45 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          className="mx-auto max-w-4xl text-center"
+        >
+          <p className="mx-auto inline-flex max-w-full items-center gap-2 rounded-full border border-[#E4EAF2] bg-[#F8FBFF] px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.08em] text-[#4F5B6F] sm:px-4 sm:text-[11px] sm:tracking-[0.12em]">
+            <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[rgba(0,136,255,0.1)] text-[#0088FF]">
+              <Check aria-hidden="true" className="h-2.5 w-2.5" strokeWidth={3} />
+            </span>
             Built for a cleaner parking flow
           </p>
-          <h2 className="mt-4 text-4xl font-semibold tracking-[-0.05em] text-[#0F172A] sm:text-5xl lg:text-[64px] lg:leading-[1.02]">
-            The HalaPark app looks polished from home to receipt.
+
+          <h2 className="mx-auto mt-4 max-w-[760px] text-[clamp(2.25rem,12vw,4.9rem)] font-semibold leading-[0.98] tracking-tight text-[#050A13] sm:leading-[0.95]">
+            Parking made simple.
+            <br />
+            From <span className="text-[#0088FF]">start to finish.</span>
           </h2>
-          <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-[#5E6578]">
-            A five-screen hero inspired by the Pop Site layout, now rebuilt in a
-            white theme with cleaner spacing and scroll-tuned motion.
+
+          <p className="mx-auto mt-5 max-w-[520px] text-sm font-light leading-6 text-[#8A94A6] sm:text-[15px]">
+            Find your spot, book in seconds, pay securely, and get instant
+            confirmation all in the HalaPark app.
           </p>
-        </div>
+        </motion.div>
 
-        <div className="mt-9 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[13px] font-medium text-[#6B7280]">
-          {appScreenshots.map((screen) => (
-            <span key={screen.id} className="inline-flex items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#CBD5E1]" />
-              <span>{screen.label}</span>
-            </span>
-          ))}
-        </div>
-
-        <div
-          ref={desktopStageRef}
-          className="relative mx-auto mt-20 hidden w-full max-w-[1600px] lg:mt-24 lg:block"
-        >
-          <div className="relative mx-auto h-[46rem] max-w-full">
-            <div className="pointer-events-none absolute left-1/2 top-[62%] h-28 w-full max-w-[40rem] -translate-x-1/2 rounded-full bg-[#E5EEF9] blur-[42px] xl:max-w-[48rem] 2xl:max-w-[54rem]" />
-
-            {appScreenshots.map((screen, index) => (
-              <HeroPhone
-                key={screen.id}
-                screen={screen}
-                layout={desktopLayouts[index]}
-                progress={smoothedProgress}
-                bobProgress={smoothedBobProgress}
-                priority={index === 2}
-                floatPhase={index * 0.14}
-                enableFloat={index !== 2}
-              />
+        <div className="mx-auto mt-8 max-w-[1180px] pb-2 sm:mt-9">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:flex md:min-w-[930px] md:items-center md:justify-center md:gap-2">
+            {processSteps.map((step, index) => (
+              <div
+                key={step.title}
+                className={`flex items-center gap-2 rounded-2xl border border-[#E4EAF2] bg-white p-3 shadow-[0_10px_26px_rgba(15,23,42,0.04)] md:rounded-none md:border-0 md:bg-transparent md:p-0 md:shadow-none ${
+                  index === processSteps.length - 1
+                    ? "sm:col-span-2 sm:mx-auto sm:w-full sm:max-w-[22rem] md:col-span-1 md:mx-0 md:max-w-none"
+                    : ""
+                }`}
+              >
+                <StepItem
+                  step={step}
+                  index={index}
+                  prefersReducedMotion={prefersReducedMotion}
+                />
+                {index < processSteps.length - 1 ? (
+                  <span
+                    aria-hidden="true"
+                    className="hidden h-px w-7 border-t border-dashed border-[#C8D0DC] md:block"
+                  />
+                ) : null}
+              </div>
             ))}
           </div>
         </div>
 
-        <div className="mt-20 grid gap-6 lg:hidden">
-          {appScreenshots.map((screen, index) => (
-            <motion.article
-              key={screen.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{
-                duration: 0.45,
-                delay: index * 0.05,
-                ease: "easeOut",
-              }}
-              className="rounded-[2rem] border border-[#E5E7EB] bg-white p-5 shadow-[0_18px_50px_rgba(15,23,42,0.06)]"
-            >
-              <div className="flex items-center justify-between gap-4">
-                <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-[#94A3B8]">
-                    {screen.step}
-                  </p>
-                  <h3 className="mt-2 text-xl font-semibold tracking-[-0.04em] text-[#0F172A]">
-                    {screen.label}
-                  </h3>
-                </div>
-                <div className="rounded-full border border-[#E2E8F0] bg-[#F8FAFC] px-3 py-1 text-xs font-medium text-[#64748B]">
-                  Screen
-                </div>
-              </div>
+        <div className="relative mx-auto mt-8 max-w-[1260px] sm:mt-10">
+          <div
+            aria-hidden="true"
+            className="absolute left-1/2 top-[54%] h-28 w-[86%] -translate-x-1/2 rounded-full bg-[#EAF4FF] blur-[42px]"
+          />
 
-              <p className="mt-4 text-sm leading-7 text-[#5E6578]">
-                {screen.description}
-              </p>
-
-              <MobilePhoneFrame
+          <div className="relative grid grid-cols-1 gap-7 sm:grid-cols-2 md:grid-cols-3 lg:flex lg:items-start lg:justify-center lg:gap-4">
+            {appScreenshots.map((screen, index) => (
+              <PhoneFrame
+                key={screen.id}
                 screen={screen}
-                bobProgress={smoothedBobProgress}
-                reduceMotion={reduceMotion}
                 index={index}
+                prefersReducedMotion={prefersReducedMotion}
               />
-            </motion.article>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </section>

@@ -138,9 +138,9 @@ export default function HalaParkInAction() {
       initial={prefersReducedMotion ? false : "hidden"}
       whileInView={prefersReducedMotion ? undefined : "visible"}
       viewport={{ once: true, amount: 0.28 }}
-      className="bg-white py-4 sm:py-5 lg:py-6"
+      className="bg-white px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20"
     >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl">
         <div className="overflow-hidden rounded-[24px] border border-[rgba(0,136,255,0.14)] bg-[linear-gradient(92deg,#FFFFFF_0%,rgba(0,136,255,0.05)_27%,rgba(0,136,255,0.12)_60%,rgba(0,136,255,0.22)_100%)] shadow-[0_12px_36px_rgba(15,23,42,0.04)]">
           <div className="grid items-center gap-6 lg:items-end lg:min-h-[390px] lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
             <motion.div
