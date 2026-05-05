@@ -59,7 +59,7 @@ const mapLinks = [
 ];
 
 function MetricIcon({ type }) {
-  const common = "h-5 w-5 text-violet-200";
+  const common = "h-5 w-5 text-[#0088FF]";
 
   if (type === "globe") {
     return (
@@ -138,7 +138,7 @@ function MetricIcon({ type }) {
 }
 
 function CapabilityIcon({ type }) {
-  const common = "h-[18px] w-[18px] text-violet-200";
+  const common = "h-[18px] w-[18px] text-[#0088FF]";
 
   if (type === "wallet") {
     return (
@@ -193,21 +193,22 @@ export default function GlobalMobilityNetworkSection() {
   }, {});
 
   return (
-    <section className="bg-[#02040D] py-10 sm:py-12 md:py-14">
+    <section className="relative overflow-hidden bg-[linear-gradient(180deg,#F6FAFF_0%,#FFFFFF_68%)] py-10 sm:py-12 md:py-14">
+      <div className="pointer-events-none absolute -left-24 top-12 h-72 w-72 rounded-full bg-[#0088FF]/12 blur-3xl" />
+      <div className="pointer-events-none absolute -right-20 bottom-8 h-80 w-80 rounded-full bg-[#7CC6FF]/18 blur-3xl" />
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="relative overflow-hidden bg-[#02040D]">
+        <div className="relative overflow-hidden rounded-[24px] border border-[#D8E7F8] bg-white shadow-[0_20px_56px_rgba(15,23,42,0.08)]">
           <div className="relative z-10 text-center">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.42em] text-white/60 sm:text-[12px]">
+            <p className="pt-7 text-[12px] font-semibold uppercase tracking-[0.18em] text-[#0088FF] sm:text-[13px]">
               Global Parking Locations
             </p>
-            <h2 className="mt-2.5 text-[clamp(2rem,4.4vw,3.65rem)] font-normal leading-[1.03] tracking-[-0.045em] text-white">
-              Shaping the Future of Smart Parking <br /> From the UAE to the
-              World
+            <h2 className="mt-3 text-[clamp(2.45rem,4.3vw,3.9rem)] font-medium leading-[1.03] tracking-[-0.055em] text-[#050A13]">
+              Shaping the Future of Smart Parking <br /> From the UAE to the World
             </h2>
-            {/* <p className="mx-auto mt-2.5 max-w-3xl text-[0.9rem] leading-relaxed text-slate-300 sm:text-[0.98rem]">
-              Building a connected ecosystem for seamless, cashless and
+            <p className="mx-auto mt-3 max-w-3xl px-4 text-[0.97rem] leading-relaxed text-slate-600 sm:text-[1.02rem]">
+              Building a connected ecosystem for seamless, cashless, and
               barrier-free parking experiences across cities and borders.
-            </p> */}
+            </p>
           </div>
 
           {/* <div className="relative z-10 mt-6 grid grid-cols-2 gap-2.5 border-y border-white/10 py-3 sm:mt-7 sm:grid-cols-3 sm:gap-3 lg:grid-cols-6">
@@ -221,13 +222,14 @@ export default function GlobalMobilityNetworkSection() {
             ))}
           </div> */}
 
-          <div className="relative z-10 mt-8 isolate min-h-[560px] overflow-hidden sm:min-h-[620px]">
+          <div className="relative z-10 mt-7 isolate min-h-[560px] overflow-hidden sm:min-h-[620px]">
             <div className="relative flex min-h-[560px] flex-col sm:min-h-[620px]">
               <img
                 src="/map_6824dc8ea581a9958227b98c_map.svg"
                 alt="Global mobility map"
-                className="absolute inset-0 h-full w-full object-cover"
+                className="absolute inset-0 h-full w-full object-cover opacity-[0.96]"
               />
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_22%,rgba(0,136,255,0.08),transparent_32%),radial-gradient(circle_at_86%_18%,rgba(0,136,255,0.09),transparent_30%),linear-gradient(180deg,rgba(248,252,255,0.2),rgba(241,248,255,0.44))]" />
               <svg
                 className="absolute inset-0 h-full w-full"
                 viewBox="0 0 100 100"
@@ -246,7 +248,7 @@ export default function GlobalMobilityNetworkSection() {
                       key={`${link.from}-${link.to}`}
                       d={path}
                       fill="none"
-                      stroke="rgba(196,181,253,0.85)"
+                      stroke="rgba(0,136,255,0.62)"
                       strokeWidth="0.26"
                       strokeLinecap="round"
                       className="gm-link-path"
@@ -278,12 +280,12 @@ export default function GlobalMobilityNetworkSection() {
                 </div>
               </div>
               <div className="absolute left-0 top-[14%] z-20 w-full max-w-[360px] px-4 sm:max-w-[390px] sm:px-6">
-                <h3 className="text-[1.45rem] font-semibold uppercase leading-[1.18] tracking-[0.02em] text-white sm:text-[1.85rem]">
+                <h3 className="text-[1.45rem] font-semibold uppercase leading-[1.18] tracking-[0.02em] text-[#071221] sm:text-[1.85rem]">
                   United by Mobility.
                   <br />
                   Connected Globally.
                 </h3>
-                <p className="mt-4 max-w-[300px] text-sm leading-relaxed text-slate-200">
+                <p className="mt-4 max-w-[300px] text-sm leading-relaxed text-slate-600">
                   HalaPark integrates with leading mobility platforms and
                   payment networks to deliver a unified and seamless parking
                   experience.
@@ -294,11 +296,11 @@ export default function GlobalMobilityNetworkSection() {
                     <li key={item.title}>
                       <div className="flex items-center gap-2.5">
                         <CapabilityIcon type={item.icon} />
-                        <p className="text-[1.03rem] font-semibold text-white">
+                        <p className="text-[1.03rem] font-semibold text-[#050A13]">
                           {item.title}
                         </p>
                       </div>
-                      <p className="mt-1.5 max-w-[290px] text-[0.92rem] leading-relaxed text-slate-300">
+                      <p className="mt-1.5 max-w-[290px] text-[0.92rem] leading-relaxed text-slate-600">
                         {item.description}
                       </p>
                     </li>
@@ -309,19 +311,19 @@ export default function GlobalMobilityNetworkSection() {
             </div>
           </div>
 
-          <div className="relative z-20 mt-2 grid gap-2 border-t border-white/10 bg-[#02040D] px-1 py-4 sm:grid-cols-2 sm:px-3 lg:grid-cols-5 lg:gap-0 lg:py-5">
+          <div className="relative z-20   grid gap-2 border-t border-[#DCE9F8] bg-[linear-gradient(180deg,#F8FBFF_0%,#F3F9FF_100%)] px-1 py-4 sm:grid-cols-2 sm:px-3 lg:grid-cols-5 lg:gap-0 lg:py-5">
             {impactStats.map((item, index) => (
               <div
                 key={item.label}
-                className={`px-2 py-2 lg:px-5 ${index > 0 ? "lg:border-l lg:border-white/15" : ""}`}
+                className={`px-2 py-2 lg:px-5 ${index > 0 ? "lg:border-l lg:border-[#DCE9F8]" : ""}`}
               >
                 <div className="mb-2 flex items-center">
                   <MetricIcon type={item.icon} />
                 </div>
-                <p className="text-[1.55rem] font-semibold leading-none tracking-[-0.02em] text-white">
+                <p className="text-[1.55rem] font-semibold leading-none tracking-[-0.02em] text-[#071221]">
                   {item.value}
                 </p>
-                <p className="mt-2 text-[0.76rem] font-medium uppercase tracking-[0.06em] text-slate-300">
+                <p className="mt-2 text-[0.76rem] font-medium uppercase tracking-[0.06em] text-slate-500">
                   {item.label}
                 </p>
               </div>
@@ -339,8 +341,8 @@ export default function GlobalMobilityNetworkSection() {
           width: 7px;
           height: 7px;
           border-radius: 999px;
-          background: #e9d5ff;
-          box-shadow: 0 0 0 0 rgba(196, 181, 253, 0.72);
+          background: #0088ff;
+          box-shadow: 0 0 0 0 rgba(0, 136, 255, 0.58);
           animation: gmPulse 2.4s ease-out infinite;
         }
 
@@ -348,23 +350,23 @@ export default function GlobalMobilityNetworkSection() {
           stroke-dasharray: 1.8 1;
           stroke-dashoffset: 0;
           animation: gmFlow 3.8s linear infinite;
-          filter: drop-shadow(0 0 5px rgba(196, 181, 253, 0.35));
+          filter: drop-shadow(0 0 5px rgba(0, 136, 255, 0.3));
         }
 
         .gm-city-lens {
           width: 124px;
           height: 124px;
           border-radius: 999px;
-          border: 1px solid rgba(196, 181, 253, 0.85);
+          border: 1px solid rgba(0, 136, 255, 0.6);
           background: radial-gradient(
             circle,
-            rgba(167, 139, 250, 0.22) 0%,
-            rgba(167, 139, 250, 0.1) 45%,
-            rgba(167, 139, 250, 0) 72%
+            rgba(0, 136, 255, 0.22) 0%,
+            rgba(0, 136, 255, 0.1) 45%,
+            rgba(0, 136, 255, 0) 72%
           );
           box-shadow:
-            0 0 34px rgba(196, 181, 253, 0.56),
-            inset 0 0 20px rgba(196, 181, 253, 0.34);
+            0 0 34px rgba(0, 136, 255, 0.3),
+            inset 0 0 20px rgba(0, 136, 255, 0.22);
           display: flex;
           flex-direction: column;
           justify-content: center;
@@ -378,12 +380,12 @@ export default function GlobalMobilityNetworkSection() {
           line-height: 1.1;
           font-weight: 600;
           letter-spacing: 0.08em;
-          color: rgba(255, 255, 255, 0.88);
+          color: rgba(7, 18, 33, 0.85);
           white-space: nowrap;
         }
 
         .gm-city-label-main {
-          color: #ffffff;
+          color: #050a13;
         }
 
         @media (max-width: 1023px) {
@@ -408,11 +410,11 @@ export default function GlobalMobilityNetworkSection() {
 
         @keyframes gmPulse {
           0% {
-            box-shadow: 0 0 0 0 rgba(196, 181, 253, 0.72);
+            box-shadow: 0 0 0 0 rgba(0, 136, 255, 0.58);
             transform: scale(0.95);
           }
           70% {
-            box-shadow: 0 0 0 13px rgba(196, 181, 253, 0);
+            box-shadow: 0 0 0 13px rgba(0, 136, 255, 0);
             transform: scale(1.1);
           }
           100% {

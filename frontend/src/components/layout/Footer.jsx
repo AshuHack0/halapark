@@ -139,11 +139,11 @@ export default function Footer() {
             </div>
           </div>
 
-          <div className="w-full md:justify-self-center md:text-center">
+          <div className="w-full md:justify-self-start">
             <h4 className="text-sm font-semibold uppercase tracking-[0.1em] text-[#050A13]">
               Quick Links
             </h4>
-            <ul className="mt-3 grid grid-flow-col grid-rows-5 gap-x-7 gap-y-2.5 text-left md:justify-center md:gap-x-8">
+            <ul className="mt-3 grid grid-cols-2 gap-x-7 gap-y-2.5 text-left md:gap-x-10">
               {quickLinks.map((link) => (
                 <li key={link.name}>
                   <Link
