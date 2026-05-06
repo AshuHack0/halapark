@@ -1,22 +1,28 @@
 "use client";
 
 import Link from "next/link";
+import { CalendarCheck2, CarFront, CircleParking, Search } from "lucide-react";
 
 const steps = [
   {
-    id: "1",
+    id: "01",
     title: "Search",
-    description: "Find available parking near you",
+    description: "Find available parking near you.",
+    icon: Search,
+    accent: CircleParking,
   },
   {
-    id: "2",
+    id: "02",
     title: "Book",
-    description: "Reserve instantly or schedule ahead",
+    description: "Reserve instantly or schedule ahead.",
+    icon: CalendarCheck2,
   },
   {
-    id: "3",
+    id: "03",
     title: "Park",
-    description: "Arrive stress-free - your spot is ready",
+    description: "Arrive stress-free - your spot is ready.",
+    icon: CarFront,
+    accent: CircleParking,
   },
 ];
 
@@ -36,52 +42,81 @@ export default function HowItWorksDemoSection() {
               id="how-it-works-title"
               className="mx-auto mt-4 max-w-[900px] text-[clamp(2.35rem,3.9vw,3.45rem)] font-semibold leading-[1.02] tracking-[-0.055em] text-[#050A13]"
             >
-               HOW IT{" "}
+              HOW IT{" "}
               <span className="bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">
                 WORKS
               </span>{" "}
-              
             </h2>
             <p className="mx-auto mt-3 max-w-[690px] text-[0.95rem] leading-relaxed text-slate-600 sm:text-[1rem]">
-            Watch the quick demo showing how easy it is to discover an open spot, reserve
-instantly, and complete payment inside HalaPark.
+              Watch the quick demo showing how easy it is to discover an open
+              spot, reserve instantly, and complete payment inside HalaPark.
             </p>
           </div>
 
-          <div className="mt-8 grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
-            <div>
-              <div className="relative pl-14">
+          <div className="mt-8 grid gap-8 lg:grid-cols-[1.04fr_0.96fr] lg:items-center">
+            <div className="mx-auto w-full max-w-[620px] lg:mx-0">
+              <div className="relative pl-[88px] sm:pl-[116px]">
                 <span
                   aria-hidden="true"
-                  className="absolute left-[19px] top-2 bottom-2 w-px bg-[#CFE2FA]"
+                  className="absolute left-[20px] top-9 bottom-[72px] border-l-2 border-dashed border-[#BDD0E6] sm:left-[28px]"
                 />
                 <span
                   aria-hidden="true"
-                  className="how-it-works-progress absolute left-[19px] top-2 h-12 w-px bg-gradient-to-b from-[#0078E0] via-[#1AB2FF] to-[#7DD3FC]"
+                  className="how-it-works-progress absolute left-[20px] top-9 h-14 border-l-2 border-dashed border-[#0088FF] sm:left-[28px]"
                 />
 
-                <div className="space-y-7">
-                  {steps.map((step) => (
-                    <article key={step.id} className="relative">
-                      <span className="absolute -left-14 top-0 inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#A5D1FF] bg-[#F0F8FF] text-sm font-semibold text-[#0078E0]">
-                        {step.id}
-                      </span>
-                      <h3 className="text-[1.22rem] font-semibold text-[#0F172A]">
-                        {step.title}
-                      </h3>
-                      <p className="mt-1 text-[0.98rem] leading-7 text-slate-600">
-                        {step.description}
-                      </p>
-                    </article>
-                  ))}
+                <div className="space-y-4 sm:space-y-5">
+                  {steps.map((step) => {
+                    const Icon = step.icon;
+                    const AccentIcon = step.accent;
+
+                    return (
+                      <article
+                        key={step.id}
+                        className="relative flex min-h-[92px] items-center gap-4 rounded-[15px] border border-[#E5EEF8] bg-white p-3 shadow-[0_7px_18px_rgba(15,23,42,0.07)] transition duration-300 hover:-translate-y-0.5 hover:border-[#BFDFFF] hover:shadow-[0_14px_30px_rgba(0,136,255,0.13)] sm:min-h-[108px] sm:gap-5 sm:rounded-[18px] sm:p-4"
+                      >
+                        <span className="absolute -left-[86px] top-1/2 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-[#168EFF] text-[0.9rem] font-bold text-white shadow-[0_8px_18px_rgba(0,136,255,0.34)] ring-4 ring-white sm:-left-[110px] sm:h-[48px] sm:w-[48px] sm:text-[0.95rem]">
+                          {step.id}
+                        </span>
+                        <div className="relative flex h-[70px] w-[92px] shrink-0 items-center justify-center overflow-hidden rounded-[8px] bg-[#F1F7FF] text-[#168EFF] sm:h-[76px] sm:w-[108px]">
+                          <div
+                            aria-hidden="true"
+                            className="absolute inset-0 opacity-45 [background-image:linear-gradient(135deg,rgba(0,136,255,0.12)_25%,transparent_25%),linear-gradient(225deg,rgba(0,136,255,0.1)_25%,transparent_25%),linear-gradient(45deg,rgba(0,136,255,0.1)_25%,transparent_25%),linear-gradient(315deg,rgba(0,136,255,0.12)_25%,#F1F7FF_25%)] [background-position:12px_0,12px_0,0_0,0_0] [background-size:24px_24px]"
+                          />
+                          {AccentIcon ? (
+                            <AccentIcon
+                              aria-hidden="true"
+                              className="absolute right-4 top-3 h-6 w-6 fill-white stroke-[2.4]"
+                            />
+                          ) : null}
+                          <Icon
+                            aria-hidden="true"
+                            className="relative h-10 w-10 stroke-[2.7] sm:h-12 sm:w-12"
+                          />
+                        </div>
+                        <div className="min-w-0">
+                          <h3 className="text-[1.2rem] font-bold leading-tight text-[#182238] sm:text-[1.35rem]">
+                            {step.title}
+                          </h3>
+                          <p className="mt-1 max-w-[260px] text-[0.88rem] font-medium leading-snug text-[#6C7587] sm:text-[1rem]">
+                            {step.description}
+                          </p>
+                        </div>
+                      </article>
+                    );
+                  })}
                 </div>
               </div>
 
-              <div className="mt-6 flex flex-wrap items-center gap-3">
+              <div className="mt-5 flex flex-wrap items-center gap-3 pl-[88px] sm:pl-[116px]">
                 <Link
                   href="/app"
-                  className="inline-flex items-center justify-center rounded-full bg-[#0088FF] px-6 py-3 text-sm font-semibold text-white shadow-[0_10px_26px_rgba(0,136,255,0.34)] transition hover:brightness-95"
+                  className="inline-flex min-h-11 items-center justify-center gap-3 rounded-[10px] bg-[#168EFF] px-7 py-3 text-[0.98rem] font-bold text-white shadow-[0_10px_24px_rgba(0,136,255,0.34)] transition hover:-translate-y-0.5 hover:brightness-95"
                 >
+                  <CarFront
+                    aria-hidden="true"
+                    className="h-5 w-5 stroke-[2.6]"
+                  />
                   Find Parking
                 </Link>
                 {/* <span className="text-sm font-medium text-slate-500">
