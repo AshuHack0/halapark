@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { Monitor, Radar, SmartphoneNfc, Workflow } from "lucide-react";
 import styles from "./SolutionIntegration.module.css";
 
 const solutionCards = [
@@ -20,19 +21,19 @@ const solutionCards = [
       "Smart displays show real-time parking info for better user experience.",
   },
   {
-    id: "Software & Kiosk Integration",
+    id: "kiosk",
     title: "Software & Kiosk Integration",
     description:
       "Unified system with apps, operations, and kiosks for quick payments and access.  ",
   },
   {
-    id: "Sensor-Based Parking Management",
+    id: "sensor",
     title: "Sensor-Based Parking Management",
     description:
       "Smart displays show real-time parking info for better user experience.",
   },
   {
-    id: "End-to-End System Integration",
+    id: "end-to-end",
     title: "End-to-End System Integration",
     description:
       "Integrated platform for scalable, automated parking operations.",
@@ -93,6 +94,13 @@ function SystemsIcon({ className = "", stroke = "#111111" }) {
   );
 }
 
+const lucideSolutionIcons = {
+  systems: Monitor,
+  kiosk: SmartphoneNfc,
+  sensor: Radar,
+  "end-to-end": Workflow,
+};
+
 function SolutionIcon({
   id,
   className = "",
@@ -130,6 +138,19 @@ function SolutionIcon({
           className={`object-contain ${imageClassName}`}
         />
       </div>
+    );
+  }
+
+  const LucideIcon = lucideSolutionIcons[id];
+
+  if (LucideIcon) {
+    return (
+      <LucideIcon
+        aria-hidden="true"
+        className={className}
+        strokeWidth={2.15}
+        style={{ color: muted ? "#9E9E9E" : "#111111" }}
+      />
     );
   }
 
