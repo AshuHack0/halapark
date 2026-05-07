@@ -9,6 +9,16 @@
   animation: connectorFlow 0.72s linear infinite;
 }
 
+.connectorPath {
+  fill: none;
+  stroke: #0088FF;
+  stroke-width: 0.45;
+  stroke-linecap: round;
+  stroke-dasharray: 1.9 1.2;
+  animation: connectorDashFlow 1.4s linear infinite;
+  filter: drop-shadow(0 0 3px rgba(0, 136, 255, 0.24));
+}
+
 @keyframes connectorFlow {
   from {
     background-position: -20px 0;
@@ -19,8 +29,22 @@
   }
 }
 
+@keyframes connectorDashFlow {
+  from {
+    stroke-dashoffset: 0;
+  }
+
+  to {
+    stroke-dashoffset: -6.2;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .connectorTrack {
+    animation: none;
+  }
+
+  .connectorPath {
     animation: none;
   }
 }

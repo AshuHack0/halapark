@@ -150,14 +150,14 @@ export default function HalaParkInAction() {
               <div className="max-w-[560px]">
                 <motion.h1
                   variants={prefersReducedMotion ? undefined : copyItemVariants}
-                  className="max-w-[520px] text-[40px] font-semibold leading-[0.94] text-[#050A13]"
+                  className="max-w-[560px] text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]"
                 >
                  Next-Gen Parking at Your Fingertips
                 </motion.h1>
 
                 <motion.p
                   variants={prefersReducedMotion ? undefined : copyItemVariants}
-                  className="mt-6 max-w-[500px] text-[13.7px] font-light leading-[1.55] text-[#8A94A6]"
+                  className="mt-3 max-w-[650px] text-[0.88rem] font-light leading-6 text-[#8A94A6] sm:text-[0.94rem]"
                 >
                  Find, book, and manage parking easily from your phone. Get real-
 time availability, quick booking, and a smooth, hassle-free experience

@@ -57,14 +57,16 @@ function MagicHeading({ text, reduced }) {
   const words = text.split(" ");
   const accent = new Set(
     words
-      .map((w, i) => (["Parking", "Asset", "Class"].includes(w) ? i : null))
+      .map((w, i) =>
+        ["Who", "Parking", "Asset", "Class"].includes(w) ? i : null,
+      )
       .filter((i) => i != null),
   );
 
   return (
     <h2
       id="who-we-are-heading"
-      className="mt-5 text-[clamp(2.35rem,4.6vw,3.6rem)] font-medium leading-[1.06] tracking-[-0.04em] [text-wrap:balance]"
+      className="mt-5 text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] [text-wrap:balance]"
     >
       {words.map((word, i) => {
         const isAccent = accent.has(i);
@@ -73,7 +75,7 @@ function MagicHeading({ text, reduced }) {
             key={`${word}-${i}`}
             className={`inline-block pr-[0.28em] [-webkit-box-decoration-break:clone] [box-decoration-break:clone] ${
               isAccent
-                ? "text-[#0078E0]"
+                ? "bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent"
                 : "text-[#050A13]"
             }`}
           >
@@ -375,7 +377,7 @@ export default function WhoWeAre() {
             />
 
             <motion.p
-              className="mt-6 max-w-xl text-base leading-relaxed text-slate-600 sm:text-lg"
+              className="mt-4 max-w-[650px] text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem]"
               {...fadeUp}
             >
               {activeContent.body}

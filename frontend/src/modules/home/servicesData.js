@@ -290,7 +290,8 @@ export const servicesData = [
       "Centralized visibility across sites",
       "Lower manual workload for teams",
     ],
-    mediaType: "integrations",
+    mediaType: "video",
+    mediaSrc: "/parkingmangement%20.mp4",
   },
   {
     slug: "Airport Services",
@@ -336,7 +337,8 @@ export const servicesData = [
       "Centralized visibility across sites",
       "Lower manual workload for teams",
     ],
-    mediaType: "integrations",
+    mediaType: "video",
+    mediaSrc: "/airportservice.mp4",
   },
   {
     slug: "Car Wash Services (Interior & Exterior)",
@@ -382,7 +384,8 @@ export const servicesData = [
       "Centralized visibility across sites",
       "Lower manual workload for teams",
     ],
-    mediaType: "integrations",
+    mediaType: "video",
+    mediaSrc: "/cleaning.mp4",
   },
   {
     slug: "Air Tyre Service",
@@ -428,7 +431,8 @@ export const servicesData = [
       "Centralized visibility across sites",
       "Lower manual workload for teams",
     ],
-    mediaType: "integrations",
+    mediaType: "video",
+    mediaSrc: "/airtyre.mp4",
   },
   {
     slug: "Battery Replacement Service",
@@ -474,7 +478,8 @@ export const servicesData = [
       "Centralized visibility across sites",
       "Lower manual workload for teams",
     ],
-    mediaType: "integrations",
+    mediaType: "video",
+    mediaSrc: "/batterychange.mp4",
   },
 ];
 

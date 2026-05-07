@@ -181,7 +181,7 @@ function AudienceCard({
             pointerEvents: !isDesktop || active ? "auto" : "none",
           }}
         >
-          <p className="max-w-[31ch] text-[0.9rem] leading-[1.4] tracking-[-0.015em] text-black sm:text-[0.97rem] lg:max-w-[450px] lg:text-[15.5px] lg:leading-[1.34]">
+          <p className="max-w-[31ch] text-[0.82rem] leading-[1.42] tracking-[-0.015em] text-black sm:text-[0.88rem] lg:max-w-[420px] lg:text-[14px] lg:leading-[1.38]">
             {description}
           </p>
 
@@ -230,24 +230,20 @@ export default function AiPoweredParkingService() {
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-[980px] text-center">
-          <p className="mx-auto inline-flex items-center rounded-full border border-[#7AB9FF]/45 bg-white/85 px-4 py-1.5 text-[12px] font-semibold uppercase tracking-[0.14em] text-[#0078E0] sm:text-[13px]">
-            AI-POWERED PARKING SERVICE
-          </p>
-
           <h2
             id="ai-powered-parking-service-title"
-            className="mx-auto mt-4 max-w-[900px] text-[clamp(2.35rem,3.9vw,3.45rem)] font-semibold leading-[1.02] tracking-[-0.055em] text-[#050A13]"
+            className="mx-auto mt-4 max-w-[940px] text-[clamp(2.65rem,4.5vw,4rem)] font-semibold uppercase leading-[1.01] tracking-[-0.06em] text-[#050A13]"
           >
-       Smarter Parking Operations with {"  "}
+            AI-POWERED PARKING{" "}
             <span className="bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">
-               AI
-            </span>{" "}
-            Intelligence
+              SERVICE
+            </span>
           </h2>
-          <p className="mx-auto mt-3 max-w-[690px] text-[0.95rem] leading-relaxed text-slate-600 sm:text-[1rem]">
-          AI-powered automation that enhances the parking experience for both users
-and operators. It enables faster access, smoother operations, and more
-reliable parking management at every step.
+          <p className="mx-auto mt-3 max-w-[650px] text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem]">
+            Smarter Parking Operations with AI Intelligence. AI-powered
+            automation enhances the parking experience for both users and
+            operators with faster access, smoother operations, and reliable
+            management.
           </p>
         </div>
 

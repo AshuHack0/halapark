@@ -305,10 +305,10 @@ export default function GoodLookingServicesSection() {
               {/* <p className="mt-5 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
                 Service 0{activeServiceIndex + 1}
               </p> */}
-              <h2 className="mt-3 text-[clamp(2.3rem,3.6vw,3.45rem)] font-medium leading-[1.03] tracking-[-0.055em] text-[#050A13]">
+              <h2 className="mt-3 text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
                 {activeService.name}
               </h2>
-              <p className="mt-5 text-base leading-8 text-slate-600 sm:text-lg">
+              <p className="mt-3 max-w-[650px] text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem]">
                 {activeService.summary}
               </p>
               {/* <div className="mt-5 flex flex-wrap gap-2.5">

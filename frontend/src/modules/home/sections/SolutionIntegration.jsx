@@ -44,30 +44,57 @@ const integrationNodes = [
   {
     id: "camera",
     nodeClass:
-      "left-[23%] top-[15%] h-[58px] w-[58px] rounded-[14px] sm:h-[54px] sm:w-[54px] lg:h-[62px] lg:w-[62px] lg:rounded-[16px]",
+      "left-[18%] top-[15%] h-[58px] w-[58px] rounded-[14px] sm:h-[54px] sm:w-[54px] lg:h-[62px] lg:w-[62px] lg:rounded-[16px]",
     iconClass:
       "h-[28px] w-[28px] sm:h-[32px] sm:w-[32px] lg:h-[36px] lg:w-[36px]",
   },
   {
     id: "barrier",
     nodeClass:
-      "left-[4%] top-[41%] h-[58px] w-[58px] rounded-[14px] sm:h-[54px] sm:w-[54px] lg:h-[62px] lg:w-[62px] lg:rounded-[16px]",
+      "left-[0%] top-[41%] h-[58px] w-[58px] rounded-[14px] sm:h-[54px] sm:w-[54px] lg:h-[62px] lg:w-[62px] lg:rounded-[16px]",
     iconClass:
       "h-[28px] w-[28px] sm:h-[32px] sm:w-[32px] lg:h-[36px] lg:w-[36px]",
   },
   {
     id: "systems",
     nodeClass:
-      "left-[23%] top-[64%] h-[58px] w-[58px] rounded-[14px] sm:h-[54px] sm:w-[54px] lg:h-[62px] lg:w-[62px] lg:rounded-[16px]",
+      "left-[18%] top-[64%] h-[58px] w-[58px] rounded-[14px] sm:h-[54px] sm:w-[54px] lg:h-[62px] lg:w-[62px] lg:rounded-[16px]",
+    iconClass:
+      "h-[28px] w-[28px] sm:h-[32px] sm:w-[32px] lg:h-[36px] lg:w-[36px]",
+  },
+];
+
+const rightIntegrationNodes = [
+  {
+    id: "camera",
+    nodeClass:
+      "right-[18%] top-[15%] h-[58px] w-[58px] rounded-[14px] sm:h-[54px] sm:w-[54px] lg:h-[62px] lg:w-[62px] lg:rounded-[16px]",
+    iconClass:
+      "h-[28px] w-[28px] sm:h-[32px] sm:w-[32px] lg:h-[36px] lg:w-[36px]",
+  },
+  {
+    id: "barrier",
+    nodeClass:
+      "right-[0%] top-[41%] h-[58px] w-[58px] rounded-[14px] sm:h-[54px] sm:w-[54px] lg:h-[62px] lg:w-[62px] lg:rounded-[16px]",
+    iconClass:
+      "h-[28px] w-[28px] sm:h-[32px] sm:w-[32px] lg:h-[36px] lg:w-[36px]",
+  },
+  {
+    id: "systems",
+    nodeClass:
+      "right-[18%] top-[64%] h-[58px] w-[58px] rounded-[14px] sm:h-[54px] sm:w-[54px] lg:h-[62px] lg:w-[62px] lg:rounded-[16px]",
     iconClass:
       "h-[28px] w-[28px] sm:h-[32px] sm:w-[32px] lg:h-[36px] lg:w-[36px]",
   },
 ];
 
 const integrationConnectors = [
-  { className: "left-[32%] top-[26%]", width: "39%", delay: "0s" },
-  { className: "left-[13%] top-[51%]", width: "58%", delay: "0.18s" },
-  { className: "left-[32%] top-[76%]", width: "39%", delay: "0.36s" },
+  { x1: 20, y: 26, x2: 49, delay: "0s" },
+  { x1: 2, y: 51, x2: 49, delay: "0.18s" },
+  { x1: 20, y: 76, x2: 49, delay: "0.36s" },
+  { x1: 51, y: 26, x2: 80, delay: "0.08s" },
+  { x1: 51, y: 51, x2: 98, delay: "0.26s" },
+  { x1: 51, y: 76, x2: 80, delay: "0.44s" },
 ];
 
 function SystemsIcon({ className = "", stroke = "#111111" }) {
@@ -162,28 +189,9 @@ function SolutionIcon({
 function NodeCard({ className, children }) {
   return (
     <div
-      className={`absolute flex items-center justify-center border border-[#E7EAF0] bg-white shadow-[0_16px_40px_rgba(15,23,42,0.08)] ${className}`}
+      className={`absolute z-30 flex items-center justify-center border border-[#E7EAF0] bg-white shadow-[0_16px_40px_rgba(15,23,42,0.08)] ${className}`}
     >
       {children}
-    </div>
-  );
-}
-
-function ConnectorLine({ className, width, delay = "0s" }) {
-  return (
-    <div
-      aria-hidden="true"
-      className={`absolute flex items-center ${className}`}
-      style={{ width }}
-    >
-      <span className="h-[7px] w-[7px] rounded-full bg-[#0088FF]" />
-      <span
-        className={`${styles.connectorTrack} mx-[7px] h-[2px] flex-1 rounded-full`}
-        style={{
-          animationDelay: delay,
-        }}
-      />
-      <span className="h-[7px] w-[7px] rounded-full bg-[#0088FF]" />
     </div>
   );
 }
@@ -193,14 +201,24 @@ function IntegrationDiagram() {
     <div className="relative mx-auto mt-10 h-[220px] max-w-[370px] sm:h-[252px] sm:max-w-[470px] lg:mt-14 lg:h-[284px] lg:max-w-[650px]">
       {/* <div className="absolute inset-x-[18%] top-[10%] h-[132px] rounded-full bg-[radial-gradient(circle,rgba(0,136,255,0.12)_0%,rgba(17,136,255,0)_72%)] blur-2xl sm:h-[154px] lg:h-[190px] lg:blur-[36px]" /> */}
 
-      {integrationConnectors.map((connector) => (
-        <ConnectorLine
-          key={`${connector.className}-${connector.width}`}
-          className={connector.className}
-          width={connector.width}
-          delay={connector.delay}
-        />
-      ))}
+      <svg
+        className="pointer-events-none absolute inset-0 z-10 h-full w-full"
+        viewBox="0 0 100 100"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+      >
+        {integrationConnectors.map((connector) => (
+          <line
+            key={`${connector.x1}-${connector.y}-${connector.x2}`}
+            className={styles.connectorPath}
+            x1={connector.x1}
+            y1={connector.y}
+            x2={connector.x2}
+            y2={connector.y}
+            style={{ animationDelay: connector.delay }}
+          />
+        ))}
+      </svg>
 
       {integrationNodes.map((node) => (
         <NodeCard key={node.id} className={node.nodeClass}>
@@ -208,7 +226,13 @@ function IntegrationDiagram() {
         </NodeCard>
       ))}
 
-      <div className="absolute right-[4%] top-[16%] flex h-[136px] w-[136px] items-center justify-center overflow-hidden rounded-[20px] bg-[linear-gradient(180deg,#24A3FF_0%,#007EEA_100%)] shadow-[0_20px_44px_rgba(0,136,255,0.22)] sm:h-[158px] sm:w-[158px] sm:rounded-[22px] lg:h-[192px] lg:w-[192px] lg:rounded-[24px] lg:shadow-[0_26px_64px_rgba(0,136,255,0.25)]">
+      {rightIntegrationNodes.map((node) => (
+        <NodeCard key={`right-${node.id}`} className={node.nodeClass}>
+          <SolutionIcon id={node.id} className={node.iconClass} muted />
+        </NodeCard>
+      ))}
+
+      <div className="absolute left-1/2 top-[16%] z-20 flex h-[136px] w-[136px] -translate-x-1/2 items-center justify-center overflow-hidden rounded-[20px] bg-[linear-gradient(180deg,#24A3FF_0%,#007EEA_100%)] shadow-[0_20px_44px_rgba(0,136,255,0.22)] sm:h-[158px] sm:w-[158px] sm:rounded-[22px] lg:h-[192px] lg:w-[192px] lg:rounded-[24px] lg:shadow-[0_26px_64px_rgba(0,136,255,0.25)]">
         <div className="absolute inset-0 rounded-[inherit] bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.55),transparent_58%)]" />
         <Image
           src="/Layer_1.svg"
@@ -298,16 +322,19 @@ export default function SolutionIntegration() {
           </h2>
         </div> */}
         <div className="mx-auto max-w-[980px] text-center">
-          <p className="text-[15px] font-semibold uppercase tracking-[0.1em] text-[#0088FF] sm:text-[16px]">
-            Solution Integration
-          </p>
-
           <h2
             id="ai-powered-parking-service-title"
-            className="mx-auto mt-4 max-w-[900px] text-[clamp(2.6rem,4.4vw,3.95rem)] font-medium leading-[1.03] tracking-[-0.06em] text-[#050A13]"
+            className="mx-auto mt-4 max-w-[940px] text-[clamp(2.65rem,4.5vw,4rem)] font-semibold uppercase leading-[1.01] tracking-[-0.06em] text-[#050A13]"
           >
-            End-to-End Integrated Parking Solution
+            Solution{" "}
+            <span className="bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">
+              Integration
+            </span>
           </h2>
+          <p className="mx-auto mt-3 max-w-[650px] text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem]">
+            End-to-end integrated parking solution that connects hardware,
+            software, and operations into one unified platform.
+          </p>
         </div>
 
         <IntegrationDiagram />

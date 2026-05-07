@@ -29,18 +29,35 @@ export default function Footer() {
   ];
 
   const socialLinks = [
-    { name: "LinkedIn", href: "https://www.linkedin.com/company/109206771/admin/dashboard/", icon: SlSocialLinkedin },
-    { name: "Instagram", href: "https://www.instagram.com/halapark.ai/", icon: SiInstagram },
-    { name: "Facebook", href: "https://www.facebook.com/profile.php?id=61571036017442", icon: SiFacebook },
-    // add the ticktok 
-    { name: "TikTok", href: "https://www.tiktok.com/@halapark.ai", icon: SiTiktok },
-    //add snapchat
-    { name: "Snapchat", href: "https://www.snapchat.com/@halapark.ai", icon: SiSnapchat  },
-
+    {
+      name: "LinkedIn",
+      href: "https://www.linkedin.com/company/109206771/admin/dashboard/",
+      icon: SlSocialLinkedin,
+    },
+    {
+      name: "Instagram",
+      href: "https://www.instagram.com/halapark.ai/",
+      icon: SiInstagram,
+    },
+    {
+      name: "Facebook",
+      href: "https://www.facebook.com/profile.php?id=61571036017442",
+      icon: SiFacebook,
+    },
+    {
+      name: "TikTok",
+      href: "https://www.tiktok.com/@halapark.ai",
+      icon: SiTiktok,
+    },
+    {
+      name: "Snapchat",
+      href: "https://www.snapchat.com/@halapark.ai",
+      icon: SiSnapchat,
+    },
   ];
 
   return (
-    <footer className="relative   w-full overflow-hidden border-t border-[#E4EAF2] bg-[linear-gradient(180deg,#FFFFFF_0%,#FBFDFF_52%,#F6FAFF_100%)] text-[#050A13] font-sans">
+    <footer className="relative w-full overflow-hidden border-t border-[#E4EAF2] bg-[linear-gradient(180deg,#FFFFFF_0%,#FBFDFF_52%,#F6FAFF_100%)] font-sans text-[#050A13]">
       <div className="pointer-events-none absolute -left-28 top-8 h-72 w-72 rounded-full bg-[#0088FF]/[0.06] blur-3xl" />
       <div className="pointer-events-none absolute -right-28 bottom-0 h-80 w-80 rounded-full bg-[#0088FF]/[0.08] blur-3xl" />
 
@@ -74,13 +91,17 @@ export default function Footer() {
           </div>
         </div> */}
 
-        <div className="mt-8 grid items-start gap-10 border-b border-[#E4EAF2] pb-10 md:grid-cols-3 md:gap-8 lg:gap-12">
-          <div className="space-y-6 md:justify-self-start">
+        <div className="mt-8 grid items-start gap-10 border-b border-[#E4EAF2] pb-10 md:grid-cols-3 md:gap-8 lg:grid-cols-[0.9fr_1.1fr_1fr] lg:gap-12">
+          <div className="space-y-3 md:justify-self-start">
             <div>
               <Link href="/" className="inline-flex items-center gap-1">
-                <img src="/logo-blue-11.svg" alt="HalaPark" className="h-10 w-auto" />
-            </Link>
-              <p className="mt-3 max-w-xs text-sm leading-6 text-[#667085]">
+                <img
+                  src="/logo-blue-11.svg"
+                  alt="HalaPark"
+                  className="h-10 w-auto"
+                />
+              </Link>
+              <p className="mt-2 max-w-[17rem] text-sm leading-5 text-[#667085]">
                 Smart parking solutions across the UAE, making parking simple and
                 efficient.
               </p>
@@ -177,22 +198,22 @@ export default function Footer() {
                   className="h-36 w-36 rounded-xl border border-[#D7E5F6] bg-white p-2.5 shadow-[0_10px_24px_rgba(15,23,42,0.05)]"
                 />
               </Link>
-              <div className="flex min-w-[9.5rem] flex-col items-start gap-2 md:items-end">
+              <div className="flex w-[6.75rem] flex-col items-start gap-2 md:items-end">
                 <img
                   src="/google-play.svg"
                   alt="Get it on Google Play"
-                  className="h-9 w-auto"
+                  className="h-9 w-[6.75rem] object-contain"
                 />
                 <img
                   src="/app-store.svg"
                   alt="Download on the App Store"
-                  className="h-9 w-auto"
+                  className="h-9 w-[6.75rem] object-contain"
                 />
                 <Link
                   href={appDownloadUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex h-9 items-center gap-1.5 rounded-2xl border-2 border-black bg-black px-3"
+                  className="inline-flex h-9 w-[6.75rem] items-center gap-1.5 rounded-2xl border-2 border-black bg-black px-2.5"
                   aria-label="Download on Huawei AppGallery"
                 >
                   <img
@@ -204,7 +225,9 @@ export default function Footer() {
                     <span className="text-[7px] font-medium opacity-90">
                       Get it on
                     </span>
-                    <span className="mt-0.5 text-[10px] font-semibold">Huawei</span>
+                    <span className="mt-0.5 text-[13px] font-semibold">
+                      Huawei 
+                    </span>
                   </span>
                 </Link>
               </div>

@@ -193,19 +193,23 @@ export default function GlobalMobilityNetworkSection() {
   }, {});
 
   return (
-    <section className="relative overflow-hidden bg-[linear-gradient(180deg,#F6FAFF_0%,#FFFFFF_68%)] py-10 sm:py-12 md:py-14">
+    <section className="relative overflow-hidden bg-[linear-gradient(180deg,#F6FAFF_0%,#FFFFFF_68%)] py-8 sm:py-10 md:py-12">
       <div className="pointer-events-none absolute -left-24 top-12 h-72 w-72 rounded-full bg-[#0088FF]/12 blur-3xl" />
       <div className="pointer-events-none absolute -right-20 bottom-8 h-80 w-80 rounded-full bg-[#7CC6FF]/18 blur-3xl" />
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="relative overflow-hidden rounded-[24px] border border-[#D8E7F8] bg-white shadow-[0_20px_56px_rgba(15,23,42,0.08)]">
           <div className="relative z-10 text-center">
-            <p className="pt-7 text-[12px] font-semibold uppercase tracking-[0.18em] text-[#0088FF] sm:text-[13px]">
-              Global Parking Locations
-            </p>
-            <h2 className="mt-3 text-[clamp(2.45rem,4.3vw,3.9rem)] font-medium leading-[1.03] tracking-[-0.055em] text-[#050A13]">
-              Shaping the Future of Smart Parking <br /> From the UAE to the World
+            <h2 className="mx-auto pt-5 text-[clamp(2.65rem,4.5vw,4rem)] font-semibold uppercase leading-[1.01] tracking-[-0.06em] text-[#050A13] sm:pt-6">
+              Global Parking{" "}
+              <span className="bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">
+                Locations
+              </span>
             </h2>
-            <p className="mx-auto mt-3 max-w-3xl px-4 text-[0.97rem] leading-relaxed text-slate-600 sm:text-[1.02rem]">
+            <p className="mx-auto mt-3 max-w-[650px] px-4 text-[0.88rem] leading-6 text-slate-800 sm:text-[0.94rem] text-bold">
+              Shaping the future of smart parking from the UAE to the world
+              through connected, intelligent parking experiences.
+            </p>
+            <p className="mx-auto mt-2 max-w-[650px] px-4 text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem]">
               Building a connected ecosystem for seamless, cashless, and
               barrier-free parking experiences across cities and borders.
             </p>
@@ -222,8 +226,8 @@ export default function GlobalMobilityNetworkSection() {
             ))}
           </div> */}
 
-          <div className="relative z-10 mt-7 isolate min-h-[560px] overflow-hidden sm:min-h-[620px]">
-            <div className="relative flex min-h-[560px] flex-col sm:min-h-[620px]">
+          <div className="relative z-10 mt-4 isolate min-h-[420px] overflow-hidden sm:min-h-[460px] lg:min-h-[500px]">
+            <div className="relative flex min-h-[420px] flex-col sm:min-h-[460px] lg:min-h-[500px]">
               <img
                 src="/map_6824dc8ea581a9958227b98c_map.svg"
                 alt="Global mobility map"
@@ -279,19 +283,19 @@ export default function GlobalMobilityNetworkSection() {
                   <span className="gm-city-label">ABU DHABI</span>
                 </div>
               </div>
-              <div className="absolute left-0 top-[14%] z-20 w-full max-w-[360px] px-4 sm:max-w-[390px] sm:px-6">
+              <div className="absolute left-0 top-[10%] z-20 w-full max-w-[360px] px-4 sm:max-w-[390px] sm:px-6">
                 <h3 className="text-[1.45rem] font-semibold uppercase leading-[1.18] tracking-[0.02em] text-[#071221] sm:text-[1.85rem]">
                   United by Mobility.
                   <br />
                   Connected Globally.
                 </h3>
-                <p className="mt-4 max-w-[300px] text-sm leading-relaxed text-slate-600">
+                <p className="mt-2 max-w-[300px] text-sm leading-relaxed text-slate-600">
                   HalaPark integrates with leading mobility platforms and
                   payment networks to deliver a unified and seamless parking
                   experience.
                 </p>
 
-                <ul className="mt-6 space-y-4">
+                <ul className="mt-3 space-y-2.5">
                   {capabilities.map((item) => (
                     <li key={item.title}>
                       <div className="flex items-center gap-2.5">
@@ -300,7 +304,7 @@ export default function GlobalMobilityNetworkSection() {
                           {item.title}
                         </p>
                       </div>
-                      <p className="mt-1.5 max-w-[290px] text-[0.92rem] leading-relaxed text-slate-600">
+                      <p className="mt-1 max-w-[290px] text-[0.92rem] leading-relaxed text-slate-600">
                         {item.description}
                       </p>
                     </li>
@@ -311,19 +315,19 @@ export default function GlobalMobilityNetworkSection() {
             </div>
           </div>
 
-          <div className="relative z-20   grid gap-2 border-t border-[#DCE9F8] bg-[linear-gradient(180deg,#F8FBFF_0%,#F3F9FF_100%)] px-1 py-4 sm:grid-cols-2 sm:px-3 lg:grid-cols-5 lg:gap-0 lg:py-5">
+          <div className="relative z-20 grid gap-2 border-t border-[#DCE9F8] bg-[linear-gradient(180deg,#F8FBFF_0%,#F3F9FF_100%)] px-1 py-3 sm:grid-cols-2 sm:px-3 lg:grid-cols-4 lg:gap-0 lg:py-4">
             {impactStats.map((item, index) => (
               <div
                 key={item.label}
-                className={`px-2 py-2 lg:px-5 ${index > 0 ? "lg:border-l lg:border-[#DCE9F8]" : ""}`}
+                className={`px-2 py-2 text-center lg:px-5 ${index > 0 ? "lg:border-l lg:border-[#DCE9F8]" : ""}`}
               >
-                <div className="mb-2 flex items-center">
+                <div className="mb-2 flex items-center justify-center">
                   <MetricIcon type={item.icon} />
                 </div>
                 <p className="text-[1.55rem] font-semibold leading-none tracking-[-0.02em] text-[#071221]">
                   {item.value}
                 </p>
-                <p className="mt-2 text-[0.76rem] font-medium uppercase tracking-[0.06em] text-slate-500">
+                <p className="mt-1.5 text-[0.76rem] font-medium uppercase tracking-[0.06em] text-slate-500">
                   {item.label}
                 </p>
               </div>

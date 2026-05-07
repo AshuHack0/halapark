@@ -128,16 +128,22 @@ function SectionIntro({ centered = false }) {
       className={`flex flex-col ${centered ? "items-center text-center" : "items-start text-left"}`}
     >
       <div className="mx-auto max-w-[980px] text-center">
-        <p className="text-[15px] font-bold uppercase tracking-[0.1em] text-[#006EDC] sm:text-[16px]">
-          Why Halapark
-        </p>
+      
 
         <h2
           id="ai-powered-parking-service-title"
-          className="mx-auto mt-4 max-w-[900px] text-[clamp(3rem,5.8vw,5rem)] font-medium leading-[1.03] tracking-[-0.06em] text-[#050A13]"
+          className="mx-auto mt-4 max-w-[940px] text-[clamp(3rem,5.4vw,4.85rem)] font-semibold leading-[0.98] tracking-[-0.07em] text-[#050A13]"
         >
-         Next-generation platform for intelligent parking solutions
+       
+
+          Why{" "}
+          <span className="bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">
+            Halapark
+          </span>
         </h2>
+          <p className="mx-auto mt-3 max-w-[650px] text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem]">
+       Next-generation platform for intelligent parking solutions 
+        </p>
       </div>
 
       {/* <Link
@@ -340,11 +346,11 @@ export default function WhyHalapark() {
                     <FeatureVisual item={item} compact />
                   </div>
 
-                  <p className="mt-5 text-[1rem] leading-7 text-slate-700">
+                  <p className="mt-5 text-[0.88rem] leading-6 text-slate-700 sm:text-[0.94rem]">
                     <span className="block text-[1.12rem] font-semibold leading-7 text-slate-900">
                       {item.title || item.copy}
                     </span>
-                    <span className="mt-1 block text-[1rem] leading-7 text-slate-700">
+                    <span className="mt-1 block text-[0.88rem] leading-6 text-slate-700 sm:text-[0.94rem]">
                       {item.subtitle || item.copy}
                     </span>
                   </p>
@@ -418,7 +424,7 @@ export default function WhyHalapark() {
                               {item.title || item.copy}
                             </h3>
                             <p
-                              className={`mt-1 text-[1rem] leading-6 tracking-[-0.012em] ${
+                              className={`mt-1 text-[0.88rem] leading-6 tracking-[-0.012em] ${
                                 isActive
                                   ? "text-slate-950"
                                   : isComplete
