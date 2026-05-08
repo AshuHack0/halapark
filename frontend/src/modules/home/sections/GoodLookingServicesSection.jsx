@@ -268,12 +268,26 @@ export default function GoodLookingServicesSection() {
     : [];
 
   return (
-    <section className="relative overflow-x-clip bg-[#f0f2f4] py-14 sm:py-16 md:py-20 lg:py-24">
+    <section
+      id="services"
+      aria-labelledby="services-section-title"
+      className="relative overflow-x-clip bg-[#f0f2f4] py-14 sm:py-16 md:py-20 lg:py-24"
+    >
       <div className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-24 bg-[linear-gradient(180deg,rgba(240,242,244,1)_0%,rgba(240,242,244,0)_100%)]" />
       <div className="pointer-events-none absolute -left-24 top-10 z-[1] h-[420px] w-[420px] rounded-full bg-[radial-gradient(circle_at_30%_30%,rgba(0,136,255,0.22),rgba(0,136,255,0)_60%)] blur-2xl" />
       <div className="pointer-events-none absolute -right-24 bottom-0 z-[1] h-[460px] w-[460px] rounded-full bg-[radial-gradient(circle_at_30%_30%,rgba(20,184,166,0.18),rgba(20,184,166,0)_60%)] blur-2xl" />
 
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto mb-10 max-w-[980px] text-center sm:mb-12 lg:mb-16">
+          
+          <h2
+            id="services-section-title"
+            className="mx-auto mt-4 max-w-[980px] text-[clamp(2.75rem,5vw,4.4rem)] font-medium leading-[1.02] tracking-[-0.06em] text-[#050A13]"
+          >
+                   SERVICES
+          </h2>
+        </div>
+
         <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start lg:gap-12 lg:pb-10">
           <motion.div
             className="max-w-xl lg:sticky lg:top-28 lg:self-start"
@@ -293,8 +307,8 @@ export default function GoodLookingServicesSection() {
                   },
                 })}
           >
-            <p className="text-[15px] font-semibold uppercase tracking-[0.1em] text-[#0088FF] sm:text-[16px]">
-              Services
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 sm:text-sm">
+              Service 0{activeServiceIndex + 1}
             </p>
             <motion.div
               key={activeService.slug}
@@ -305,7 +319,7 @@ export default function GoodLookingServicesSection() {
               {/* <p className="mt-5 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
                 Service 0{activeServiceIndex + 1}
               </p> */}
-              <h2 className="mt-3 text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
+              <h2 className="mt-3 text-[clamp(2rem,3.25vw,3rem)] font-semibold leading-[1.04] tracking-[-0.045em] text-[#050A13]">
                 {activeService.name}
               </h2>
               <p className="mt-3 max-w-[650px] text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem]">

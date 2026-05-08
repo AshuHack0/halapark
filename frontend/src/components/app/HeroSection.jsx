@@ -292,14 +292,17 @@ export default function HeroSection() {
             }}
             className="pointer-events-none absolute bottom-[-32%] left-[-28%] right-[-18%] top-[-16%] z-0 opacity-75 sm:bottom-[-36%] sm:left-[-24%] sm:right-[-18%] sm:top-[-18%] lg:bottom-[-42%] lg:left-[-20%] lg:right-[-18%] lg:top-[-22%]"
           >
+            <div className="absolute inset-x-[9%] bottom-[18%] z-0 h-[24%] rounded-full bg-[#0F172A]/20 blur-[42px] sm:inset-x-[12%] sm:bottom-[16%] lg:bottom-[14%] lg:blur-[56px]" />
             <Image
               src="/j3.png"
               alt=""
               fill
               sizes="(min-width: 1024px) 1240px, 155vw"
-              className="object-cover object-center"
+              className="relative z-10 object-cover object-center drop-shadow-[0_34px_48px_rgba(15,23,42,0.22)]"
               priority
             />
+            <div className="absolute bottom-0 left-0 top-0 z-20 w-[34%] bg-[linear-gradient(90deg,#F8FBFF_0%,rgba(248,251,255,0.88)_32%,rgba(248,251,255,0.38)_68%,rgba(248,251,255,0)_100%)] blur-[0.2px] sm:w-[30%] lg:w-[28%]" />
+            <div className="absolute bottom-[12%] left-[6%] top-[12%] z-20 w-[18%] rounded-full bg-[#0F172A]/10 blur-[34px] sm:left-[5%] lg:left-[4%]" />
           </motion.div>
 
           <FloatingCards prefersReducedMotion={prefersReducedMotion} />

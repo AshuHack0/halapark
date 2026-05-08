@@ -66,21 +66,21 @@ const integrationNodes = [
 
 const rightIntegrationNodes = [
   {
-    id: "camera",
+    id: "kiosk",
     nodeClass:
       "right-[18%] top-[15%] h-[58px] w-[58px] rounded-[14px] sm:h-[54px] sm:w-[54px] lg:h-[62px] lg:w-[62px] lg:rounded-[16px]",
     iconClass:
       "h-[28px] w-[28px] sm:h-[32px] sm:w-[32px] lg:h-[36px] lg:w-[36px]",
   },
   {
-    id: "barrier",
+    id: "sensor",
     nodeClass:
       "right-[0%] top-[41%] h-[58px] w-[58px] rounded-[14px] sm:h-[54px] sm:w-[54px] lg:h-[62px] lg:w-[62px] lg:rounded-[16px]",
     iconClass:
       "h-[28px] w-[28px] sm:h-[32px] sm:w-[32px] lg:h-[36px] lg:w-[36px]",
   },
   {
-    id: "systems",
+    id: "end-to-end",
     nodeClass:
       "right-[18%] top-[64%] h-[58px] w-[58px] rounded-[14px] sm:h-[54px] sm:w-[54px] lg:h-[62px] lg:w-[62px] lg:rounded-[16px]",
     iconClass:
@@ -114,7 +114,7 @@ function SystemsIcon({ className = "", stroke = "#111111" }) {
       <path
         d="M13.5 24H20.5M26.8 13.9 35 18M26.8 34.1 35 30M24 15.8V20.2M24 27.8V32.2M27.5 24H34.5"
         stroke={stroke}
-        strokeWidth="2.5"
+        strokeWidth="1.8"
         strokeLinecap="round"
       />
     </svg>
@@ -175,7 +175,7 @@ function SolutionIcon({
       <LucideIcon
         aria-hidden="true"
         className={className}
-        strokeWidth={2.15}
+        strokeWidth={1.65}
         style={{ color: muted ? "#9E9E9E" : "#111111" }}
       />
     );
