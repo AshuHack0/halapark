@@ -91,8 +91,8 @@ export default function Footer() {
           </div>
         </div> */}
 
-        <div className="mt-8 grid items-start gap-10 border-b border-[#E4EAF2] pb-10 md:grid-cols-3 md:gap-8 lg:grid-cols-[0.9fr_1.1fr_1fr] lg:gap-12">
-          <div className="space-y-3 md:justify-self-start">
+        <div className="mt-8 grid items-start gap-8 border-b border-[#E4EAF2] pb-10 md:grid-cols-3 md:gap-8 lg:grid-cols-[1fr_1fr_1fr] lg:gap-10">
+          <div className="flex h-full max-w-[22.5rem] flex-col md:justify-self-start">
             <div>
               <Link href="/" className="inline-flex items-center gap-1">
                 <img
@@ -107,11 +107,8 @@ export default function Footer() {
               </p>
             </div>
 
-            <div>
-              <h4 className="text-sm font-semibold uppercase tracking-[0.1em] text-[#050A13]">
-                Support
-              </h4>
-              <ul className="mt-3 space-y-2.5 text-sm text-[#667085]">
+            <div className="mt-4">
+              <ul className="space-y-2 text-sm leading-5 text-[#667085]">
                 <li>
                   <a
                     href="mailto:info@halapark.com"
@@ -128,19 +125,10 @@ export default function Footer() {
                     +971 4 378 2022
                   </a>
                 </li>
-                <li>
-                  <Link href="/contact" className="transition hover:text-[#0088FF]">
-                    Contact Us
-                  </Link>
-                </li>
               </ul>
             </div>
 
-            <div>
-              <h4 className="text-sm font-semibold uppercase tracking-[0.1em] text-[#050A13]">
-                Follow Us
-              </h4>
-              <div className="mt-3 flex flex-wrap items-center gap-2.5">
+            <div className="mt-4 flex flex-wrap items-center gap-2.5">
               {socialLinks.map((social) => {
                 const Icon = social.icon;
                 return (
@@ -150,13 +138,12 @@ export default function Footer() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={social.name}
-                    className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[#D8E6F7] bg-[#F2F8FF] text-[#0088FF] shadow-[0_8px_20px_rgba(15,23,42,0.04)] transition hover:border-[#0088FF] hover:bg-[#0088FF] hover:text-white hover:shadow-[0_10px_24px_rgba(0,136,255,0.18)]"
+                    className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-[#D8E6F7] bg-[#F2F8FF] text-[#0088FF] shadow-[0_8px_20px_rgba(15,23,42,0.04)] transition hover:border-[#0088FF] hover:bg-[#0088FF] hover:text-white hover:shadow-[0_10px_24px_rgba(0,136,255,0.18)]"
                   >
-                    <Icon className="h-[1.05rem] w-[1.05rem]" aria-hidden="true" />
+                    <Icon className="h-4 w-4" aria-hidden="true" />
                   </Link>
                 );
               })}
-              </div>
             </div>
           </div>
 
