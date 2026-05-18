@@ -89,7 +89,7 @@ const navLinks = [
   { href: "/", key: "home" },
   // { href: "/how-it-works", key: "howItWorks" },
   { href: "/app", key: "app" },
-  { href: "#services", key: "services", hasDropdown: true },
+  { href: "/services", key: "services" },
   { href: "/solutions", key: "solutions" },
   { href: "/business", key: "business" },
   { href: "/about", key: "aboutUs" },
@@ -264,8 +264,8 @@ export default function Navbar() {
 
   const resolveLinkHref = (href) => (href.startsWith("#") ? `/${href}` : href);
   const isLinkActive = (href) => {
-    if (href === "#services") {
-      return pathname.startsWith("/services") || (pathname === "/" && hash === "#services");
+    if (href === "/services") {
+      return pathname.startsWith("/services");
     }
     if (href.startsWith("#")) {
       return pathname === "/" && hash === href;
@@ -332,6 +332,15 @@ export default function Navbar() {
                           }`}
                           role="menu"
                         >
+                          <Link
+                            href="/services"
+                            className="flex items-center justify-between rounded-xl bg-[rgba(0,136,255,0.06)] px-3 py-3 text-sm font-semibold text-[#0078E0] mb-1 transition hover:bg-[rgba(0,136,255,0.12)]"
+                            onClick={() => setServicesOpen(false)}
+                          >
+                            <span>View All Services</span>
+                            <span className="shrink-0 opacity-80"><ArrowRightIcon /></span>
+                          </Link>
+                          <div className="my-1 border-t border-slate-100" />
                           {serviceLinks.map((service) => (
                             <Link
                               key={service.href}
@@ -499,6 +508,15 @@ export default function Navbar() {
                       }`}
                     >
                       <div className="mt-1 space-y-1 rounded-lg border border-slate-200 bg-slate-50 p-2">
+                        <Link
+                          href="/services"
+                          onClick={() => { setMenuOpen(false); setMobileServicesOpen(false); }}
+                          className="flex items-center justify-between rounded-md bg-[rgba(0,136,255,0.08)] px-3 py-3 text-sm font-semibold text-[#0078E0] transition hover:bg-[rgba(0,136,255,0.14)]"
+                        >
+                          <span>View All Services</span>
+                          <span className="shrink-0 opacity-80"><ArrowRightIcon /></span>
+                        </Link>
+                        <div className="border-t border-slate-200 my-1" />
                         {serviceLinks.map((service) => (
                           <Link
                             key={service.href}
