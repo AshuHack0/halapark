@@ -2,6 +2,8 @@
 
 import { useState, useRef, useLayoutEffect, useEffect } from "react";
 import { createPortal } from "react-dom";
+import ReCAPTCHA from "react-google-recaptcha";
+import { RECAPTCHA_SITE_KEY } from "@/config/recaptcha.site";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -262,11 +264,22 @@ function ServiceModal({ service, onClose }) {
 
 /* ═══════════════════════════ QUOTE MODAL ════════════════════════════ */
 
-const BLANK_FORM = { fullName: "", companyName: "", email: "", phone: "", service: "", tower: "", slots: "", notRobot: false };
+const BLANK_FORM = {
+  fullName: "",
+  companyName: "",
+  email: "",
+  phone: "",
+  service: "",
+  tower: "",
+  slots: "",
+};
 
 function QuoteModal({ isOpen, onClose }) {
   const [form, setForm] = useState(BLANK_FORM);
-  const [done, setDone]   = useState(false);
+  const [done, setDone] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [formError, setFormError] = useState("");
+  const recaptchaRef = useRef(null);
 
   useLayoutEffect(() => {
     if (!isOpen) return;
@@ -286,7 +299,54 @@ function QuoteModal({ isOpen, onClose }) {
     setForm((p) => ({ ...p, [name]: type === "checkbox" ? checked : value }));
   };
 
-  const handleClose = () => { setForm(BLANK_FORM); setDone(false); onClose(); };
+  const handleClose = () => {
+    setForm(BLANK_FORM);
+    setDone(false);
+    setFormError("");
+    setSubmitting(false);
+    recaptchaRef.current?.reset();
+    onClose();
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setFormError("");
+
+    if (!RECAPTCHA_SITE_KEY) {
+      setFormError("reCAPTCHA is not configured. Add your site key in src/config/recaptcha.site.js");
+      return;
+    }
+
+    const recaptchaToken = recaptchaRef.current?.getValue();
+    if (!recaptchaToken) {
+      setFormError("Please complete the captcha.");
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/quote", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, recaptchaToken }),
+      });
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        setFormError(data.error || "Something went wrong. Please try again.");
+        recaptchaRef.current?.reset();
+        return;
+      }
+
+      setDone(true);
+      recaptchaRef.current?.reset();
+    } catch {
+      setFormError("Network error. Please try again.");
+      recaptchaRef.current?.reset();
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -338,7 +398,7 @@ function QuoteModal({ isOpen, onClose }) {
                 <h2 className="mt-1 text-xl font-semibold tracking-[-0.04em] text-[#050A13] sm:mt-2 sm:text-2xl">Get a Quote</h2>
                 <p className="mt-0.5 text-[0.78rem] text-slate-500 sm:text-[0.84rem]">Fill in the details and our team will be in touch.</p>
 
-                <form onSubmit={(e) => { e.preventDefault(); setDone(true); }} className="mt-4 space-y-3 sm:mt-6 sm:space-y-4">
+                <form onSubmit={handleSubmit} className="mt-4 space-y-3 sm:mt-6 sm:space-y-4">
                   {/* compact input style shared */}
                   <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
                     {[["fullName","Full Name","John Smith","text",true],["companyName","Company Name","Acme Corp","text",false]].map(([name,label,ph,type,req]) => (
@@ -383,17 +443,31 @@ function QuoteModal({ isOpen, onClose }) {
                       />
                     </div>
                   </div>
-                  <label className="flex cursor-pointer items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 sm:rounded-xl sm:px-4 sm:py-3">
-                    <input required type="checkbox" name="notRobot" checked={form.notRobot} onChange={onChange} className="h-4 w-4 accent-[#0088FF]" />
-                    <span className="text-[0.82rem] text-slate-700 sm:text-sm">I&apos;m not a robot</span>
-                    <div className="ml-auto flex flex-col items-center">
-                      <div className="h-7 w-7 rounded bg-[rgba(0,136,255,0.08)] sm:h-8 sm:w-8" />
-                      <p className="mt-0.5 text-[9px] text-slate-400">reCAPTCHA</p>
-                    </div>
-                  </label>
-                  <button type="submit"
-                    className="w-full rounded-full bg-[#0088FF] py-3 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(0,136,255,0.22)] transition hover:brightness-95 sm:py-3.5"
-                  >Submit Request</button>
+                  <div>
+                    {RECAPTCHA_SITE_KEY ? (
+                      <ReCAPTCHA
+                        ref={recaptchaRef}
+                        sitekey={RECAPTCHA_SITE_KEY}
+                        onChange={() => setFormError("")}
+                      />
+                    ) : (
+                      <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+                        Add your site key in src/config/recaptcha.site.js to enable captcha.
+                      </p>
+                    )}
+                  </div>
+                  {formError ? (
+                    <p className="text-sm text-red-600" role="alert">
+                      {formError}
+                    </p>
+                  ) : null}
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    className="w-full rounded-full bg-[#0088FF] py-3 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(0,136,255,0.22)] transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-60 sm:py-3.5"
+                  >
+                    {submitting ? "Submitting…" : "Submit Request"}
+                  </button>
                 </form>
               </>
             )}
