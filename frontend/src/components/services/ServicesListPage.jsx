@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useRef, useLayoutEffect } from "react";
+import { useState, useRef, useLayoutEffect, useEffect } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -16,7 +17,6 @@ import {
 import {
   X, ArrowUpRight, Check, Shield, Camera, BadgeCheck,
   CreditCard, Lock, ChevronRight, MapPin, Clock, ParkingCircle, ArrowRight, Zap,
-  Building2, Home, Plane,
 } from "lucide-react";
 import { allServicesData, serviceNames } from "./allServicesData";
 import GoodLookingServiceHero from "./GoodLookingServiceHero";
@@ -30,12 +30,21 @@ const ease       = [0.22, 1, 0.36, 1];
 
 function ServiceModal({ service, onClose }) {
   const reduced = useReducedMotion();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useLayoutEffect(() => {
     if (!service) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = prev; };
+    document.documentElement.classList.add("lenis-stopped");
+    return () => {
+      document.body.style.overflow = prev;
+      document.documentElement.classList.remove("lenis-stopped");
+    };
   }, [service]);
 
   useLayoutEffect(() => {
@@ -44,9 +53,19 @@ function ServiceModal({ service, onClose }) {
     return () => document.removeEventListener("keydown", fn);
   }, [onClose]);
 
-  if (!service) return null;
+  if (!service || !mounted) return null;
 
-  return (
+  const includedLabel = service.includedLabel || "What's Included";
+  const subCategoriesLabel =
+    service.subCategoriesLabel || "Service Categories";
+  const normalizedSubCategories = (service.subCategories || []).map((cat) =>
+    typeof cat === "string" ? { title: cat, description: null } : cat,
+  );
+  const hasDetailedSubCategories = normalizedSubCategories.some(
+    (cat) => cat.description,
+  );
+
+  return createPortal(
     <AnimatePresence>
       <motion.div
         key="svc-modal-bg"
@@ -63,29 +82,43 @@ function ServiceModal({ service, onClose }) {
           exit={{ opacity: 0, y: 40 }}
           transition={{ duration: 0.3, ease }}
           onClick={(e) => e.stopPropagation()}
-          className="relative z-10 w-full max-h-[92dvh] overflow-y-auto overscroll-contain rounded-t-[26px] bg-white shadow-[0_-8px_40px_rgba(15,23,42,0.12),0_40px_100px_rgba(15,23,42,0.32)] [&::-webkit-scrollbar]:hidden sm:max-w-[640px] sm:rounded-[28px]"
+          data-lenis-prevent
+          data-lenis-prevent-wheel
+          className="relative z-10 flex h-[min(92dvh,calc(100dvh-env(safe-area-inset-bottom)))] max-h-[min(92dvh,calc(100dvh-env(safe-area-inset-bottom)))] w-full flex-col overflow-hidden rounded-t-[26px] bg-white shadow-[0_-8px_40px_rgba(15,23,42,0.12),0_40px_100px_rgba(15,23,42,0.32)] sm:max-w-[640px] sm:rounded-[28px]"
         >
           {/* Drag handle — mobile only */}
-          <div className="sticky top-0 z-20 flex justify-center bg-white pt-3 pb-1 sm:hidden">
+          <div className="flex shrink-0 justify-center bg-white pt-3 pb-1 sm:hidden">
             <span className="h-1 w-10 rounded-full bg-slate-200" />
           </div>
 
-          {/* Close */}
-          <button
-            type="button" onClick={onClose} aria-label="Close"
-            className="absolute right-4 top-4 z-30 flex h-9 w-9 items-center justify-center rounded-full bg-black/28 text-white backdrop-blur-sm transition hover:bg-black/48"
-          >
-            <X className="h-4 w-4" />
-          </button>
-
-          {/* Media — shorter on mobile */}
-          <div className="relative h-40 w-full overflow-hidden rounded-t-[26px] bg-[#d2dae2] sm:h-60 sm:rounded-t-[28px]">
+          {/* Media */}
+          <div className="relative h-36 w-full shrink-0 overflow-hidden bg-[#d2dae2] sm:h-48">
             {service.mediaType === "video" ? (
-              <video src={service.mediaSrc} autoPlay={!reduced} loop muted playsInline preload="metadata" className="h-full w-full object-cover" />
+              <video
+                src={service.mediaSrc}
+                autoPlay={!reduced}
+                loop
+                muted
+                playsInline
+                preload="metadata"
+                className="h-full w-full object-cover"
+              />
             ) : (
-              <img src={service.mediaSrc} alt={service.name} className="h-full w-full object-cover" />
+              <img
+                src={service.mediaSrc}
+                alt={service.name}
+                className="h-full w-full object-cover"
+              />
             )}
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#06111f]/50 to-transparent" />
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Close"
+              className="absolute right-4 top-4 z-30 flex h-9 w-9 items-center justify-center rounded-full bg-black/28 text-white backdrop-blur-sm transition hover:bg-black/48"
+            >
+              <X className="h-4 w-4" />
+            </button>
             <div className="absolute bottom-3 left-4">
               <span className="rounded-full bg-[#0088FF] px-2.5 py-0.5 text-[11px] font-semibold text-white shadow-[0_4px_14px_rgba(0,136,255,0.35)]">
                 Service {String(service.id).padStart(2, "0")}
@@ -93,51 +126,102 @@ function ServiceModal({ service, onClose }) {
             </div>
           </div>
 
-          {/* Scrollable body */}
-          <div className="px-4 pt-4 sm:px-8 sm:pt-6">
-            <h2 className="text-[1.15rem] font-semibold leading-snug tracking-[-0.03em] text-[#050A13] sm:text-[1.85rem]">{service.name}</h2>
-            <p className="mt-2 text-[0.8rem] leading-6 text-slate-500 sm:mt-3 sm:text-[0.94rem] sm:leading-7">{service.fullDesc}</p>
+          {/* Scrollable body — lenis-prevent so Mac trackpad scroll works inside modal */}
+          <div
+            data-lenis-prevent
+            data-lenis-prevent-wheel
+            className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-4 [-webkit-overflow-scrolling:touch] sm:px-8 sm:py-5"
+          >
+            <h2 className="text-[1.15rem] font-semibold leading-snug tracking-[-0.03em] text-[#050A13] sm:text-[1.85rem]">
+              {service.name}
+            </h2>
+            <p className="mt-2 text-[0.8rem] leading-6 text-slate-500 sm:mt-3 sm:text-[0.94rem] sm:leading-7">
+              {service.fullDesc}
+            </p>
 
-            {/* What's Included */}
-            <div className="mt-4 sm:mt-6">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">What&apos;s Included</p>
-              <ul className="mt-2 space-y-1.5 sm:mt-3 sm:space-y-2.5">
-                {service.whatsIncluded.map((item) => (
-                  <li key={item} className="flex items-start gap-2.5">
-                    <span className="mt-0.5 flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full bg-[rgba(0,136,255,0.1)] sm:h-5 sm:w-5">
-                      <Check className="h-2.5 w-2.5 text-[#0088FF] sm:h-3 sm:w-3" />
-                    </span>
-                    <span className="text-[0.78rem] leading-5 text-slate-700 sm:text-[0.84rem] sm:leading-6">{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Sub-categories */}
-            {service.subCategories?.length > 0 && (
+            {service.whatsIncluded?.length > 0 && (
               <div className="mt-4 sm:mt-6">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">Service Categories</p>
-                <div className="mt-2 flex flex-wrap gap-1.5 sm:mt-3 sm:gap-2">
-                  {service.subCategories.map((cat) => (
-                    <span key={cat} className="rounded-full border border-[rgba(0,136,255,0.2)] bg-[rgba(0,136,255,0.06)] px-2.5 py-1 text-[11px] font-medium text-[#0078E0] sm:px-3 sm:py-1.5 sm:text-xs">{cat}</span>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">
+                  {includedLabel}
+                </p>
+                <ul className="mt-2 space-y-1.5 sm:mt-3 sm:space-y-2.5">
+                  {service.whatsIncluded.map((item) => (
+                    <li key={item} className="flex items-start gap-2.5">
+                      <span className="mt-0.5 flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full bg-[rgba(0,136,255,0.1)] sm:h-5 sm:w-5">
+                        <Check className="h-2.5 w-2.5 text-[#0088FF] sm:h-3 sm:w-3" />
+                      </span>
+                      <span className="text-[0.78rem] leading-5 text-slate-700 sm:text-[0.84rem] sm:leading-6">
+                        {item}
+                      </span>
+                    </li>
                   ))}
-                </div>
+                </ul>
               </div>
             )}
 
-            {/* Packages */}
+            {normalizedSubCategories.length > 0 && (
+              <div className="mt-4 sm:mt-6">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">
+                  {subCategoriesLabel}
+                </p>
+                {hasDetailedSubCategories ? (
+                  <ul className="mt-2 space-y-3 sm:mt-3 sm:space-y-4">
+                    {normalizedSubCategories.map((cat) => (
+                      <li
+                        key={cat.title}
+                        className="rounded-xl border border-[rgba(0,136,255,0.12)] bg-[#f8fbff] p-3 sm:p-4"
+                      >
+                        <p className="text-[0.82rem] font-semibold text-[#050A13] sm:text-sm">
+                          {cat.title}
+                        </p>
+                        {cat.description ? (
+                          <p className="mt-1.5 text-[0.78rem] leading-5 text-slate-600 sm:text-[0.84rem] sm:leading-6">
+                            {cat.description}
+                          </p>
+                        ) : null}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <div className="mt-2 flex flex-wrap gap-1.5 sm:mt-3 sm:gap-2">
+                    {normalizedSubCategories.map((cat) => (
+                      <span
+                        key={cat.title}
+                        className="rounded-full border border-[rgba(0,136,255,0.2)] bg-[rgba(0,136,255,0.06)] px-2.5 py-1 text-[11px] font-medium text-[#0078E0] sm:px-3 sm:py-1.5 sm:text-xs"
+                      >
+                        {cat.title}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
             {service.packages?.length > 0 && (
               <div className="mt-4 sm:mt-6">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">Storage Packages</p>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">
+                  Packages
+                </p>
                 <div className="mt-2 space-y-2 sm:mt-3 sm:space-y-3">
                   {service.packages.map((pkg) => (
-                    <div key={pkg.name} className="rounded-xl border border-[rgba(0,136,255,0.14)] bg-[#f4f9ff] p-3 sm:rounded-2xl sm:p-4">
-                      <p className="text-sm font-semibold text-[#050A13]">{pkg.name}</p>
-                      <p className="mt-0.5 text-[11px] text-slate-500">{pkg.desc}</p>
-                      <ul className="mt-1.5 space-y-1">
+                    <div
+                      key={pkg.name}
+                      className="rounded-xl border border-[rgba(0,136,255,0.14)] bg-[#f4f9ff] p-3 sm:rounded-2xl sm:p-4"
+                    >
+                      <p className="text-sm font-semibold text-[#050A13]">
+                        {pkg.name}
+                      </p>
+                      <p className="mt-0.5 text-[11px] leading-5 text-slate-500 sm:text-xs">
+                        {pkg.desc}
+                      </p>
+                      <ul className="mt-2 space-y-1.5">
                         {pkg.items.map((item) => (
-                          <li key={item} className="flex items-center gap-2 text-[11px] text-slate-600 sm:text-xs">
-                            <Check className="h-2.5 w-2.5 flex-shrink-0 text-[#0088FF]" /> {item}
+                          <li
+                            key={item}
+                            className="flex items-start gap-2 text-[11px] text-slate-600 sm:text-xs"
+                          >
+                            <Check className="mt-0.5 h-2.5 w-2.5 flex-shrink-0 text-[#0088FF]" />
+                            <span className="leading-5">{item}</span>
                           </li>
                         ))}
                       </ul>
@@ -147,27 +231,32 @@ function ServiceModal({ service, onClose }) {
               </div>
             )}
 
-            {/* spacer so content doesn't hide behind sticky bar */}
-            <div className="h-4 sm:h-0" />
+            <div className="h-1 shrink-0" aria-hidden />
           </div>
 
-          {/* CTA — sticky at bottom of scroll area so always visible */}
-          <div className="sticky bottom-0 z-10 flex gap-2 border-t border-slate-100 bg-white px-4 py-3 sm:static sm:gap-3 sm:border-none sm:px-8 sm:pb-8 sm:pt-6">
-            <Link
-              href="/contact" onClick={onClose}
-              className="flex flex-1 items-center justify-center rounded-full bg-[#0088FF] px-4 py-2.5 text-sm font-semibold text-white shadow-[0_6px_16px_rgba(0,136,255,0.28)] transition hover:brightness-95 sm:flex-none sm:px-7 sm:py-3"
-            >
-              Book the Service
-            </Link>
-            <button type="button" onClick={onClose}
-              className="flex flex-1 items-center justify-center rounded-full border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-slate-300 sm:flex-none sm:px-6 sm:py-3"
-            >
-              Close
-            </button>
+          {/* CTA — fixed footer, never shrinks */}
+          <div className="shrink-0 border-t border-slate-100 bg-white shadow-[0_-10px_28px_rgba(15,23,42,0.08)]">
+            <div className="flex flex-col gap-2.5 px-4 pt-3 pb-[calc(0.875rem+env(safe-area-inset-bottom,0px))] sm:flex-row sm:items-center sm:gap-3 sm:px-8 sm:py-4 sm:pb-4">
+              <Link
+                href="/contact"
+                onClick={onClose}
+                className="inline-flex h-11 w-full shrink-0 items-center justify-center rounded-full bg-[#0088FF] px-5 text-sm font-semibold text-white shadow-[0_6px_16px_rgba(0,136,255,0.28)] transition hover:brightness-95 sm:h-12 sm:min-w-[200px] sm:flex-1 sm:px-7"
+              >
+                Book the Service
+              </Link>
+              <button
+                type="button"
+                onClick={onClose}
+                className="inline-flex h-11 w-full shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-700 transition hover:border-slate-300 sm:h-12 sm:w-auto sm:min-w-[120px] sm:px-6"
+              >
+                Close
+              </button>
+            </div>
           </div>
         </motion.div>
       </motion.div>
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   );
 }
 
@@ -402,8 +491,8 @@ function ServiceCard({ service, index, onClick, category }) {
               <ArrowUpRight className="h-3.5 w-3.5 transition-colors duration-200 group-hover/card:[color:var(--hover-bg)]" />
             </span>
           </div>
-          <p className="mt-1.5 line-clamp-2 text-[0.775rem] leading-5 text-slate-400">
-            {service.shortDesc}
+          <p className="mt-1.5 line-clamp-3 text-[0.775rem] leading-5 text-slate-500">
+            {service.fullDesc}
           </p>
 
           {/* Read more row */}
@@ -1193,7 +1282,7 @@ function PartnersSection() {
         </motion.div>
 
         {/* ── Stats strip ── */}
-        <motion.div
+        {/* <motion.div
           initial={reduced ? false : { opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.4 }}
@@ -1206,7 +1295,7 @@ function PartnersSection() {
               <p className="mt-0.5 text-[10px] leading-4 text-slate-400 sm:text-[11px]">{s.label}</p>
             </div>
           ))}
-        </motion.div>
+        </motion.div> */}
       </div>
 
       {/* ── Row 1 — scrolls left ── */}
@@ -1326,13 +1415,8 @@ function TrustSection() {
                 <Icon className="h-6 w-6 text-[#0088FF]" aria-hidden />
               </div>
 
-              {/* Check indicator */}
-              <div className="mt-4 flex h-5 w-5 items-center justify-center rounded-full bg-[rgba(0,136,255,0.1)]">
-                <Check className="h-3 w-3 text-[#0088FF]" strokeWidth={3} aria-hidden />
-              </div>
-
               {/* Label */}
-              <p className="mt-3 text-[0.82rem] font-semibold leading-snug text-[#050A13]">{label}</p>
+              <p className="mt-4 text-[0.82rem] font-semibold leading-snug text-[#050A13]">{label}</p>
             </motion.div>
           ))}
         </div>
@@ -1344,193 +1428,32 @@ function TrustSection() {
 
 /* ═══════════════════════ LONG-TERM CTA SECTION ═══════════════════════ */
 
-const LT_FEATURES = [
-  { icon: Check, text: "Flexible monthly contracts" },
-  { icon: Check, text: "Multiple UAE locations"     },
-  { icon: Check, text: "24/7 dedicated support"     },
-  { icon: Check, text: "Smart access management"    },
-];
-
-const LT_USE_CASES = [
-  {
-    Icon: Building2,
-    title: "Business & Corporate",
-    desc: "Dedicated fleet slots, centralized billing, and monthly business plans tailored to your company size.",
-    accent: "#0088FF",
-    bg: "rgba(0,136,255,0.08)",
-  },
-  {
-    Icon: Home,
-    title: "Residential Towers",
-    desc: "Long-term tenant parking with smart access, real-time monitoring, and hassle-free management.",
-    accent: "#6366F1",
-    bg: "rgba(99,102,241,0.08)",
-  },
-  {
-    Icon: Plane,
-    title: "Airport Long-Stay",
-    desc: "Monthly airport parking with guaranteed availability, easy drop-off, and shuttle coordination.",
-    accent: "#16B364",
-    bg: "rgba(22,179,100,0.08)",
-  },
-];
-
 function LongTermCTA({ onGetQuote }) {
   const reduced = useReducedMotion();
 
   return (
-    <section className="relative overflow-hidden bg-[#F4F8FF] py-20 sm:py-24 lg:py-28">
-
-      {/* Background layers */}
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,#FFFFFF_0%,#EEF5FF_45%,#F4F8FF_100%)]" />
-
-      {/* Dot grid */}
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(0,136,255,0.045)_1px,transparent_1px),linear-gradient(90deg,rgba(0,136,255,0.045)_1px,transparent_1px)] bg-[size:44px_44px] [mask-image:radial-gradient(ellipse_80%_70%_at_50%_50%,black,transparent)]" />
-
-      {/* Soft blobs */}
-      <div className="pointer-events-none absolute -left-28 -bottom-28 h-[480px] w-[480px] rounded-full bg-[radial-gradient(circle,rgba(0,136,255,0.08),transparent_65%)] blur-3xl" />
-      <div className="pointer-events-none absolute -right-28 -top-28 h-[460px] w-[460px] rounded-full bg-[radial-gradient(circle,rgba(99,102,241,0.07),transparent_65%)] blur-3xl" />
-
-      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <motion.article
-          initial={reduced ? false : { opacity: 0, y: 32 }}
+    <section className="bg-[#F4F8FF] py-16 sm:py-20 lg:py-24">
+      <div className="mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
+        <motion.div
+          initial={reduced ? false : { opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.7, ease }}
-          className="relative isolate overflow-hidden rounded-[28px] border border-[#0088FF]/10 bg-white shadow-[0_8px_48px_rgba(0,136,255,0.10),0_2px_12px_rgba(6,6,22,0.06)] sm:rounded-[32px]"
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.6, ease }}
         >
-          {/* Inner corner glow accents */}
-          <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden rounded-[28px] sm:rounded-[32px]">
-            <div className="absolute -left-16 bottom-0 h-[280px] w-[280px] rounded-full bg-[radial-gradient(circle,rgba(0,136,255,0.09),transparent_65%)] blur-3xl" />
-            <div className="absolute -right-16 top-0 h-[300px] w-[300px] rounded-full bg-[radial-gradient(circle,rgba(99,102,241,0.07),transparent_65%)] blur-3xl" />
-            <div className="absolute left-[38%] top-[15%] h-[220px] w-[220px] rounded-full bg-[radial-gradient(circle,rgba(56,189,248,0.05),transparent_65%)] blur-2xl" />
-          </div>
-
-          {/* Subtle dot grid inside card */}
-          <div className="pointer-events-none absolute inset-0 rounded-[28px] bg-[linear-gradient(rgba(0,136,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(0,136,255,0.025)_1px,transparent_1px)] bg-[size:36px_36px] sm:rounded-[32px]" />
-
-          {/* Content */}
-          <div className="relative z-10 grid gap-10 px-7 py-12 sm:px-12 sm:py-14 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-16 lg:px-16 lg:py-16">
-
-            {/* ── LEFT — text ── */}
-            <motion.div
-              initial={reduced ? false : { opacity: 0, x: -24 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, amount: 0.4 }}
-              transition={{ duration: 0.65, ease, delay: 0.1 }}
-            >
-              {/* Badge */}
-              <div className="inline-flex items-center gap-2 rounded-full border border-[#0088FF]/20 bg-[rgba(0,136,255,0.06)] px-4 py-1.5">
-                <motion.span
-                  className="h-1.5 w-1.5 rounded-full bg-[#0088FF]"
-                  animate={{ scale:[1,1.6,1], opacity:[1,0.4,1] }}
-                  transition={{ duration: 1.8, repeat: Infinity, ease:"easeInOut" }}
-                />
-                <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#0088FF]">Long-Term Parking</p>
-              </div>
-
-              {/* Headline */}
-              <h2 className="mt-5 text-[clamp(1.9rem,3.8vw,3.2rem)] font-semibold leading-[1.06] tracking-[-0.06em] text-[#050A13]">
-                Looking for{" "}
-                <span className="bg-[linear-gradient(120deg,#0060CC_0%,#0088FF_50%,#38BDF8_100%)] bg-clip-text text-transparent">
-                  Long-Term Parking?
-                </span>
-              </h2>
-
-              {/* Description */}
-              <p className="mt-4 max-w-[52ch] text-[0.88rem] leading-7 text-slate-500 sm:text-[0.94rem]">
-                Secure, flexible, and smart parking solutions for businesses, residents, airports, and yearly vehicle storage and yearly parking.
-              </p>
-
-              {/* Feature grid */}
-              <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-3">
-                {LT_FEATURES.map(({ icon: Icon, text }) => (
-                  <div key={text} className="flex items-center gap-2.5">
-                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[rgba(0,136,255,0.1)]">
-                      <Icon className="h-3 w-3 text-[#0088FF]" strokeWidth={3} aria-hidden />
-                    </span>
-                    <span className="text-[0.8rem] font-medium text-slate-600">{text}</span>
-                  </div>
-                ))}
-              </div>
-
-              {/* CTAs */}
-              <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-                <motion.button
-                  type="button"
-                  onClick={onGetQuote}
-                  whileHover={reduced ? undefined : { scale: 1.04 }}
-                  whileTap={reduced ? undefined : { scale: 0.97 }}
-                  transition={springSoft}
-                  className="group/btn inline-flex items-center justify-center gap-2.5 rounded-full bg-[#0088FF] px-7 py-3.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,136,255,0.30)] transition hover:brightness-110"
-                >
-                  Get a Quote
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 transition-transform duration-200 group-hover/btn:translate-x-0.5">
-                    <ArrowRight className="h-3.5 w-3.5" />
-                  </span>
-                </motion.button>
-                <Link
-                  href="/contact"
-                  className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-7 py-3.5 text-sm font-semibold text-slate-700 transition hover:border-[#0088FF]/40 hover:text-[#0088FF]"
-                >
-                  Talk to Our Team
-                </Link>
-              </div>
-
-              {/* Trust line */}
-              <p className="mt-5 text-[11px] text-slate-400">
-                Trusted by <span className="font-medium text-slate-600">500+ businesses</span> across the UAE
-              </p>
-            </motion.div>
-
-            {/* ── RIGHT — use-case cards ── */}
-            <div className="flex flex-col gap-3">
-              {LT_USE_CASES.map(({ Icon, title, desc, accent, bg }, i) => (
-                <motion.div
-                  key={title}
-                  initial={reduced ? false : { opacity: 0, x: 24 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true, amount: 0.3 }}
-                  transition={{ duration: 0.55, ease, delay: 0.18 + i * 0.1 }}
-                  whileHover={reduced ? undefined : { x: 4, transition: springSoft }}
-                  className="group/uc relative overflow-hidden rounded-2xl border border-slate-100 bg-[#F7FAFF] p-4 transition-all duration-300 hover:border-slate-200 hover:shadow-[0_4px_20px_rgba(6,6,22,0.07)] sm:p-5"
-                >
-                  {/* Hover glow */}
-                  <div className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-300 group-hover/uc:opacity-100"
-                    style={{ background: `radial-gradient(circle at 20% 50%, ${accent}0D, transparent 65%)` }} />
-
-                  <div className="relative flex items-start gap-4">
-                    {/* Icon */}
-                    <div
-                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl"
-                      style={{ background: bg, boxShadow: `0 4px 14px ${accent}1A` }}
-                    >
-                      <Icon className="h-5 w-5" style={{ color: accent }} aria-hidden />
-                    </div>
-
-                    {/* Text */}
-                    <div className="min-w-0 flex-1">
-                      <p className="text-[0.88rem] font-semibold text-[#050A13]">{title}</p>
-                      <p className="mt-1 text-[0.76rem] leading-5 text-slate-500">{desc}</p>
-                    </div>
-
-                    {/* Arrow */}
-                    <ArrowUpRight
-                      className="mt-0.5 h-4 w-4 shrink-0 text-slate-300 transition-colors duration-200 group-hover/uc:text-slate-500"
-                      aria-hidden
-                    />
-                  </div>
-                </motion.div>
-              ))}
-
-              {/* Bottom caption */}
-              <p className="mt-1 text-center text-[11px] text-slate-400">
-                Custom plans available for all property types
-              </p>
-            </div>
-
-          </div>
-        </motion.article>
+          <h2 className="text-[clamp(1.75rem,3.5vw,2.75rem)] font-semibold leading-tight tracking-[-0.04em] text-[#050A13]">
+            Looking for Long-Term Parking?
+          </h2>
+          <p className="mx-auto mt-4 max-w-2xl text-[0.9rem] leading-7 text-slate-600 sm:text-base">
+            Secure, flexible, and smart parking solutions for businesses, residents, airports, and yearly vehicle storage and yearly parking.
+          </p>
+          <button
+            type="button"
+            onClick={onGetQuote}
+            className="mt-8 inline-flex items-center justify-center rounded-full bg-[#0088FF] px-8 py-3.5 text-sm font-semibold text-white transition hover:brightness-110"
+          >
+            Get a Quote
+          </button>
+        </motion.div>
       </div>
     </section>
   );
