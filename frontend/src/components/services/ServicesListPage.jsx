@@ -19,6 +19,7 @@ import {
   Building2, Home, Plane,
 } from "lucide-react";
 import { allServicesData, serviceNames } from "./allServicesData";
+import GoodLookingServiceHero from "./GoodLookingServiceHero";
 
 /* ─── Springs & easing ─── */
 const springPop  = { type: "spring", stiffness: 380, damping: 24, mass: 0.85 };
@@ -317,9 +318,9 @@ function QuoteModal({ isOpen, onClose }) {
 /* ═══════════════════════════ SERVICE CARD ═══════════════════════════ */
 
 const CAT_META = {
-  parking: { label: "Parking",      color: "#0088FF", bg: "rgba(0,136,255,0.12)"  },
-  valet:   { label: "Valet",        color: "#6366F1", bg: "rgba(99,102,241,0.12)" },
-  care:    { label: "Vehicle Care", color: "#16B364", bg: "rgba(22,179,100,0.12)" },
+  parking: { label: "Parking",      color: "#0088FF", bg: "rgba(0,136,255,0.12)" },
+  valet:   { label: "Valet",        color: "#0088FF", bg: "rgba(0,136,255,0.12)" },
+  care:    { label: "Vehicle Care", color: "#0088FF", bg: "rgba(0,136,255,0.12)" },
 };
 
 function ServiceCard({ service, index, onClick, category }) {
@@ -342,10 +343,6 @@ function ServiceCard({ service, index, onClick, category }) {
     >
       {/* Card shell */}
       <div className="relative overflow-hidden rounded-[20px] border border-white/80 bg-white shadow-[0_1px_3px_rgba(6,6,22,0.06),0_8px_32px_-8px_rgba(0,136,255,0.08)] transition-shadow duration-300 group-hover/card:shadow-[0_4px_8px_rgba(6,6,22,0.06),0_20px_48px_-8px_rgba(0,136,255,0.18)]">
-
-        {/* Top accent line — category colour */}
-        <div className="absolute inset-x-0 top-0 z-20 h-[2.5px] rounded-t-[20px]"
-          style={{ background: `linear-gradient(90deg, transparent, ${cat.color}, transparent)` }} />
 
         {/* Shimmer sweep */}
         {!reduced && (
@@ -475,7 +472,7 @@ function SvcHeroPhone({ reduced }) {
           </span>
           <div>
             <p className="text-[11px] font-semibold text-[#050A13]">Service Booked</p>
-            <p className="text-[10px] text-[#667085]">Valet — Dubai Mall</p>
+            <p className="text-[10px] text-[#667085]">Valet, Dubai Mall</p>
           </div>
           <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#16B364] text-white">
             <Check aria-hidden className="h-3 w-3" strokeWidth={3} />
@@ -770,7 +767,7 @@ function HeroSection({ onGetQuote }) {
             <motion.div {...fadeUp} className="mt-7 flex gap-4">
               <div className="mt-1 w-0.5 shrink-0 self-stretch rounded-full bg-gradient-to-b from-[#0088FF] via-[#0088FF]/40 to-transparent" />
               <p className="max-w-[440px] text-[0.9rem] leading-[1.75] text-slate-500">
-                Smart parking and vehicle care built for convenience, safety, and innovation — 18 services, all in one seamless platform.
+                Smart parking and vehicle care built for convenience, safety, and innovation.
               </p>
             </motion.div>
 
@@ -992,7 +989,7 @@ function ServicesGrid({ onServiceClick }) {
               </span>
             </h2>
             <p className="mt-2.5 max-w-[480px] text-[0.88rem] leading-6 text-slate-500">
-              From self-parking to valet, EV charging to car storage — tap any card to explore full details and what's included.
+              From self-parking to valet, EV charging to car storage. Tap any card to explore full details and what's included.
             </p>
           </div>
 
@@ -1079,6 +1076,21 @@ function ServicesGrid({ onServiceClick }) {
         )}
 
       </div>
+
+      <style>{`
+        @keyframes svc-shimmer {
+          0%   { transform: translateX(-120%) skewX(-12deg); }
+          100% { transform: translateX(240%) skewX(-12deg); }
+        }
+        .svc-shimmer {
+          animation: svc-shimmer 0.7s ease-in-out forwards;
+          animation-play-state: paused;
+        }
+        .group\\/card:hover .svc-shimmer { animation-play-state: running; }
+        @media (prefers-reduced-motion: reduce) {
+          .svc-shimmer { animation: none; }
+        }
+      `}</style>
     </section>
   );
 }
@@ -1176,7 +1188,7 @@ function PartnersSection() {
             </span>
           </h2>
           <p className="mt-3 max-w-[460px] text-[0.88rem] leading-6 text-slate-500">
-            From global hotel chains to residential towers and shopping destinations — HalaPark powers parking across every sector.
+            HalaPark partners with global hotel chains, residential towers, retail destinations, and enterprises across the UAE.
           </p>
         </motion.div>
 
@@ -1247,188 +1259,85 @@ function PartnersSection() {
 /* ══════════════════════════ TRUST SECTION ═══════════════════════════ */
 
 const TRUST = [
-  { Icon: Camera,     label: "24/7 Surveillance",        desc: "Round-the-clock CCTV monitoring at every facility, every moment.",   accent: "#38BDF8" },
-  { Icon: BadgeCheck, label: "Verified Valet Staff",     desc: "Every attendant is professionally trained, certified, and vetted.",   accent: "#34D399" },
-  { Icon: CreditCard, label: "Secure Payment System",    desc: "End-to-end encrypted, cashless transactions every single time.",     accent: "#A78BFA" },
-  { Icon: Shield,     label: "Vehicle Safety Assurance", desc: "Full accountability and guaranteed protection for every vehicle.",    accent: "#FB923C" },
-];
-
-const TRUST_STATS = [
-  { value: "500K+", label: "Sessions monitored" },
-  { value: "24/7",  label: "Active security"    },
-  { value: "100%",  label: "Vetted staff"        },
+  { Icon: Camera,     label: "24/7 Surveillance"                  },
+  { Icon: Shield,     label: "Insurance / Vehicle Safety Assurance" },
+  { Icon: BadgeCheck, label: "Verified Valet Staff"               },
+  { Icon: CreditCard, label: "Secure Payment System"              },
+  { Icon: Lock,       label: "Controlled Access Zones"            },
 ];
 
 function TrustSection() {
   const reduced = useReducedMotion();
 
   return (
-    <section className="relative overflow-hidden bg-[#F4F8FF] py-20 sm:py-24 lg:py-28">
+    <section className="relative overflow-hidden bg-[#F4F8FF] py-16 sm:py-20 lg:py-24">
 
-      {/* ── Background ── */}
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,#EEF5FF_0%,#F4F8FF_40%,#FFFFFF_100%)]" />
-
-      {/* Dot grid */}
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(0,136,255,0.045)_1px,transparent_1px),linear-gradient(90deg,rgba(0,136,255,0.045)_1px,transparent_1px)] bg-[size:44px_44px] [mask-image:radial-gradient(ellipse_80%_70%_at_50%_50%,black,transparent)]" />
-
-      {/* Soft blobs */}
-      <div className="pointer-events-none absolute -left-32 -top-32 h-[500px] w-[500px] rounded-full bg-[radial-gradient(circle,rgba(0,136,255,0.07),transparent_68%)] blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-32 -right-32 h-[480px] w-[480px] rounded-full bg-[radial-gradient(circle,rgba(99,102,241,0.07),transparent_68%)] blur-3xl" />
-      <div className="pointer-events-none absolute left-[40%] top-[20%] h-[360px] w-[360px] rounded-full bg-[radial-gradient(circle,rgba(56,189,248,0.05),transparent_65%)] blur-2xl" />
+      {/* Background */}
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,#EEF5FF_0%,#F4F8FF_50%,#FFFFFF_100%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(0,136,255,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(0,136,255,0.04)_1px,transparent_1px)] bg-[size:44px_44px] [mask-image:radial-gradient(ellipse_70%_60%_at_50%_50%,black,transparent)]" />
+      <div className="pointer-events-none absolute -left-32 top-0 h-[400px] w-[400px] rounded-full bg-[radial-gradient(circle,rgba(0,136,255,0.07),transparent_68%)] blur-3xl" />
+      <div className="pointer-events-none absolute -right-32 bottom-0 h-[400px] w-[400px] rounded-full bg-[radial-gradient(circle,rgba(0,136,255,0.05),transparent_68%)] blur-3xl" />
 
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid gap-4 lg:grid-cols-3 lg:grid-rows-2">
 
-          {/* ─── Feature block — left col spans 2 rows ─── */}
-          <motion.div
-            initial={reduced ? false : { opacity: 0, x: -32 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.7, ease }}
-            className="relative overflow-hidden rounded-[24px] border border-[#0088FF]/12 bg-white p-7 shadow-[0_4px_24px_rgba(0,136,255,0.07)] lg:row-span-2 sm:p-8"
-          >
+        {/* Header */}
+        <motion.div
+          initial={reduced ? false : { opacity: 0, y: 22 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.6, ease }}
+          className="mb-12 text-center"
+        >
+          <div className="inline-flex items-center gap-2 rounded-full border border-[rgba(0,136,255,0.22)] bg-[rgba(0,136,255,0.05)] px-3.5 py-1.5">
+            <motion.span
+              className="h-1.5 w-1.5 rounded-full bg-[#0088FF]"
+              animate={{ scale: [1, 1.5, 1], opacity: [1, 0.4, 1] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#0088FF]">Trust & Safety</p>
+          </div>
+          <h2 className="mt-4 text-[clamp(1.9rem,3.8vw,3.2rem)] font-semibold leading-[1.05] tracking-[-0.055em] text-[#050A13]">
+            Your safety is our{" "}
+            <span className="bg-[linear-gradient(120deg,#0060CC_0%,#0088FF_50%,#38BDF8_100%)] bg-clip-text text-transparent">
+              priority.
+            </span>
+          </h2>
+        </motion.div>
 
-            {/* Corner glow */}
-            <div className="pointer-events-none absolute -right-10 -top-10 h-48 w-48 rounded-full bg-[radial-gradient(circle,rgba(0,136,255,0.08),transparent_70%)] blur-2xl" />
-
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 rounded-full border border-[#0088FF]/20 bg-[rgba(0,136,255,0.05)] px-3.5 py-1.5">
-              <motion.span
-                className="h-1.5 w-1.5 rounded-full bg-[#0088FF]"
-                animate={{ scale:[1,1.6,1], opacity:[1,0.4,1] }}
-                transition={{ duration: 2, repeat: Infinity, ease:"easeInOut" }}
-              />
-              <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#0088FF]">Trust & Safety</p>
-            </div>
-
-            {/* Headline */}
-            <h2 className="mt-5 text-[clamp(1.8rem,3vw,2.6rem)] font-semibold leading-[1.08] tracking-[-0.05em] text-[#050A13]">
-              Your safety is<br />
-              <span className="bg-[linear-gradient(120deg,#0060CC,#0088FF_55%,#38BDF8)] bg-clip-text text-transparent">
-                our #1 priority.
-              </span>
-            </h2>
-            <p className="mt-3 text-[0.84rem] leading-6 text-slate-500">
-              Every facility, every vehicle, every transaction — protected by industry-leading security standards and verified professionals.
-            </p>
-
-            {/* Animated shield */}
-            <div className="relative my-8 flex justify-center">
-              {!reduced && (
-                <>
-                  <motion.div
-                    className="absolute h-36 w-36 rounded-full border border-[#0088FF]/14"
-                    animate={{ scale:[1,1.18,1], opacity:[0.7,0,0.7] }}
-                    transition={{ duration: 2.8, repeat: Infinity, ease:"easeOut" }}
-                  />
-                  <motion.div
-                    className="absolute h-28 w-28 rounded-full border border-[#0088FF]/20"
-                    animate={{ scale:[1,1.14,1], opacity:[0.8,0,0.8] }}
-                    transition={{ duration: 2.8, repeat: Infinity, ease:"easeOut", delay: 0.5 }}
-                  />
-                </>
-              )}
-              <div className="relative flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-[#0088FF] to-[#2563EB] shadow-[0_8px_32px_rgba(0,136,255,0.35)]">
-                <Shield className="h-9 w-9 text-white" fill="rgba(255,255,255,0.15)" aria-hidden />
-              </div>
-            </div>
-
-            {/* Stats row */}
-            <div className="grid grid-cols-3 divide-x divide-slate-100 rounded-2xl border border-slate-100 bg-[#F7FAFF] px-2 py-4">
-              {TRUST_STATS.map((s) => (
-                <div key={s.label} className="px-2 text-center sm:px-3">
-                  <p className="text-[1.25rem] font-bold tracking-[-0.04em] text-[#050A13] sm:text-[1.5rem]">{s.value}</p>
-                  <p className="mt-0.5 text-[10px] leading-4 text-slate-400">{s.label}</p>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* ─── Trust cards 1-4 ─── */}
-          {TRUST.map(({ Icon, label, desc, accent }, i) => (
+        {/* 5 cards — 2 col mobile, 3 col md, 5 col lg */}
+        <div className="grid grid-cols-2 gap-4 sm:gap-5 md:grid-cols-3 lg:grid-cols-5">
+          {TRUST.map(({ Icon, label }, i) => (
             <motion.div
               key={label}
-              initial={reduced ? false : { opacity: 0, y: 24, filter: "blur(3px)" }}
-              whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.55, ease, delay: 0.1 + i * 0.08 }}
-              whileHover={reduced ? undefined : { y: -5, scale: 1.018, transition: springSoft }}
-              className="group/trust relative overflow-hidden rounded-[22px] border border-slate-100 bg-white p-5 shadow-[0_2px_16px_rgba(6,6,22,0.05)] transition-shadow duration-300 group-hover/trust:shadow-[0_8px_32px_rgba(6,6,22,0.09)] sm:p-6"
+              initial={reduced ? false : { opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.15 }}
+              transition={{ duration: 0.5, ease, delay: i * 0.07 }}
+              whileHover={reduced ? undefined : { y: -6, transition: springSoft }}
+              className={`group/trust relative flex flex-col items-center overflow-hidden rounded-[20px] border border-slate-100 bg-white px-5 py-7 text-center shadow-[0_2px_14px_rgba(6,6,22,0.05)] transition-shadow duration-300 hover:shadow-[0_8px_28px_rgba(0,136,255,0.12)] ${
+                i === 4 ? "col-span-2 md:col-span-1" : ""
+              }`}
             >
-
               {/* Hover glow */}
-              <div className="pointer-events-none absolute inset-0 rounded-[22px] opacity-0 transition-opacity duration-400 group-hover/trust:opacity-100"
-                style={{ background: `radial-gradient(circle at 30% 0%, ${accent}0D, transparent 65%)` }} />
+              <div className="pointer-events-none absolute inset-0 rounded-[20px] bg-[radial-gradient(circle_at_50%_0%,rgba(0,136,255,0.07),transparent_65%)] opacity-0 transition-opacity duration-300 group-hover/trust:opacity-100" />
 
-              {/* Icon */}
-              <div
-                className="relative flex h-12 w-12 items-center justify-center rounded-2xl"
-                style={{ background: `linear-gradient(135deg, ${accent}22, ${accent}0A)`, boxShadow: `0 4px 14px ${accent}18` }}
-              >
-                <Icon className="h-5 w-5" style={{ color: accent }} aria-hidden />
-                <div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-br from-white/40 to-transparent" />
+              {/* Icon circle */}
+              <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-[rgba(0,136,255,0.08)] shadow-[0_4px_14px_rgba(0,136,255,0.12)] transition-all duration-300 group-hover/trust:bg-[rgba(0,136,255,0.14)]">
+                <Icon className="h-6 w-6 text-[#0088FF]" aria-hidden />
               </div>
 
-              <p className="mt-4 text-[0.92rem] font-semibold leading-snug text-[#050A13]">{label}</p>
-              <p className="mt-1.5 text-[0.78rem] leading-5 text-slate-500">{desc}</p>
-
-              {/* Bottom check badge */}
-              <div className="mt-4 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1"
-                style={{ borderColor: `${accent}28`, background: `${accent}0A` }}>
-                <Check className="h-3 w-3" style={{ color: accent }} strokeWidth={3} aria-hidden />
-                <span className="text-[10px] font-bold tracking-wide" style={{ color: accent }}>Guaranteed</span>
+              {/* Check indicator */}
+              <div className="mt-4 flex h-5 w-5 items-center justify-center rounded-full bg-[rgba(0,136,255,0.1)]">
+                <Check className="h-3 w-3 text-[#0088FF]" strokeWidth={3} aria-hidden />
               </div>
+
+              {/* Label */}
+              <p className="mt-3 text-[0.82rem] font-semibold leading-snug text-[#050A13]">{label}</p>
             </motion.div>
           ))}
-
-          {/* ─── Wide bottom card — Controlled Access Zones ─── */}
-          <motion.div
-            initial={reduced ? false : { opacity: 0, y: 28 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.6, ease, delay: 0.35 }}
-            whileHover={reduced ? undefined : { y: -4, transition: springSoft }}
-            className="group/trust relative overflow-hidden rounded-[22px] border border-slate-100 bg-white shadow-[0_2px_16px_rgba(6,6,22,0.05)] transition-shadow duration-300 group-hover/trust:shadow-[0_8px_32px_rgba(6,6,22,0.09)] lg:col-span-2"
-          >
-            <div className="pointer-events-none absolute right-0 top-0 h-full w-1/2 opacity-0 transition-opacity duration-500 group-hover/trust:opacity-100"
-              style={{ background: "radial-gradient(circle at 80% 50%, rgba(168,85,247,0.05), transparent 65%)" }} />
-
-            <div className="flex flex-col gap-5 p-5 sm:flex-row sm:items-center sm:gap-8 sm:p-7">
-              {/* Icon */}
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,rgba(168,85,247,0.18),rgba(168,85,247,0.06))] shadow-[0_4px_14px_rgba(168,85,247,0.14)]">
-                <Lock className="h-6 w-6 text-[#A855F7]" aria-hidden />
-              </div>
-
-              {/* Text */}
-              <div className="flex-1">
-                <p className="text-[0.98rem] font-semibold text-[#050A13]">Controlled Access Zones</p>
-                <p className="mt-1 text-[0.82rem] leading-6 text-slate-500">
-                  Smart ANPR cameras, automated barriers, and digital validation ensure only authorized vehicles access our secured parking facilities — every time, without exception.
-                </p>
-              </div>
-
-              {/* Feature pills */}
-              <div className="flex shrink-0 flex-wrap gap-2 sm:flex-col sm:items-end">
-                {["ANPR Technology", "Smart Barriers", "Digital Validation"].map(tag => (
-                  <span key={tag} className="rounded-full border border-[rgba(168,85,247,0.2)] bg-[rgba(168,85,247,0.06)] px-3 py-1 text-[11px] font-semibold text-[#A855F7]">
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-
         </div>
-      </div>
 
-      <style>{`
-        .svc-trust-flow { animation: svc-trust-gradient 14s ease-in-out infinite; }
-        @keyframes svc-trust-gradient {
-          0%,100% { background-position: 0% 50%; }
-          50%      { background-position: 100% 50%; }
-        }
-        @media (prefers-reduced-motion: reduce) { .svc-trust-flow { animation: none; } }
-      `}</style>
+      </div>
     </section>
   );
 }
@@ -1530,7 +1439,7 @@ function LongTermCTA({ onGetQuote }) {
 
               {/* Description */}
               <p className="mt-4 max-w-[52ch] text-[0.88rem] leading-7 text-slate-500 sm:text-[0.94rem]">
-                Secure, flexible, and smart parking solutions for businesses, residents, airports, and yearly vehicle storage — designed to grow with you.
+                Secure, flexible, and smart parking solutions for businesses, residents, airports, and yearly vehicle storage and yearly parking.
               </p>
 
               {/* Feature grid */}
@@ -1639,7 +1548,7 @@ export default function ServicesListPage() {
       <QuoteModal   isOpen={quoteOpen}        onClose={() => setQuoteOpen(false)} />
 
       <main>
-        <HeroSection    onGetQuote={() => setQuoteOpen(true)} />
+        <GoodLookingServiceHero onGetQuote={() => setQuoteOpen(true)} />
         <ServicesGrid   onServiceClick={setSelectedService} />
         <PartnersSection />
         <TrustSection />

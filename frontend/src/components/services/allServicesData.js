@@ -58,7 +58,7 @@ export const allServicesData = [
     slug: "valet-on-demand",
     name: "Valet On Demand",
     shortDesc:
-      "Premium valet services for any venue or event — from hotels and restaurants to weddings, hospitals, and corporate offices.",
+      "Premium valet services for any venue or event, from hotels and restaurants to weddings, hospitals, and corporate offices.",
     mediaType: "video",
     mediaSrc: "https://framerusercontent.com/assets/0ynnxWZbG6G2zLs2krR8m3tUyQ.mp4",
     fullDesc:
@@ -93,10 +93,10 @@ export const allServicesData = [
     fullDesc:
       "HalaPark offers integrated EV charging for modern electric mobility. Users can easily find and use charging stations while parking. Operators manage availability and usage from a central platform. Smart scheduling and secure payments ensure a simple, efficient experience.",
     whatsIncluded: [
-      "Smart Infrastructure Management — centralized monitoring and payments",
-      "Business Growth & Customer Convenience — attract more EV customers",
-      "Sustainability Support — renewable energy integration",
-      "Reliable & Efficient Operations — regular maintenance and smart monitoring",
+      "Smart Infrastructure Management: centralized monitoring and payments",
+      "Business Growth and Customer Convenience: attract more EV customers",
+      "Sustainability Support: renewable energy integration",
+      "Reliable and Efficient Operations: regular maintenance and smart monitoring",
     ],
   },
   {
@@ -199,9 +199,9 @@ export const allServicesData = [
     fullDesc:
       "From securing exclusive parking locations to managing daily operations, HalaPark provides reliable fleet parking solutions with flexible access, efficient coordination, and competitive parking options tailored to your business needs.",
     whatsIncluded: [
-      "Exclusive Parking Access — premium locations via our property network",
-      "Complete Site Setup & Support — signage, access coordination, and connectivity",
-      "End-to-End Parking Management — daily operations, support, and billing coordination",
+      "Exclusive Parking Access: premium locations via our property network",
+      "Complete Site Setup and Support: signage, access coordination, and connectivity",
+      "End-to-End Parking Management: daily operations, support, and billing coordination",
       "Centralized platform to monitor all parking activities",
     ],
   },
@@ -228,7 +228,7 @@ export const allServicesData = [
     slug: "barrier-free-parking",
     name: "Barrier-Free Parking",
     shortDesc:
-      "Fully automated, ticketless parking using smart license plate recognition. Drive in and out — no barriers, no waiting.",
+      "Fully automated, ticketless parking using smart license plate recognition. Drive in and out with no barriers, no waiting.",
     mediaType: "video",
     mediaSrc: "/Ticket.mp4",
     fullDesc:
@@ -264,7 +264,7 @@ export const allServicesData = [
     slug: "airport-parking",
     name: "Airport Parking Services",
     shortDesc:
-      "Seamless airport mobility — convenient terminal parking, fast drop-off and pick-up, and optional valet support.",
+      "Seamless airport mobility with convenient terminal parking, fast drop-off and pick-up, and optional valet support.",
     mediaType: "video",
     mediaSrc: "/airportservice.mp4",
     fullDesc:
@@ -300,7 +300,7 @@ export const allServicesData = [
     slug: "car-wash",
     name: "Car Wash Services",
     shortDesc:
-      "On-demand interior and exterior car wash at parking locations — washing, polishing, vacuuming, and deep cleaning.",
+      "On-demand interior and exterior car wash at parking locations, including washing, polishing, vacuuming, and deep cleaning.",
     mediaType: "video",
     mediaSrc: "/cleaning.mp4",
     fullDesc:
@@ -318,7 +318,7 @@ export const allServicesData = [
     slug: "air-tyre-service",
     name: "Air Tyre Service",
     shortDesc:
-      "On-demand tyre inflation and pressure-check at parking hubs — no workshop visit needed.",
+      "On-demand tyre inflation and pressure-check at parking hubs. No workshop visit needed.",
     mediaType: "video",
     mediaSrc: "/airtyre.mp4",
     fullDesc:
@@ -354,7 +354,7 @@ export const allServicesData = [
     slug: "jump-start",
     name: "Jump Start Service",
     shortDesc:
-      "Fast, reliable roadside battery assistance for vehicles with low or dead batteries — on-site, no waiting.",
+      "Fast, reliable roadside battery assistance for vehicles with low or dead batteries. On-site, no waiting.",
     mediaType: "video",
     mediaSrc: "/mobilemen.mp4",
     fullDesc:
