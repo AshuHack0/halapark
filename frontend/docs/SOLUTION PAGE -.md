@@ -11,19 +11,7 @@ control to optimize space usage and operations.
 
 **CTA:**
 
-Request a Demo \| Explore More ↓
-
-**Visual:**
-
-Futuristic UAE smart city parking scene
-
-Car entering automated gate (ANPR active)
-
-Subtle HalaPark UI overlay
-
-Digital flow lines connecting systems
-
-(NO multi-image layout --- single premium background)
+ 
 
 \-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\--
 
@@ -48,21 +36,7 @@ powered by automation, AI, and real-time control.
 
 **CTA:** View App Features
 
-**Visual**:
-
-Direction (RIGHT SIDE)
-
-Large HalaPark mobile app mockup (main focus)
-
-Supporting visuals (collage style):
-
--   **Traffic congestion at gate**
-
--   **Full parking lot**
-
--   **Manual payment kiosk**
-
--   **Driver searching parking**
+ 
 
 \-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\--
 
@@ -124,7 +98,7 @@ Visual: Plaine colored background
 
 **Image idea: AI analytics charts**
 
-**Visual:** 3 column of solutions with picture
+ 
 
 CTA: **\>** (PER PICTURE)
 
@@ -195,13 +169,9 @@ operational ecosystem without disrupting current systems.
 
 -   **EV charging networks**
 
-**Visual:**
+ 
 
-Central HalaPark node
-
-Connected API ecosystem diagram
-
-Flow lines linking systems
+ 
 
 \-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\--
 
@@ -253,13 +223,7 @@ without disruption.
 > Go live with dashboards, alerts, reporting, and continuous
 > optimization.
 
-**Visual:**
-
-Command center dashboard
-
-Multi-screen control room
-
-Operators managing live parking system
+ 
 
 \-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\--
 
@@ -274,12 +238,7 @@ Operators managing live parking system
 -   **Seamless user experience**
 
 -   **Built for UAE smart city standards**
-
-**Visual Direction:**
-
-Control room / command center
-
-Live dashboards across multiple sites
+ 
 
 \-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\--
 
@@ -294,11 +253,4 @@ developments, and engineered to upgrade existing infrastructure without
 disruption.
 
 **CTA Buttons**: Request Demo \| Talk to Our Team
-
-**Visual:**
-
-Futuristic smart city skyline
-
-Glowing data network connections
-
-Parking system integrated into city infrastructure
+ 
