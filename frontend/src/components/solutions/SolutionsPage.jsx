@@ -281,14 +281,17 @@ function StatsSection() {
 // ─── Solution Integration ──────────────────────────────────────────────────────
 
 const integrationCards = [
-  { title: "All-in-One Barrier Integration", description: "All-in-one compact system with barriers, AI cameras, and lighting for efficient parking.", points: ["Smart barrier control", "AI camera integration", "Automated lighting"], image: "/hf_20260327_061900_db12a62e-2867-44b6-83f0-ea7f1a5442ef.png", gradient: "from-[#0078E0]/85 via-[#0088FF]/60 to-[#0088FF]/20" },
-  { title: "ANPR & AI Camera Integration", description: "ANPR and AI cameras enable secure, real-time parking detection.", points: ["License plate recognition", "Real-time detection", "Secure access control"], image: "/hf_20260327_064316_9c7b1a28-dbfa-456e-b88a-0087cb567a61.png", gradient: "from-[#0050B3]/85 via-[#0066CC]/60 to-[#0088FF]/20" },
-  { title: "Software & Kiosk Integration", description: "Unified system with apps, operations, and kiosks for quick payments and access.", points: ["Mobile app & web portal", "Self-service kiosks", "Integrated payments"], image: "/hf_20260327_065515_cd3808b8-d99d-4faa-817d-e3f772726da6.png", gradient: "from-[#005FA3]/85 via-[#0078C8]/60 to-[#1AB2FF]/20" },
-  { title: "End-to-End System Integration", description: "Integrated platform for scalable, automated parking operations.", points: ["IoT sensor management", "Guidance display system", "Full stack automation"], image: "/hf_20260327_060926_cbb82448-441c-42ee-9589-785e7acd7565.png", gradient: "from-[#003F7F]/85 via-[#0060B8]/60 to-[#0088FF]/20" },
+  { title: "All-in-One Barrier Integration",  description: "All-in-one compact system with barriers, AI cameras, and lighting for efficient parking.",   points: ["Smart barrier control", "AI camera integration", "Automated lighting"],       image: "/hf_20260327_061900_db12a62e-2867-44b6-83f0-ea7f1a5442ef.png", gradient: "from-[#0078E0]/85 via-[#0088FF]/60 to-[#0088FF]/20" },
+  { title: "ANPR & AI Camera Integration",    description: "ANPR and AI cameras enable secure, real-time parking detection.",                              points: ["License plate recognition", "Real-time detection", "Secure access control"],  image: "/hf_20260327_064316_9c7b1a28-dbfa-456e-b88a-0087cb567a61.png", gradient: "from-[#0050B3]/85 via-[#0066CC]/60 to-[#0088FF]/20" },
+  { title: "Guidance Display Integration",    description: "Smart displays show real-time parking info for better user experience.",                        points: ["Live space availability", "Wayfinding signage", "Zone-level guidance"],        image: "/hf_20260327_062407_6dca49c0-90dd-468a-96f9-b36bba13ea8b.png", gradient: "from-[#004F9A]/85 via-[#0070D0]/60 to-[#1AB2FF]/20" },
+  { title: "Software & Kiosk Integration",    description: "Unified system with apps, operations, and kiosks for quick payments and access.",              points: ["Mobile app & web portal", "Self-service kiosks", "Integrated payments"],     image: "/hf_20260327_065515_cd3808b8-d99d-4faa-817d-e3f772726da6.png", gradient: "from-[#005FA3]/85 via-[#0078C8]/60 to-[#1AB2FF]/20" },
+  { title: "Sensor-Based Parking Management", description: "IoT sensors enable real-time parking tracking and space management.",                           points: ["Bay-level occupancy", "Instant alerts", "Predictive analytics"],              image: "/hf_20260327_071129_800d49da-6fb8-4b7e-a1ba-b32db4c31565.png", gradient: "from-[#003F7F]/85 via-[#005BB8]/60 to-[#0088FF]/20" },
+  { title: "End-to-End System Integration",   description: "Integrated platform for scalable, automated parking operations.",                               points: ["IoT sensor management", "Guidance display system", "Full stack automation"], image: "/hf_20260327_060926_cbb82448-441c-42ee-9589-785e7acd7565.png", gradient: "from-[#003F7F]/85 via-[#0060B8]/60 to-[#0088FF]/20" },
 ];
 
 function SectorSolutionsSection() {
   const reduced = useReducedMotion();
+  const loop = [...integrationCards, ...integrationCards];
   return (
     <section className="bg-white py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -306,28 +309,45 @@ function SectorSolutionsSection() {
         {/* Mobile: 2-col grid */}
         <div className="grid grid-cols-2 gap-4 lg:hidden">
           {integrationCards.map((card, i) => (
-            <motion.article key={`mob-${card.title}`} initial={reduced ? false : { opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.1 }} transition={{ duration: 0.5, ease, delay: i * 0.07 }} className="group relative h-[320px] overflow-hidden rounded-[18px] bg-slate-800">
+            <motion.article key={`mob-${card.title}`} initial={reduced ? false : { opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.1 }} transition={{ duration: 0.5, ease, delay: i * 0.07 }} className="group relative h-[280px] overflow-hidden rounded-[18px] bg-slate-800">
               <Image src={card.image} alt={card.title} fill className="object-cover transition duration-700 group-hover:scale-105" sizes="50vw" />
               <div className={`absolute inset-0 bg-gradient-to-b ${card.gradient}`} />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
               <div className="absolute inset-0 p-4">
-                <h3 className="text-[1rem] font-semibold leading-tight tracking-[-0.02em] text-white">{card.title}</h3>
+                <h3 className="text-[0.95rem] font-semibold leading-tight tracking-[-0.02em] text-white">{card.title}</h3>
               </div>
             </motion.article>
           ))}
         </div>
+      </div>
 
-        {/* Desktop: staggered flex */}
-        <div className="hidden items-start gap-4 lg:flex">
-          {integrationCards.map((card, i) => (
-            <motion.article key={card.title} initial={reduced ? false : { opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.1 }} transition={{ duration: 0.55, ease, delay: i * 0.08 }} className={`group relative flex-1 overflow-hidden rounded-[22px] bg-slate-800 ${i % 2 === 0 ? "h-[520px]" : "mt-12 h-[520px]"}`}>
-              <Image src={card.image} alt={card.title} fill className="object-cover transition duration-700 group-hover:scale-105" sizes="(min-width: 1024px) 25vw, 50vw" />
+      {/* Desktop: staggered auto-scroll marquee */}
+      <style>{`
+        @keyframes integrationScroll {
+          0%   { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        .integration-scroll {
+          animation: integrationScroll 40s linear infinite;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .integration-scroll { animation: none; }
+        }
+      `}</style>
+      <div className="mt-14 hidden w-full overflow-hidden lg:block">
+        <div className="integration-scroll flex w-max items-start gap-4 px-6 pb-14">
+          {loop.map((card, i) => (
+            <article
+              key={`${card.title}-${i}`}
+              className={`group relative w-[260px] shrink-0 overflow-hidden rounded-[22px] bg-slate-800 xl:w-[290px] ${i % 2 === 0 ? "h-[520px]" : "mt-12 h-[520px]"}`}
+            >
+              <Image src={card.image} alt={card.title} fill className="object-cover transition duration-700 group-hover:scale-105" sizes="290px" />
               <div className={`absolute inset-0 bg-gradient-to-b ${card.gradient}`} />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
               <div className="absolute inset-0 flex flex-col justify-between p-5 sm:p-6">
-                <h3 className="text-[1.1rem] font-semibold leading-tight tracking-[-0.03em] text-white drop-shadow-sm sm:text-[1.25rem] lg:text-[1.4rem]">{card.title}</h3>
+                <h3 className="text-[1.1rem] font-semibold leading-tight tracking-[-0.03em] text-white drop-shadow-sm lg:text-[1.2rem]">{card.title}</h3>
                 <div className="translate-y-4 opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
-                  <p className="text-[0.78rem] leading-relaxed text-white/85 sm:text-[0.82rem]">{card.description}</p>
+                  <p className="text-[0.78rem] leading-relaxed text-white/85">{card.description}</p>
                   <ul className="mt-3 space-y-1.5">
                     {card.points.map((pt) => (
                       <li key={pt} className="flex items-center gap-2 text-[0.75rem] font-medium text-white/90">
@@ -338,7 +358,7 @@ function SectorSolutionsSection() {
                   </ul>
                 </div>
               </div>
-            </motion.article>
+            </article>
           ))}
         </div>
       </div>
@@ -468,24 +488,36 @@ function FeatureHighlightsSection() {
   return (
     <>
       {/* Industries */}
-      <section className="bg-[#F4F8FF] py-16 sm:py-20 lg:py-24">
+      <section className="bg-white py-16 sm:py-20 lg:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto mb-12 max-w-2xl text-center">
             <p className="text-[16px] font-medium tracking-[-0.03em] text-[#0088FF]">Industries</p>
             <h2 className="mt-3 text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
               Built for High-Demand{" "}
-              <span className="text-[#667085]">Environments</span>
+              <span className="bg-gradient-to-r from-[#0088FF] to-[#0078E0] bg-clip-text text-transparent">Environments</span>
             </h2>
+            <p className="mt-4 text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem]">
+              From airports to smart cities — HalaPark scales across every high-traffic environment.
+            </p>
           </div>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
             {industryItems.map((item, i) => {
               const Icon = item.icon;
               return (
-                <motion.div key={item.label} initial={reduced ? false : { opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, ease, delay: i * 0.05 }} className="flex flex-col items-center gap-3 rounded-[20px] border border-slate-100 bg-white px-4 py-6 text-center shadow-sm transition hover:-translate-y-1 hover:border-[#0088FF]/20 hover:shadow-[0_8px_24px_rgba(0,136,255,0.1)]">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-[12px] bg-[#EEF6FF]">
-                    <Icon className="h-5 w-5 text-[#0088FF]" strokeWidth={1.8} aria-hidden />
+                <motion.div
+                  key={item.label}
+                  initial={reduced ? false : { opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, ease, delay: i * 0.06 }}
+                  className="group relative overflow-hidden rounded-[20px] border border-slate-100 bg-[#F4F8FF] p-6 text-center transition hover:-translate-y-1 hover:border-[#0088FF]/25 hover:bg-white hover:shadow-[0_12px_32px_rgba(0,136,255,0.12)]"
+                >
+                  {/* Accent line top */}
+                  <div className="absolute inset-x-0 top-0 h-[3px] rounded-t-[20px] bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] opacity-0 transition duration-300 group-hover:opacity-100" />
+                  <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-[0_4px_14px_rgba(0,136,255,0.12)] transition duration-300 group-hover:bg-[#0088FF] group-hover:shadow-[0_6px_20px_rgba(0,136,255,0.3)]">
+                    <Icon className="h-6 w-6 text-[#0088FF] transition duration-300 group-hover:text-white" strokeWidth={1.7} aria-hidden />
                   </div>
-                  <p className="text-[0.88rem] font-semibold text-[#050A13] sm:text-[0.94rem]">{item.label}</p>
+                  <p className="text-[0.88rem] font-semibold leading-tight tracking-[-0.01em] text-[#050A13] sm:text-[0.94rem]">{item.label}</p>
                 </motion.div>
               );
             })}
@@ -524,28 +556,74 @@ function FeatureHighlightsSection() {
                 <Image src="/hf_20260327_061900_db12a62e-2867-44b6-83f0-ea7f1a5442ef.png" alt="" fill className="object-cover object-center" aria-hidden />
                 <div className="absolute inset-0 bg-gradient-to-tr from-[#06111f]/90 via-[#06111f]/70 to-[#06111f]/40" />
               </div>
-              <div className="relative z-10 flex h-[280px] flex-col justify-between sm:h-[320px]">
-                <div>
-                  <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/50">Why HalaPark</p>
-                  <h3 className="mt-3 text-[clamp(1.5rem,2.5vw,2rem)] font-semibold leading-[1.08] tracking-[-0.04em] text-white">
-                    Why Leading Developments{" "}
-                    <span className="text-[#5BC4FF]">Choose Halapark</span>
-                  </h3>
+              <div className="relative z-10 flex h-[280px] items-center justify-center sm:h-[320px]">
+                <div className="text-center">
+                  <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-[18px] bg-[#0088FF] shadow-[0_0_40px_rgba(0,136,255,0.45)]">
+                    <Image src="/Layer_1.svg" alt="HalaPark" width={32} height={40} className="h-9 w-auto" />
+                  </div>
+                  <p className="text-[0.82rem] font-semibold uppercase tracking-[0.2em] text-white/50">HalaPark</p>
+                  <p className="mt-2 text-[1.2rem] font-semibold leading-snug tracking-[-0.03em] text-white">
+                    Go live in days,<br />
+                    <span className="text-[#5BC4FF]">not months.</span>
+                  </p>
                 </div>
-                <ul className="space-y-3">
-                  {["End-to-end parking automation", "Real-time operational visibility", "Scalable multi-site infrastructure", "Seamless user experience", "Built for UAE smart city standards"].map((pt) => (
-                    <li key={pt} className="flex items-center gap-2.5 text-[0.88rem] text-white/80">
-                      <Check className="h-4 w-4 shrink-0 text-[#5BC4FF]" strokeWidth={2.5} aria-hidden />
-                      {pt}
-                    </li>
-                  ))}
-                </ul>
               </div>
             </motion.div>
           </div>
         </div>
       </section>
     </>
+  );
+}
+
+// ─── Why HalaPark ─────────────────────────────────────────────────────────────
+
+function WhyHalaparkSection() {
+  const reduced = useReducedMotion();
+  const points = [
+    "End-to-end parking automation",
+    "Real-time operational visibility",
+    "Scalable multi-site infrastructure",
+    "Seamless user experience",
+    "Built for UAE smart city standards",
+  ];
+  return (
+    <section className="bg-[#F4F8FF] py-16 sm:py-20 lg:py-24">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+          <motion.div
+            initial={reduced ? false : { opacity: 0, x: -28 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.65, ease }}
+          >
+            <p className="text-[16px] font-medium tracking-[-0.03em] text-[#0088FF]">Why HalaPark</p>
+            <h2 className="mt-3 text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
+              Why Leading Developments{" "}
+              <span className="text-[#667085]">Choose Halapark?</span>
+            </h2>
+          </motion.div>
+
+          <ul className="space-y-3">
+            {points.map((point, i) => (
+              <motion.li
+                key={point}
+                initial={reduced ? false : { opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.45, ease, delay: i * 0.07 }}
+                className="flex items-center gap-4 rounded-2xl border border-slate-100 bg-white px-5 py-4 shadow-sm"
+              >
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#0088FF]">
+                  <Check className="h-3.5 w-3.5 text-white" strokeWidth={3} aria-hidden />
+                </span>
+                <span className="text-[0.94rem] font-medium text-[#050A13]">{point}</span>
+              </motion.li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -602,6 +680,7 @@ export default function SolutionsPage() {
       <SectorSolutionsSection />
       <TrustedBySection />
       <FeatureHighlightsSection />
+      <WhyHalaparkSection />
       <NewFinalCTA />
     </main>
   );
