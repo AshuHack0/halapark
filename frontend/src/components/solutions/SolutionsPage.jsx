@@ -331,9 +331,6 @@ function SectorSolutionsSection() {
           <p className="mt-4 text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-[#050A13]">
             End-to-End Integrated Parking Solution
           </p>
-          <p className="mt-3 text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem]">
-            HalaPark connects hardware, software, and operations into one unified platform without disrupting your existing setup.
-          </p>
         </div>
 
         {/* Row 1: 3 cards */}
