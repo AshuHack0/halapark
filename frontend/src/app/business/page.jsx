@@ -1,5 +1,6 @@
 import BusinessHero from "@/components/business/Hero";
 import BuiltForEverySpace from "@/components/business/BuiltForEverySpace";
+import WhyChooseHalaPark from "@/components/business/WhyChooseHalaPark";
 import BusinessSolutions from "@/components/business/BusinessSolutions";
 import WhoWeWorkWith from "@/components/business/WhoWeWorkWith";
 import TransformParking from "@/components/business/TransformParking";
@@ -21,6 +22,9 @@ export default function BusinessPage() {
         <BuiltForEverySpace />
       </SectionReveal>
       <SectionReveal delay={0.05}>
+        <WhyChooseHalaPark />
+      </SectionReveal>
+      <SectionReveal delay={0.055}>
         <BusinessSolutions />
       </SectionReveal>
       <SectionReveal delay={0.06}>
