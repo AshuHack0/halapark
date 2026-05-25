@@ -103,14 +103,9 @@ export default function WhoWeWorkWith() {
                 <Image src={card.image} alt={card.title} fill className="object-cover transition duration-500 group-hover:scale-105" sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#050A13]/40 to-transparent" />
               </div>
-              <div className="flex items-start justify-between gap-4 p-5">
-                <div className="flex-1">
-                  <h3 className="text-[1rem] font-semibold leading-tight tracking-[-0.02em] text-[#050A13] sm:text-[1.05rem]">{card.title}</h3>
-                  <p className="mt-2 text-[0.82rem] leading-6 text-slate-500 sm:text-[0.88rem]">{card.description}</p>
-                </div>
-                <Link href="/contact" className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EEF6FF] text-[#0088FF] transition group-hover:bg-[#0088FF] group-hover:text-white" aria-label={`Learn more about ${card.title}`}>
-                  <ArrowRight className="h-4 w-4" aria-hidden />
-                </Link>
+              <div className="p-5">
+                <h3 className="text-[1rem] font-semibold leading-tight tracking-[-0.02em] text-[#050A13] sm:text-[1.05rem]">{card.title}</h3>
+                <p className="mt-2 text-[0.82rem] leading-6 text-slate-500 sm:text-[0.88rem]">{card.description}</p>
               </div>
             </motion.article>
           ))}
@@ -131,14 +126,9 @@ export default function WhoWeWorkWith() {
                 <Image src={card.image} alt={card.title} fill className="object-cover transition duration-500 group-hover:scale-105" sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#050A13]/40 to-transparent" />
               </div>
-              <div className="flex items-start justify-between gap-4 p-5">
-                <div className="flex-1">
-                  <h3 className="text-[1rem] font-semibold leading-tight tracking-[-0.02em] text-[#050A13] sm:text-[1.05rem]">{card.title}</h3>
-                  <p className="mt-2 text-[0.82rem] leading-6 text-slate-500 sm:text-[0.88rem]">{card.description}</p>
-                </div>
-                <Link href="/contact" className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EEF6FF] text-[#0088FF] transition group-hover:bg-[#0088FF] group-hover:text-white" aria-label={`Learn more about ${card.title}`}>
-                  <ArrowRight className="h-4 w-4" aria-hidden />
-                </Link>
+              <div className="p-5">
+                <h3 className="text-[1rem] font-semibold leading-tight tracking-[-0.02em] text-[#050A13] sm:text-[1.05rem]">{card.title}</h3>
+                <p className="mt-2 text-[0.82rem] leading-6 text-slate-500 sm:text-[0.88rem]">{card.description}</p>
               </div>
             </motion.article>
           ))}
@@ -159,14 +149,9 @@ export default function WhoWeWorkWith() {
                 <Image src={card.image} alt={card.title} fill className="object-cover transition duration-500 group-hover:scale-105" sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#050A13]/40 to-transparent" />
               </div>
-              <div className="flex items-start justify-between gap-4 p-5">
-                <div className="flex-1">
-                  <h3 className="text-[1rem] font-semibold leading-tight tracking-[-0.02em] text-[#050A13] sm:text-[1.05rem]">{card.title}</h3>
-                  <p className="mt-2 text-[0.82rem] leading-6 text-slate-500 sm:text-[0.88rem]">{card.description}</p>
-                </div>
-                <Link href="/contact" className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EEF6FF] text-[#0088FF] transition group-hover:bg-[#0088FF] group-hover:text-white" aria-label={`Learn more about ${card.title}`}>
-                  <ArrowRight className="h-4 w-4" aria-hidden />
-                </Link>
+              <div className="p-5">
+                <h3 className="text-[1rem] font-semibold leading-tight tracking-[-0.02em] text-[#050A13] sm:text-[1.05rem]">{card.title}</h3>
+                <p className="mt-2 text-[0.82rem] leading-6 text-slate-500 sm:text-[0.88rem]">{card.description}</p>
               </div>
             </motion.article>
           ))}
