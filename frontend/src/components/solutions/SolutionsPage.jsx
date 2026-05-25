@@ -15,7 +15,6 @@ import {
   Cctv,
   MapPin,
   BadgeCheck,
-  BarChart3,
   Lock,
   TrendingUp,
   CalendarCheck,
@@ -113,7 +112,7 @@ function GlobalExpansionSection() {
               Solving Parking Inefficiencies Through Smart Mobility
             </p>
             <p className="mt-5 text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem]">
-              Traditional parking systems are manual, fragmented, and lack real-time visibility — causing congestion, operational inefficiencies, and poor user experience. HalaPark transforms parking into a connected ecosystem powered by automation, AI, and real-time control.
+              Traditional parking systems are manual, fragmented, and lack real-time visibility, causing congestion, operational inefficiencies, and poor user experience. HalaPark transforms parking into a connected ecosystem powered by automation, AI, and real-time control.
             </p>
 
             <ul className="mt-8 space-y-3">
@@ -224,44 +223,62 @@ function StatsSection() {
           </a>
         </div>
 
-        <div id="solutions-grid" className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {solutionItems.map((card, i) => (
-            <motion.article
-              key={card.title}
-              initial={reduced ? false : { opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.1 }}
-              transition={{ duration: 0.5, ease, delay: i * 0.06 }}
-              className="group overflow-hidden rounded-[22px] bg-white shadow-[0_4px_24px_rgba(6,6,22,0.06)] transition hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(0,136,255,0.12)]"
-            >
-              {/* Image */}
-              <div className="relative h-52 w-full overflow-hidden bg-slate-100">
-                <Image
-                  src={card.image}
-                  alt={card.title}
-                  fill
-                  className="object-cover transition duration-500 group-hover:scale-105"
-                  sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#050A13]/40 to-transparent" />
-              </div>
-
-              {/* Content */}
-              <div className="flex items-start justify-between gap-4 p-5">
-                <div className="flex-1">
-                  <h3 className="text-[1rem] font-semibold leading-tight tracking-[-0.02em] text-[#050A13] sm:text-[1.05rem]">{card.title}</h3>
-                  <p className="mt-2 text-[0.82rem] leading-6 text-slate-500 sm:text-[0.88rem]">{card.description}</p>
+        <div id="solutions-grid" className="space-y-5">
+          {/* Row 1 — 4 cards */}
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {solutionItems.slice(0, 4).map((card, i) => (
+              <motion.article
+                key={card.title}
+                initial={reduced ? false : { opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.1 }}
+                transition={{ duration: 0.5, ease, delay: i * 0.06 }}
+                className="group overflow-hidden rounded-[22px] bg-white shadow-[0_4px_24px_rgba(6,6,22,0.06)] transition hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(0,136,255,0.12)]"
+              >
+                <div className="relative h-52 w-full overflow-hidden bg-slate-100">
+                  <Image src={card.image} alt={card.title} fill className="object-cover transition duration-500 group-hover:scale-105" sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#050A13]/40 to-transparent" />
                 </div>
-                <Link
-                  href="/contact"
-                  className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EEF6FF] text-[#0088FF] transition group-hover:bg-[#0088FF] group-hover:text-white"
-                  aria-label={`Learn more about ${card.title}`}
-                >
-                  <ArrowRight className="h-4 w-4" aria-hidden />
-                </Link>
-              </div>
-            </motion.article>
-          ))}
+                <div className="flex items-start justify-between gap-4 p-5">
+                  <div className="flex-1">
+                    <h3 className="text-[1rem] font-semibold leading-tight tracking-[-0.02em] text-[#050A13] sm:text-[1.05rem]">{card.title}</h3>
+                    <p className="mt-2 text-[0.82rem] leading-6 text-slate-500 sm:text-[0.88rem]">{card.description}</p>
+                  </div>
+                  <Link href="/contact" className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EEF6FF] text-[#0088FF] transition group-hover:bg-[#0088FF] group-hover:text-white" aria-label={`Learn more about ${card.title}`}>
+                    <ArrowRight className="h-4 w-4" aria-hidden />
+                  </Link>
+                </div>
+              </motion.article>
+            ))}
+          </div>
+
+          {/* Row 2 — 3 cards centered, same card width as row 1 (3/4 of container) */}
+          <div className="mx-auto grid w-full gap-5 sm:grid-cols-2 lg:w-3/4 lg:grid-cols-3">
+            {solutionItems.slice(4).map((card, i) => (
+              <motion.article
+                key={card.title}
+                initial={reduced ? false : { opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.1 }}
+                transition={{ duration: 0.5, ease, delay: i * 0.06 }}
+                className="group overflow-hidden rounded-[22px] bg-white shadow-[0_4px_24px_rgba(6,6,22,0.06)] transition hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(0,136,255,0.12)]"
+              >
+                <div className="relative h-52 w-full overflow-hidden bg-slate-100">
+                  <Image src={card.image} alt={card.title} fill className="object-cover transition duration-500 group-hover:scale-105" sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#050A13]/40 to-transparent" />
+                </div>
+                <div className="flex items-start justify-between gap-4 p-5">
+                  <div className="flex-1">
+                    <h3 className="text-[1rem] font-semibold leading-tight tracking-[-0.02em] text-[#050A13] sm:text-[1.05rem]">{card.title}</h3>
+                    <p className="mt-2 text-[0.82rem] leading-6 text-slate-500 sm:text-[0.88rem]">{card.description}</p>
+                  </div>
+                  <Link href="/contact" className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EEF6FF] text-[#0088FF] transition group-hover:bg-[#0088FF] group-hover:text-white" aria-label={`Learn more about ${card.title}`}>
+                    <ArrowRight className="h-4 w-4" aria-hidden />
+                  </Link>
+                </div>
+              </motion.article>
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -315,23 +332,21 @@ function SectorSolutionsSection() {
             End-to-End Integrated Parking Solution
           </p>
           <p className="mt-3 text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem]">
-            HalaPark connects hardware, software, and operations into one unified platform — without disrupting your existing setup.
+            HalaPark connects hardware, software, and operations into one unified platform without disrupting your existing setup.
           </p>
         </div>
 
-        {/* Row 1: 4 cards */}
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-          {integrationCards.slice(0, 4).map((card, i) => (
+        {/* Row 1: 3 cards */}
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+          {integrationCards.slice(0, 3).map((card, i) => (
             <IntegrationCard key={card.title} card={card} i={i} reduced={reduced} />
           ))}
         </div>
 
-        {/* Row 2: remaining cards centered */}
-        <div className="mt-4 flex justify-center gap-4">
-          {integrationCards.slice(4).map((card, i) => (
-            <div key={card.title} className="w-1/2 sm:w-1/4">
-              <IntegrationCard card={card} i={i + 4} reduced={reduced} />
-            </div>
+        {/* Row 2: 3 cards */}
+        <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3">
+          {integrationCards.slice(3, 6).map((card, i) => (
+            <IntegrationCard key={card.title} card={card} i={i + 3} reduced={reduced} />
           ))}
         </div>
       </div>
@@ -405,107 +420,107 @@ function TrustedBySection() {
       </section>
 
       {/* Seamless Integrations */}
-      <section className="bg-white py-16 sm:py-20 lg:py-24">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+      <section className="bg-white py-12 sm:py-14 lg:py-16">
+        <div className="mx-auto w-full max-w-[min(100%,1400px)] px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-[980px] text-center">
+            <h2 className="text-[clamp(3rem,5.5vw,5rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
+              Seamless{" "}
+              <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">Integrations</span>
+            </h2>
+            <p className="mx-auto mt-3 max-w-[650px] text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem]">
+              End-to-end integrated parking solution that connects hardware, software, and operations into one unified platform.
+            </p>
+          </div>
 
-            {/* LEFT: text + system list */}
-            <motion.div initial={reduced ? false : { opacity: 0, x: -28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }}>
-              <h2 className="text-[clamp(3rem,5.5vw,5rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
-                Seamless{" "}
-                <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">Integrations</span>
-              </h2>
-              <p className="mt-4 text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem]">
-                HalaPark connects with existing infrastructure to create a unified operational ecosystem without disrupting current systems.
-              </p>
-              <ul className="mt-8 space-y-4">
-                {integrationSystems.map((sys, i) => {
-                  const Icon = sys.icon;
-                  return (
-                    <motion.li
-                      key={sys.label}
-                      initial={reduced ? false : { opacity: 0, x: -16 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.4, ease, delay: i * 0.07 }}
-                      className="flex items-center gap-3"
-                    >
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-[#EEF6FF]">
-                        <Icon className="h-4 w-4 text-[#0088FF]" strokeWidth={1.8} aria-hidden />
-                      </div>
-                      <p className="text-[0.94rem] font-medium text-[#050A13]">{sys.label}</p>
-                    </motion.li>
-                  );
-                })}
-              </ul>
-            </motion.div>
+          {/* Diagram — exact home page style */}
+          <style>{`
+            @keyframes seamlessConnectorFlow {
+              from { stroke-dashoffset: 0; }
+              to   { stroke-dashoffset: -6.2; }
+            }
+            .seamless-connector {
+              fill: none;
+              stroke: #0088FF;
+              stroke-width: 0.45;
+              stroke-linecap: round;
+              stroke-dasharray: 1.9 1.2;
+              animation: seamlessConnectorFlow 1.4s linear infinite;
+              filter: drop-shadow(0 0 3px rgba(0,136,255,0.24));
+            }
+            @media (prefers-reduced-motion: reduce) { .seamless-connector { animation: none; } }
+          `}</style>
 
-            {/* RIGHT: ecosystem diagram — same style as home page SolutionIntegration */}
-            <motion.div initial={reduced ? false : { opacity: 0, x: 28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease, delay: 0.1 }} className="flex justify-center">
-              <style>{`
-                @keyframes seamlessConnectorFlow {
-                  from { stroke-dashoffset: 0; }
-                  to   { stroke-dashoffset: -6.2; }
-                }
-                .seamless-connector {
-                  fill: none;
-                  stroke: #0088FF;
-                  stroke-width: 0.45;
-                  stroke-linecap: round;
-                  stroke-dasharray: 1.9 1.2;
-                  animation: seamlessConnectorFlow 1.4s linear infinite;
-                  filter: drop-shadow(0 0 3px rgba(0,136,255,0.24));
-                }
-                @media (prefers-reduced-motion: reduce) { .seamless-connector { animation: none; } }
-              `}</style>
+          <div className="relative mx-auto mt-10 h-[220px] max-w-[370px] sm:h-[252px] sm:max-w-[470px] lg:mt-14 lg:h-[284px] lg:max-w-[650px]">
+            <svg className="pointer-events-none absolute inset-0 z-10 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
+              <line className="seamless-connector" x1="20" y1="26" x2="49" y2="26" style={{ animationDelay: "0s" }} />
+              <line className="seamless-connector" x1="2"  y1="51" x2="49" y2="51" style={{ animationDelay: "0.18s" }} />
+              <line className="seamless-connector" x1="20" y1="76" x2="49" y2="76" style={{ animationDelay: "0.36s" }} />
+              <line className="seamless-connector" x1="51" y1="26" x2="80" y2="26" style={{ animationDelay: "0.08s" }} />
+              <line className="seamless-connector" x1="51" y1="51" x2="98" y2="51" style={{ animationDelay: "0.26s" }} />
+              <line className="seamless-connector" x1="51" y1="76" x2="80" y2="76" style={{ animationDelay: "0.44s" }} />
+            </svg>
 
-              <div className="relative h-[284px] w-full max-w-[500px] sm:h-[300px] lg:h-[320px] lg:max-w-[560px]">
-                {/* Animated connector lines — same coords as home page */}
-                <svg className="pointer-events-none absolute inset-0 z-10 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
-                  <line className="seamless-connector" x1="20" y1="26" x2="49" y2="26" style={{ animationDelay: "0s" }} />
-                  <line className="seamless-connector" x1="2"  y1="51" x2="49" y2="51" style={{ animationDelay: "0.18s" }} />
-                  <line className="seamless-connector" x1="20" y1="76" x2="49" y2="76" style={{ animationDelay: "0.36s" }} />
-                  <line className="seamless-connector" x1="51" y1="26" x2="80" y2="26" style={{ animationDelay: "0.08s" }} />
-                  <line className="seamless-connector" x1="51" y1="51" x2="98" y2="51" style={{ animationDelay: "0.26s" }} />
-                  <line className="seamless-connector" x1="51" y1="76" x2="80" y2="76" style={{ animationDelay: "0.44s" }} />
-                </svg>
-
-                {/* Left nodes */}
-                {[
-                  { icon: CreditCard, cls: "left-[18%] top-[26%] -translate-y-1/2" },
-                  { icon: Car,        cls: "left-[0%]  top-[51%] -translate-y-1/2" },
-                  { icon: Cctv,       cls: "left-[18%] top-[76%] -translate-y-1/2" },
-                ].map((n, i) => {
-                  const Icon = n.icon;
-                  return (
-                    <div key={i} className={`absolute z-30 flex h-[58px] w-[58px] items-center justify-center rounded-[14px] border border-[#E7EAF0] bg-white shadow-[0_16px_40px_rgba(15,23,42,0.08)] lg:h-[62px] lg:w-[62px] lg:rounded-[16px] ${n.cls}`}>
-                      <Icon className="h-[28px] w-[28px] text-[#555] lg:h-[32px] lg:w-[32px]" strokeWidth={1.65} aria-hidden />
-                    </div>
-                  );
-                })}
-
-                {/* Right nodes */}
-                {[
-                  { icon: Building2, cls: "right-[18%] top-[26%] -translate-y-1/2" },
-                  { icon: Zap,       cls: "right-[0%]  top-[51%] -translate-y-1/2" },
-                  { icon: Shield,    cls: "right-[18%] top-[76%] -translate-y-1/2" },
-                ].map((n, i) => {
-                  const Icon = n.icon;
-                  return (
-                    <div key={i} className={`absolute z-30 flex h-[58px] w-[58px] items-center justify-center rounded-[14px] border border-[#E7EAF0] bg-white shadow-[0_16px_40px_rgba(15,23,42,0.08)] lg:h-[62px] lg:w-[62px] lg:rounded-[16px] ${n.cls}`}>
-                      <Icon className="h-[28px] w-[28px] text-[#555] lg:h-[32px] lg:w-[32px]" strokeWidth={1.65} aria-hidden />
-                    </div>
-                  );
-                })}
-
-                {/* Center HalaPark node */}
-                <div className="absolute left-1/2 top-1/2 z-20 flex h-[136px] w-[136px] -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-[20px] bg-[linear-gradient(180deg,#24A3FF_0%,#007EEA_100%)] shadow-[0_20px_44px_rgba(0,136,255,0.22)] sm:h-[158px] sm:w-[158px] sm:rounded-[22px] lg:h-[176px] lg:w-[176px] lg:rounded-[24px]">
-                  <div className="absolute inset-0 rounded-[inherit] bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.55),transparent_58%)]" />
-                  <Image src="/Layer_1.svg" alt="HalaPark" width={70} height={90} className="relative h-[76px] w-[60px] object-contain sm:h-[88px] sm:w-[70px]" />
+            {/* Left nodes */}
+            {[
+              { icon: CreditCard, cls: "left-[18%] top-[15%]" },
+              { icon: Car,        cls: "left-[0%]  top-[41%]" },
+              { icon: Cctv,       cls: "left-[18%] top-[64%]" },
+            ].map((n, i) => {
+              const Icon = n.icon;
+              return (
+                <div key={i} className={`absolute z-30 flex h-[58px] w-[58px] items-center justify-center rounded-[14px] border border-[#E7EAF0] bg-white shadow-[0_16px_40px_rgba(15,23,42,0.08)] sm:h-[54px] sm:w-[54px] lg:h-[62px] lg:w-[62px] lg:rounded-[16px] ${n.cls}`}>
+                  <Icon className="h-[28px] w-[28px] text-[#555] sm:h-[32px] sm:w-[32px] lg:h-[36px] lg:w-[36px]" strokeWidth={1.65} aria-hidden />
                 </div>
-              </div>
-            </motion.div>
+              );
+            })}
 
+            {/* Right nodes */}
+            {[
+              { icon: Building2, cls: "right-[18%] top-[15%]" },
+              { icon: Zap,       cls: "right-[0%]  top-[41%]" },
+              { icon: Shield,    cls: "right-[18%] top-[64%]" },
+            ].map((n, i) => {
+              const Icon = n.icon;
+              return (
+                <div key={i} className={`absolute z-30 flex h-[58px] w-[58px] items-center justify-center rounded-[14px] border border-[#E7EAF0] bg-white shadow-[0_16px_40px_rgba(15,23,42,0.08)] sm:h-[54px] sm:w-[54px] lg:h-[62px] lg:w-[62px] lg:rounded-[16px] ${n.cls}`}>
+                  <Icon className="h-[28px] w-[28px] text-[#555] sm:h-[32px] sm:w-[32px] lg:h-[36px] lg:w-[36px]" strokeWidth={1.65} aria-hidden />
+                </div>
+              );
+            })}
+
+            {/* Center HalaPark node */}
+            <div className="absolute left-1/2 top-[16%] z-20 flex h-[136px] w-[136px] -translate-x-1/2 items-center justify-center overflow-hidden rounded-[20px] bg-[linear-gradient(180deg,#24A3FF_0%,#007EEA_100%)] shadow-[0_20px_44px_rgba(0,136,255,0.22)] sm:h-[158px] sm:w-[158px] sm:rounded-[22px] lg:h-[192px] lg:w-[192px] lg:rounded-[24px] lg:shadow-[0_26px_64px_rgba(0,136,255,0.25)]">
+              <div className="absolute inset-0 rounded-[inherit] bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.55),transparent_58%)]" />
+              <Image src="/Layer_1.svg" alt="HalaPark mark" width={80} height={102} className="relative h-[76px] w-[60px] object-contain sm:h-[88px] sm:w-[70px] lg:h-[102px] lg:w-[80px]" />
+            </div>
+          </div>
+
+          {/* Scrolling cards — same as home page */}
+          <div
+            className="mx-auto mt-10 w-full overflow-x-hidden pb-2 lg:mt-12 [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)] [-webkit-mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]"
+            aria-label="Integration systems, scrolling"
+          >
+            <style>{`
+              @keyframes seamlessMarquee {
+                0%   { transform: translateX(0); }
+                100% { transform: translateX(-50%); }
+              }
+              .seamless-marquee { animation: seamlessMarquee 45s linear infinite; }
+              @media (prefers-reduced-motion: reduce) { .seamless-marquee { animation: none; } }
+            `}</style>
+            <div className="flex w-max gap-4 sm:gap-5 md:gap-6 seamless-marquee">
+              {[...integrationSystems, ...integrationSystems].map((sys, i) => {
+                const Icon = sys.icon;
+                return (
+                  <div key={i} className="flex w-[min(72vw,300px)] shrink-0 items-center gap-4 rounded-[24px] border border-[#E7EAF0] bg-white p-5 shadow-sm sm:w-[min(40vw,340px)] lg:w-[280px]">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] bg-[#EEF6FF]">
+                      <Icon className="h-5 w-5 text-[#0088FF]" strokeWidth={1.7} aria-hidden />
+                    </div>
+                    <p className="text-[0.88rem] font-medium leading-snug text-[#050A13]">{sys.label}</p>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </section>
@@ -549,7 +564,7 @@ function FeatureHighlightsSection() {
               <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">Environments</span>
             </h2>
             <p className="mt-4 text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-white/70">
-              From airports to smart cities — HalaPark scales across every high-traffic environment.
+              From airports to smart cities, HalaPark scales across every high-traffic environment.
             </p>
           </div>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
@@ -584,9 +599,6 @@ function FeatureHighlightsSection() {
                 Deployment{" "}
                 <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">Journey</span>
               </h2>
-              <p className="mt-4 text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-[#050A13]">
-                Modernize without disrupting your operations
-              </p>
               <p className="mt-5 max-w-[520px] text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem]">
                 We ensure a smooth rollout by understanding your environment, integrating with existing systems, and improving performance over time without disruption.
               </p>
@@ -716,29 +728,51 @@ function NewFinalCTA() {
     <section className="bg-white py-4 sm:py-5 lg:py-6">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="relative overflow-hidden rounded-[28px] bg-[#06111f]">
+          {/* Background: city skyline */}
           <div className="absolute inset-0">
-            <Image src="/hf_20260327_061900_db12a62e-2867-44b6-83f0-ea7f1a5442ef.png" alt="" fill className="object-cover object-center" aria-hidden />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#06111f]/95 via-[#06111f]/80 to-[#06111f]/50" />
+            <Image src="/hf_20260327_064457_c75923ba-dc06-4c6e-9b63-fa181e94bcfa.png" alt="" fill className="object-cover object-center opacity-40" aria-hidden />
+            <div className="absolute inset-0 bg-gradient-to-b from-[#06111f]/60 via-[#06111f]/40 to-[#06111f]/80" />
           </div>
+
+          {/* Glowing network SVG overlay */}
+          <svg className="pointer-events-none absolute inset-0 h-full w-full opacity-20" aria-hidden preserveAspectRatio="xMidYMid slice" viewBox="0 0 800 400">
+            <defs>
+              <radialGradient id="nodeGlow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stopColor="#0088FF" stopOpacity="0.9" />
+                <stop offset="100%" stopColor="#0088FF" stopOpacity="0" />
+              </radialGradient>
+            </defs>
+            {/* Network lines */}
+            {[
+              [120,80,400,200],[280,300,400,200],[600,120,400,200],[680,300,400,200],
+              [50,200,400,200],[750,200,400,200],[200,50,400,200],[580,350,400,200],
+            ].map(([x1,y1,x2,y2],i) => (
+              <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#0088FF" strokeWidth="0.6" strokeOpacity="0.5" strokeDasharray="4 6" />
+            ))}
+            {/* Outer nodes */}
+            {[[120,80],[280,300],[600,120],[680,300],[50,200],[750,200],[200,50],[580,350]].map(([cx,cy],i) => (
+              <circle key={i} cx={cx} cy={cy} r="4" fill="#0088FF" fillOpacity="0.7" />
+            ))}
+            {/* Center glow */}
+            <circle cx="400" cy="200" r="60" fill="url(#nodeGlow)" />
+            <circle cx="400" cy="200" r="6" fill="#0088FF" />
+          </svg>
+
           <motion.div initial={reduced ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.65, ease }} className="relative z-10 flex flex-col items-center px-6 py-16 text-center sm:px-10 sm:py-20 lg:py-24">
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 backdrop-blur-sm">
-              <BarChart3 className="h-3.5 w-3.5 text-[#5BC4FF]" aria-hidden />
-              <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/80">Transform Your Parking</span>
-            </div>
-            <h2 className="max-w-[680px] text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-white">
+            <h2 className="max-w-[720px] text-[clamp(2.65rem,4.5vw,4.2rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-white">
               Transform Parking Into a{" "}
-              <span className="bg-gradient-to-r from-[#3AADFF] to-[#0066CC] bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-[#3AADFF] to-[#0088FF] bg-clip-text text-transparent">
                 Fully Connected Mobility Infrastructure
               </span>
             </h2>
-            <p className="mt-4 max-w-[520px] text-[0.88rem] leading-6 text-white/65 sm:text-[0.94rem]">
+            <p className="mt-5 max-w-[560px] text-[0.88rem] leading-6 text-white/65 sm:text-[0.94rem]">
               Halapark replaces fragmented parking systems with one intelligent platform that connects access control, real-time operations, and data-driven intelligence. Built for scale, designed for modern developments, and engineered to upgrade existing infrastructure without disruption.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               <Link href="/contact" className="inline-flex items-center gap-2 rounded-full bg-[#0088FF] px-8 py-3.5 text-sm font-semibold text-white shadow-[0_8px_28px_rgba(0,136,255,0.45)] transition hover:brightness-110">
                 Request Demo <ArrowRight className="h-4 w-4" aria-hidden />
               </Link>
-              <Link href="/contact" className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-8 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/18">
+              <Link href="/contact" className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-8 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20">
                 <CalendarCheck className="h-4 w-4" aria-hidden />
                 Talk to Our Team
               </Link>
