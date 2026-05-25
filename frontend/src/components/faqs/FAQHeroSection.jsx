@@ -1,23 +1,39 @@
+import Image from "next/image";
+
 export default function FAQHeroSection() {
   return (
-    <section className="px-4 pb-5 pt-16 sm:px-6 sm:pb-6 sm:pt-20 lg:px-8">
-      <div className="mx-auto max-w-6xl">
-        <div className="rounded-[28px] border border-[rgba(0,136,255,0.14)] bg-[rgba(0,136,255,0.08)] px-6 py-7 shadow-[0_18px_50px_rgba(0,136,255,0.08)] sm:px-8">
-          <div className="inline-flex items-center rounded-full border border-[rgba(0,136,255,0.14)] bg-white/70 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#0088FF]">
-            FAQ
+    <section className="bg-white py-4 sm:py-5 lg:py-6">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="relative overflow-hidden rounded-[24px] bg-[#06111f] text-white">
+          <div className="absolute inset-0">
+            <Image
+              src="/hf_20260327_061900_db12a62e-2867-44b6-83f0-ea7f1a5442ef.png"
+              alt=""
+              fill
+              className="object-cover object-center opacity-30"
+              aria-hidden
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#06111f]/90 via-[#06111f]/70 to-[#06111f]/40" />
           </div>
-
-          <h1 className="mt-4 text-3xl font-bold tracking-tight text-[#0088FF] sm:text-4xl lg:text-[2.8rem]">
-            Frequently Asked Questions
-          </h1>
-
-          <p className="mt-3 max-w-3xl text-sm leading-7 text-[#0088FF] sm:text-base">
-            Everything you need to know about using HalaPark for drivers,
-            property owners, and businesses.
-          </p>
+          <div className="relative flex min-h-[320px] w-full flex-col justify-center px-8 py-14 sm:px-12 md:min-h-[380px] lg:px-20">
+            <div className="relative z-10 w-full max-w-xl">
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 backdrop-blur-sm">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#5BC4FF]" />
+                <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/80">Help Center</span>
+              </div>
+              <h1 className="text-4xl font-semibold leading-[1.05] tracking-[-0.04em] text-white sm:text-5xl md:text-6xl">
+                Frequently Asked{" "}
+                <span className="bg-gradient-to-r from-[#3AADFF] to-[#0088FF] bg-clip-text text-transparent">
+                  Questions
+                </span>
+              </h1>
+              <p className="mt-4 max-w-md text-sm leading-relaxed text-white/75 sm:text-base">
+                Everything you need to know about HalaPark — for drivers, property owners, and businesses.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
   );
 }
-
