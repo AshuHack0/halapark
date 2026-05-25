@@ -1,131 +1,60 @@
 "use client";
 
-import { motion } from "framer-motion";
-import RatingBadge from "@/components/common/RatingBadge";
+import { useEffect, useRef } from "react";
+import Link from "next/link";
 
 export default function BusinessHero() {
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.play()?.catch(() => {});
+    }
+  }, []);
+
   return (
-    <section className="relative pt-32 lg:pt-38 flex items-end overflow-hidden max-h-screen bg-gradient-to-l from-[rgba(0,136,255,0.22)] to-white">
-      <div className="container mx-auto sm:px-0 px-4 max-w-7xl ">
-        <div className="flex flex-col lg:flex-row items-center gap-12 max-md:gap-10 max-sm:gap-8 ">
-          {/* Text Content */}
-          <div className="lg:w-1/2 z-10 max-lg:text-center mt-20 sm:mt-0 ">
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="
-                text-sm
-                max-sm:text-xs
-                font-semibold
-                uppercase
-                tracking-[0.2em]
-                text-[#0088FF]
-                mb-4
-              "
-            >
-              For Business
-            </motion.p>
-
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="
-                text-5xl 
-                lg:text-6xl 
-                max-md:text-4xl 
-                max-sm:text-3xl 
-                font-bold 
-                text-slate-900 
-                leading-[1.1] 
-                mb-6
-              "
-            >
-              Turn Your Parking Into a{" "}
-              <span className="text-[#0088FF]">Profit Centre</span>
-            </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="
-                text-lg 
-                max-md:text-base 
-                max-sm:text-sm 
-                text-[#636363] 
-                mb-8 
-                max-md:mb-6 
-                max-w-lg 
-                leading-relaxed 
-                max-lg:mx-auto
-              "
-            >
-              Whether you own one bay or manage a 500-space facility, HalaPark
-              gives you the tools, technology, and team to run a smarter, more
-              profitable parking operation.
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="
-                flex 
-                flex-col 
-                sm:flex-row 
-                items-center 
-                gap-6 
-                max-sm:gap-4
-                max-lg:justify-center
-              "
-            >
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="
-                  px-8 
-                  py-3 
-                  max-sm:px-6 
-                  bg-[#0088FF] 
-                  text-white 
-                  rounded-full 
-                  font-medium 
-                  text-base 
-                  max-sm:text-sm 
-                  hover:brightness-95 
-                  transition-colors
-                "
-              >
-                Connect With Us
-              </motion.button>
-
-              <RatingBadge
-                rating="4.9"
-                totalReviews="4268"
-                textColor="transparent"
-                shadow="none"
-                border="true"
-              />
-            </motion.div>
+    <section id="hero-section" className="bg-white py-4 sm:py-5 lg:py-6">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="relative overflow-hidden rounded-[24px] bg-[#06111f] text-white">
+          <div className="absolute inset-0">
+            <video
+              ref={videoRef}
+              src="/HalaParkVideo.mp4"
+              poster="/hf_20260327_061900_db12a62e-2867-44b6-83f0-ea7f1a5442ef.png"
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              className="h-full w-full object-cover"
+            />
+            <div className="absolute inset-0 bg-black/40" />
           </div>
 
-          {/* Visual Content */}
-          <div className="lg:w-1/2 relative flex justify-center lg:self-end">
-            <img
-              src="/asnkjadnkan.png"
-              alt=""
-              className="
-                pl-15 
-                w-[72%]
-                max-w-[420px]
-                max-lg:pl-0 
-                max-md:w-[70%] 
-                max-sm:w-[58%] 
-                h-auto
-              "
-            />
+          <div className="relative flex min-h-[500px] w-full flex-col justify-center px-8 py-14 sm:px-12 md:min-h-[620px] lg:px-20">
+            <div className="relative z-10 w-full max-w-lg">
+              <h1 className="text-5xl font-semibold text-white sm:text-6xl md:text-7xl">
+                Turning Smart Parking into Business Growth
+              </h1>
+
+              <p className="mt-5 max-w-sm text-sm leading-relaxed text-white/90 sm:text-base">
+                HalaPark helps businesses maximize revenue, automate parking operations, and deliver seamless smart mobility experiences through AI-powered parking technology.
+              </p>
+
+              <div className="mt-7 flex flex-wrap gap-3">
+                <Link
+                  href="/contact"
+                  className="inline-block rounded-full bg-[#0088FF] px-8 py-3 text-sm font-medium text-white sm:text-base"
+                >
+                  Get Proposal
+                </Link>
+                <Link
+                  href="/contact"
+                  className="inline-block rounded-full border border-white/40 bg-white/10 px-8 py-3 text-sm font-medium text-white backdrop-blur-sm sm:text-base"
+                >
+                  Book a Free Consultation
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </div>
