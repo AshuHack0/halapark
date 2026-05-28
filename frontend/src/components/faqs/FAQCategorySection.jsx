@@ -39,7 +39,10 @@ const iconMap = {
 
 export default function FAQCategorySection() {
   const [activeCategoryId, setActiveCategoryId] = useState(faqCategories[0]?.id);
-  const [openQuestionId, setOpenQuestionId] = useState(faqCategories[0]?.items[0]?.id ?? null);
+  const makeKey = (catId, itemId) => `${catId}::${itemId}`;
+  const [openQuestionKey, setOpenQuestionKey] = useState(
+    faqCategories[0] ? makeKey(faqCategories[0].id, faqCategories[0].items[0]?.id ?? "") : null
+  );
 
   const activeCategory = useMemo(
     () => faqCategories.find((c) => c.id === activeCategoryId),
@@ -48,7 +51,7 @@ export default function FAQCategorySection() {
 
   const handleCategoryClick = (category) => {
     setActiveCategoryId(category.id);
-    setOpenQuestionId(category.items[0]?.id ?? null);
+    setOpenQuestionKey(category.items[0] ? makeKey(category.id, category.items[0].id) : null);
   };
 
   return (
@@ -123,15 +126,16 @@ export default function FAQCategorySection() {
 
             <div className="divide-y divide-slate-100 rounded-[20px] border border-[#E7EAF0] bg-white shadow-[0_4px_24px_rgba(6,6,22,0.05)]">
               {activeCategory?.items.map((item) => {
-                const isOpen = openQuestionId === item.id;
+                const key = makeKey(activeCategoryId, item.id);
+                const isOpen = openQuestionKey === key;
                 return (
-                  <div key={item.id}>
+                  <div key={key}>
                     <button
                       type="button"
-                      onClick={() => setOpenQuestionId(isOpen ? null : item.id)}
+                      onClick={() => setOpenQuestionKey(isOpen ? null : key)}
                       className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
                       aria-expanded={isOpen}
-                      aria-controls={`${item.id}-content`}
+                      aria-controls={`${key}-content`}
                     >
                       <span className={`text-[0.94rem] font-medium leading-snug transition-colors ${isOpen ? "text-[#0088FF]" : "text-[#050A13]"}`}>
                         {item.question}
@@ -143,8 +147,19 @@ export default function FAQCategorySection() {
                       </span>
                     </button>
                     {isOpen && (
-                      <div id={`${item.id}-content`} className="px-6 pb-5">
+                      <div id={`${key}-content`} className="px-6 pb-5">
                         <p className="text-[0.88rem] leading-6 text-slate-500">{item.answer}</p>
+                        {item.videoUrl && (
+                          <div className="mt-4 overflow-hidden rounded-[14px] border border-[#E7EAF0]">
+                            <iframe
+                              src={item.videoUrl}
+                              title={item.question}
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                              allowFullScreen
+                              className="aspect-video w-full"
+                            />
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>

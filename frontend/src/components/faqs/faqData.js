@@ -79,6 +79,7 @@ export const faqCategories = [
         question: "How does parking work on HalaPark?",
         answer:
           "Simply search for a location, book your space, and follow the provided access instructions to park.",
+        videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
       },
       {
         id: "access-location",
@@ -126,7 +127,7 @@ export const faqCategories = [
         answer: "HalaPark supports secure digital payments, including credit/debit cards.",
       },
         {
-        id: "payment-methods",
+        id: "monthly-yearly-receipts",
         question: "Suggestion for Monthly/Yearly Booking – Will I receive invoices or receipts?",
         answer: "Yes, a digital receipt is provided for every completed transaction.",
       },

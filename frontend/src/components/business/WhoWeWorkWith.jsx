@@ -1,9 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
 
 const ease = [0.22, 1, 0.36, 1];
 
@@ -156,40 +154,6 @@ export default function WhoWeWorkWith() {
             </motion.article>
           ))}
         </div>
-
-        {/* CTA Banner */}
-        <motion.div
-          initial={reduced ? false : { opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.65, ease }}
-          className="relative mt-16 overflow-hidden rounded-[28px] bg-[#06111f]"
-        >
-          <div className="absolute inset-0">
-            <Image src="/hf_20260327_064457_c75923ba-dc06-4c6e-9b63-fa181e94bcfa.png" alt="" fill className="object-cover object-center opacity-30" aria-hidden />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#06111f]/90 via-[#06111f]/70 to-[#06111f]/50" />
-          </div>
-          <div className="relative z-10 flex flex-col items-center px-6 py-14 text-center sm:px-10 sm:py-16">
-            <h3 className="max-w-[640px] text-[clamp(1.6rem,3vw,2.4rem)] font-semibold leading-[1.1] tracking-[-0.04em] text-white">
-              Trusted by Leading Properties{" "}
-              <span className="bg-gradient-to-r from-[#3AADFF] to-[#0088FF] bg-clip-text text-transparent">
-                & Enterprises
-              </span>
-            </h3>
-            <p className="mx-auto mt-4 max-w-[560px] text-[0.88rem] leading-6 text-white/65 sm:text-[0.94rem]">
-              Smart Parking Across Connected Locations. Navigate through HalaPark parking facilities, partner properties, commercial destinations, residential communities, and intelligent mobility spaces designed for convenience, efficiency, and seamless parking experiences.
-            </p>
-            <p className="mx-auto mt-2 max-w-[560px] text-[0.88rem] leading-6 text-white/50 sm:text-[0.94rem]">
-              Showcasing all our building partners, business partners, and parking success stories.
-            </p>
-            <Link
-              href="/destinations"
-              className="mt-8 inline-flex items-center gap-2 rounded-full bg-[#0088FF] px-8 py-3.5 text-sm font-semibold text-white shadow-[0_8px_28px_rgba(0,136,255,0.45)] transition hover:brightness-110"
-            >
-              Explore HalaPark Destinations <ArrowRight className="h-4 w-4" aria-hidden />
-            </Link>
-          </div>
-        </motion.div>
 
       </div>
     </section>

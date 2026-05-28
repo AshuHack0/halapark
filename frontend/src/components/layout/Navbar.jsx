@@ -94,6 +94,7 @@ const navLinks = [
   { href: "/business", key: "business" },
   { href: "/about", key: "aboutUs" },
   { href: "/faqs", key: "faqs" },
+  { href: "/careers", key: "careers" },
 ];
 
 const LANGUAGE_STORAGE_KEY = "halapark-language";
@@ -108,6 +109,7 @@ const UI_TEXT = {
       business: "Business",
       aboutUs: "About Us",
       faqs: "FAQs",
+      careers: "Careers",
     },
     cta: "Get In Touch",
     search: "Search",
@@ -122,6 +124,7 @@ const UI_TEXT = {
       business: "الأعمال",
       aboutUs: "من نحن",
       faqs: "الأسئلة الشائعة",
+      careers: "الوظائف",
     },
     cta: "تواصل معنا",
     search: "بحث",

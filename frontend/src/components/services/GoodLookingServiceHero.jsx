@@ -35,13 +35,6 @@ export default function GoodLookingServiceHero({ onGetQuote }) {
               transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
               className="flex flex-col items-center"
             >
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 backdrop-blur-sm">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#0088FF]" />
-                <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-white/80">
-                  Our Services
-                </p>
-              </div>
-
               <h1
                 id="services-hero-title"
                 className="max-w-[720px] text-[clamp(2.4rem,5.5vw,5rem)] font-semibold leading-[1.04] tracking-[-0.05em] text-white"

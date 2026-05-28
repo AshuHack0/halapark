@@ -541,15 +541,6 @@ function ServiceCard({ service, index, onClick, category }) {
             </span>
           </div>
 
-          {/* Category pill — top-right of media */}
-          <div className="absolute right-2.5 top-2.5 z-10">
-            <span
-              className="rounded-full px-2.5 py-1 text-[10px] font-bold tracking-wide backdrop-blur-sm"
-              style={{ background: cat.bg, color: cat.color }}
-            >
-              {cat.label}
-            </span>
-          </div>
         </div>
 
         {/* Body */}
@@ -1136,22 +1127,16 @@ function ServicesGrid({ onServiceClick }) {
         >
           {/* Left */}
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-[rgba(0,136,255,0.22)] bg-[rgba(0,136,255,0.05)] px-3.5 py-1.5">
-              <motion.span
-                className="h-1.5 w-1.5 rounded-full bg-[#0088FF]"
-                animate={{ scale:[1,1.5,1], opacity:[1,0.5,1] }}
-                transition={{ duration: 2, repeat: Infinity, ease:"easeInOut" }}
-              />
-              <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#0088FF]">Explore Our Services</p>
-            </div>
-
-            <h2 className="mt-4 text-[clamp(2rem,3.8vw,3.2rem)] font-semibold leading-[1.03] tracking-[-0.055em] text-[#050A13]">
-              Everything you need,{" "}
+            <h2 className="text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
+              Explore Our{" "}
               <span className="bg-[linear-gradient(120deg,#0060CC_0%,#0088FF_50%,#38BDF8_100%)] bg-clip-text text-transparent">
-                one platform.
+                Services
               </span>
             </h2>
-            <p className="mt-2.5 max-w-[480px] text-[0.88rem] leading-6 text-slate-500">
+            <p className="mt-3 max-w-[480px] text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-[#050A13]">
+              Everything you need, one platform.
+            </p>
+            <p className="mt-3 max-w-[480px] text-[0.88rem] leading-6 text-slate-500">
               From self-parking to valet, EV charging to car storage. Tap any card to explore full details and what's included.
             </p>
           </div>
@@ -1335,21 +1320,15 @@ function PartnersSection() {
           transition={{ duration: 0.65, ease }}
           className="flex flex-col items-center text-center"
         >
-          <div className="inline-flex items-center gap-2 rounded-full border border-[rgba(0,136,255,0.22)] bg-[rgba(0,136,255,0.05)] px-3.5 py-1.5">
-            <motion.span
-              className="h-1.5 w-1.5 rounded-full bg-[#0088FF]"
-              animate={{ scale:[1,1.5,1], opacity:[1,0.5,1] }}
-              transition={{ duration: 2, repeat: Infinity, ease:"easeInOut" }}
-            />
-            <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#0088FF]">Clients & Partners</p>
-          </div>
-
-          <h2 className="mt-4 text-[clamp(1.9rem,3.8vw,3.2rem)] font-semibold leading-[1.04] tracking-[-0.055em] text-[#050A13]">
-            Trusted by the UAE&apos;s{" "}
+          <h2 className="text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
+            Clients &{" "}
             <span className="bg-[linear-gradient(120deg,#0060CC_0%,#0088FF_50%,#38BDF8_100%)] bg-clip-text text-transparent">
-              leading brands.
+              Partners
             </span>
           </h2>
+          <p className="mt-3 max-w-[460px] text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-[#050A13]">
+            Trusted by the UAE&apos;s leading brands.
+          </p>
           <p className="mt-3 max-w-[460px] text-[0.88rem] leading-6 text-slate-500">
             HalaPark partners with global hotel chains, residential towers, retail destinations, and enterprises across the UAE.
           </p>
@@ -1451,20 +1430,15 @@ function TrustSection() {
           transition={{ duration: 0.6, ease }}
           className="mb-12 text-center"
         >
-          <div className="inline-flex items-center gap-2 rounded-full border border-[rgba(0,136,255,0.22)] bg-[rgba(0,136,255,0.05)] px-3.5 py-1.5">
-            <motion.span
-              className="h-1.5 w-1.5 rounded-full bg-[#0088FF]"
-              animate={{ scale: [1, 1.5, 1], opacity: [1, 0.4, 1] }}
-              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-            />
-            <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#0088FF]">Trust & Safety</p>
-          </div>
-          <h2 className="mt-4 text-[clamp(1.9rem,3.8vw,3.2rem)] font-semibold leading-[1.05] tracking-[-0.055em] text-[#050A13]">
-            Your safety is our{" "}
+          <h2 className="text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
+            Trust &{" "}
             <span className="bg-[linear-gradient(120deg,#0060CC_0%,#0088FF_50%,#38BDF8_100%)] bg-clip-text text-transparent">
-              priority.
+              Safety
             </span>
           </h2>
+          <p className="mt-3 text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-[#050A13]">
+            Your safety is our priority.
+          </p>
         </motion.div>
 
         {/* 5 cards — 2 col mobile, 3 col md, 5 col lg */}
@@ -1514,11 +1488,12 @@ function LongTermCTA({ onGetQuote }) {
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.6, ease }}
         >
-          <h2 className="text-[clamp(1.75rem,3.5vw,2.75rem)] font-semibold leading-tight tracking-[-0.04em] text-[#050A13]">
-            Looking for Long-Term Parking?
+          <h2 className="text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
+            Looking for Long-Term{" "}
+            <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">Parking?</span>
           </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-[0.9rem] leading-7 text-slate-600 sm:text-base">
-            Secure, flexible, and smart parking solutions for businesses, residents, airports, and yearly vehicle storage and yearly parking.
+          <p className="mx-auto mt-4 max-w-2xl text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-[#050A13]">
+            Secure, flexible, and smart parking solutions for businesses, residents, airports, and yearly vehicle storage.
           </p>
           <button
             type="button"
