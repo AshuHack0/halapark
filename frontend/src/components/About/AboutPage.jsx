@@ -7,7 +7,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import {
   ArrowRight, Check, Zap, CreditCard, Shield, BarChart3,
   Cpu, Leaf, Building2, Car, Network, CalendarCheck,
-  Target, Eye, BookOpen, Globe, Users, TrendingUp,
+  Target, Eye, Globe, Users, TrendingUp,
 } from "lucide-react";
 
 const ease = [0.22, 1, 0.36, 1];
@@ -70,16 +70,12 @@ function AboutIntro() {
   return (
     <section className="bg-[#F4F8FF] py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-          <motion.div initial={reduced ? false : { opacity: 0, x: -28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }}>
-            <h2 className="text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
-              Who We{" "}
-              <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">Are</span>
+        <div className="grid items-stretch gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14">
+          <motion.div initial={reduced ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }}>
+            <h2 className="text-[clamp(2.8rem,5vw,4.5rem)] font-semibold leading-[1.0] tracking-[-0.06em] text-[#050A13]">
+              Born in Dubai.<br />Built for the Future.
             </h2>
-            <p className="mt-4 text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-[#050A13]">
-              Born in Dubai. Built for the Future.
-            </p>
-            <div className="mt-5 space-y-4 text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem]">
+            <div className="mt-8 space-y-5 text-[0.93rem] leading-7 text-slate-500">
               <p>
                 HalaPark is transforming how cities, businesses, and communities experience parking. What was once fragmented, stressful, and time-consuming is now evolving into a seamless digital journey powered by smart technology, automation, and integrated mobility solutions.
               </p>
@@ -92,16 +88,18 @@ function AboutIntro() {
             </div>
           </motion.div>
 
-          <motion.div initial={reduced ? false : { opacity: 0, x: 28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease, delay: 0.1 }} className="relative overflow-hidden rounded-[28px] bg-[#06111f]">
-            <div className="absolute inset-0">
-              <Image src="/hf_20260327_064457_c75923ba-dc06-4c6e-9b63-fa181e94bcfa.png" alt="" fill className="object-cover object-center opacity-30" aria-hidden />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#06111f]/90 via-[#06111f]/50 to-transparent" />
+          <motion.div initial={reduced ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease, delay: 0.12 }} className="flex flex-col gap-3">
+            {/* Photo */}
+            <div className="relative h-52 w-full overflow-hidden rounded-[20px] sm:h-60">
+              <Image src="/hf_20260327_060926_cbb82448-441c-42ee-9589-785e7acd7565.png" alt="HalaPark parking facility" fill className="object-cover object-center" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#050A13]/30 to-transparent" />
             </div>
-            <div className="relative z-10 grid grid-cols-2 gap-px p-1">
+            {/* Stats grid below photo */}
+            <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[20px] bg-[#E0EAFF]">
               {stats.map((stat) => (
-                <div key={stat.label} className="flex flex-col items-center justify-center px-6 py-10 text-center">
-                  <p className="text-[2.8rem] font-semibold leading-none tracking-[-0.04em] text-white">{stat.value}</p>
-                  <p className="mt-2 text-[0.78rem] font-medium text-white/55">{stat.label}</p>
+                <div key={stat.label} className="flex flex-col items-start bg-white px-6 py-6">
+                  <p className="text-[2.6rem] font-semibold leading-none tracking-[-0.05em] text-[#050A13]">{stat.value}</p>
+                  <p className="mt-1.5 text-[0.75rem] font-medium text-slate-400">{stat.label}</p>
                 </div>
               ))}
             </div>
@@ -124,38 +122,45 @@ function OurMission() {
   return (
     <section className="bg-white py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid items-start gap-12 lg:grid-cols-2 lg:gap-16">
-          <motion.div initial={reduced ? false : { opacity: 0, x: -28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }}>
-            <h2 className="text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
-              Our{" "}
-              <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">Mission</span>
+        <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+          {/* LEFT — heading + body text only */}
+          <motion.div initial={reduced ? false : { opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.6, ease }}>
+            <h2 className="mb-3 text-[clamp(2.4rem,4vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-[#050A13]">
+              Our Mission
             </h2>
-            <p className="mt-4 text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-[#050A13]">
+            <p className="mb-7 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500">
               Creating Smarter Movement for Modern Cities
             </p>
-            <div className="mt-5 space-y-4 text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem]">
+            <div className="space-y-5 text-[0.93rem] leading-7 text-slate-500">
               <p>Our mission is to redefine how people experience parking and urban mobility through intelligent technology, seamless automation, and integrated digital platforms.</p>
               <p>HalaPark is committed to building smarter mobility environments that simplify movement, enhance convenience, improve operational performance, and support the evolving needs of modern communities and future-ready cities.</p>
               <p>Through innovation, scalable infrastructure, and human-centered experiences, we are shaping a future where mobility feels effortless, intuitive, and intelligently embedded into everyday life.</p>
             </div>
           </motion.div>
 
-          <div className="space-y-4">
-            {pillars.map((p, i) => {
-              const Icon = p.icon;
-              return (
-                <motion.div key={p.title} initial={reduced ? false : { opacity: 0, x: 28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, ease, delay: i * 0.1 }} className="flex gap-4 rounded-[20px] border border-[#E7EAF0] bg-white p-5 shadow-[0_4px_24px_rgba(6,6,22,0.05)]">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[12px] bg-[#EEF6FF]">
-                    <Icon className="h-5 w-5 text-[#0088FF]" strokeWidth={1.7} aria-hidden />
-                  </div>
-                  <div>
-                    <p className="text-[0.95rem] font-semibold text-[#050A13]">{p.title}</p>
-                    <p className="mt-1 text-[0.83rem] leading-5 text-slate-500">{p.desc}</p>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
+          {/* RIGHT — image on top, pillars below */}
+          <motion.div initial={reduced ? false : { opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.6, ease, delay: 0.1 }} className="flex flex-col gap-5">
+            <div className="relative h-56 w-full overflow-hidden rounded-[20px] sm:h-64">
+              <Image src="/hf_20260327_062407_6dca49c0-90dd-468a-96f9-b36bba13ea8b.png" alt="Smart city mobility" fill className="object-cover object-center" />
+              <div className="absolute inset-0 bg-[#050A13]/20" />
+            </div>
+            <div className="space-y-3">
+              {pillars.map((p, i) => {
+                const Icon = p.icon;
+                return (
+                  <motion.div key={p.title} initial={reduced ? false : { opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, ease, delay: i * 0.08 }} className="flex gap-4 border-b border-[#E7EAF0] pb-4 last:border-0 last:pb-0">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-[#EEF6FF]">
+                      <Icon className="h-4 w-4 text-[#0088FF]" strokeWidth={1.7} aria-hidden />
+                    </div>
+                    <div>
+                      <p className="text-[0.95rem] font-semibold text-[#050A13]">{p.title}</p>
+                      <p className="mt-1 text-[0.83rem] leading-5 text-slate-500">{p.desc}</p>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </motion.div>
         </div>
       </div>
     </section>
@@ -171,14 +176,13 @@ function OurVision() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
           <motion.div initial={reduced ? false : { opacity: 0, x: -28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }}>
-            <h2 className="text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
-              Our{" "}
-              <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">Vision</span>
+            <h2 className="mb-3 text-[clamp(2.4rem,4vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-[#050A13]">
+              Our Vision
             </h2>
-            <p className="mt-4 text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-[#050A13]">
+            <p className="mb-6 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500">
               A Future Where Parking Feels Invisible
             </p>
-            <div className="mt-5 space-y-4 text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem]">
+            <div className="space-y-4 text-[0.93rem] leading-7 text-slate-500">
               <p>HalaPark is creating a future where parking becomes invisible, seamlessly integrated into the way cities move, operate, and evolve.</p>
               <p>A future where vehicles move effortlessly through intelligent environments. Where access is automated. Where payments are frictionless. Where operations are data-driven.</p>
               <p>As urban mobility continues to evolve, HalaPark innovates through intelligent systems that support smart city initiatives, EV integration, digital infrastructure, and next-generation transportation environments.</p>
@@ -223,19 +227,23 @@ function OurVision() {
 
 function OurStory() {
   const reduced = useReducedMotion();
+  const milestones = [
+    { year: "Founded", text: "Solving parking inefficiency in modern cities" },
+    { year: "Expanded", text: "120+ locations across the UAE and region" },
+    { year: "Today", text: "An intelligent mobility network for next-gen cities" },
+  ];
   return (
     <section className="bg-white py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-          <motion.div initial={reduced ? false : { opacity: 0, x: -28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }}>
-            <h2 className="text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
-              Our{" "}
-              <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">Story</span>
+        <div className="grid items-start gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-20">
+          <motion.div initial={reduced ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }}>
+            <h2 className="mb-3 text-[clamp(2.4rem,4vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-[#050A13]">
+              Our Story
             </h2>
-            <p className="mt-4 text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-[#050A13]">
+            <p className="mb-6 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500">
               Built from a Vision to Simplify Urban Movement
             </p>
-            <div className="mt-5 space-y-4 text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem]">
+            <div className="space-y-5 text-[0.93rem] leading-7 text-slate-500">
               <p>HalaPark was founded with one clear mission: to solve one of the most overlooked challenges in modern cities — parking inefficiency.</p>
               <p>As urban environments expanded and mobility demands accelerated, traditional parking systems struggled to evolve. Manual operations, disconnected infrastructure, and payment frustrations created unnecessary friction for both operators and drivers.</p>
               <p className="font-medium text-[#050A13]">We saw an opportunity to reimagine parking through technology.</p>
@@ -244,26 +252,38 @@ function OurStory() {
             </div>
           </motion.div>
 
-          <motion.div initial={reduced ? false : { opacity: 0, x: 28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease, delay: 0.1 }} className="relative overflow-hidden rounded-[28px] bg-[#06111f]">
-            <div className="absolute inset-0">
-              <Image src="/hf_20260327_064457_c75923ba-dc06-4c6e-9b63-fa181e94bcfa.png" alt="" fill className="object-cover object-center opacity-40" aria-hidden />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#06111f]/80 via-[#06111f]/40 to-transparent" />
-            </div>
-            <div className="relative z-10 p-8 sm:p-10">
-              <p className="mb-6 text-[0.72rem] font-bold uppercase tracking-[0.18em] text-white/40">HalaPark by the Numbers</p>
-              <div className="grid grid-cols-2 gap-4">
-                {[
-                  { value: "8+",   label: "Years of Experience" },
-                  { value: "120+", label: "Locations" },
-                  { value: "40+",  label: "Enterprise Clients" },
-                  { value: "1M+",  label: "Monthly Transactions" },
-                ].map((stat) => (
-                  <div key={stat.label} className="rounded-[16px] border border-white/10 bg-white/5 px-5 py-5 text-center backdrop-blur-sm">
-                    <p className="text-[2.4rem] font-semibold leading-none tracking-[-0.04em] text-white">{stat.value}</p>
-                    <p className="mt-2 text-[0.75rem] font-medium text-white/50">{stat.label}</p>
+          {/* Right column — photo with stats overlay */}
+          <motion.div initial={reduced ? false : { opacity: 0, x: 24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.6, ease, delay: 0.12 }}>
+            <div className="relative overflow-hidden rounded-[24px]">
+              <div className="relative h-72 w-full sm:h-80">
+                <Image src="/hf_20260327_060926_cbb82448-441c-42ee-9589-785e7acd7565.png" alt="HalaPark story" fill className="object-cover object-center" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#06111f]/80 via-[#06111f]/20 to-transparent" />
+              </div>
+              {/* Stats pinned to bottom of image */}
+              <div className="absolute bottom-0 left-0 right-0 grid grid-cols-2 divide-x divide-white/10 border-t border-white/10">
+                {[["8+", "Years"], ["120+", "Locations"]].map(([v, l]) => (
+                  <div key={l} className="bg-[#06111f]/70 px-5 py-4 backdrop-blur-sm">
+                    <p className="text-[1.8rem] font-semibold leading-none tracking-[-0.04em] text-white">{v}</p>
+                    <p className="mt-1 text-[0.72rem] text-white/50">{l}</p>
                   </div>
                 ))}
               </div>
+            </div>
+            <div className="mt-4 grid grid-cols-2 gap-3">
+              {[["40+", "Enterprise Clients"], ["1M+", "Monthly Transactions"]].map(([v, l]) => (
+                <div key={l} className="rounded-[16px] bg-[#F4F8FF] px-5 py-4">
+                  <p className="text-[1.8rem] font-semibold leading-none tracking-[-0.04em] text-[#050A13]">{v}</p>
+                  <p className="mt-1 text-[0.72rem] text-slate-400">{l}</p>
+                </div>
+              ))}
+            </div>
+            <div className="mt-5 space-y-4">
+              {milestones.map((m, i) => (
+                <motion.div key={m.year} initial={reduced ? false : { opacity: 0, x: 12 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, ease, delay: i * 0.08 }}>
+                  <p className="text-[0.7rem] font-bold uppercase tracking-[0.16em] text-[#0088FF]">{m.year}</p>
+                  <p className="mt-0.5 text-[0.88rem] font-medium leading-snug text-[#050A13]">{m.text}</p>
+                </motion.div>
+              ))}
             </div>
           </motion.div>
         </div>
@@ -289,28 +309,33 @@ function WhatWeDo() {
   return (
     <section className="bg-[#F4F8FF] py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <motion.div initial={reduced ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }} className="mx-auto mb-12 max-w-[780px] text-center">
-          <h2 className="text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
-            What We{" "}
-            <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">Do</span>
-          </h2>
-          <p className="mx-auto mt-4 max-w-[600px] text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-[#050A13]">
-            Smart Parking Solutions Designed for Modern Cities
-          </p>
-          <p className="mx-auto mt-4 max-w-[600px] text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem]">
-            HalaPark delivers intelligent parking and mobility solutions that seamlessly combine automation, AI technology, operations, infrastructure, and digital experiences into one unified platform.
-          </p>
-        </motion.div>
+        <div className="grid items-start gap-10 lg:grid-cols-[0.7fr_1.3fr] lg:gap-16">
+          <motion.div initial={reduced ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }} className="lg:sticky lg:top-24">
+            <h2 className="mb-3 text-[clamp(2.2rem,3.5vw,3rem)] font-semibold leading-[1.06] tracking-[-0.05em] text-[#050A13]">
+              What We Do
+            </h2>
+            <p className="mb-5 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500">
+              Smart Parking Solutions for Modern Cities
+            </p>
+            <p className="text-[0.93rem] leading-7 text-slate-500">
+              HalaPark delivers intelligent parking and mobility solutions that seamlessly combine automation, AI technology, operations, infrastructure, and digital experiences into one unified platform.
+            </p>
+            <div className="relative mt-8 h-48 w-full overflow-hidden rounded-[18px]">
+              <Image src="/hf_20260327_064316_9c7b1a28-dbfa-456e-b88a-0087cb567a61.png" alt="HalaPark smart parking" fill className="object-cover object-center" />
+              <div className="absolute inset-0 bg-[#050A13]/15" />
+            </div>
+          </motion.div>
 
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {ecosystem.map((item, i) => (
-            <motion.div key={item} initial={reduced ? false : { opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, ease, delay: i * 0.03 }} className="flex items-center gap-3 rounded-[14px] border border-[#E7EAF0] bg-white px-4 py-3.5 shadow-sm">
-              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#0088FF]">
-                <Check className="h-3 w-3 text-white" strokeWidth={3} aria-hidden />
-              </span>
-              <span className="text-[0.85rem] font-medium text-[#050A13]">{item}</span>
-            </motion.div>
-          ))}
+          <motion.div initial={reduced ? false : { opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.1 }} transition={{ duration: 0.55, ease }} className="grid gap-2.5 sm:grid-cols-2">
+            {ecosystem.map((item, i) => (
+              <motion.div key={item} initial={reduced ? false : { opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.35, ease, delay: i * 0.025 }} className="flex items-center gap-3 rounded-[12px] bg-white px-4 py-3.5 shadow-sm">
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#0088FF]">
+                  <Check className="h-3 w-3 text-white" strokeWidth={3} aria-hidden />
+                </span>
+                <span className="text-[0.85rem] font-medium text-[#050A13]">{item}</span>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       </div>
     </section>
@@ -322,43 +347,56 @@ function WhatWeDo() {
 function TechnologyInnovation() {
   const reduced = useReducedMotion();
   const techPoints = [
-    { icon: Cpu, label: "AI-Driven Automation" },
-    { icon: BarChart3, label: "Real-Time Data Intelligence" },
-    { icon: Shield, label: "Cloud-Based Infrastructure" },
-    { icon: Zap, label: "Smart Access Systems" },
+    { icon: Cpu, label: "AI-Driven Automation", desc: "Machine learning at the core of every decision." },
+    { icon: BarChart3, label: "Real-Time Data Intelligence", desc: "Live insights across all facilities and transactions." },
+    { icon: Shield, label: "Cloud-Based Infrastructure", desc: "Scalable, secure, always-on platform architecture." },
+    { icon: Zap, label: "Smart Access Systems", desc: "Frictionless entry and exit powered by smart recognition." },
   ];
   return (
     <section className="bg-white py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-          <motion.div initial={reduced ? false : { opacity: 0, x: -28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }}>
-            <h2 className="text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
-              Technology &{" "}
-              <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">Innovation</span>
-            </h2>
-            <p className="mt-4 text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-[#050A13]">
-              Powered by Intelligent Mobility Technology
-            </p>
-            <div className="mt-5 space-y-4 text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem]">
-              <p>HalaPark combines AI-driven automation, real-time data intelligence, cloud-based infrastructure, smart access systems, and digital mobility platforms to create scalable parking environments built for modern cities.</p>
-              <p>Our technology enables operators, businesses, and property owners to optimize performance, automate operations, improve visibility, and deliver seamless mobility experiences through intelligent infrastructure and advanced systems.</p>
-              <p>Through continuous innovation, HalaPark is building the technological foundation for smarter urban movement and future-ready transportation environments.</p>
+          {/* LEFT — full image */}
+          <motion.div initial={reduced ? false : { opacity: 0, x: -24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }} className="relative h-72 w-full overflow-hidden rounded-[24px] sm:h-80 lg:h-[420px]">
+            <Image src="/hf_20260327_064316_9c7b1a28-dbfa-456e-b88a-0087cb567a61.png" alt="HalaPark technology" fill className="object-cover object-center" />
+            <div className="absolute inset-0 bg-gradient-to-tr from-[#06111f]/60 via-transparent to-transparent" />
+            <div className="absolute bottom-6 left-6">
+              <span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-3 py-1 backdrop-blur-sm">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#5BC4FF]" />
+                <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/80">AI-Powered Platform</span>
+              </span>
             </div>
           </motion.div>
 
-          <div className="grid grid-cols-2 gap-4">
-            {techPoints.map((p, i) => {
-              const Icon = p.icon;
-              return (
-                <motion.div key={p.label} initial={reduced ? false : { opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, ease, delay: i * 0.08 }} className="group rounded-[20px] border border-[#E7EAF0] bg-white p-6 shadow-[0_4px_24px_rgba(6,6,22,0.06)] transition hover:-translate-y-1 hover:border-[rgba(0,136,255,0.2)] hover:shadow-[0_12px_32px_rgba(0,136,255,0.10)]">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-[12px] bg-[#EEF6FF] transition duration-300 group-hover:bg-[#0088FF]">
-                    <Icon className="h-5 w-5 text-[#0088FF] transition duration-300 group-hover:text-white" strokeWidth={1.7} aria-hidden />
-                  </div>
-                  <p className="mt-4 text-[0.9rem] font-semibold leading-snug text-[#050A13]">{p.label}</p>
-                </motion.div>
-              );
-            })}
-          </div>
+          {/* RIGHT — heading + 4 feature cards */}
+          <motion.div initial={reduced ? false : { opacity: 0, x: 24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease, delay: 0.1 }}>
+            <h2 className="mb-3 text-[clamp(2.4rem,4vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-[#050A13]">
+              Technology & Innovation
+            </h2>
+            <p className="mb-5 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500">
+              Powered by Intelligent Mobility Technology
+            </p>
+            <p className="text-[0.93rem] leading-7 text-slate-500">
+              HalaPark combines AI-driven automation, real-time data intelligence, cloud-based infrastructure, and digital mobility platforms to create scalable parking environments built for modern cities.
+            </p>
+            <div className="mt-8 grid grid-cols-2 gap-3">
+              {techPoints.map((p, i) => {
+                const Icon = p.icon;
+                return (
+                  <motion.div key={p.label} initial={reduced ? false : { opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.45, ease, delay: i * 0.07 }} className="rounded-[16px] border border-[#E7EAF0] bg-[#F4F8FF] p-4">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-white shadow-sm">
+                      <Icon className="h-4 w-4 text-[#0088FF]" strokeWidth={1.7} aria-hidden />
+                    </div>
+                    <p className="mt-3 text-[0.88rem] font-semibold leading-snug text-[#050A13]">{p.label}</p>
+                    <p className="mt-1 text-[0.78rem] leading-5 text-slate-500">{p.desc}</p>
+                  </motion.div>
+                );
+              })}
+            </div>
+            <p className="mt-6 text-[0.86rem] leading-6 text-slate-400">
+              Through continuous innovation, HalaPark is building the technological foundation for smarter urban movement and future-ready transportation environments.
+            </p>
+          </motion.div>
         </div>
       </div>
     </section>
@@ -381,29 +419,36 @@ function WhyHalaPark() {
   return (
     <section className="bg-[#F4F8FF] py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <motion.div initial={reduced ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }} className="mx-auto mb-12 max-w-[780px] text-center">
-          <h2 className="text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
-            Why{" "}
-            <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">HalaPark</span>
-          </h2>
-          <p className="mx-auto mt-4 max-w-[600px] text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-[#050A13]">
-            More Than Parking. A Smart Mobility Ecosystem.
-          </p>
-        </motion.div>
+        <div className="grid items-start gap-12 lg:grid-cols-[0.75fr_1.25fr] lg:gap-16">
+          <motion.div initial={reduced ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }} className="lg:sticky lg:top-24">
+            <h2 className="mb-3 text-[clamp(2.2rem,3.5vw,3rem)] font-semibold leading-[1.06] tracking-[-0.05em] text-[#050A13]">
+              Why HalaPark
+            </h2>
+            <p className="mb-7 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500">
+              More Than Parking. A Smart Mobility Ecosystem.
+            </p>
+            <div className="relative h-52 w-full overflow-hidden rounded-[18px]">
+              <Image src="/hf_20260327_061010_f3bc038b-576f-4903-8896-5d998cc78527.png" alt="HalaPark experience" fill className="object-cover object-center" />
+              <div className="absolute inset-0 bg-[#050A13]/20" />
+            </div>
+          </motion.div>
 
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {whyItems.map((item, i) => {
-            const Icon = item.icon;
-            return (
-              <motion.div key={item.title} initial={reduced ? false : { opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.1 }} transition={{ duration: 0.5, ease, delay: i * 0.07 }} className="group rounded-[22px] border border-[#E7EAF0] bg-white p-6 shadow-[0_4px_24px_rgba(6,6,22,0.06)] transition hover:-translate-y-1 hover:border-[rgba(0,136,255,0.2)] hover:shadow-[0_16px_40px_rgba(0,136,255,0.10)]">
-                <div className="flex h-12 w-12 items-center justify-center rounded-[14px] bg-[#EEF6FF] transition duration-300 group-hover:bg-[#0088FF]">
-                  <Icon className="h-5 w-5 text-[#0088FF] transition duration-300 group-hover:text-white" strokeWidth={1.7} aria-hidden />
-                </div>
-                <h3 className="mt-5 text-[1rem] font-semibold leading-tight tracking-[-0.02em] text-[#050A13] sm:text-[1.05rem]">{item.title}</h3>
-                <p className="mt-3 text-[0.82rem] leading-6 text-slate-500 sm:text-[0.88rem]">{item.description}</p>
-              </motion.div>
-            );
-          })}
+          <div className="divide-y divide-[#E7EAF0]">
+            {whyItems.map((item, i) => {
+              const Icon = item.icon;
+              return (
+                <motion.div key={item.title} initial={reduced ? false : { opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.1 }} transition={{ duration: 0.45, ease, delay: i * 0.05 }} className="flex gap-5 py-5 first:pt-0 last:pb-0">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-white shadow-sm">
+                    <Icon className="h-4 w-4 text-[#0088FF]" strokeWidth={1.7} aria-hidden />
+                  </div>
+                  <div>
+                    <p className="text-[0.95rem] font-semibold text-[#050A13]">{item.title}</p>
+                    <p className="mt-1.5 text-[0.84rem] leading-6 text-slate-500">{item.description}</p>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </section>
@@ -426,31 +471,44 @@ function CoreValues() {
   return (
     <section className="bg-white py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <motion.div initial={reduced ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }} className="mx-auto mb-12 max-w-[780px] text-center">
-          <h2 className="text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
-            Our Core{" "}
-            <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">Values</span>
-          </h2>
-          <p className="mx-auto mt-4 max-w-[600px] text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-[#050A13]">
-            The foundation of everything we build and deliver.
-          </p>
-        </motion.div>
+        <div className="grid items-center gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
 
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {coreValues.map((item, i) => {
-            const Icon = item.icon;
-            return (
-              <motion.div key={item.label} initial={reduced ? false : { opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.1 }} transition={{ duration: 0.5, ease, delay: i * 0.07 }} className="group flex gap-4 rounded-[20px] border border-[#E7EAF0] bg-white p-6 shadow-[0_4px_24px_rgba(6,6,22,0.05)] transition hover:-translate-y-1 hover:border-[rgba(0,136,255,0.2)] hover:shadow-[0_12px_32px_rgba(0,136,255,0.10)]">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[12px] bg-[#EEF6FF] transition duration-300 group-hover:bg-[#0088FF]">
-                  <Icon className="h-5 w-5 text-[#0088FF] transition duration-300 group-hover:text-white" strokeWidth={1.7} aria-hidden />
-                </div>
-                <div>
-                  <p className="text-[0.95rem] font-semibold text-[#050A13]">{item.label}</p>
-                  <p className="mt-1.5 text-[0.82rem] leading-5 text-slate-500">{item.desc}</p>
-                </div>
-              </motion.div>
-            );
-          })}
+          {/* LEFT — photo */}
+          <motion.div initial={reduced ? false : { opacity: 0, x: -24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }} className="relative h-72 w-full overflow-hidden rounded-[24px] sm:h-[420px]">
+            <Image src="/hf_20260327_064457_c75923ba-dc06-4c6e-9b63-fa181e94bcfa.png" alt="HalaPark values" fill className="object-cover object-center" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#06111f]/60 via-transparent to-transparent" />
+            <div className="absolute bottom-6 left-6 right-6">
+              <p className="text-[0.7rem] font-bold uppercase tracking-[0.18em] text-white/50">Our Core Values</p>
+              <p className="mt-1 text-[1.1rem] font-semibold leading-snug text-white">The foundation of everything we build and deliver.</p>
+            </div>
+          </motion.div>
+
+          {/* RIGHT — values list */}
+          <motion.div initial={reduced ? false : { opacity: 0, x: 24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease, delay: 0.1 }}>
+            <h2 className="mb-3 text-[clamp(2.4rem,4vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-[#050A13]">
+              Our Core Values
+            </h2>
+            <p className="mb-8 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500">
+              The foundation of everything we build and deliver.
+            </p>
+            <div className="divide-y divide-[#E7EAF0]">
+              {coreValues.map((item, i) => {
+                const Icon = item.icon;
+                return (
+                  <motion.div key={item.label} initial={reduced ? false : { opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.1 }} transition={{ duration: 0.4, ease, delay: i * 0.05 }} className="flex gap-4 py-4 first:pt-0">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-[#EEF6FF]">
+                      <Icon className="h-4 w-4 text-[#0088FF]" strokeWidth={1.7} aria-hidden />
+                    </div>
+                    <div>
+                      <p className="text-[0.95rem] font-semibold text-[#050A13]">{item.label}</p>
+                      <p className="mt-1 text-[0.83rem] leading-5 text-slate-500">{item.desc}</p>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </motion.div>
+
         </div>
       </div>
     </section>
@@ -475,27 +533,32 @@ const serveItems = [
 function WhoWeServe() {
   const reduced = useReducedMotion();
   return (
-    <section className="bg-white py-16 sm:py-20 lg:py-24">
+    <section className="bg-[#F4F8FF] py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <motion.div initial={reduced ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }} className="mx-auto mb-12 max-w-[780px] text-center">
-          <h2 className="text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
-            Who We{" "}
-            <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">Serve</span>
-          </h2>
-          <p className="mx-auto mt-4 max-w-[600px] text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-[#050A13]">
-            Intelligent Mobility Solutions for Every Environment
-          </p>
-        </motion.div>
+        <div className="grid items-start gap-10 lg:grid-cols-[0.65fr_1.35fr] lg:gap-16">
+          <motion.div initial={reduced ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }} className="lg:sticky lg:top-24">
+            <h2 className="mb-3 text-[clamp(2.2rem,3.5vw,3rem)] font-semibold leading-[1.06] tracking-[-0.05em] text-[#050A13]">
+              Who We Serve
+            </h2>
+            <p className="mb-7 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500">
+              Intelligent Mobility Solutions for Every Environment
+            </p>
+            <div className="relative h-52 w-full overflow-hidden rounded-[18px]">
+              <Image src="/hf_20260327_065515_cd3808b8-d99d-4faa-817d-e3f772726da6.png" alt="Properties we serve" fill className="object-cover object-center" />
+              <div className="absolute inset-0 bg-[#050A13]/20" />
+            </div>
+          </motion.div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-          {serveItems.map((item, i) => (
-            <motion.div key={item.label} initial={reduced ? false : { opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.1 }} transition={{ duration: 0.5, ease, delay: i * 0.05 }} className="group flex flex-col items-center gap-3 rounded-[18px] border border-[#E7EAF0] bg-white px-4 py-6 text-center shadow-[0_4px_24px_rgba(6,6,22,0.05)] transition hover:-translate-y-1 hover:border-[rgba(0,136,255,0.2)] hover:shadow-[0_12px_32px_rgba(0,136,255,0.10)]">
-              <span className="flex h-10 w-10 items-center justify-center rounded-[12px] bg-[#EEF6FF] transition duration-300 group-hover:bg-[#0088FF]">
-                <item.icon className="h-5 w-5 text-[#0088FF] transition duration-300 group-hover:text-white" strokeWidth={1.7} aria-hidden />
-              </span>
-              <span className="text-[0.82rem] font-semibold leading-snug text-[#050A13]">{item.label}</span>
-            </motion.div>
-          ))}
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3">
+            {serveItems.map((item, i) => (
+              <motion.div key={item.label} initial={reduced ? false : { opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.1 }} transition={{ duration: 0.4, ease, delay: i * 0.04 }} className="flex items-center gap-3 rounded-[14px] bg-white px-4 py-4 shadow-sm">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[8px] bg-[#EEF6FF]">
+                  <item.icon className="h-4 w-4 text-[#0088FF]" strokeWidth={1.7} aria-hidden />
+                </span>
+                <span className="text-[0.83rem] font-medium leading-snug text-[#050A13]">{item.label}</span>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -514,31 +577,26 @@ const sustainabilityPoints = [
 function SustainabilitySmartCities() {
   const reduced = useReducedMotion();
   return (
-    <section className="bg-[#F4F8FF] py-16 sm:py-20 lg:py-24">
+    <section className="bg-white py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+        {/* Full-width heading at top */}
+        <motion.div initial={reduced ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }} className="mb-12 max-w-[640px]">
+          <h2 className="mb-3 text-[clamp(2.4rem,4vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-[#050A13]">
+            Sustainability & Smart Cities
+          </h2>
+          <p className="text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500">
+            Supporting Smarter & More Sustainable Urban Living
+          </p>
+        </motion.div>
 
-          <motion.div initial={reduced ? false : { opacity: 0, x: -28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }}>
-            <h2 className="text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
-              Sustainability &{" "}
-              <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">Smart Cities</span>
-            </h2>
-            <p className="mt-4 text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-[#050A13]">
-              Supporting Smarter & More Sustainable Urban Living
-            </p>
-            <div className="mt-5 space-y-4 text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem]">
-              <p>HalaPark helps reduce congestion, unnecessary vehicle movement, fuel consumption, and operational inefficiencies through intelligent parking technologies and optimized mobility systems.</p>
-              <p>By supporting digital infrastructure, EV-ready ecosystems, automation, and data-driven operations, HalaPark contributes to smarter, cleaner, and more sustainable urban environments.</p>
-            </div>
-          </motion.div>
-
+        <div className="grid items-start gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
           <div className="grid grid-cols-2 gap-4">
             {sustainabilityPoints.map((p, i) => {
               const Icon = p.icon;
               return (
-                <motion.div key={p.title} initial={reduced ? false : { opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, ease, delay: i * 0.08 }} className="group rounded-[20px] border border-[#E7EAF0] bg-white p-6 shadow-[0_4px_24px_rgba(6,6,22,0.06)] transition hover:-translate-y-1 hover:border-[rgba(0,136,255,0.2)] hover:shadow-[0_12px_32px_rgba(0,136,255,0.10)]">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-[12px] bg-[#EEF6FF] transition duration-300 group-hover:bg-[#0088FF]">
-                    <Icon className="h-5 w-5 text-[#0088FF] transition duration-300 group-hover:text-white" strokeWidth={1.7} aria-hidden />
+                <motion.div key={p.title} initial={reduced ? false : { opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, ease, delay: i * 0.08 }} className="rounded-[18px] border border-[#E7EAF0] bg-white p-5 shadow-sm">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-[#EEF6FF]">
+                    <Icon className="h-4 w-4 text-[#0088FF]" strokeWidth={1.7} aria-hidden />
                   </div>
                   <p className="mt-4 text-[0.9rem] font-semibold leading-snug text-[#050A13]">{p.title}</p>
                   <p className="mt-2 text-[0.82rem] leading-5 text-slate-500">{p.desc}</p>
@@ -547,6 +605,16 @@ function SustainabilitySmartCities() {
             })}
           </div>
 
+          <motion.div initial={reduced ? false : { opacity: 0, x: 24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease, delay: 0.1 }} className="lg:pt-2">
+            <div className="relative h-52 w-full overflow-hidden rounded-[18px] sm:h-60">
+              <Image src="/hf_20260327_070648_996630bc-828e-4cd7-8cb1-f42c30332d86.png" alt="Sustainable smart city" fill className="object-cover object-center" />
+              <div className="absolute inset-0 bg-[#050A13]/20" />
+            </div>
+            <div className="mt-6 space-y-4 text-[0.93rem] leading-7 text-slate-500">
+              <p>HalaPark helps reduce congestion, unnecessary vehicle movement, fuel consumption, and operational inefficiencies through intelligent parking technologies and optimized mobility systems.</p>
+              <p>By supporting digital infrastructure, EV-ready ecosystems, automation, and data-driven operations, HalaPark contributes to smarter, cleaner, and more sustainable urban environments.</p>
+            </div>
+          </motion.div>
         </div>
       </div>
     </section>
@@ -565,38 +633,39 @@ const trustPoints = [
 function TrustSecurityReliability() {
   const reduced = useReducedMotion();
   return (
-    <section className="bg-white py-16 sm:py-20 lg:py-24">
+    <section className="bg-[#F4F8FF] py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
 
-          <div className="grid grid-cols-2 gap-4">
-            {trustPoints.map((p, i) => {
-              const Icon = p.icon;
-              return (
-                <motion.div key={p.title} initial={reduced ? false : { opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, ease, delay: i * 0.08 }} className="group rounded-[20px] border border-[#E7EAF0] bg-[#F4F8FF] p-6 shadow-[0_4px_24px_rgba(6,6,22,0.05)] transition hover:-translate-y-1 hover:border-[rgba(0,136,255,0.2)] hover:shadow-[0_12px_32px_rgba(0,136,255,0.10)]">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-[12px] bg-white transition duration-300 group-hover:bg-[#0088FF]">
-                    <Icon className="h-5 w-5 text-[#0088FF] transition duration-300 group-hover:text-white" strokeWidth={1.7} aria-hidden />
-                  </div>
-                  <p className="mt-4 text-[0.9rem] font-semibold leading-snug text-[#050A13]">{p.title}</p>
-                  <p className="mt-2 text-[0.82rem] leading-5 text-slate-500">{p.desc}</p>
-                </motion.div>
-              );
-            })}
-          </div>
-
-          <motion.div initial={reduced ? false : { opacity: 0, x: 28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }}>
-            <h2 className="text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
-              Trust, Security &{" "}
-              <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">Reliability</span>
+          <motion.div initial={reduced ? false : { opacity: 0, x: -28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }}>
+            <h2 className="mb-3 text-[clamp(2.4rem,4vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-[#050A13]">
+              Trust, Security & Reliability
             </h2>
-            <p className="mt-4 text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-[#050A13]">
+            <p className="mb-6 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500">
               Built for Enterprise-Grade Operations
             </p>
-            <div className="mt-5 space-y-4 text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem]">
+            <div className="space-y-4 text-[0.93rem] leading-7 text-slate-500">
               <p>HalaPark prioritizes operational reliability, secure digital infrastructure, data protection, and scalable system performance across every mobility environment.</p>
               <p>Our intelligent systems are designed to support high-demand operations with secure access management, real-time monitoring, and seamless digital experiences that businesses and communities can trust.</p>
             </div>
           </motion.div>
+
+          <div className="space-y-3">
+            {trustPoints.map((p, i) => {
+              const Icon = p.icon;
+              return (
+                <motion.div key={p.title} initial={reduced ? false : { opacity: 0, x: 24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, ease, delay: i * 0.08 }} className="flex gap-4 rounded-[16px] bg-white px-5 py-5 shadow-sm">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-[#EEF6FF]">
+                    <Icon className="h-4 w-4 text-[#0088FF]" strokeWidth={1.7} aria-hidden />
+                  </div>
+                  <div>
+                    <p className="text-[0.92rem] font-semibold text-[#050A13]">{p.title}</p>
+                    <p className="mt-1 text-[0.82rem] leading-5 text-slate-500">{p.desc}</p>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
 
         </div>
       </div>
@@ -620,43 +689,46 @@ const impactItems = [
 function OurImpact() {
   const reduced = useReducedMotion();
   return (
-    <section className="bg-[#F4F8FF] py-16 sm:py-20 lg:py-24">
+    <section className="bg-white py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid items-start gap-12 lg:grid-cols-2 lg:gap-16">
+        {/* Pull-quote style top heading */}
+        <motion.div initial={reduced ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }} className="mb-12">
+          <h2 className="mb-3 text-[clamp(2.4rem,4vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-[#050A13]">
+            Our Impact
+          </h2>
+          <p className="text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500">
+            Driving Smarter Urban Experiences
+          </p>
+        </motion.div>
 
-          <motion.div initial={reduced ? false : { opacity: 0, x: -28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }}>
-            <h2 className="text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
-              Our{" "}
-              <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">Impact</span>
-            </h2>
-            <p className="mt-4 text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-[#050A13]">
-              Driving Smarter Urban Experiences
-            </p>
-            <div className="mt-5 space-y-4 text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem]">
+        <div className="grid items-start gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
+            {impactItems.map((item, i) => {
+              const Icon = item.icon;
+              return (
+                <motion.div key={item.label} initial={reduced ? false : { opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, ease, delay: i * 0.05 }} className="flex flex-col items-center gap-2.5 rounded-[14px] border border-[#E7EAF0] bg-white p-5 text-center shadow-sm">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-[#EEF6FF]">
+                    <Icon className="h-4 w-4 text-[#0088FF]" strokeWidth={1.7} aria-hidden />
+                  </span>
+                  <span className="text-[0.8rem] font-medium leading-snug text-[#050A13]">{item.label}</span>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          <motion.div initial={reduced ? false : { opacity: 0, x: 24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease, delay: 0.1 }} className="flex flex-col gap-5">
+            <div className="relative h-48 w-full overflow-hidden rounded-[18px] sm:h-56">
+              <Image src="/hf_20260327_065515_cd3808b8-d99d-4faa-817d-e3f772726da6.png" alt="Urban mobility impact" fill className="object-cover object-center" />
+              <div className="absolute inset-0 bg-[#050A13]/20" />
+            </div>
+            <div className="space-y-4 text-[0.93rem] leading-7 text-slate-500">
               <p>HalaPark is helping reshape how people interact with parking and mobility infrastructure across modern developments and urban environments.</p>
-            </div>
-            <motion.p initial={reduced ? false : { opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.55, ease, delay: 0.2 }} className="mt-6 text-[0.88rem] font-medium leading-6 text-[#0088FF]">
-              By connecting people, properties, businesses, and mobility systems through intelligent technology, HalaPark creates experiences that are more efficient, sustainable, scalable, and future-focused.
-            </motion.p>
-          </motion.div>
-
-          <motion.div initial={reduced ? false : { opacity: 0, x: 28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease, delay: 0.1 }}>
-            <p className="mb-5 text-[0.72rem] font-bold uppercase tracking-[0.18em] text-[#0088FF]">Our Technology-Driven Platform Supports</p>
-            <div className="grid gap-3 sm:grid-cols-2">
-              {impactItems.map((item, i) => {
-                const Icon = item.icon;
-                return (
-                  <motion.div key={item.label} initial={reduced ? false : { opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, ease, delay: i * 0.05 }} className="flex items-center gap-3 rounded-[14px] border border-[#E7EAF0] bg-white px-4 py-3.5">
-                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[10px] bg-[#EEF6FF]">
-                      <Icon className="h-4 w-4 text-[#0088FF]" strokeWidth={1.7} aria-hidden />
-                    </span>
-                    <span className="text-[0.85rem] font-medium text-[#050A13]">{item.label}</span>
-                  </motion.div>
-                );
-              })}
+              <p className="font-medium text-[#0088FF]">
+                By connecting people, properties, businesses, and mobility systems through intelligent technology, HalaPark creates experiences that are more efficient, sustainable, scalable, and future-focused.
+              </p>
+              <p className="text-[13px] font-semibold uppercase tracking-[0.1em] text-slate-400 pt-1">Our Technology-Driven Platform Supports</p>
             </div>
           </motion.div>
-
         </div>
       </div>
     </section>
@@ -668,7 +740,7 @@ function OurImpact() {
 function FutureOfMobility() {
   const reduced = useReducedMotion();
   return (
-    <section className="bg-white py-4 sm:py-5 lg:py-6">
+    <section className="bg-[#F4F8FF] py-4 sm:py-5 lg:py-6">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={reduced ? false : { opacity: 0, y: 24 }}
@@ -677,9 +749,7 @@ function FutureOfMobility() {
           transition={{ duration: 0.65, ease }}
           className="relative overflow-hidden rounded-[28px] bg-[#06111f] px-8 py-16 text-center sm:px-12 sm:py-20 lg:px-20 lg:py-24"
         >
-          {/* Subtle grid overlay */}
           <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(0,136,255,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(0,136,255,0.04)_1px,transparent_1px)] bg-[size:48px_48px] [mask-image:radial-gradient(ellipse_70%_60%_at_50%_50%,black,transparent)]" />
-          {/* Glow */}
           <div className="pointer-events-none absolute left-1/2 top-1/2 h-[400px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(ellipse,rgba(0,136,255,0.12),transparent_70%)] blur-2xl" />
 
           <div className="relative z-10 mx-auto max-w-[780px]">
@@ -709,19 +779,18 @@ function FutureOfMobility() {
 function HalaParkExperience() {
   const reduced = useReducedMotion();
   return (
-    <section className="bg-[#F4F8FF] py-16 sm:py-20 lg:py-24">
+    <section className="bg-white py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
 
           <motion.div initial={reduced ? false : { opacity: 0, x: -28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }}>
-            <h2 className="text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
-              The HalaPark{" "}
-              <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">Experience</span>
+            <h2 className="mb-3 text-[clamp(2.4rem,4vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-[#050A13]">
+              The HalaPark Experience
             </h2>
-            <p className="mt-4 text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-[#050A13]">
+            <p className="mb-6 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500">
               Parking Designed Around People
             </p>
-            <div className="mt-5 space-y-4 text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem]">
+            <div className="space-y-4 text-[0.93rem] leading-7 text-slate-500">
               <p>At HalaPark, parking becomes more than a destination. It becomes part of a smarter journey.</p>
               <p>From intelligent entry systems and automated recognition technology to seamless digital payments and real-time operational control, every interaction is carefully designed to create a premium mobility experience that feels modern, effortless, and intuitive.</p>
               <p>Whether entering a residential community, visiting a commercial destination, managing parking operations, or navigating a busy urban district — HalaPark makes every experience smoother, smarter, and stress-free.</p>
@@ -731,9 +800,9 @@ function HalaParkExperience() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.55, ease, delay: 0.2 }}
-              className="mt-8 rounded-[20px] border border-[#0088FF]/20 bg-white px-6 py-5"
+              className="mt-8 rounded-[18px] bg-[#F4F8FF] px-6 py-5"
             >
-              <p className="text-[0.78rem] font-bold uppercase tracking-[0.18em] text-[#0088FF]">Our Goal is Simple</p>
+              <p className="text-[13px] font-semibold uppercase tracking-[0.1em] text-[#0088FF]">Our Goal is Simple</p>
               <p className="mt-2 text-[1.05rem] font-semibold leading-snug tracking-[-0.02em] text-[#050A13]">
                 To make movement within cities smarter, faster, and more human.
               </p>
@@ -796,37 +865,42 @@ function PartnershipsInvestment() {
   return (
     <section className="bg-[#F4F8FF] py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid items-start gap-12 lg:grid-cols-2 lg:gap-16">
-          <motion.div initial={reduced ? false : { opacity: 0, x: -28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }}>
-            <h2 className="text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
-              Our{" "}
-              <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">Partnerships</span>
-            </h2>
-            <p className="mt-4 text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-[#050A13]">
-              Collaborating to Build Smarter Mobility Networks
-            </p>
-            <div className="mt-5 space-y-4 text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem]">
+        <div className="grid items-stretch gap-10 lg:grid-cols-2 lg:gap-14">
+          {/* LEFT — image on top, text below */}
+          <motion.div initial={reduced ? false : { opacity: 0, x: -24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }} className="flex flex-col">
+            <div className="relative h-56 w-full overflow-hidden rounded-[20px] sm:h-64">
+              <Image src="/hf_20260327_071129_800d49da-6fb8-4b7e-a1ba-b32db4c31565.png" alt="Partnership network" fill className="object-cover object-center" />
+              <div className="absolute inset-0 bg-[#050A13]/20" />
+            </div>
+            <div className="mt-6 flex flex-1 flex-col justify-center space-y-4 text-[0.93rem] leading-7 text-slate-500">
               <p>HalaPark believes the future of mobility is built through collaboration.</p>
               <p>We actively partner with developers, technology providers, operators, government entities, real estate groups, and forward-thinking organizations to accelerate the transformation of parking and mobility infrastructure across the region.</p>
               <p>Through strategic partnerships, HalaPark creates scalable frameworks that combine intelligent technology, operational excellence, and long-term infrastructure growth.</p>
             </div>
-            <motion.p initial={reduced ? false : { opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.55, ease, delay: 0.2 }} className="mt-6 text-[0.88rem] font-medium leading-6 text-[#0088FF]">
-              Together with our partners, HalaPark is building smarter, more efficient, and more sustainable mobility experiences for the future.
-            </motion.p>
           </motion.div>
 
-          <motion.div initial={reduced ? false : { opacity: 0, x: 28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease, delay: 0.1 }}>
-            <p className="mb-5 text-[0.72rem] font-bold uppercase tracking-[0.18em] text-[#0088FF]">Collaboration Opportunities Include</p>
-            <div className="grid gap-3 sm:grid-cols-2">
+          {/* RIGHT — heading + checklist */}
+          <motion.div initial={reduced ? false : { opacity: 0, x: 24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease, delay: 0.1 }} className="flex flex-col justify-center">
+            <h2 className="mb-3 text-[clamp(2.1rem,3.2vw,2.8rem)] font-semibold leading-[1.06] tracking-[-0.05em] text-[#050A13]">
+              Our Partnerships
+            </h2>
+            <p className="mb-5 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500">
+              Collaborating to Build Smarter Mobility Networks
+            </p>
+            <p className="mb-5 mt-5 text-[13px] font-semibold uppercase tracking-[0.1em] text-slate-400">Collaboration Opportunities Include</p>
+            <div className="grid grid-cols-2 gap-2">
               {partnershipOps.map((item, i) => (
-                <motion.div key={item} initial={reduced ? false : { opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, ease, delay: i * 0.05 }} className="flex items-center gap-3 rounded-[14px] border border-[#E7EAF0] bg-white px-4 py-3.5">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#0088FF]">
-                    <Check className="h-3 w-3 text-white" strokeWidth={3} aria-hidden />
+                <motion.div key={item} initial={reduced ? false : { opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.3, ease, delay: i * 0.04 }} className="flex items-center gap-2.5 rounded-[10px] bg-white px-3 py-3 shadow-sm">
+                  <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[#0088FF]">
+                    <Check className="h-2.5 w-2.5 text-white" strokeWidth={3} aria-hidden />
                   </span>
-                  <span className="text-[0.85rem] font-medium text-[#050A13]">{item}</span>
+                  <span className="text-[0.79rem] font-medium leading-tight text-[#050A13]">{item}</span>
                 </motion.div>
               ))}
             </div>
+            <p className="mt-5 text-[0.86rem] font-medium leading-6 text-[#0088FF]">
+              Together with our partners, HalaPark is building smarter, more efficient, and more sustainable mobility experiences for the future.
+            </p>
           </motion.div>
         </div>
       </div>
@@ -852,29 +926,30 @@ function InvestmentOpportunities() {
   return (
     <section className="bg-white py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/* Editorial: label above, then wide 2-col layout */}
+        <motion.div initial={reduced ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }} className="mb-12">
+          <h2 className="mb-3 max-w-[640px] text-[clamp(2.4rem,4vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-[#050A13]">
+            Investment Opportunities
+          </h2>
+          <p className="max-w-[640px] text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500">
+            Investing in the Future of Smart Mobility
+          </p>
+        </motion.div>
+
         <div className="grid items-start gap-12 lg:grid-cols-2 lg:gap-16">
-          <motion.div initial={reduced ? false : { opacity: 0, x: -28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }}>
-            <h2 className="text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
-              Investment{" "}
-              <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">Opportunities</span>
-            </h2>
-            <p className="mt-4 text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-[#050A13]">
-              Investing in the Future of Smart Mobility
-            </p>
-            <div className="mt-5 space-y-4 text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem]">
-              <p>As cities evolve toward smarter and more advanced infrastructure, the demand for intelligent mobility technology continues to grow rapidly.</p>
-              <p>HalaPark operates at the intersection of smart cities, digital infrastructure, AI-driven operations, and future transportation systems. We welcome strategic investors and visionary stakeholders who share our ambition to redefine urban mobility through scalable technology and intelligent parking innovation.</p>
-            </div>
-            <motion.p initial={reduced ? false : { opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.55, ease, delay: 0.2 }} className="mt-6 text-[0.88rem] font-medium leading-6 text-[#0088FF]">
+          <motion.div initial={reduced ? false : { opacity: 0, x: -24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }} className="space-y-4 text-[0.93rem] leading-7 text-slate-500">
+            <p>As cities evolve toward smarter and more advanced infrastructure, the demand for intelligent mobility technology continues to grow rapidly.</p>
+            <p>HalaPark operates at the intersection of smart cities, digital infrastructure, AI-driven operations, and future transportation systems. We welcome strategic investors and visionary stakeholders who share our ambition to redefine urban mobility through scalable technology and intelligent parking innovation.</p>
+            <p className="font-medium text-[#0088FF]">
               By investing in HalaPark, stakeholders become part of the next generation of intelligent urban infrastructure shaping how future cities move, operate, and grow.
-            </motion.p>
+            </p>
           </motion.div>
 
-          <motion.div initial={reduced ? false : { opacity: 0, x: 28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease, delay: 0.1 }}>
-            <p className="mb-5 text-[0.72rem] font-bold uppercase tracking-[0.18em] text-[#0088FF]">Investment Focus Areas Include</p>
-            <div className="grid gap-3 sm:grid-cols-2">
+          <motion.div initial={reduced ? false : { opacity: 0, x: 24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease, delay: 0.1 }}>
+            <p className="mb-5 text-[13px] font-semibold uppercase tracking-[0.1em] text-slate-400">Investment Focus Areas Include</p>
+            <div className="grid gap-2.5 sm:grid-cols-2">
               {investmentAreas.map((item, i) => (
-                <motion.div key={item} initial={reduced ? false : { opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, ease, delay: i * 0.05 }} className="flex items-center gap-3 rounded-[14px] border border-[#E7EAF0] bg-[#F4F8FF] px-4 py-3.5">
+                <motion.div key={item} initial={reduced ? false : { opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.35, ease, delay: i * 0.04 }} className="flex items-center gap-3 rounded-[12px] border border-[#E7EAF0] bg-[#F4F8FF] px-4 py-3.5">
                   <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#0088FF]">
                     <Check className="h-3 w-3 text-white" strokeWidth={3} aria-hidden />
                   </span>
@@ -901,13 +976,24 @@ function PoweringFutureCities() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.65, ease }}
-          className="mx-auto max-w-[820px] text-center"
+          className="mx-auto max-w-[820px]"
         >
-          <h2 className="text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
-            Powering the Movement of{" "}
-            <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">Future Cities</span>
+          {/* Wide photo banner */}
+          <div className="relative mb-10 h-56 w-full overflow-hidden rounded-[22px] sm:h-72">
+            <Image src="/hf_20260327_064457_c75923ba-dc06-4c6e-9b63-fa181e94bcfa.png" alt="Future cities" fill className="object-cover object-center" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#050A13]/50 to-transparent" />
+            <div className="absolute bottom-6 left-8">
+              <p className="text-[0.7rem] font-bold uppercase tracking-[0.2em] text-white/60">HalaPark</p>
+              <p className="mt-1 text-[1.1rem] font-semibold leading-tight text-white">Powering Future Cities</p>
+            </div>
+          </div>
+          <h2 className="mb-3 text-[clamp(2.8rem,5vw,4.5rem)] font-semibold leading-[1.0] tracking-[-0.06em] text-[#050A13]">
+            Powering Future Cities
           </h2>
-          <div className="mx-auto mt-6 max-w-[680px] space-y-4 text-[0.88rem] leading-7 text-slate-500 sm:text-[0.94rem]">
+          <p className="mb-8 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500">
+            Powering the Movement of Future Cities
+          </p>
+          <div className="space-y-4 text-[0.95rem] leading-7 text-slate-500">
             <p>Cities are evolving faster than ever: becoming smarter, more advanced, and driven by digital experiences. HalaPark powers that transformation through intelligent parking and seamless mobility innovation.</p>
             <p>By combining AI, automation, and real-time technology, HalaPark transforms everyday parking into an integrated mobility environment designed for smarter cities and frictionless urban experiences.</p>
           </div>
@@ -916,11 +1002,11 @@ function PoweringFutureCities() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.55, ease, delay: 0.2 }}
-            className="mx-auto mt-8 max-w-[580px] text-[1rem] font-semibold leading-[1.5] tracking-[-0.02em] text-[#050A13] sm:text-[1.05rem]"
+            className="mt-10 border-t border-[#E7EAF0] pt-8 text-[1.15rem] font-semibold leading-[1.5] tracking-[-0.02em] text-[#050A13] sm:text-[1.25rem]"
           >
             Because the future of mobility is not just about movement:{" "}
-            <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">
-              it's about creating smarter journeys for everyone.
+            <span className="text-[#0088FF]">
+              it&apos;s about creating smarter journeys for everyone.
             </span>
           </motion.p>
         </motion.div>
@@ -938,22 +1024,17 @@ function FinalCTA() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="relative overflow-hidden rounded-[28px] bg-[#06111f]">
 
-          {/* Background image + overlay */}
           <div className="absolute inset-0">
             <Image src="/hf_20260327_064457_c75923ba-dc06-4c6e-9b63-fa181e94bcfa.png" alt="" fill className="object-cover object-center opacity-20" aria-hidden />
             <div className="absolute inset-0 bg-gradient-to-br from-[#06111f] via-[#06111f]/95 to-[#0a1a2e]/90" />
           </div>
 
-          {/* Dot grid */}
           <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(0,136,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(0,136,255,0.05)_1px,transparent_1px)] bg-[size:44px_44px] [mask-image:radial-gradient(ellipse_80%_70%_at_50%_50%,black,transparent)]" />
-
-          {/* Blue glow */}
           <div className="pointer-events-none absolute -bottom-20 -right-20 h-[400px] w-[400px] rounded-full bg-[radial-gradient(circle,rgba(0,136,255,0.18),transparent_65%)] blur-3xl" />
           <div className="pointer-events-none absolute -left-16 top-0 h-[300px] w-[300px] rounded-full bg-[radial-gradient(circle,rgba(0,136,255,0.10),transparent_65%)] blur-2xl" />
 
           <div className="relative z-10 grid items-center gap-10 px-8 py-14 sm:px-12 sm:py-16 lg:grid-cols-[1fr_auto] lg:gap-16 lg:px-16 lg:py-20">
 
-            {/* LEFT — text */}
             <motion.div initial={reduced ? false : { opacity: 0, x: -28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }}>
               <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/8 px-3.5 py-1.5">
                 <span className="h-1.5 w-1.5 rounded-full bg-[#5BC4FF]" />
@@ -984,7 +1065,6 @@ function FinalCTA() {
               </div>
             </motion.div>
 
-            {/* RIGHT — stat panel */}
             <motion.div initial={reduced ? false : { opacity: 0, x: 28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease, delay: 0.1 }} className="w-full lg:w-[300px]">
               <div className="rounded-[22px] border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
                 <p className="mb-5 text-[0.7rem] font-bold uppercase tracking-[0.18em] text-white/35">HalaPark at a Glance</p>
@@ -1024,13 +1104,14 @@ function AppDownloadCTA() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
 
-          {/* LEFT */}
           <motion.div initial={reduced ? false : { opacity: 0, x: -28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }}>
-            <h2 className="text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
-              Next-Gen Parking at{" "}
-              <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">Your Fingertips</span>
+            <h2 className="mb-3 text-[clamp(2.4rem,4vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-[#050A13]">
+              Get the App
             </h2>
-            <p className="mt-5 max-w-[480px] text-[0.88rem] leading-7 text-slate-500 sm:text-[0.94rem]">
+            <p className="mb-5 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500">
+              Next-Gen Parking at Your Fingertips
+            </p>
+            <p className="max-w-[480px] text-[0.93rem] leading-7 text-slate-500">
               Find, book, and manage parking easily from your phone. Get real-time availability, instant access, and a smooth, hassle-free experience anytime, anywhere.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
@@ -1051,8 +1132,13 @@ function AppDownloadCTA() {
             </div>
           </motion.div>
 
-          {/* RIGHT — feature chips */}
-          <motion.div initial={reduced ? false : { opacity: 0, x: 28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease, delay: 0.1 }} className="grid grid-cols-2 gap-4">
+          <motion.div initial={reduced ? false : { opacity: 0, x: 28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease, delay: 0.1 }} className="flex flex-col gap-4">
+            {/* App mockup photo */}
+            <div className="relative h-48 w-full overflow-hidden rounded-[20px] sm:h-56">
+              <Image src="/hf_20260327_061900_db12a62e-2867-44b6-83f0-ea7f1a5442ef.png" alt="HalaPark mobile app" fill className="object-cover object-center" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#050A13]/30 to-transparent" />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
             {[
               { icon: Zap,        label: "Instant Access",       desc: "Enter and exit in seconds with automated recognition." },
               { icon: BarChart3,  label: "Real-Time Availability",desc: "See live space availability before you arrive."          },
@@ -1061,15 +1147,16 @@ function AppDownloadCTA() {
             ].map((item, i) => {
               const Icon = item.icon;
               return (
-                <motion.div key={item.label} initial={reduced ? false : { opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.45, ease, delay: 0.15 + i * 0.07 }} className="group rounded-[20px] border border-[#E7EAF0] bg-white p-5 shadow-[0_4px_24px_rgba(6,6,22,0.05)] transition hover:-translate-y-1 hover:border-[rgba(0,136,255,0.2)] hover:shadow-[0_12px_32px_rgba(0,136,255,0.10)]">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-[12px] bg-[#EEF6FF] transition duration-300 group-hover:bg-[#0088FF]">
-                    <Icon className="h-5 w-5 text-[#0088FF] transition duration-300 group-hover:text-white" strokeWidth={1.7} aria-hidden />
+                <motion.div key={item.label} initial={reduced ? false : { opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.45, ease, delay: 0.15 + i * 0.07 }} className="rounded-[18px] border border-[#E7EAF0] bg-white p-5 shadow-sm">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-[#EEF6FF]">
+                    <Icon className="h-4 w-4 text-[#0088FF]" strokeWidth={1.7} aria-hidden />
                   </div>
                   <p className="mt-4 text-[0.88rem] font-semibold text-[#050A13]">{item.label}</p>
                   <p className="mt-1.5 text-[0.78rem] leading-5 text-slate-500">{item.desc}</p>
                 </motion.div>
               );
             })}
+            </div>
           </motion.div>
 
         </div>
