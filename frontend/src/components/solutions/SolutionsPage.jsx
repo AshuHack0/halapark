@@ -85,13 +85,6 @@ function GlobalExpansionSection() {
     "Friction at access and payment points",
   ];
 
-  const collageImages = [
-    { src: "/Park.png",    alt: "Traffic congestion at gate" },
-    { src: "/Map.png",     alt: "Full parking lot" },
-    { src: "/Payment.png", alt: "Manual payment kiosk" },
-    { src: "/Find.png",    alt: "Driver searching for parking" },
-  ];
-
   return (
     <section className="bg-white py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -131,60 +124,22 @@ function GlobalExpansionSection() {
             </Link>
           </motion.div>
 
-          {/* RIGHT: phone + collage */}
+          {/* RIGHT: collage image */}
           <motion.div
             initial={reduced ? false : { opacity: 0, x: 28 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.65, ease, delay: 0.1 }}
-            className="relative flex justify-center"
+            className="relative w-full overflow-hidden rounded-[24px]"
           >
-            {/* Collage grid behind the phone */}
-            <div className="relative h-[520px] w-full max-w-[460px] sm:h-[580px]">
-              {/* 2×2 collage */}
-              <div className="absolute inset-0 grid grid-cols-2 grid-rows-2 gap-2 rounded-[24px] overflow-hidden">
-                {collageImages.map((img) => (
-                  <div key={img.alt} className="relative overflow-hidden rounded-[14px]">
-                    <Image
-                      src={img.src}
-                      alt={img.alt}
-                      fill
-                      className="object-cover"
-                      sizes="230px"
-                    />
-                    <div className="absolute inset-0 bg-[#06111f]/30" />
-                  </div>
-                ))}
-              </div>
-
-              {/* Phone mockup centred on top */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="relative w-[190px] sm:w-[220px] drop-shadow-[0_30px_58px_rgba(5,10,19,0.28)]">
-                  <div className="relative isolate aspect-[1439/2920]">
-                    {/* Screenshot inside screen area — exact insets from mobileframe.png */}
-                    <div className="absolute left-[4.2%] right-[4.2%] top-[1%] bottom-[1.2%] z-20 overflow-hidden rounded-[1.9rem]">
-                      <Image
-                        src="/Booking.png"
-                        alt="HalaPark app screen"
-                        fill
-                        className="object-cover object-top"
-                        sizes="220px"
-                      />
-                    </div>
-                    {/* Phone frame on top */}
-                    <div className="pointer-events-none absolute inset-0 z-10">
-                      <Image
-                        src="/mobileframe.png"
-                        alt=""
-                        fill
-                        className="select-none object-contain"
-                        sizes="220px"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <Image
+              src="/collageallsolutionsection .jpeg"
+              alt="HalaPark parking solutions collage"
+              width={920}
+              height={700}
+              className="h-auto w-full object-cover"
+              sizes="(min-width: 1024px) 50vw, 100vw"
+            />
           </motion.div>
 
         </div>

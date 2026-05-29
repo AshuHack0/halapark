@@ -24,7 +24,7 @@ const whyItems = [
     subtitle:
       " Easily find, book, and manage parking in just a few taps with a user-friendly platform.",
     copy: "Convert underutilised parking into consistent, trackable income streams.",
-    image: "/hf_20260327_061900_db12a62e-2867-44b6-83f0-ea7f1a5442ef.png",
+    image: "/Smart & Seamless Experience.jpeg",
     accent: "#0088FF",
     badge: "Live inventory",
     stat: "500+",
@@ -39,7 +39,7 @@ const whyItems = [
     subtitle:
       "Enjoy a fully digital payment system that is fast, reliable, and safe for every transaction.",
     copy: "Eliminate manual processes with automation across access, billing, and management.",
-    image: "/hf_20260327_064457_c75923ba-dc06-4c6e-9b63-fa181e94bcfa (2).png",
+    image: "/Cashless s Secure Payments.jpeg",
     accent: "#0088FF",
     badge: "Barrier ready",
     stat: "< 3 sec",
@@ -69,7 +69,7 @@ const whyItems = [
     subtitle:
       "Optimize space usage and generate additional revenue from underutilized parking areas.",
     copy: "Deploy without replacing your existing systems, we enhance what you already have.",
-    image: "/hf_20260327_061010_f3bc038b-576f-4903-8896-5d998cc78527.png",
+    image: "/Maximize Parking Value dekhna ye.jpeg",
     accent: "#0088FF",
     badge: "Premium arrival",
     stat: "2 taps",
@@ -84,7 +84,7 @@ const whyItems = [
     subtitle:
       "Leverage advanced AI technology for faster access, intelligent space allocation, automated operations, and a seamless parking experience for both users and operators.",
     copy: "Deploy without replacing your existing systems, we enhance what you already have.",
-    image: "/hf_20260327_061010_f3bc038b-576f-4903-8896-5d998cc78527.png",
+    image: "/AI-Driven Parking Intelligence.jpeg",
     accent: "#0088FF",
     badge: "Premium arrival",
     stat: "2 taps",
