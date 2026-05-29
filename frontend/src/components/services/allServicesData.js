@@ -3,8 +3,8 @@ export const allServicesData = [
     id: 1,
     slug: "self-parking",
     name: "Self-Parking",
-    mediaType: "video",
-    mediaSrc: "/Cards.mp4",
+    mediaType: "image",
+    mediaSrc: "/selfParking.jpeg",
     fullDesc:
       "provides a fast, secure, and hassle-free parking experience, allowing users to independently park their vehicles with easy access, real-time availability, cashless payments, and 24/7 monitored security.",
     whatsIncluded: [
@@ -19,9 +19,8 @@ export const allServicesData = [
     id: 2,
     slug: "tenant-sharing-slot",
     name: "Tenant Sharing Slot",
-    mediaType: "video",
-    mediaSrc:
-      "https://framerusercontent.com/assets/Ki9XP1dVVd8pAXpLyQHZWqYodIo.mp4",
+    mediaType: "image",
+    mediaSrc: "/tenantsharing.jpeg",
     fullDesc:
       "Turn your unused parking space into extra income with HalaPark's Tenant Sharing Slot feature. If you're away or not using your slot, simply share it with the public through your account in the HalaPark app and start earning effortlessly.",
     whatsIncluded: [
@@ -36,8 +35,8 @@ export const allServicesData = [
     id: 3,
     slug: "valet-service",
     name: "Valet Service",
-    mediaType: "video",
-    mediaSrc: "/mobilemen.mp4",
+    mediaType: "image",
+    mediaSrc: "/valets.jpeg",
     fullDesc:
       "Our Valet Service offers a seamless and stress-free parking experience designed for convenience, speed, and comfort. Simply hand over your car keys to our valet team, and our professional attendants will take care of the rest.",
     whatsIncluded: [
@@ -52,9 +51,8 @@ export const allServicesData = [
     id: 4,
     slug: "valet-on-demand",
     name: "Valet On Demand Services",
-    mediaType: "video",
-    mediaSrc:
-      "https://framerusercontent.com/assets/0ynnxWZbG6G2zLs2krR8m3tUyQ.mp4",
+    mediaType: "image",
+    mediaSrc: "/Valet On Demand .jpeg",
     fullDesc:
       "HalaPark offers a premium valet on demand service for users and businesses. Customers can instantly request vehicle pickup, parking, and return through a seamless process. The service ensures smooth coordination, real-time tracking, and secure vehicle handling. Ideal for hotels, malls, residential towers, and commercial spaces, it enhances convenience, efficiency, and customer experience.",
     whatsIncluded: [],
@@ -111,8 +109,8 @@ export const allServicesData = [
     id: 5,
     slug: "ev-charging",
     name: "Electric Vehicle Charging",
-    mediaType: "video",
-    mediaSrc: "/Ev.mp4",
+    mediaType: "image",
+    mediaSrc: "/Electric Vehicle Charging.jpeg",
     fullDesc:
       "HalaPark offers integrated EV charging for modern electric mobility. Users can easily find and use charging stations while parking. Operators manage availability and usage from a central platform. Smart scheduling and secure payments ensure a simple, efficient experience.",
     includedLabel: "Key Benefits for Businesses",
@@ -127,8 +125,8 @@ export const allServicesData = [
     id: 6,
     slug: "vip-parking",
     name: "VIP Parking",
-    mediaType: "video",
-    mediaSrc: "/huhuhuhu.mp4",
+    mediaType: "image",
+    mediaSrc: "/VIP Parking.jpeg",
     fullDesc:
       "HalaPark VIP Parking offers a premium parking experience with secure access, real-time monitoring, automated bookings, and smart parking management. Designed for luxury vehicles and high-end facilities, the service provides seamless operations, enhanced convenience, and efficient parking coordination through centralized monitoring and advanced analytics.",
     whatsIncluded: [
@@ -143,8 +141,8 @@ export const allServicesData = [
     id: 7,
     slug: "guest-visitor-parking",
     name: "Guest / Visitor Parking",
-    mediaType: "video",
-    mediaSrc: "/HalaPark.mp4",
+    mediaType: "image",
+    mediaSrc: "/Guest Visitor Parking.jpeg",
     fullDesc:
       "provides convenient and secure parking solutions for guests, visitors, and temporary users in residential, commercial, and mixed-use properties. The service ensures smooth access, organized parking allocation, and a hassle-free visitor experience through smart parking management and real-time monitoring.",
     whatsIncluded: [
@@ -159,8 +157,8 @@ export const allServicesData = [
     id: 8,
     slug: "car-storage",
     name: "Car Storage",
-    mediaType: "video",
-    mediaSrc: "/8170425-uhd_1440_2560_25fps.mp4",
+    mediaType: "image",
+    mediaSrc: "/Car Storage .jpeg",
     fullDesc:
       "HalaPark Car Storage Parking offers secure and professionally managed vehicle storage solutions for both short-term and long-term needs. The service ensures vehicles are safely stored, protected, and easily accessible whenever required.",
     whatsIncluded: [],
@@ -204,8 +202,8 @@ export const allServicesData = [
     id: 9,
     slug: "fleet-parking",
     name: "Fleet Parking Solutions",
-    mediaType: "video",
-    mediaSrc: "/cvc.mp4",
+    mediaType: "image",
+    mediaSrc: "/Fleet Parking Solutions .jpeg",
     fullDesc:
       "From securing exclusive parking locations to managing daily operations, HalaPark provides reliable fleet parking solutions with flexible access, efficient coordination, and competitive parking options tailored to your business needs.",
     includedLabel: "Key Features",
@@ -220,8 +218,7 @@ export const allServicesData = [
     slug: "bike-parking",
     name: "Bike Parking",
     mediaType: "image",
-    mediaSrc:
-      "/hf_20260306_105452_e9554d73-6553-4981-92ac-9e3b5e9b1dbf.jpeg",
+    mediaSrc: "/Bike Parking.jpeg",
     fullDesc:
       "HalaPark Bike Parking provides secure and organized parking solutions for individual motorcycles and scooters. The service ensures safe parking, easy access, and efficient space management for daily riders and visitors.",
     whatsIncluded: [
@@ -236,8 +233,8 @@ export const allServicesData = [
     id: 11,
     slug: "barrier-free-parking",
     name: "Barrier-Free Parking",
-    mediaType: "video",
-    mediaSrc: "/Ticket.mp4",
+    mediaType: "image",
+    mediaSrc: "/Barrier-Free Parking.jpeg",
     fullDesc:
       "A fully automated barrier-free parking system using smart recognition technology. Vehicles enter and exit without tickets or barriers through real-time identification and digital validation. It ensures fast, secure access while reducing congestion and improving traffic flow for users and operators.",
     whatsIncluded: [
@@ -252,9 +249,8 @@ export const allServicesData = [
     id: 12,
     slug: "smart-public-parking",
     name: "Smart Public Parking",
-    mediaType: "video",
-    mediaSrc:
-      "https://framerusercontent.com/assets/clShwemj51ZsM12xcORI3h6pdo0.mp4",
+    mediaType: "image",
+    mediaSrc: "/Smart Public Parking.jpeg",
     fullDesc:
       "HalaPark lets you easily find and reserve nearby parking in advance. It offers a seamless digital experience with secure cashless payments and instant booking confirmation. From search to payment, everything is managed in one smooth flow for a fast, simple, and stress-free parking experience.",
     whatsIncluded: [
@@ -269,8 +265,8 @@ export const allServicesData = [
     id: 13,
     slug: "airport-parking",
     name: "Airport Parking Services",
-    mediaType: "video",
-    mediaSrc: "/airportservice.mp4",
+    mediaType: "image",
+    mediaSrc: "/Airport Parking Services  .jpeg",
     fullDesc:
       "HalaPark offers seamless airport mobility solutions for passengers and visitors. It provides convenient terminal parking, fast drop-off and pick-up, and optional valet support. Users can pre-book spaces, reduce waiting time, and enjoy smooth, hassle-free airport access.",
     whatsIncluded: [
@@ -286,7 +282,7 @@ export const allServicesData = [
     slug: "yacht-parking",
     name: "Yacht Parking / Marina Docking",
     mediaType: "image",
-    mediaSrc: "/imgi_135_UBbLcu5oDOTH71yMBqwOYljdec.jpg",
+    mediaSrc: "/Yacht Parking .jpeg",
     fullDesc:
       "provides secure and professionally managed marina docking solutions for yachts, boats, and private watercraft. The service ensures safe docking, organized marina operations, and convenient access for owners and guests.",
     whatsIncluded: [
@@ -301,8 +297,8 @@ export const allServicesData = [
     id: 15,
     slug: "car-wash",
     name: "Car Wash Services (Interior & Exterior)",
-    mediaType: "video",
-    mediaSrc: "/cleaning.mp4",
+    mediaType: "image",
+    mediaSrc: "/Car Wash Services .jpeg",
     fullDesc:
       "On-demand car wash services for interior and exterior cleaning at parking locations or service zones. It includes washing, polishing, vacuuming, and deep cleaning for a full vehicle refresh. Fast, eco-friendly, and efficient, it improves vehicle appearance and hygiene while saving time.",
     whatsIncluded: [
@@ -317,8 +313,8 @@ export const allServicesData = [
     id: 16,
     slug: "air-tyre-service",
     name: "Air Tyre Service",
-    mediaType: "video",
-    mediaSrc: "/airtyre.mp4",
+    mediaType: "image",
+    mediaSrc: "/Air Tyre Service.jpeg",
     fullDesc:
       "On-demand tyre inflation and pressure-check service that ensures optimal tyre performance, safety, and fuel efficiency without needing a workshop visit. Available at parking hubs and through mobile support units, it provides quick and convenient assistance while helping maintain vehicle safety and extend tyre lifespan.",
     whatsIncluded: [
@@ -333,8 +329,8 @@ export const allServicesData = [
     id: 17,
     slug: "battery-replacement",
     name: "Battery Replacement Service",
-    mediaType: "video",
-    mediaSrc: "/batterychange.mp4",
+    mediaType: "image",
+    mediaSrc: "/Battery Replacement Service.jpeg",
     fullDesc:
       "Fast on-demand battery replacement service to keep vehicles running without delays. Available at parking facilities and service zones, it offers quick diagnosis and safe installation. Fully integrated with smart parking for convenient and efficient mobility support.",
     whatsIncluded: [
@@ -349,8 +345,8 @@ export const allServicesData = [
     id: 18,
     slug: "jump-start",
     name: "Jump Start Service",
-    mediaType: "video",
-    mediaSrc: "/mobilemen.mp4",
+    mediaType: "image",
+    mediaSrc: "/Jump Start Service.jpeg",
     fullDesc:
       "provides fast and reliable roadside battery assistance for vehicles with low or dead batteries. Our trained support team delivers quick on-site response to help drivers safely restart their vehicles and continue their journey with minimal delay.",
     whatsIncluded: [
