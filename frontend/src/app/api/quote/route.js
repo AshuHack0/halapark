@@ -1,5 +1,7 @@
 import { RECAPTCHA_SECRET_KEY } from "@/config/recaptcha.secret";
 
+const BACKEND_URL = process.env.BACKEND_API_URL ?? "http://localhost:4000";
+
 export async function POST(request) {
   const secret = RECAPTCHA_SECRET_KEY;
 
@@ -48,6 +50,24 @@ export async function POST(request) {
     );
   }
 
-  // TODO: persist quote (email, CRM, database). Payload available in `body`.
+  try {
+    await fetch(`${BACKEND_URL}/api/quotes`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        fullName: body.fullName,
+        email: body.email,
+        phone: body.phone,
+        service: body.service,
+        tower: body.tower,
+        slots: body.slots,
+        message: body.message,
+        source: "website",
+      }),
+    });
+  } catch (err) {
+    console.error("Failed to persist quote to backend:", err);
+  }
+
   return Response.json({ ok: true });
 }

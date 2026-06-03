@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
@@ -14,39 +13,48 @@ const ease = [0.22, 1, 0.36, 1];
 
 // ─── Hero ─────────────────────────────────────────────────────────────────────
 
-function AboutHero() {
-  const videoRef = useRef(null);
-  useEffect(() => {
-    if (videoRef.current) videoRef.current.play()?.catch(() => {});
-  }, []);
-
+function AboutHero({ hero }) {
   return (
     <section className="bg-white py-4 sm:py-5 lg:py-6">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="relative overflow-hidden rounded-[24px] bg-[#06111f] text-white">
           <div className="absolute inset-0">
-            <video ref={videoRef} src="/HalaParkVideo.mp4"
-              poster="/hf_20260327_061900_db12a62e-2867-44b6-83f0-ea7f1a5442ef.png"
-              muted loop playsInline preload="metadata" className="h-full w-full object-cover" />
-            <div className="absolute inset-0 bg-black/45" />
+            {hero?.image ? (
+              <Image
+                src={hero.image}
+                alt=""
+                fill
+                className="object-cover object-center"
+                aria-hidden
+                priority
+              />
+            ) : null}
+            <div className="absolute inset-0 bg-black/55" />
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/60" />
           </div>
-          <div className="relative flex min-h-[500px] w-full flex-col justify-center px-8 py-14 sm:px-12 md:min-h-[620px] lg:px-20">
-            <div className="relative z-10 w-full max-w-xl">
-              <h1 className="text-5xl font-semibold leading-[1.01] tracking-[-0.05em] text-white sm:text-6xl md:text-7xl">
-                Smart Parking Beyond Expectations
+          <div className="relative flex min-h-[500px] w-full flex-col items-center justify-center px-8 py-14 text-center sm:px-12 md:min-h-[620px] lg:px-20">
+            <div className="relative z-10 w-full max-w-3xl">
+              <h1 className="text-[clamp(2.4rem,5.5vw,5rem)] font-semibold leading-[1.04] tracking-[-0.05em] text-white">
+                {hero?.title}
               </h1>
               <p className="mt-4 text-base font-medium text-white/80 sm:text-lg">
-                Intelligent Parking. Smarter Cities. Seamless Movement.
+                {hero?.tagline}
               </p>
-              <p className="mt-4 max-w-lg text-sm leading-relaxed text-white/70 sm:text-base">
-                HalaPark is not just a parking company. We are building the intelligence behind modern mobility.
+              <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-white/70 sm:text-base">
+                {hero?.description}
               </p>
-              <div className="mt-7 flex flex-wrap gap-3">
-                <Link href="/contact" className="inline-flex items-center gap-2 rounded-full bg-[#0088FF] px-8 py-3 text-sm font-semibold text-white shadow-[0_8px_28px_rgba(0,136,255,0.45)] transition hover:brightness-110 sm:text-base">
-                  Partner With HalaPark <ArrowRight className="h-4 w-4" aria-hidden />
+              <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+                <Link
+                  href={hero?.primaryCtaLink || "/contact"}
+                  className="inline-flex items-center gap-2 rounded-full bg-[#0088FF] px-8 py-3 text-sm font-semibold text-white shadow-[0_8px_28px_rgba(0,136,255,0.45)] transition hover:brightness-110 sm:text-base"
+                >
+                  {hero?.primaryCtaText} <ArrowRight className="h-4 w-4" aria-hidden />
                 </Link>
-                <Link href="/contact" className="inline-block rounded-full border border-white/35 bg-white/10 px-8 py-3 text-sm font-medium text-white backdrop-blur-sm sm:text-base">
-                  Speak With Our Experts
+                <Link
+                  href={hero?.secondaryCtaLink || "/contact"}
+                  className="inline-block rounded-full border border-white/35 bg-white/10 px-8 py-3 text-sm font-medium text-white backdrop-blur-sm sm:text-base"
+                >
+                  {hero?.secondaryCtaText}
                 </Link>
               </div>
             </div>
@@ -112,39 +120,35 @@ function AboutIntro() {
 
 // ─── Mission ──────────────────────────────────────────────────────────────────
 
-function OurMission() {
+function OurMission({ mission }) {
   const reduced = useReducedMotion();
-  const pillars = [
-    { icon: Target, title: "Redefine Parking", desc: "Transform every parking touchpoint into a seamless digital experience." },
-    { icon: Globe, title: "Smarter Cities", desc: "Support evolving urban mobility needs through intelligent infrastructure." },
-    { icon: Users, title: "People First", desc: "Human-centered design at every step — from entry to exit." },
-  ];
   return (
     <section className="bg-white py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
-          {/* LEFT — heading + body text only */}
           <motion.div initial={reduced ? false : { opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.6, ease }}>
             <h2 className="mb-3 text-[clamp(2.4rem,4vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-[#050A13]">
-              Our Mission
+              {mission?.title}
             </h2>
             <p className="mb-7 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500">
-              Creating Smarter Movement for Modern Cities
+              {mission?.subtitle}
             </p>
             <div className="space-y-5 text-[0.93rem] leading-7 text-slate-500">
-              <p>Our mission is to redefine how people experience parking and urban mobility through intelligent technology, seamless automation, and integrated digital platforms.</p>
-              <p>HalaPark is committed to building smarter mobility environments that simplify movement, enhance convenience, improve operational performance, and support the evolving needs of modern communities and future-ready cities.</p>
-              <p>Through innovation, scalable infrastructure, and human-centered experiences, we are shaping a future where mobility feels effortless, intuitive, and intelligently embedded into everyday life.</p>
+              {(mission?.paragraphs ?? []).map((paragraph) => (
+                <p key={paragraph.slice(0, 48)}>{paragraph}</p>
+              ))}
             </div>
           </motion.div>
 
-          {/* RIGHT — image on top, pillars below */}
           <motion.div initial={reduced ? false : { opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.6, ease, delay: 0.1 }} className="flex flex-col gap-5">
-            <div className="relative h-56 w-full overflow-hidden rounded-[20px] sm:h-64">
-              <Image src="/hf_20260327_062407_6dca49c0-90dd-468a-96f9-b36bba13ea8b.png" alt="Smart city mobility" fill className="object-cover object-center" />
-              <div className="absolute inset-0 bg-[#050A13]/20" />
-            </div>
+            {mission?.image ? (
+              <div className="relative h-56 w-full overflow-hidden rounded-[20px] sm:h-64">
+                <Image src={mission.image} alt="Smart city mobility" fill className="object-cover object-center" />
+                <div className="absolute inset-0 bg-[#050A13]/20" />
+              </div>
+            ) : null}
             <div className="space-y-3">
+              {/* Extra mission pillars — not in content doc
               {pillars.map((p, i) => {
                 const Icon = p.icon;
                 return (
@@ -159,6 +163,7 @@ function OurMission() {
                   </motion.div>
                 );
               })}
+              */}
             </div>
           </motion.div>
         </div>
@@ -169,49 +174,52 @@ function OurMission() {
 
 // ─── Vision ───────────────────────────────────────────────────────────────────
 
-function OurVision() {
+function OurVision({ vision }) {
   const reduced = useReducedMotion();
+  const card = vision?.card ?? {};
   return (
     <section className="bg-[#F4F8FF] py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
           <motion.div initial={reduced ? false : { opacity: 0, x: -28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }}>
             <h2 className="mb-3 text-[clamp(2.4rem,4vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-[#050A13]">
-              Our Vision
+              {vision?.title}
             </h2>
             <p className="mb-6 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500">
-              A Future Where Parking Feels Invisible
+              {vision?.subtitle}
             </p>
             <div className="space-y-4 text-[0.93rem] leading-7 text-slate-500">
-              <p>HalaPark is creating a future where parking becomes invisible, seamlessly integrated into the way cities move, operate, and evolve.</p>
-              <p>A future where vehicles move effortlessly through intelligent environments. Where access is automated. Where payments are frictionless. Where operations are data-driven.</p>
-              <p>As urban mobility continues to evolve, HalaPark innovates through intelligent systems that support smart city initiatives, EV integration, digital infrastructure, and next-generation transportation environments.</p>
+              {(vision?.paragraphs ?? []).map((paragraph) => (
+                <p key={paragraph.slice(0, 48)}>{paragraph}</p>
+              ))}
             </div>
           </motion.div>
 
           <motion.div initial={reduced ? false : { opacity: 0, x: 28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease, delay: 0.1 }} className="relative min-h-[340px] overflow-hidden rounded-[28px] bg-[#06111f] p-8 sm:p-10">
             <div className="absolute inset-0">
-              <Image src="/hf_20260327_064457_c75923ba-dc06-4c6e-9b63-fa181e94bcfa.png" alt="" fill className="object-cover object-center opacity-25" aria-hidden />
+              {vision?.image ? (
+                <Image src={vision.image} alt="" fill className="object-cover object-center opacity-25" aria-hidden />
+              ) : null}
               <div className="absolute inset-0 bg-gradient-to-tr from-[#06111f]/95 via-[#06111f]/80 to-[#06111f]/50" />
             </div>
             <div className="relative z-10 flex h-full flex-col justify-between gap-8">
               <div>
                 <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1">
                   <span className="h-1.5 w-1.5 rounded-full bg-[#5BC4FF]" />
-                  <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/70">Our Vision</span>
+                  <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/70">
+                    {card.badge}
+                  </span>
                 </div>
                 <p className="text-[clamp(1.3rem,2vw,1.7rem)] font-semibold leading-[1.3] tracking-[-0.03em] text-white">
-                  A Future Where Parking Feels Invisible
+                  {card.title}
                 </p>
-                <p className="mt-4 text-[0.88rem] leading-6 text-white/55">
-                  Seamlessly integrated into the way cities move, operate, and evolve.
-                </p>
+                <p className="mt-4 text-[0.88rem] leading-6 text-white/55">{card.subtitle}</p>
               </div>
               <div className="grid grid-cols-3 gap-3 border-t border-white/10 pt-6">
-                {[["AI-Driven", "Operations"], ["Frictionless", "Payments"], ["Smart City", "Ready"]].map(([l1, l2]) => (
-                  <div key={l1} className="text-center">
-                    <p className="text-[0.78rem] font-semibold text-white">{l1}</p>
-                    <p className="text-[0.72rem] text-white/45">{l2}</p>
+                {(card.highlights ?? []).map((item) => (
+                  <div key={`${item.line1}-${item.line2}`} className="text-center">
+                    <p className="text-[0.78rem] font-semibold text-white">{item.line1}</p>
+                    <p className="text-[0.72rem] text-white/45">{item.line2}</p>
                   </div>
                 ))}
               </div>
@@ -225,66 +233,38 @@ function OurVision() {
 
 // ─── Our Story ────────────────────────────────────────────────────────────────
 
-function OurStory() {
+function OurStory({ story }) {
   const reduced = useReducedMotion();
-  const milestones = [
-    { year: "Founded", text: "Solving parking inefficiency in modern cities" },
-    { year: "Expanded", text: "120+ locations across the UAE and region" },
-    { year: "Today", text: "An intelligent mobility network for next-gen cities" },
-  ];
   return (
     <section className="bg-white py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid items-start gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-20">
           <motion.div initial={reduced ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }}>
             <h2 className="mb-3 text-[clamp(2.4rem,4vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-[#050A13]">
-              Our Story
+              {story?.title}
             </h2>
             <p className="mb-6 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500">
-              Built from a Vision to Simplify Urban Movement
+              {story?.subtitle}
             </p>
             <div className="space-y-5 text-[0.93rem] leading-7 text-slate-500">
-              <p>HalaPark was founded with one clear mission: to solve one of the most overlooked challenges in modern cities — parking inefficiency.</p>
-              <p>As urban environments expanded and mobility demands accelerated, traditional parking systems struggled to evolve. Manual operations, disconnected infrastructure, and payment frustrations created unnecessary friction for both operators and drivers.</p>
-              <p className="font-medium text-[#050A13]">We saw an opportunity to reimagine parking through technology.</p>
-              <p>What began as a parking platform evolved into an intelligent mobility network designed to simplify vehicle movement, optimize operations, and unlock asset value.</p>
-              <p className="font-medium text-[#050A13]">We are not simply managing parking spaces. We are engineering smarter mobility experiences for the next generation of urban environments.</p>
+              {(story?.paragraphs ?? []).map((paragraph) => (
+                <p key={paragraph.slice(0, 48)}>{paragraph}</p>
+              ))}
             </div>
           </motion.div>
 
-          {/* Right column — photo with stats overlay */}
+          {/* Extra story stats & milestones — not in content doc
           <motion.div initial={reduced ? false : { opacity: 0, x: 24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.6, ease, delay: 0.12 }}>
-            <div className="relative overflow-hidden rounded-[24px]">
-              <div className="relative h-72 w-full sm:h-80">
-                <Image src="/hf_20260327_060926_cbb82448-441c-42ee-9589-785e7acd7565.png" alt="HalaPark story" fill className="object-cover object-center" />
+            ...
+          </motion.div>
+          */}
+          <motion.div initial={reduced ? false : { opacity: 0, x: 24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.6, ease, delay: 0.12 }}>
+            {story?.image ? (
+              <div className="relative h-72 w-full overflow-hidden rounded-[24px] sm:h-80">
+                <Image src={story.image} alt="HalaPark story" fill className="object-cover object-center" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#06111f]/80 via-[#06111f]/20 to-transparent" />
               </div>
-              {/* Stats pinned to bottom of image */}
-              <div className="absolute bottom-0 left-0 right-0 grid grid-cols-2 divide-x divide-white/10 border-t border-white/10">
-                {[["8+", "Years"], ["120+", "Locations"]].map(([v, l]) => (
-                  <div key={l} className="bg-[#06111f]/70 px-5 py-4 backdrop-blur-sm">
-                    <p className="text-[1.8rem] font-semibold leading-none tracking-[-0.04em] text-white">{v}</p>
-                    <p className="mt-1 text-[0.72rem] text-white/50">{l}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="mt-4 grid grid-cols-2 gap-3">
-              {[["40+", "Enterprise Clients"], ["1M+", "Monthly Transactions"]].map(([v, l]) => (
-                <div key={l} className="rounded-[16px] bg-[#F4F8FF] px-5 py-4">
-                  <p className="text-[1.8rem] font-semibold leading-none tracking-[-0.04em] text-[#050A13]">{v}</p>
-                  <p className="mt-1 text-[0.72rem] text-slate-400">{l}</p>
-                </div>
-              ))}
-            </div>
-            <div className="mt-5 space-y-4">
-              {milestones.map((m, i) => (
-                <motion.div key={m.year} initial={reduced ? false : { opacity: 0, x: 12 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, ease, delay: i * 0.08 }}>
-                  <p className="text-[0.7rem] font-bold uppercase tracking-[0.16em] text-[#0088FF]">{m.year}</p>
-                  <p className="mt-0.5 text-[0.88rem] font-medium leading-snug text-[#050A13]">{m.text}</p>
-                </motion.div>
-              ))}
-            </div>
+            ) : null}
           </motion.div>
         </div>
       </div>
@@ -294,40 +274,31 @@ function OurStory() {
 
 // ─── What We Do ───────────────────────────────────────────────────────────────
 
-const ecosystem = [
-  "AI-Powered Parking Management", "Free Flow & Ticketless Parking",
-  "Mobile Parking Applications", "Digital Payments & Wallet Systems",
-  "Residential & Community Access Control", "Public & On-Street Parking",
-  "Parking Guidance Systems", "Space Sharing & Monetization",
-  "Digital Permit Management", "Real-Time Parking Analytics",
-  "Data Intelligence & Operational Insights", "Smart Mobility Integrations",
-  "EV & Future Mobility Readiness",
-];
-
-function WhatWeDo() {
+function WhatWeDo({ whatWeDo }) {
   const reduced = useReducedMotion();
+  const items = whatWeDo?.ecosystemItems ?? [];
   return (
     <section className="bg-[#F4F8FF] py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid items-start gap-10 lg:grid-cols-[0.7fr_1.3fr] lg:gap-16">
           <motion.div initial={reduced ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }} className="lg:sticky lg:top-24">
             <h2 className="mb-3 text-[clamp(2.2rem,3.5vw,3rem)] font-semibold leading-[1.06] tracking-[-0.05em] text-[#050A13]">
-              What We Do
+              {whatWeDo?.title}
             </h2>
             <p className="mb-5 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500">
-              Smart Parking Solutions for Modern Cities
+              {whatWeDo?.subtitle}
             </p>
-            <p className="text-[0.93rem] leading-7 text-slate-500">
-              HalaPark delivers intelligent parking and mobility solutions that seamlessly combine automation, AI technology, operations, infrastructure, and digital experiences into one unified platform.
-            </p>
+            <p className="text-[0.93rem] leading-7 text-slate-500">{whatWeDo?.intro}</p>
+            {whatWeDo?.image ? (
             <div className="relative mt-8 h-48 w-full overflow-hidden rounded-[18px]">
-              <Image src="/hf_20260327_064316_9c7b1a28-dbfa-456e-b88a-0087cb567a61.png" alt="HalaPark smart parking" fill className="object-cover object-center" />
+              <Image src={whatWeDo.image} alt="HalaPark smart parking" fill className="object-cover object-center" />
               <div className="absolute inset-0 bg-[#050A13]/15" />
             </div>
+            ) : null}
           </motion.div>
 
           <motion.div initial={reduced ? false : { opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.1 }} transition={{ duration: 0.55, ease }} className="grid gap-2.5 sm:grid-cols-2">
-            {ecosystem.map((item, i) => (
+            {items.map((item, i) => (
               <motion.div key={item} initial={reduced ? false : { opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.35, ease, delay: i * 0.025 }} className="flex items-center gap-3 rounded-[12px] bg-white px-4 py-3.5 shadow-sm">
                 <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#0088FF]">
                   <Check className="h-3 w-3 text-white" strokeWidth={3} aria-hidden />
@@ -344,41 +315,36 @@ function WhatWeDo() {
 
 // ─── Technology & Innovation ──────────────────────────────────────────────────
 
-function TechnologyInnovation() {
+function TechnologyInnovation({ technology }) {
   const reduced = useReducedMotion();
-  const techPoints = [
-    { icon: Cpu, label: "AI-Driven Automation", desc: "Machine learning at the core of every decision." },
-    { icon: BarChart3, label: "Real-Time Data Intelligence", desc: "Live insights across all facilities and transactions." },
-    { icon: Shield, label: "Cloud-Based Infrastructure", desc: "Scalable, secure, always-on platform architecture." },
-    { icon: Zap, label: "Smart Access Systems", desc: "Frictionless entry and exit powered by smart recognition." },
-  ];
   return (
     <section className="bg-white py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-          {/* LEFT — full image */}
           <motion.div initial={reduced ? false : { opacity: 0, x: -24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }} className="relative h-72 w-full overflow-hidden rounded-[24px] sm:h-80 lg:h-[420px]">
-            <Image src="/hf_20260327_064316_9c7b1a28-dbfa-456e-b88a-0087cb567a61.png" alt="HalaPark technology" fill className="object-cover object-center" />
+            {technology?.image ? (
+              <Image src={technology.image} alt="HalaPark technology" fill className="object-cover object-center" />
+            ) : null}
             <div className="absolute inset-0 bg-gradient-to-tr from-[#06111f]/60 via-transparent to-transparent" />
             <div className="absolute bottom-6 left-6">
               <span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-3 py-1 backdrop-blur-sm">
                 <span className="h-1.5 w-1.5 rounded-full bg-[#5BC4FF]" />
-                <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/80">AI-Powered Platform</span>
+                <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/80">
+                  {technology?.imageBadge}
+                </span>
               </span>
             </div>
           </motion.div>
 
-          {/* RIGHT — heading + 4 feature cards */}
           <motion.div initial={reduced ? false : { opacity: 0, x: 24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease, delay: 0.1 }}>
             <h2 className="mb-3 text-[clamp(2.4rem,4vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-[#050A13]">
-              Technology & Innovation
+              {technology?.title}
             </h2>
             <p className="mb-5 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500">
-              Powered by Intelligent Mobility Technology
+              {technology?.subtitle}
             </p>
-            <p className="text-[0.93rem] leading-7 text-slate-500">
-              HalaPark combines AI-driven automation, real-time data intelligence, cloud-based infrastructure, and digital mobility platforms to create scalable parking environments built for modern cities.
-            </p>
+            <p className="text-[0.93rem] leading-7 text-slate-500">{technology?.body}</p>
+            {/* Extra feature cards — not in content doc
             <div className="mt-8 grid grid-cols-2 gap-3">
               {techPoints.map((p, i) => {
                 const Icon = p.icon;
@@ -393,9 +359,7 @@ function TechnologyInnovation() {
                 );
               })}
             </div>
-            <p className="mt-6 text-[0.86rem] leading-6 text-slate-400">
-              Through continuous innovation, HalaPark is building the technological foundation for smarter urban movement and future-ready transportation environments.
-            </p>
+            */}
           </motion.div>
         </div>
       </div>
@@ -1017,78 +981,48 @@ function PoweringFutureCities() {
 
 // ─── Final CTA ─────────────────────────────────────────────────────────────────
 
-function FinalCTA() {
+function FinalCTA({ cta }) {
   const reduced = useReducedMotion();
   return (
     <section className="bg-white py-4 sm:py-5 lg:py-6">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="relative overflow-hidden rounded-[28px] bg-[#06111f]">
-
           <div className="absolute inset-0">
-            <Image src="/hf_20260327_064457_c75923ba-dc06-4c6e-9b63-fa181e94bcfa.png" alt="" fill className="object-cover object-center opacity-20" aria-hidden />
-            <div className="absolute inset-0 bg-gradient-to-br from-[#06111f] via-[#06111f]/95 to-[#0a1a2e]/90" />
+            {cta?.image ? (
+              <Image src={cta.image} alt="" fill className="object-cover object-center" aria-hidden />
+            ) : null}
+            <div className="absolute inset-0 bg-black/55" />
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/60" />
           </div>
 
-          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(0,136,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(0,136,255,0.05)_1px,transparent_1px)] bg-[size:44px_44px] [mask-image:radial-gradient(ellipse_80%_70%_at_50%_50%,black,transparent)]" />
-          <div className="pointer-events-none absolute -bottom-20 -right-20 h-[400px] w-[400px] rounded-full bg-[radial-gradient(circle,rgba(0,136,255,0.18),transparent_65%)] blur-3xl" />
-          <div className="pointer-events-none absolute -left-16 top-0 h-[300px] w-[300px] rounded-full bg-[radial-gradient(circle,rgba(0,136,255,0.10),transparent_65%)] blur-2xl" />
-
-          <div className="relative z-10 grid items-center gap-10 px-8 py-14 sm:px-12 sm:py-16 lg:grid-cols-[1fr_auto] lg:gap-16 lg:px-16 lg:py-20">
-
-            <motion.div initial={reduced ? false : { opacity: 0, x: -28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }}>
-              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/8 px-3.5 py-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#5BC4FF]" />
-                <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/55">Build With Us</span>
-              </div>
-              <h2 className="text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-white">
-                Build the Future of{" "}
-                <span className="bg-gradient-to-r from-[#3AADFF] to-[#0088FF] bg-clip-text text-transparent">
-                  Mobility With Us
-                </span>
-              </h2>
-              <p className="mt-4 text-[clamp(1.15rem,1.8vw,1.4rem)] font-medium leading-[1.3] tracking-[-0.02em] text-white/70">
-                The Future of Urban Mobility Starts Here
-              </p>
-              <div className="mt-5 space-y-3 text-[0.88rem] leading-6 text-white/45 sm:text-[0.94rem]">
-                <p>HalaPark continues to collaborate with developers, businesses, property owners, operators, technology partners, and investors to create the next generation of intelligent parking experiences.</p>
-                <p>Together, we are building smarter mobility ecosystems powered by innovation, automation, intelligent technology, and future-focused infrastructure.</p>
-                <p>HalaPark is shaping a future where mobility becomes seamless, cities become smarter, and parking becomes an invisible part of everyday life.</p>
-              </div>
-              <div className="mt-8 flex flex-wrap gap-3">
-                <Link href="/contact" className="inline-flex items-center gap-2 rounded-full bg-[#0088FF] px-8 py-3.5 text-sm font-semibold text-white shadow-[0_8px_28px_rgba(0,136,255,0.45)] transition hover:brightness-110">
-                  Partner With HalaPark <ArrowRight className="h-4 w-4" aria-hidden />
-                </Link>
-                <Link href="/contact" className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/8 px-8 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/15">
-                  <CalendarCheck className="h-4 w-4" aria-hidden />
-                  Speak With Our Experts
-                </Link>
-              </div>
-            </motion.div>
-
-            <motion.div initial={reduced ? false : { opacity: 0, x: 28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease, delay: 0.1 }} className="w-full lg:w-[300px]">
-              <div className="rounded-[22px] border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
-                <p className="mb-5 text-[0.7rem] font-bold uppercase tracking-[0.18em] text-white/35">HalaPark at a Glance</p>
-                <div className="space-y-4">
-                  {[
-                    { value: "8+",   label: "Years of Experience"     },
-                    { value: "120+", label: "Locations"               },
-                    { value: "40+",  label: "Enterprise Clients"      },
-                    { value: "1M+",  label: "Monthly Transactions"    },
-                  ].map((s, i) => (
-                    <motion.div key={s.label} initial={reduced ? false : { opacity: 0, x: 16 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, ease, delay: 0.2 + i * 0.07 }} className="flex items-center justify-between border-b border-white/8 pb-4 last:border-0 last:pb-0">
-                      <span className="text-[0.82rem] text-white/45">{s.label}</span>
-                      <span className="text-[1.6rem] font-semibold leading-none tracking-[-0.04em] text-white">{s.value}</span>
-                    </motion.div>
-                  ))}
-                </div>
-                <div className="mt-6 rounded-[14px] bg-[#0088FF]/15 px-4 py-3 text-center">
-                  <p className="text-[0.78rem] font-semibold text-[#5BC4FF]">Shaping the future of</p>
-                  <p className="text-[0.78rem] font-semibold text-[#5BC4FF]">intelligent urban mobility</p>
-                </div>
-              </div>
-            </motion.div>
-
-          </div>
+          <motion.div
+            initial={reduced ? false : { opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.65, ease }}
+            className="relative z-10 mx-auto max-w-3xl px-8 py-14 text-center sm:px-12 sm:py-16 lg:px-16 lg:py-20"
+          >
+            <h2 className="text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-white">
+              {cta?.title}
+            </h2>
+            <p className="mx-auto mt-5 max-w-2xl text-sm leading-7 text-white/75 sm:text-base">
+              {cta?.description}
+            </p>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+              <Link
+                href={cta?.primaryCtaLink || "/contact"}
+                className="inline-flex items-center gap-2 rounded-full bg-[#0088FF] px-8 py-3.5 text-sm font-semibold text-white shadow-[0_8px_28px_rgba(0,136,255,0.45)] transition hover:brightness-110"
+              >
+                {cta?.primaryCtaText} <ArrowRight className="h-4 w-4" aria-hidden />
+              </Link>
+              <Link
+                href={cta?.secondaryCtaLink || "/contact"}
+                className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-8 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/15"
+              >
+                {cta?.secondaryCtaText}
+              </Link>
+            </div>
+          </motion.div>
         </div>
       </div>
     </section>
@@ -1167,29 +1101,39 @@ function AppDownloadCTA() {
 
 // ─── Page Export ───────────────────────────────────────────────────────────────
 
-export default function AboutPage() {
+export default function AboutPage({ content }) {
+  if (!content) {
+    return (
+      <main className="flex min-h-[50vh] items-center justify-center bg-white px-4">
+        <p className="text-center text-slate-500">
+          About page content is unavailable. Please ensure the backend is running.
+        </p>
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-white">
-      <AboutHero />
-      <AboutIntro />
-      <OurMission />
-      <OurVision />
-      <OurStory />
-      <WhatWeDo />
-      <TechnologyInnovation />
-      <PartnershipsInvestment />
-      <InvestmentOpportunities />
-      <WhyHalaPark />
-      <WhoWeServe />
-      <SustainabilitySmartCities />
-      <TrustSecurityReliability />
-      <OurImpact />
-      <FutureOfMobility />
-      <HalaParkExperience />
-      <CoreValues />
-      <PoweringFutureCities />
-      <FinalCTA />
-      <AppDownloadCTA />
+      <AboutHero hero={content.hero} />
+      {/* <AboutIntro /> */}
+      <OurMission mission={content.mission} />
+      <OurVision vision={content.vision} />
+      <OurStory story={content.story} />
+      <WhatWeDo whatWeDo={content.whatWeDo} />
+      <TechnologyInnovation technology={content.technology} />
+      {/* <PartnershipsInvestment /> */}
+      {/* <InvestmentOpportunities /> */}
+      {/* <WhyHalaPark /> */}
+      {/* <WhoWeServe /> */}
+      {/* <SustainabilitySmartCities /> */}
+      {/* <TrustSecurityReliability /> */}
+      {/* <OurImpact /> */}
+      {/* <FutureOfMobility /> */}
+      {/* <HalaParkExperience /> */}
+      {/* <CoreValues /> */}
+      {/* <PoweringFutureCities /> */}
+      <FinalCTA cta={content.cta} />
+      {/* <AppDownloadCTA /> */}
     </main>
   );
 }

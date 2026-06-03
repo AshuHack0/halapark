@@ -1,5 +1,7 @@
 import AboutPage from "@/components/About/AboutPage";
+import { fetchAboutContent } from "@/lib/cms";
 
-export default function About() {
-  return <AboutPage />;
+export default async function About() {
+  const content = await fetchAboutContent();
+  return <AboutPage content={content} />;
 }

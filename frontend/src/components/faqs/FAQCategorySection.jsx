@@ -18,7 +18,6 @@ import {
   TriangleAlert,
   WalletCards,
 } from "lucide-react";
-import { faqCategories } from "./faqData";
 
 const iconMap = {
   BadgePercent,
@@ -37,16 +36,44 @@ const iconMap = {
   WalletCards,
 };
 
-export default function FAQCategorySection() {
-  const [activeCategoryId, setActiveCategoryId] = useState(faqCategories[0]?.id);
+function normalizeVideoUrl(url) {
+  if (!url || typeof url !== "string") return null;
+  const trimmed = url.trim();
+  if (!trimmed) return null;
+
+  // Already embeddable URL
+  if (trimmed.includes("youtube.com/embed/") || trimmed.includes("player.vimeo.com/video/")) {
+    return trimmed;
+  }
+
+  // Convert common YouTube watch/share links to embed links
+  try {
+    const parsed = new URL(trimmed);
+    if (parsed.hostname.includes("youtube.com")) {
+      const id = parsed.searchParams.get("v");
+      if (id) return `https://www.youtube.com/embed/${id}`;
+    }
+    if (parsed.hostname === "youtu.be") {
+      const id = parsed.pathname.replace("/", "");
+      if (id) return `https://www.youtube.com/embed/${id}`;
+    }
+  } catch {
+    return null;
+  }
+
+  return trimmed;
+}
+
+export default function FAQCategorySection({ categories = [] }) {
+  const [activeCategoryId, setActiveCategoryId] = useState(categories[0]?.id);
   const makeKey = (catId, itemId) => `${catId}::${itemId}`;
   const [openQuestionKey, setOpenQuestionKey] = useState(
-    faqCategories[0] ? makeKey(faqCategories[0].id, faqCategories[0].items[0]?.id ?? "") : null
+    categories[0] ? makeKey(categories[0].id, categories[0].items?.[0]?.id ?? "") : null
   );
 
   const activeCategory = useMemo(
-    () => faqCategories.find((c) => c.id === activeCategoryId),
-    [activeCategoryId]
+    () => categories.find((c) => c.id === activeCategoryId),
+    [activeCategoryId, categories]
   );
 
   const handleCategoryClick = (category) => {
@@ -71,6 +98,13 @@ export default function FAQCategorySection() {
           </p>
         </div>
 
+        {categories.length === 0 ? (
+          <div className="mx-auto max-w-3xl rounded-[20px] border border-[#E7EAF0] bg-[#F8FBFF] px-6 py-8 text-center">
+            <p className="text-sm text-slate-500">
+              No FAQs configured yet. Add <code className="text-xs">sections.faqCategories</code> from admin panel for the FAQs page.
+            </p>
+          </div>
+        ) : (
         <div className="grid gap-8 lg:grid-cols-[260px_1fr] lg:items-start lg:gap-10">
 
           {/* LEFT: sticky category list */}
@@ -78,7 +112,7 @@ export default function FAQCategorySection() {
             <div className="rounded-[20px] border border-[#E7EAF0] bg-white p-3 shadow-[0_4px_24px_rgba(6,6,22,0.05)]">
               <p className="mb-2 px-3 pt-1 text-[0.7rem] font-bold uppercase tracking-[0.18em] text-slate-400">Categories</p>
               <ul className="space-y-0.5">
-                {faqCategories.map((category) => {
+                {categories.map((category) => {
                   const Icon = iconMap[category.icon] ?? Building2;
                   const isActive = category.id === activeCategoryId;
                   return (
@@ -125,7 +159,7 @@ export default function FAQCategorySection() {
             </div>
 
             <div className="divide-y divide-slate-100 rounded-[20px] border border-[#E7EAF0] bg-white shadow-[0_4px_24px_rgba(6,6,22,0.05)]">
-              {activeCategory?.items.map((item) => {
+              {activeCategory?.items?.map((item) => {
                 const key = makeKey(activeCategoryId, item.id);
                 const isOpen = openQuestionKey === key;
                 return (
@@ -149,10 +183,10 @@ export default function FAQCategorySection() {
                     {isOpen && (
                       <div id={`${key}-content`} className="px-6 pb-5">
                         <p className="text-[0.88rem] leading-6 text-slate-500">{item.answer}</p>
-                        {item.videoUrl && (
+                        {normalizeVideoUrl(item.videoUrl) && (
                           <div className="mt-4 overflow-hidden rounded-[14px] border border-[#E7EAF0]">
                             <iframe
-                              src={item.videoUrl}
+                              src={normalizeVideoUrl(item.videoUrl)}
                               title={item.question}
                               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                               allowFullScreen
@@ -169,6 +203,7 @@ export default function FAQCategorySection() {
           </div>
 
         </div>
+        )}
       </div>
     </section>
   );

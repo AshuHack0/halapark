@@ -1,5 +1,7 @@
 import CareersPage from "@/components/careers/CareersPage";
+import { fetchCareersContent } from "@/lib/cms";
 
-export default function Careers() {
-  return <CareersPage />;
+export default async function Careers() {
+  const content = await fetchCareersContent();
+  return <CareersPage content={content} />;
 }
