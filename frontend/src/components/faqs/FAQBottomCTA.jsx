@@ -11,10 +11,10 @@ export default function FAQBottomCTA() {
             <div>
               <p className="text-[0.75rem] font-bold uppercase tracking-[0.2em] text-white/60">Still have questions?</p>
               <h2 className="mt-2 text-[1.6rem] font-semibold leading-[1.1] tracking-[-0.03em] text-white sm:text-[2rem]">
-                Can&apos;t find what you&apos;re looking for?
+                Still Have Questions?
               </h2>
               <p className="mt-2 max-w-[480px] text-[0.88rem] leading-6 text-white/75">
-                Our team is ready to help with bookings, onboarding, account access, and business setup. Reach out anytime.
+                Whether you&apos;re managing a commercial property, residential community, smart city project, or public parking operation, our team is here to help you build a smarter parking experience with HalaPark.
               </p>
             </div>
             <div className="flex shrink-0 flex-wrap items-center justify-center gap-3 sm:justify-end">
@@ -22,7 +22,7 @@ export default function FAQBottomCTA() {
                 href="/contact"
                 className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-[#0088FF] shadow-[0_4px_16px_rgba(0,0,0,0.12)] transition hover:brightness-95"
               >
-                Contact Support <ArrowRight className="h-4 w-4" aria-hidden />
+                Connect with Our Experts <ArrowRight className="h-4 w-4" aria-hidden />
               </Link>
               <Link
                 href="https://wa.me/97143782022"

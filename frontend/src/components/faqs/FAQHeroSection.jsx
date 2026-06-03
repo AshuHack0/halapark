@@ -22,13 +22,13 @@ export default function FAQHeroSection() {
                 <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/80">Help Center</span>
               </div>
               <h1 className="text-4xl font-semibold leading-[1.05] tracking-[-0.04em] text-white sm:text-5xl md:text-6xl">
-                Frequently Asked{" "}
+                Got Questions?{" "}
                 <span className="bg-gradient-to-r from-[#3AADFF] to-[#0088FF] bg-clip-text text-transparent">
-                  Questions
+                  We&apos;ve Got Answers.
                 </span>
               </h1>
               <p className="mt-4 max-w-md text-sm leading-relaxed text-white/75 sm:text-base">
-                Everything you need to know about HalaPark — for drivers, property owners, and businesses.
+                Find helpful information about HalaPark&apos;s smart parking solutions, system features, payments, access, and operations — all organized into easy-to-browse categories for a faster and smoother experience.
               </p>
             </div>
           </div>

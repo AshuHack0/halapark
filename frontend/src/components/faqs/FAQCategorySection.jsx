@@ -9,12 +9,20 @@ import {
   CarFront,
   ChevronDown,
   Clock3,
+  Droplets,
   Headset,
+  KeyRound,
   LockKeyhole,
+  MapPin,
+  PlayCircle,
+  PlugZap,
+  ScanLine,
+  Settings2,
   ShieldAlert,
   ShieldCheck,
   Smartphone,
   Store,
+  Truck,
   TriangleAlert,
   WalletCards,
 } from "lucide-react";
@@ -26,12 +34,20 @@ const iconMap = {
   CalendarCheck2,
   CarFront,
   Clock3,
+  Droplets,
   Headset,
+  KeyRound,
   LockKeyhole,
+  MapPin,
+  PlayCircle,
+  PlugZap,
+  ScanLine,
+  Settings2,
   ShieldAlert,
   ShieldCheck,
   Smartphone,
   Store,
+  Truck,
   TriangleAlert,
   WalletCards,
 };
@@ -57,11 +73,57 @@ function normalizeVideoUrl(url) {
       const id = parsed.pathname.replace("/", "");
       if (id) return `https://www.youtube.com/embed/${id}`;
     }
+    // Convert a Google Drive *file* link to its embeddable preview form.
+    // Drive *folder* links cannot be embedded — those fall through and are
+    // surfaced as a normal "Open tutorial" link instead (see render below).
+    if (parsed.hostname.includes("drive.google.com")) {
+      const fileMatch = parsed.pathname.match(/\/file\/d\/([^/]+)/);
+      if (fileMatch) return `https://drive.google.com/file/d/${fileMatch[1]}/preview`;
+      return null;
+    }
   } catch {
     return null;
   }
 
   return trimmed;
+}
+
+function externalLink(url) {
+  if (!url || typeof url !== "string") return null;
+  const trimmed = url.trim();
+  return trimmed ? trimmed : null;
+}
+
+// Direct video file (Cloudinary raw upload, or a plain .mp4/.webm/.mov/.ogg
+// link) — rendered with a native <video> player rather than an iframe.
+function directVideoSrc(url) {
+  if (!url || typeof url !== "string") return null;
+  const trimmed = url.trim();
+  if (!trimmed) return null;
+  try {
+    const parsed = new URL(trimmed);
+    const path = parsed.pathname.toLowerCase();
+    if (/\.(mp4|webm|mov|ogg|m4v)$/.test(path)) return trimmed;
+    // Cloudinary raw video delivery URLs (e.g. .../video/upload/...) may omit
+    // the extension but are still direct files.
+    if (parsed.hostname.includes("res.cloudinary.com") && path.includes("/video/upload/")) {
+      return trimmed;
+    }
+  } catch {
+    return null;
+  }
+  return null;
+}
+
+// Collect every non-empty video URL for an item, supporting the dynamic
+// `videos` array as well as the legacy single `videoUrl` field.
+function collectVideos(item) {
+  const list = [];
+  if (Array.isArray(item.videos)) list.push(...item.videos);
+  if (item.videoUrl) list.push(item.videoUrl);
+  return list
+    .map((u) => (typeof u === "string" ? u.trim() : ""))
+    .filter(Boolean);
 }
 
 export default function FAQCategorySection({ categories = [] }) {
@@ -182,18 +244,65 @@ export default function FAQCategorySection({ categories = [] }) {
                     </button>
                     {isOpen && (
                       <div id={`${key}-content`} className="px-6 pb-5">
-                        <p className="text-[0.88rem] leading-6 text-slate-500">{item.answer}</p>
-                        {normalizeVideoUrl(item.videoUrl) && (
-                          <div className="mt-4 overflow-hidden rounded-[14px] border border-[#E7EAF0]">
-                            <iframe
-                              src={normalizeVideoUrl(item.videoUrl)}
-                              title={item.question}
-                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                              allowFullScreen
-                              className="aspect-video w-full"
-                            />
-                          </div>
+                        {item.answer && (
+                          <p className="text-[0.88rem] leading-6 text-slate-500">{item.answer}</p>
                         )}
+                        {(() => {
+                          const videos = collectVideos(item);
+                          const folder = externalLink(item.videoFolderUrl);
+                          if (videos.length === 0 && !folder) return null;
+                          return (
+                            <div className="mt-4 space-y-3">
+                              {videos.map((url, i) => {
+                                const fileSrc = directVideoSrc(url);
+                                const embed = fileSrc ? null : normalizeVideoUrl(url);
+                                return fileSrc ? (
+                                  <div key={`${key}-vid-${i}`} className="overflow-hidden rounded-[14px] border border-[#E7EAF0] bg-black">
+                                    <video
+                                      src={fileSrc}
+                                      controls
+                                      preload="metadata"
+                                      playsInline
+                                      className="aspect-video w-full"
+                                    />
+                                  </div>
+                                ) : embed ? (
+                                  <div key={`${key}-vid-${i}`} className="overflow-hidden rounded-[14px] border border-[#E7EAF0]">
+                                    <iframe
+                                      src={embed}
+                                      title={`${item.question} — video ${i + 1}`}
+                                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                      allowFullScreen
+                                      className="aspect-video w-full"
+                                    />
+                                  </div>
+                                ) : (
+                                  <a
+                                    key={`${key}-vid-${i}`}
+                                    href={url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-2 rounded-full bg-[#EEF6FF] px-4 py-2 text-[0.82rem] font-semibold text-[#0088FF] transition hover:bg-[#DCEEFF]"
+                                  >
+                                    <PlayCircle className="h-4 w-4" strokeWidth={2} aria-hidden />
+                                    {videos.length > 1 ? `Watch video ${i + 1}` : "Open video tutorial"}
+                                  </a>
+                                );
+                              })}
+                              {videos.length === 0 && folder ? (
+                                <a
+                                  href={folder}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-2 rounded-full bg-[#EEF6FF] px-4 py-2 text-[0.82rem] font-semibold text-[#0088FF] transition hover:bg-[#DCEEFF]"
+                                >
+                                  <PlayCircle className="h-4 w-4" strokeWidth={2} aria-hidden />
+                                  Open video tutorials
+                                </a>
+                              ) : null}
+                            </div>
+                          );
+                        })()}
                       </div>
                     )}
                   </div>
