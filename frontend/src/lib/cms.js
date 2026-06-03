@@ -13,7 +13,7 @@ export const DEFAULT_HOME_SLIDES = [
     description:
       "Find, book, and manage parking spaces with HalaPark, the smart platform for drivers, businesses, and property owners.",
     image: "/hf_20260327_061900_db12a62e-2867-44b6-83f0-ea7f1a5442ef.png",
-    video: "/HalaParkVideo.mp4",
+    video: "/Halapark%20Hero%20Page-Ai.mp4",
   },
   {
     id: 2,

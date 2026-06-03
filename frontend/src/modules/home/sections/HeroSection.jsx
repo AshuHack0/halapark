@@ -62,10 +62,10 @@ function HeroBackgroundMedia({ slide, isActive, onVideoEnd }) {
       <video
         ref={videoRef}
         src={slide.video}
-        poster={slide.image}
         muted
+        autoPlay
         playsInline
-        preload="metadata"
+        preload="auto"
         onEnded={onVideoEnd}
         className="h-full w-full object-cover"
       />
