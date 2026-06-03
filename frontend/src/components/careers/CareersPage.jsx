@@ -1,33 +1,16 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import {
   ArrowRight,
   Check,
-  Briefcase,
-  HeadphonesIcon,
-  Building2,
-  Headset,
-  Users,
-  CarFront,
 } from "lucide-react";
+import JobApplicationModal from "./JobApplicationModal";
 
 const ease = [0.22, 1, 0.36, 1];
-
-const OPPORTUNITY_ICONS = {
-  Briefcase,
-  HeadphonesIcon,
-  Headset,
-  Building2,
-  Users,
-  CarFront,
-};
-
-function resolveIcon(name) {
-  return OPPORTUNITY_ICONS[name] ?? Briefcase;
-}
 
 function CareersHero({ hero }) {
   return (
@@ -98,11 +81,20 @@ function BuildingSmarterMobility({ building }) {
   );
 }
 
-function Opportunities({ opportunities }) {
+function JobOpenings({ openPositions }) {
   const reduced = useReducedMotion();
-  const items = opportunities ?? [];
+  const posts = openPositions?.posts ?? [];
+  const [applyJob, setApplyJob] = useState(null);
+
+  if (posts.length === 0) return null;
 
   return (
+    <>
+      <JobApplicationModal
+        isOpen={Boolean(applyJob)}
+        onClose={() => setApplyJob(null)}
+        job={applyJob}
+      />
     <section id="open-positions" className="bg-white py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
@@ -113,46 +105,82 @@ function Opportunities({ opportunities }) {
           className="mx-auto mb-12 max-w-[780px] text-center"
         >
           <h2 className="text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-[1.08] tracking-[-0.05em] text-[#050A13]">
-            Opportunities with HalaPark
+            {openPositions?.title ?? "Open Positions"}
           </h2>
+          {openPositions?.subtitle ? (
+            <p className="mt-4 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500">
+              {openPositions.subtitle}
+            </p>
+          ) : null}
         </motion.div>
 
-        <div className="grid gap-5 lg:grid-cols-3">
-          {items.map((item, i) => {
-            const Icon = resolveIcon(item.icon);
-            return (
-              <motion.div
-                key={`${item.title}-${i}`}
-                initial={reduced ? false : { opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.1 }}
-                transition={{ duration: 0.5, ease, delay: i * 0.07 }}
-                className="group rounded-[22px] border border-[#E7EAF0] bg-[#F8FBFF] p-6 shadow-[0_4px_24px_rgba(6,6,22,0.06)] transition hover:-translate-y-1 hover:border-[rgba(0,136,255,0.2)] hover:shadow-[0_16px_40px_rgba(0,136,255,0.10)]"
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[14px] bg-[#EEF6FF] transition duration-300 group-hover:bg-[#0088FF]">
-                    <Icon
-                      className="h-5 w-5 text-[#0088FF] transition duration-300 group-hover:text-white"
-                      strokeWidth={1.7}
-                      aria-hidden
-                    />
+        <div className="mx-auto max-w-4xl space-y-4">
+          {posts.map((post, i) => {
+              const useForm = post.applyMode === "form";
+              const applyHref = post.applyLink || "/contact";
+              const ApplyTag = !useForm && applyHref.startsWith("/") ? Link : "a";
+
+              return (
+                <motion.article
+                  key={`${post.title}-${i}`}
+                  initial={reduced ? false : { opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.1 }}
+                  transition={{ duration: 0.45, ease, delay: i * 0.05 }}
+                  className="rounded-[22px] border border-[#E7EAF0] bg-white p-6 shadow-[0_4px_24px_rgba(6,6,22,0.06)] sm:p-7"
+                >
+                  <div className="flex flex-wrap items-start justify-between gap-4">
+                    <div className="min-w-0 flex-1">
+                      <h3 className="text-[1.05rem] font-semibold tracking-[-0.02em] text-[#050A13] sm:text-lg">
+                        {post.title}
+                      </h3>
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {post.department ? (
+                          <span className="rounded-full bg-[#EEF6FF] px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-wider text-[#0088FF]">
+                            {post.department}
+                          </span>
+                        ) : null}
+                        {post.employmentType ? (
+                          <span className="rounded-full border border-[#E7EAF0] bg-slate-50 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-wider text-slate-600">
+                            {post.employmentType}
+                          </span>
+                        ) : null}
+                      </div>
+                      {post.location ? (
+                        <p className="mt-3 text-sm text-slate-500">{post.location}</p>
+                      ) : null}
+                      {post.description ? (
+                        <p className="mt-4 text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem]">
+                          {post.description}
+                        </p>
+                      ) : null}
+                    </div>
+                    {useForm ? (
+                      <button
+                        type="button"
+                        onClick={() => setApplyJob(post)}
+                        className="inline-flex shrink-0 items-center gap-2 rounded-full bg-[#0088FF] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_4px_16px_rgba(0,136,255,0.35)] transition hover:brightness-110"
+                      >
+                        {post.applyLabel ?? "Apply Now"}
+                        <ArrowRight className="h-4 w-4" aria-hidden />
+                      </button>
+                    ) : (
+                      <ApplyTag
+                        href={applyHref}
+                        className="inline-flex shrink-0 items-center gap-2 rounded-full bg-[#0088FF] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_4px_16px_rgba(0,136,255,0.35)] transition hover:brightness-110"
+                      >
+                        {post.applyLabel ?? "Apply Now"}
+                        <ArrowRight className="h-4 w-4" aria-hidden />
+                      </ApplyTag>
+                    )}
                   </div>
-                  <span className="rounded-full border border-[#C6DEFF] bg-[#EEF6FF] px-3 py-1 text-[0.7rem] font-bold uppercase tracking-[0.15em] text-[#0088FF]">
-                    {item.badge}
-                  </span>
-                </div>
-                <h3 className="mt-5 text-[1rem] font-semibold leading-tight tracking-[-0.02em] text-[#050A13] sm:text-[1.05rem]">
-                  {item.title}
-                </h3>
-                <p className="mt-3 text-[0.82rem] leading-6 text-slate-500 sm:text-[0.88rem]">
-                  {item.description}
-                </p>
-              </motion.div>
-            );
-          })}
+                </motion.article>
+              );
+            })}
         </div>
       </div>
     </section>
+    </>
   );
 }
 
@@ -215,7 +243,7 @@ function WhyJoinUs({ whyJoin }) {
   );
 }
 
-function CareersCTA({ cta, heroImage }) {
+function CareersCTA({ cta, heroImage, hasOpenPositions }) {
   const reduced = useReducedMotion();
   const primaryHref = cta?.primaryCtaLink || "/contact";
   const secondaryHref = cta?.secondaryCtaLink || "#open-positions";
@@ -262,12 +290,14 @@ function CareersCTA({ cta, heroImage }) {
               >
                 {cta?.primaryCtaText} <ArrowRight className="h-4 w-4" aria-hidden />
               </Link>
-              <SecondaryTag
-                href={secondaryHref}
-                className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-10 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/18"
-              >
-                {cta?.secondaryCtaText}
-              </SecondaryTag>
+              {hasOpenPositions ? (
+                <SecondaryTag
+                  href={secondaryHref}
+                  className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-10 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/18"
+                >
+                  {cta?.secondaryCtaText}
+                </SecondaryTag>
+              ) : null}
             </div>
           </motion.div>
         </div>
@@ -291,9 +321,13 @@ export default function CareersPage({ content }) {
     <main className="min-h-screen bg-white">
       <CareersHero hero={content.hero} />
       <BuildingSmarterMobility building={content.building} />
-      <Opportunities opportunities={content.opportunities} />
+      <JobOpenings openPositions={content.openPositions} />
       <WhyJoinUs whyJoin={content.whyJoin} />
-      <CareersCTA cta={content.cta} heroImage={content.hero?.image} />
+      <CareersCTA
+        cta={content.cta}
+        heroImage={content.hero?.image}
+        hasOpenPositions={(content.openPositions?.posts?.length ?? 0) > 0}
+      />
     </main>
   );
 }
