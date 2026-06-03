@@ -251,8 +251,13 @@ export default function FAQCategorySection({ categories = [] }) {
                           const videos = collectVideos(item);
                           const folder = externalLink(item.videoFolderUrl);
                           if (videos.length === 0 && !folder) return null;
+                          // Single video → full width. Two or more → 2-up grid
+                          // (50% each on sm+, stacking on mobile).
+                          const multi = videos.length > 1;
                           return (
-                            <div className="mt-4 space-y-3">
+                            <div
+                              className={`mt-4 grid gap-3 ${multi ? "sm:grid-cols-2" : "grid-cols-1"}`}
+                            >
                               {videos.map((url, i) => {
                                 const fileSrc = directVideoSrc(url);
                                 const embed = fileSrc ? null : normalizeVideoUrl(url);
@@ -282,7 +287,7 @@ export default function FAQCategorySection({ categories = [] }) {
                                     href={url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="inline-flex items-center gap-2 rounded-full bg-[#EEF6FF] px-4 py-2 text-[0.82rem] font-semibold text-[#0088FF] transition hover:bg-[#DCEEFF]"
+                                    className="inline-flex items-center gap-2 self-start rounded-full bg-[#EEF6FF] px-4 py-2 text-[0.82rem] font-semibold text-[#0088FF] transition hover:bg-[#DCEEFF]"
                                   >
                                     <PlayCircle className="h-4 w-4" strokeWidth={2} aria-hidden />
                                     {videos.length > 1 ? `Watch video ${i + 1}` : "Open video tutorial"}
@@ -294,7 +299,7 @@ export default function FAQCategorySection({ categories = [] }) {
                                   href={folder}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-2 rounded-full bg-[#EEF6FF] px-4 py-2 text-[0.82rem] font-semibold text-[#0088FF] transition hover:bg-[#DCEEFF]"
+                                  className="inline-flex items-center gap-2 self-start rounded-full bg-[#EEF6FF] px-4 py-2 text-[0.82rem] font-semibold text-[#0088FF] transition hover:bg-[#DCEEFF]"
                                 >
                                   <PlayCircle className="h-4 w-4" strokeWidth={2} aria-hidden />
                                   Open video tutorials

@@ -7,10 +7,20 @@ import { motion, useReducedMotion } from "framer-motion";
 import {
   ArrowRight,
   Check,
+  Briefcase,
+  Headset,
+  Building2,
+  Sparkles,
 } from "lucide-react";
 import JobApplicationModal from "./JobApplicationModal";
 
 const ease = [0.22, 1, 0.36, 1];
+
+const opportunityIcons = {
+  Briefcase,
+  Headset,
+  Building2,
+};
 
 function CareersHero({ hero }) {
   return (
@@ -57,8 +67,7 @@ function BuildingSmarterMobility({ building }) {
         <div className="mx-auto max-w-[860px] text-center">
           <motion.div
             initial={reduced ? false : { opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.65, ease }}
           >
             <h2 className="text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-[1.08] tracking-[-0.05em] text-[#050A13]">
@@ -75,6 +84,62 @@ function BuildingSmarterMobility({ building }) {
               ))}
             </div>
           </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function OpportunitiesSection({ opportunities }) {
+  const reduced = useReducedMotion();
+  const items = Array.isArray(opportunities) ? opportunities : [];
+
+  if (items.length === 0) return null;
+
+  return (
+    <section className="bg-white py-16 sm:py-20 lg:py-24">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial={reduced ? false : { opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.65, ease }}
+          className="mx-auto mb-12 max-w-[780px] text-center"
+        >
+          <h2 className="text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-[1.08] tracking-[-0.05em] text-[#050A13]">
+            Opportunities with HalaPark
+          </h2>
+        </motion.div>
+
+        <div className="grid gap-6 md:grid-cols-3">
+          {items.map((item, i) => {
+            const Icon = opportunityIcons[item.icon] ?? Sparkles;
+            return (
+              <motion.article
+                key={`${item.title}-${i}`}
+                initial={reduced ? false : { opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, ease, delay: i * 0.08 }}
+                className="flex h-full flex-col rounded-[22px] border border-[#E7EAF0] bg-white p-7 shadow-[0_4px_24px_rgba(6,6,22,0.06)] transition hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(6,6,22,0.10)]"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-[14px] bg-[#EEF6FF]">
+                    <Icon className="h-6 w-6 text-[#0088FF]" strokeWidth={1.8} aria-hidden />
+                  </div>
+                  {item.badge ? (
+                    <span className="rounded-full bg-[#EEF6FF] px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-wider text-[#0088FF]">
+                      {item.badge}
+                    </span>
+                  ) : null}
+                </div>
+                <h3 className="mt-5 text-[1.1rem] font-semibold tracking-[-0.02em] text-[#050A13]">
+                  {item.title}
+                </h3>
+                <p className="mt-3 text-[0.9rem] leading-6 text-slate-500">
+                  {item.description}
+                </p>
+              </motion.article>
+            );
+          })}
         </div>
       </div>
     </section>
@@ -321,6 +386,7 @@ export default function CareersPage({ content }) {
     <main className="min-h-screen bg-white">
       <CareersHero hero={content.hero} />
       <BuildingSmarterMobility building={content.building} />
+      <OpportunitiesSection opportunities={content.opportunities} />
       <JobOpenings openPositions={content.openPositions} />
       <WhyJoinUs whyJoin={content.whyJoin} />
       <CareersCTA

@@ -17,10 +17,6 @@ export default function FAQHeroSection() {
           </div>
           <div className="relative flex min-h-[320px] w-full flex-col justify-center px-8 py-14 sm:px-12 md:min-h-[380px] lg:px-20">
             <div className="relative z-10 w-full max-w-xl">
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 backdrop-blur-sm">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#5BC4FF]" />
-                <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/80">Help Center</span>
-              </div>
               <h1 className="text-4xl font-semibold leading-[1.05] tracking-[-0.04em] text-white sm:text-5xl md:text-6xl">
                 Got Questions?{" "}
                 <span className="bg-gradient-to-r from-[#3AADFF] to-[#0088FF] bg-clip-text text-transparent">
