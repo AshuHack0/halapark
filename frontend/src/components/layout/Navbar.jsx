@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { servicesData } from "@/modules/home/servicesData";
+import SearchModal from "@/components/layout/SearchModal";
 
 const HamburgerIcon = () => (
   <svg
@@ -161,6 +162,7 @@ export default function Navbar() {
   const DROPDOWN_CLOSE_DELAY_MS = 220;
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const [language, setLanguage] = useState(getInitialLanguage);
@@ -170,7 +172,7 @@ export default function Navbar() {
   const servicesMenuRef = useRef(null);
   const servicesCloseTimerRef = useRef(null);
   const serviceLinks = servicesData.map((service) => ({
-    href: `/services/${service.slug}`,
+    href: `/services?open=${encodeURIComponent(service.slug)}`,
     label: isArabic ? (SERVICE_LABELS_AR[service.slug] || service.name) : service.name,
   }));
 
@@ -200,6 +202,18 @@ export default function Navbar() {
     window.addEventListener("hashchange", syncHash);
     return () => window.removeEventListener("hashchange", syncHash);
   }, [pathname]);
+
+  // ⌘K / Ctrl+K opens search
+  useEffect(() => {
+    const fn = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setSearchOpen((v) => !v);
+      }
+    };
+    document.addEventListener("keydown", fn);
+    return () => document.removeEventListener("keydown", fn);
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -420,6 +434,7 @@ export default function Navbar() {
               <button
                 type="button"
                 aria-label="Search"
+                onClick={() => setSearchOpen(true)}
                 className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 text-slate-700 hover:bg-slate-50"
               >
                 <SearchIcon />
@@ -482,6 +497,7 @@ export default function Navbar() {
             </div>
             <button
               type="button"
+              onClick={() => { setMenuOpen(false); setSearchOpen(true); }}
               className="w-full flex items-center gap-2 px-3 py-3 text-[1.03rem] font-medium text-gray-700 hover:text-[#0088FF] hover:bg-[rgba(0,136,255,0.08)] rounded-lg"
             >
               <SearchIcon />
@@ -567,6 +583,8 @@ export default function Navbar() {
 
       {/* Spacer for fixed navbar */}
       <div className="h-16 lg:h-[78px]" />
+
+      <SearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
     </>
   );
 }

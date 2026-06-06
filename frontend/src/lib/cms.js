@@ -140,6 +140,26 @@ export async function fetchHomeHeroSlides() {
   return DEFAULT_HOME_SLIDES;
 }
 
+// The home page has many CMS-editable sections; they each need its slice of
+// `sections`. Cache the in-flight fetch so one page load = one request,
+// regardless of how many sections ask for content.
+let _homeSectionsPromise = null;
+
+export function fetchHomeSections() {
+  if (!_homeSectionsPromise) {
+    _homeSectionsPromise = fetchPage("home")
+      .then((page) => page?.sections ?? {})
+      .catch(() => ({}));
+  }
+  return _homeSectionsPromise;
+}
+
+// Returns just one section's stored content (or null if absent).
+export async function fetchHomeSection(key) {
+  const sections = await fetchHomeSections();
+  return sections?.[key] ?? null;
+}
+
 export function mergeCareersContent(page) {
   if (!page?.sections) return null;
   return page.sections;

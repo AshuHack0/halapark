@@ -1,6 +1,7 @@
 import { RECAPTCHA_SECRET_KEY } from "@/config/recaptcha.secret";
 
-const BACKEND_URL = process.env.BACKEND_API_URL ?? "http://localhost:4000";
+const BACKEND_URL =
+  process.env.BACKEND_API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8087";
 
 export async function POST(request) {
   const secret = RECAPTCHA_SECRET_KEY;
@@ -51,7 +52,7 @@ export async function POST(request) {
   }
 
   try {
-    await fetch(`${BACKEND_URL}/api/quotes`, {
+    const backendRes = await fetch(`${BACKEND_URL}/api/quotes`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -59,14 +60,25 @@ export async function POST(request) {
         email: body.email,
         phone: body.phone,
         service: body.service,
-        tower: body.tower,
-        slots: body.slots,
-        message: body.message,
+        tower: body.tower || undefined,
+        slots: body.slots || undefined,
+        message: body.message || undefined,
         source: "website",
       }),
     });
+    if (!backendRes.ok) {
+      const data = await backendRes.json().catch(() => ({}));
+      return Response.json(
+        { error: data.error ?? "Failed to submit quote." },
+        { status: backendRes.status },
+      );
+    }
   } catch (err) {
     console.error("Failed to persist quote to backend:", err);
+    return Response.json(
+      { error: "Unable to reach the server. Please try again." },
+      { status: 502 },
+    );
   }
 
   return Response.json({ ok: true });

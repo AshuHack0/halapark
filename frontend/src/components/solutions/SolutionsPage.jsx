@@ -51,9 +51,9 @@ function NewHero() {
             <div className="absolute inset-0 bg-black/40" />
           </div>
 
-          <div className="relative flex min-h-[500px] w-full flex-col justify-center px-8 py-14 sm:px-12 md:min-h-[620px] lg:px-20">
+          <div className="relative flex min-h-[500px] w-full flex-col justify-center px-6 py-12 sm:px-12 sm:py-14 md:min-h-[620px] lg:px-20">
             <div className="relative z-10 w-full max-w-lg">
-              <h1 className="text-5xl font-semibold text-white sm:text-6xl md:text-7xl">
+              <h1 className="text-[clamp(2.2rem,6vw,4.5rem)] font-semibold leading-[1.05] text-white">
                 Intelligent Parking Infrastructure
               </h1>
               <p className="mt-5 max-w-sm text-sm leading-relaxed text-white/90 sm:text-base">

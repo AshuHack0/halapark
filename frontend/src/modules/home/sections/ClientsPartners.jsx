@@ -60,7 +60,7 @@ export default function ClientsPartners() {
               {tickerItems.map((name, index) => (
                 <div
                   key={`${name}-${index}`}
-                  className="flex min-w-[180px] items-center justify-center rounded-xl border border-dashed border-slate-300 bg-white/80 px-6 py-6 text-center text-sm font-medium text-slate-500 sm:min-w-[220px] sm:px-8 sm:text-base"
+                  className="flex min-w-[140px] items-center justify-center rounded-xl border border-dashed border-slate-300 bg-white/80 px-4 py-5 text-center text-[0.78rem] font-medium text-slate-500 sm:min-w-[200px] sm:px-7 sm:py-6 sm:text-sm"
                 >
                   {name}
                 </div>

@@ -41,26 +41,29 @@ export default function BusinessCTA() {
           </svg>
 
           <motion.div
-            initial={reduced ? false : { opacity: 0, y: 24 }}
+            initial={reduced ? false : { opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.65, ease }}
-            className="relative z-10 flex flex-col items-center px-6 py-16 text-center sm:px-10 sm:py-20 lg:py-24"
+            transition={{ duration: 0.55, ease }}
+            className="relative z-10 flex flex-col items-start gap-4 px-6 py-8 sm:flex-row sm:items-center sm:justify-between sm:px-10 sm:py-10"
           >
-            <h2 className="max-w-[720px] text-[clamp(2.65rem,4.5vw,4.2rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-white">
-              Start a Smart Parking Business with{" "}
-              <span className="bg-gradient-to-r from-[#3AADFF] to-[#0088FF] bg-clip-text text-transparent">
-                No Upfront Investment
-              </span>
-            </h2>
-            <p className="mt-5 max-w-[560px] text-[0.88rem] leading-6 text-white/65 sm:text-[0.94rem]">
-              Partner with HalaPark to launch intelligent parking solutions powered by automation, AI technology, and seamless digital operations.
-            </p>
-            <div className="mt-8">
-              <Link href="/contact" className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-6 py-2.5 text-sm font-medium text-white backdrop-blur-sm transition hover:bg-white/20">
-                Book a Free Consultation <ArrowRight className="h-4 w-4" aria-hidden />
-              </Link>
+            <div className="max-w-[580px]">
+              <h2 className="text-[1.35rem] font-semibold leading-snug tracking-[-0.03em] text-white sm:text-[1.6rem]">
+                Start a Smart Parking Business with{" "}
+                <span className="bg-gradient-to-r from-[#3AADFF] to-[#0088FF] bg-clip-text text-transparent">
+                  No Upfront Investment
+                </span>
+              </h2>
+              <p className="mt-1.5 text-[0.82rem] leading-5 text-white/60 sm:text-[0.88rem]">
+                Partner with HalaPark to launch intelligent parking solutions powered by automation, AI, and seamless digital operations.
+              </p>
             </div>
+            <Link
+              href="/contact"
+              className="shrink-0 inline-flex items-center gap-2 rounded-full bg-[#0088FF] px-6 py-2.5 text-sm font-semibold text-white shadow-[0_4px_20px_rgba(0,136,255,0.4)] transition hover:brightness-110"
+            >
+              Book a Free Consultation <ArrowRight className="h-4 w-4" aria-hidden />
+            </Link>
           </motion.div>
         </div>
       </div>

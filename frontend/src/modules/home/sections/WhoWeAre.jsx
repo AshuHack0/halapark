@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   motion,
   useMotionTemplate,
@@ -12,36 +12,11 @@ import {
 } from "framer-motion";
 import Image from "next/image";
 import { Building2, Layers, TrendingUp } from "lucide-react";
+import { DEFAULT_HOME_CONTENT, mergeHomeSection } from "@/lib/homeDefaults";
+import { fetchHomeSection } from "@/lib/cms";
 
-const headingText = "Who We Are";
-const audienceContent = {
-  business: {
-    heading: "Who We Are",
-    body: "HalaPark is a smart parking company transforming urban parking in the UAE. We deliver fast, seamless digital solutions that connect drivers, businesses, and property owners to improve efficiency, save time, and optimize space.",
-  },
-  users: {
-    heading: "Parking Made Simple for Users",
-    body: "We make parking fast and stress-free for everyday drivers. Users can instantly see available parking in real time, reserve and pay within seconds, and move through entry and exit without tickets, delays, or manual steps. With automated access and barrier-free systems, parking becomes fast, predictable, and effortless from start to finish.",
-  },
-};
-
-const highlights = [
-  {
-    icon: Layers,
-    title: "All-in-One Infrastructure",
-    description: "A fully unified ecosystem that seamlessly combines hardware, software, and operational workflows into one intelligent platform.",
-  },
-  {
-    icon: TrendingUp,
-    title: "Maximize Revenue & Utilization",
-    description: "Transform underutilized parking assets into optimized, data-driven revenue streams with measurable performance and efficiency.",
-  },
-  {
-    icon: Building2,
-    title: "Scalable by Design",
-    description: "Designed to support both single-site operations and large-scale enterprise parking networks with ease, flexibility, and reliability.",
-  },
-];
+// Map serializable icon names (stored in CMS) to lucide components.
+const whoWeAreIcons = { Layers, TrendingUp, Building2 };
 
 const springPop = { type: "spring", stiffness: 380, damping: 24, mass: 0.85 };
 const springSoft = { type: "spring", stiffness: 120, damping: 20 };
@@ -92,7 +67,18 @@ export default function WhoWeAre() {
   const prefersReducedMotion = useReducedMotion();
   const reduced = !!prefersReducedMotion;
   const [activeAudience, setActiveAudience] = useState("business");
-  const activeContent = audienceContent[activeAudience];
+  const [content, setContent] = useState(DEFAULT_HOME_CONTENT.whoWeAre);
+
+  useEffect(() => {
+    fetchHomeSection("whoWeAre").then((cms) => {
+      if (cms) setContent(mergeHomeSection("whoWeAre", cms));
+    });
+  }, []);
+
+  const headingText = content.eyebrowHeading;
+  const audienceContent = content.audiences;
+  const highlights = content.highlights ?? [];
+  const activeContent = audienceContent[activeAudience] ?? audienceContent.business;
 
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -443,7 +429,7 @@ export default function WhoWeAre() {
 
             <ul className="relative flex flex-col gap-4 sm:gap-5">
               {highlights.map((item, index) => {
-                const Icon = item.icon;
+                const Icon = whoWeAreIcons[item.icon] ?? Layers;
                 return (
                   <motion.li
                     key={item.title}

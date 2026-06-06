@@ -229,7 +229,7 @@ export default function FAQCategorySection({ categories = [] }) {
                     <button
                       type="button"
                       onClick={() => setOpenQuestionKey(isOpen ? null : key)}
-                      className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
+                      className="flex w-full items-center justify-between gap-3 px-4 py-4 text-left sm:gap-4 sm:px-6 sm:py-5"
                       aria-expanded={isOpen}
                       aria-controls={`${key}-content`}
                     >
@@ -243,7 +243,7 @@ export default function FAQCategorySection({ categories = [] }) {
                       </span>
                     </button>
                     {isOpen && (
-                      <div id={`${key}-content`} className="px-6 pb-5">
+                      <div id={`${key}-content`} className="px-4 pb-4 sm:px-6 sm:pb-5">
                         {item.answer && (
                           <p className="text-[0.88rem] leading-6 text-slate-500">{item.answer}</p>
                         )}

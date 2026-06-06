@@ -43,22 +43,40 @@ function FormField({
 }
 
 export default function ContactFormPanel() {
-  const [formData, setFormData] = useState(initialFormData);
+  const [formData, setFormData]     = useState(initialFormData);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitting, setSubmitting]  = useState(false);
+  const [formError, setFormError]    = useState("");
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-
+    setFormError("");
     setIsSubmitted(false);
-    setFormData((current) => ({
-      ...current,
-      [name]: value,
-    }));
+    setFormData((current) => ({ ...current, [name]: value }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    setIsSubmitted(true);
+    setFormError("");
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setFormError(data.error || "Something went wrong. Please try again.");
+        return;
+      }
+      setIsSubmitted(true);
+      setFormData(initialFormData);
+    } catch {
+      setFormError("Network error. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -161,27 +179,28 @@ export default function ContactFormPanel() {
           />
         </label>
 
-        <div className="flex flex-col gap-4 border-t border-slate-100 pt-6 sm:flex-row sm:items-center sm:justify-between">
-          <p className="max-w-md text-sm leading-6 text-slate-500">
-            This form UI is ready for backend integration whenever submission
-            handling is connected.
+        {formError ? (
+          <p className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+            {formError}
           </p>
-
-          <button
-            type="submit"
-            className="inline-flex items-center justify-center gap-2 rounded-full bg-[#0088FF] px-6 py-3.5 text-base font-semibold text-white transition hover:bg-[#0088FF]"
-          >
-            <Send className="h-4 w-4" />
-            Send Message
-          </button>
-        </div>
+        ) : null}
 
         {isSubmitted ? (
           <p className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700">
-            Thanks for reaching out. Your message has been captured in the UI
-            and can be connected to your API next.
+            ✓ Message sent! Our team will get back to you shortly.
           </p>
         ) : null}
+
+        <div className="flex flex-col gap-4 border-t border-slate-100 pt-6 sm:flex-row sm:items-center sm:justify-end">
+          <button
+            type="submit"
+            disabled={submitting}
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-[#0088FF] px-6 py-3.5 text-base font-semibold text-white transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            <Send className="h-4 w-4" />
+            {submitting ? "Sending…" : "Send Message"}
+          </button>
+        </div>
       </form>
     </div>
   );

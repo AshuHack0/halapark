@@ -299,6 +299,21 @@ function QuoteModal({ isOpen, onClose }) {
     setForm((p) => ({ ...p, [name]: type === "checkbox" ? checked : value }));
   };
 
+  // Phone field: only allow digits, +, spaces, hyphens, parentheses.
+  const onPhoneChange = (e) => {
+    const filtered = e.target.value.replace(/[^\d+\s\-().]/g, "");
+    setForm((p) => ({ ...p, phone: filtered }));
+  };
+
+  const validate = () => {
+    if (!form.fullName.trim()) return "Full name is required.";
+    if (!form.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) return "A valid email is required.";
+    if (!form.phone.trim()) return "Phone number is required.";
+    if (/[a-zA-Z]/.test(form.phone)) return "Phone number must not contain letters.";
+    if (!form.service) return "Please select a service.";
+    return null;
+  };
+
   const handleClose = () => {
     setForm(BLANK_FORM);
     setDone(false);
@@ -311,6 +326,9 @@ function QuoteModal({ isOpen, onClose }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormError("");
+
+    const validationError = validate();
+    if (validationError) { setFormError(validationError); return; }
 
     if (!RECAPTCHA_SITE_KEY) {
       setFormError("reCAPTCHA is not configured. Add your site key in src/config/recaptcha.site.js");
@@ -357,16 +375,14 @@ function QuoteModal({ isOpen, onClose }) {
         initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
         transition={{ duration: 0.22 }}
         className="fixed inset-0 z-[200] flex items-end justify-center sm:items-center sm:p-6"
-        onClick={handleClose}
       >
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={handleClose} />
         <motion.div
           key="quote-panel"
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 40 }}
           transition={{ duration: 0.3, ease }}
-          onClick={(e) => e.stopPropagation()}
           className="relative z-10 w-full max-h-[92dvh] overflow-y-auto overscroll-contain rounded-t-[26px] bg-white shadow-[0_-8px_40px_rgba(15,23,42,0.12),0_40px_100px_rgba(15,23,42,0.32)] [&::-webkit-scrollbar]:hidden sm:max-w-[560px] sm:rounded-[28px]"
         >
           {/* Drag handle — mobile only */}
@@ -411,14 +427,22 @@ function QuoteModal({ isOpen, onClose }) {
                     ))}
                   </div>
                   <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
-                    {[["email","Email Address","john@company.com","email",true],["phone","Phone Number","+971 50 000 0000","tel",true]].map(([name,label,ph,type,req]) => (
-                      <div key={name}>
-                        <label className="mb-1 block text-[11px] font-medium text-slate-700 sm:mb-1.5 sm:text-xs">{label}{req && <span className="ml-0.5 text-red-500">*</span>}</label>
-                        <input required={req} type={type} name={name} value={form[name]} onChange={onChange} placeholder={ph}
-                          className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#0088FF] focus:bg-white focus:ring-2 focus:ring-[rgba(0,136,255,0.12)] sm:rounded-xl sm:px-4 sm:py-2.5"
-                        />
-                      </div>
-                    ))}
+                    <div>
+                      <label className="mb-1 block text-[11px] font-medium text-slate-700 sm:mb-1.5 sm:text-xs">Email Address <span className="ml-0.5 text-red-500">*</span></label>
+                      <input required type="email" name="email" value={form.email} onChange={onChange} placeholder="john@company.com"
+                        className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#0088FF] focus:bg-white focus:ring-2 focus:ring-[rgba(0,136,255,0.12)] sm:rounded-xl sm:px-4 sm:py-2.5"
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-1 block text-[11px] font-medium text-slate-700 sm:mb-1.5 sm:text-xs">Phone Number <span className="ml-0.5 text-red-500">*</span></label>
+                      <input required type="tel" name="phone" value={form.phone} onChange={onPhoneChange}
+                        placeholder="+971 50 000 0000"
+                        inputMode="tel"
+                        pattern="[\d+\s\-().]+"
+                        title="Phone number must contain only digits, +, spaces, or hyphens"
+                        className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#0088FF] focus:bg-white focus:ring-2 focus:ring-[rgba(0,136,255,0.12)] sm:rounded-xl sm:px-4 sm:py-2.5"
+                      />
+                    </div>
                   </div>
                   <div>
                     <label className="mb-1 block text-[11px] font-medium text-slate-700 sm:mb-1.5 sm:text-xs">Select Service <span className="text-red-500">*</span></label>
@@ -1513,6 +1537,19 @@ function LongTermCTA({ onGetQuote }) {
 export default function ServicesListPage() {
   const [selectedService, setSelectedService] = useState(null);
   const [quoteOpen, setQuoteOpen]             = useState(false);
+
+  // Auto-open service modal when ?open=<slug> is in the URL.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const slug = params.get("open");
+    if (!slug) return;
+    const service = allServicesData.find((s) => s.slug === slug);
+    if (service) setSelectedService(service);
+    // Remove the query param from the URL without a page reload.
+    const url = new URL(window.location.href);
+    url.searchParams.delete("open");
+    window.history.replaceState({}, "", url.toString());
+  }, []);
 
   return (
     <>

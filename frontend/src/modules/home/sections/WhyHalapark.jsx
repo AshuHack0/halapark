@@ -12,137 +12,52 @@ import {
   ScanLine,
   Zap,
 } from "lucide-react";
+import { DEFAULT_HOME_CONTENT, mergeHomeSection } from "@/lib/homeDefaults";
+import { fetchHomeSection } from "@/lib/cms";
 
 const DESKTOP_NAV_OFFSET = 70;
 const DESKTOP_STEP_SCROLL_VH = 62;
 
-const whyItems = [
-  {
-    id: "01",
-    icon: Gauge,
-    title: "Smart & Seamless Experience",
-    subtitle:
-      " Easily find, book, and manage parking in just a few taps with a user-friendly platform.",
-    copy: "Convert underutilised parking into consistent, trackable income streams.",
-    image: "/Smart & Seamless Experience.jpeg",
-    accent: "#0088FF",
-    badge: "Live inventory",
-    stat: "500+",
-    statLabel: "properties tracked",
-    visualTitle: "See demand build before drivers even arrive onsite.",
-    chips: ["Live bays", "Booking windows", "Turnover alerts"],
-  },
-  {
-    id: "02",
-    icon: ScanLine,
-    title: "Cashless s Secure Payments",
-    subtitle:
-      "Enjoy a fully digital payment system that is fast, reliable, and safe for every transaction.",
-    copy: "Eliminate manual processes with automation across access, billing, and management.",
-    image: "/Cashless s Secure Payments.jpeg",
-    accent: "#0088FF",
-    badge: "Barrier ready",
-    stat: "< 3 sec",
-    statLabel: "entry validation",
-    visualTitle: "Access states update before the car reaches the barrier.",
-    chips: ["ANPR synced", "QR fallback", "Gate rules"],
-  },
-  {
-    id: "03",
-    icon: CircleDollarSign,
-    title: "Automated Smart Access",
-    subtitle:
-      " Benefit from advanced entry and exit systems powered by camera and barrier technology.",
-    copy: "Access real-time dashboards, reporting, and performance insights across all locations.",
-    image: "/hf_20260327_062407_6dca49c0-90dd-468a-96f9-b36bba13ea8b.png",
-    accent: "#14B8A6",
-    badge: "Revenue unlock",
-    stat: "4",
-    statLabel: "parking revenue modes",
-    visualTitle: "List and monetise idle parking supply from one control hub.",
-    chips: ["Hourly", "Monthly", "Private rental"],
-  },
-  {
-    id: "04",
-    icon: Clock3,
-    title: "Maximize Parking Value",
-    subtitle:
-      "Optimize space usage and generate additional revenue from underutilized parking areas.",
-    copy: "Deploy without replacing your existing systems, we enhance what you already have.",
-    image: "/Maximize Parking Value dekhna ye.jpeg",
-    accent: "#0088FF",
-    badge: "Premium arrival",
-    stat: "2 taps",
-    statLabel: "to reserve and extend",
-    visualTitle: "Guest arrivals stay smooth even when demand spikes fast.",
-    chips: ["Valet", "Pre-book", "Extend stay"],
-  },
-  {
-    id: "05",
-    icon: Clock3,
-    title: " AI-Driven Parking Intelligence",
-    subtitle:
-      "Leverage advanced AI technology for faster access, intelligent space allocation, automated operations, and a seamless parking experience for both users and operators.",
-    copy: "Deploy without replacing your existing systems, we enhance what you already have.",
-    image: "/AI-Driven Parking Intelligence.jpeg",
-    accent: "#0088FF",
-    badge: "Premium arrival",
-    stat: "2 taps",
-    statLabel: "to reserve and extend",
-    visualTitle: "Guest arrivals stay smooth even when demand spikes fast.",
-    chips: ["Valet", "Pre-book", "Extend stay"],
-  },
-  // {
-  //   id: "05",
-  //   icon: BarChart3,
-  //   copy: "Act on real-time payments, occupancy, and site performance from one operator dashboard.",
-  //   image: "/hf_20260327_064316_9c7b1a28-dbfa-456e-b88a-0087cb567a61.png",
-  //   accent: "#0F172A",
-  //   badge: "Operator view",
-  //   stat: "24/7",
-  //   statLabel: "reporting access",
-  //   visualTitle: "Teams, sites, and performance stay visible in one dashboard.",
-  //   chips: ["Payments", "Occupancy", "Alerts"],
-  // },
-  // {
-  //   id: "06",
-  //   icon: Zap,
-  //   copy: "Bundle EV-ready parking into the same booking journey so drivers can reserve, park, and charge seamlessly.",
-  //   image: "/hf_20260327_060926_cbb82448-441c-42ee-9589-785e7acd7565.png",
-  //   accent: "#22C55E",
-  //   badge: "EV-ready journey",
-  //   stat: "1 flow",
-  //   statLabel: "from booking to charging",
-  //   visualTitle: "Parking and charging stay connected in a single journey.",
-  //   chips: ["Charge-ready", "Unified checkout", "Driver guidance"],
-  // },
-];
+// Map serializable icon names (stored in CMS) to lucide components.
+const whyIcons = { Gauge, ScanLine, CircleDollarSign, Clock3, BarChart3, Zap };
 
 function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
 }
 
-function SectionIntro({ centered = false }) {
+function SectionIntro({ centered = false, heading = "Why Halapark", subtitle = "" }) {
+  // Render the first word plain and the remainder in the gradient accent,
+  // matching the original "Why <Halapark>" treatment.
+  const trimmed = (heading ?? "").trim();
+  const firstSpace = trimmed.indexOf(" ");
+  const leadWord = firstSpace === -1 ? trimmed : trimmed.slice(0, firstSpace);
+  const accentRest = firstSpace === -1 ? "" : trimmed.slice(firstSpace + 1);
+
   return (
     <div
       className={`flex flex-col ${centered ? "items-center text-center" : "items-start text-left"}`}
     >
       <div className="mx-auto max-w-[980px] text-center">
-      
+
 
         <h2
           id="ai-powered-parking-service-title"
           className="mx-auto mt-4 max-w-[940px] text-[clamp(3rem,5.4vw,4.85rem)] font-semibold leading-[0.98] tracking-[-0.07em] text-[#050A13]"
         >
-       
 
-          Why{" "}
-          <span className="bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">
-            Halapark
-          </span>
+
+          {leadWord}
+          {accentRest ? (
+            <>
+              {" "}
+              <span className="bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">
+                {accentRest}
+              </span>
+            </>
+          ) : null}
         </h2>
           <p className="mx-auto mt-3 max-w-[650px] text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem]">
-       Next-generation platform for intelligent parking solutions 
+       {subtitle}
         </p>
       </div>
 
@@ -157,7 +72,7 @@ function SectionIntro({ centered = false }) {
 }
 
 function FeatureVisual({ item, compact = false }) {
-  const Icon = item.icon;
+  const Icon = whyIcons[item.icon] ?? Gauge;
 
   return (
     <div
@@ -246,7 +161,15 @@ function FeatureVisual({ item, compact = false }) {
 }
 
 export default function WhyHalapark() {
-  const visibleWhyItems = whyItems.slice(0, 5);
+  const [content, setContent] = useState(DEFAULT_HOME_CONTENT.whyHalapark);
+
+  useEffect(() => {
+    fetchHomeSection("whyHalapark").then((cms) => {
+      if (cms) setContent(mergeHomeSection("whyHalapark", cms));
+    });
+  }, []);
+
+  const visibleWhyItems = (content.items ?? []).slice(0, 5);
   const trackRef = useRef(null);
   const lineFillRef = useRef(null);
   const frameRef = useRef(null);
@@ -319,13 +242,13 @@ export default function WhyHalapark() {
   return (
     <section className="bg-white py-10 sm:py-12 lg:py-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <SectionIntro />
+        <SectionIntro heading={content.heading} subtitle={content.subtitle} />
       </div>
       <div className="mx-auto mt-10 max-w-7xl px-4 sm:px-6 lg:px-8 lg:mt-12">
         <div className="lg:hidden">
           <div className="mt-10 grid gap-6">
             {visibleWhyItems.map((item) => {
-              const Icon = item.icon;
+              const Icon = whyIcons[item.icon] ?? Gauge;
 
               return (
                 <article
@@ -388,7 +311,7 @@ export default function WhyHalapark() {
 
                   <div className="space-y-1">
                     {visibleWhyItems.map((item, index) => {
-                      const Icon = item.icon;
+                      const Icon = whyIcons[item.icon] ?? Gauge;
                       const isActive = index === activeIndex;
                       const isComplete = index < activeIndex;
 

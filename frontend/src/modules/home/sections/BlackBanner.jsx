@@ -67,7 +67,7 @@ export default function BlackBanner() {
 
               <div className="relative z-10 grid flex-1 gap-10 sm:gap-12 lg:grid-cols-12 lg:items-center">
                 <div className="lg:col-span-8">
-                  <h2 className="max-w-[14ch] text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-white">
+                  <h2 className="max-w-[16ch] text-[clamp(2rem,4.5vw,4rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-white">
                     {featureCard.title}
                   </h2>
 

@@ -145,12 +145,12 @@ export default function HalaParkInAction() {
           <div className="grid items-center gap-6 lg:items-end lg:min-h-[390px] lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
             <motion.div
               variants={prefersReducedMotion ? undefined : copyStackVariants}
-              className="flex h-full flex-col justify-between px-8 pb-7 pt-7 sm:px-12 md:px-14 lg:py-[40px] lg:pl-[58px] lg:pr-6"
+              className="flex h-full flex-col justify-between px-5 pb-6 pt-6 sm:px-10 md:px-14 lg:py-[40px] lg:pl-[58px] lg:pr-6"
             >
               <div className="max-w-[560px]">
                 <motion.h1
                   variants={prefersReducedMotion ? undefined : copyItemVariants}
-                  className="max-w-[560px] text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]"
+                  className="max-w-[560px] text-[clamp(2rem,4.5vw,4rem)] font-semibold leading-[1.05] tracking-[-0.06em] text-[#050A13]"
                 >
                  Next-Gen Parking at Your Fingertips
                 </motion.h1>

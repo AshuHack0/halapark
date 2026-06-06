@@ -118,16 +118,14 @@ export default function JobApplicationModal({ isOpen, onClose, job }) {
         exit={{ opacity: 0 }}
         transition={{ duration: 0.22 }}
         className="fixed inset-0 z-[200] flex items-end justify-center sm:items-center sm:p-6"
-        onClick={handleClose}
       >
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={handleClose} />
         <motion.div
           key="job-apply-panel"
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 40 }}
           transition={{ duration: 0.3, ease }}
-          onClick={(e) => e.stopPropagation()}
           className="relative z-10 max-h-[92dvh] w-full overflow-y-auto overscroll-contain rounded-t-[26px] bg-white shadow-[0_-8px_40px_rgba(15,23,42,0.12),0_40px_100px_rgba(15,23,42,0.32)] [&::-webkit-scrollbar]:hidden sm:max-w-[560px] sm:rounded-[28px]"
         >
           <div className="sticky top-0 z-20 flex justify-center bg-white pt-3 pb-1 sm:hidden">
