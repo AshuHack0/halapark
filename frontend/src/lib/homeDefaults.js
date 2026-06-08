@@ -97,6 +97,107 @@ export const DEFAULT_HOME_CONTENT = {
       },
     ],
   },
+
+  aiPoweredParkingService: {
+    cards: [
+      {
+        title: "For User",
+        ctaLabel: "View for Customer",
+        audienceTag: "APP EXPERIENCE",
+        description: "Intelligent automation helps you find and access available parking faster, reducing wait time and making every journey smooth and stress-free.",
+        href: "/app",
+      },
+      {
+        title: "For Businesses /\nProperty owners",
+        ctaLabel: "View for Business",
+        audienceTag: "BUSINESS SUITE",
+        description: "Advanced automation streamlines parking management, improves space utilization, and delivers real-time insights to increase efficiency and revenue.",
+        href: "/business",
+      },
+    ],
+  },
+
+  howItWorksDemoSection: {
+    heading: "How It Works",
+    subtitle: "The Power of Smart Parking",
+    videoUrl: "",
+    steps: [
+      { title: "Find", description: "Discover available parking spaces in real-time." },
+      { title: "Book", description: "Reserve your spot instantly." },
+      { title: "Park", description: "Enjoy seamless access and hassle-free parking." },
+    ],
+    ctaLabel: "Explore More",
+    ctaHref: "/services",
+  },
+
+  blackBanner: {
+    title: "Ready to Transform Your Parking?",
+    description: "Join thousands of users and businesses already experiencing smarter parking with HalaPark.",
+    ctas: [
+      { label: "Get Started", href: "/contact" },
+      { label: "View Solutions", href: "/services" },
+    ],
+  },
+
+  goodLookingServicesSection: {
+    integrations: [
+      { name: "Self-Parking", backgroundColor: "#0088FF" },
+      { name: "Valet Service", backgroundColor: "#00D084" },
+      { name: "EV Charging", backgroundColor: "#FF6B35" },
+      { name: "VIP Parking", backgroundColor: "#9D4EDD" },
+      { name: "Fleet Solutions", backgroundColor: "#3A86FF" },
+      { name: "Barrier-Free", backgroundColor: "#FB5607" },
+    ],
+  },
+
+  solutionIntegration: {
+    heading: "Integrated Solutions",
+    subtitle: "Everything You Need",
+    cards: [
+      { title: "Mobile Platform", description: "User-friendly apps and interfaces." },
+      { title: "Smart Infrastructure", description: "Advanced technology for automated access." },
+      { title: "Real-Time Analytics", description: "Data-driven insights to optimize operations." },
+      { title: "Secure Payments", description: "Seamless, secure transactions." },
+      { title: "Integration APIs", description: "Connect with your existing systems." },
+      { title: "24/7 Support", description: "Dedicated support team." },
+    ],
+  },
+
+  technologySection: {
+    heading: "Technology",
+    subtitle: "Built for the Future",
+  },
+
+  clientsPartners: {
+    heading: "Trusted by Leading Brands",
+    logoPlaceholders: Array(8).fill({ name: "Partner Logo" }),
+  },
+
+  globalMobilityNetworkSection: {
+    heading: "Global Mobility Network",
+    subtitle: "Connecting Smart Parking Worldwide",
+    capabilities: [
+      { icon: "Globe", title: "Worldwide Coverage", description: "Operating across multiple regions." },
+      { icon: "Zap", title: "Real-Time Intelligence", description: "Connected systems delivering insights." },
+      { icon: "Shield", title: "Enterprise Security", description: "Bank-level security." },
+    ],
+    stats: [
+      { number: "50+", label: "Parking Locations" },
+      { number: "100K+", label: "Active Users" },
+      { number: "99.9%", label: "Uptime" },
+      { number: "24/7", label: "Support Available" },
+    ],
+  },
+
+  halaParkInAction: {
+    heading: "HalaPark In Action",
+    subtitle: "See It Live",
+    storeLinks: [
+      { name: "Apple App Store", url: "https://apps.apple.com/us/app/halapark-all-about-parking/id1590800416" },
+      { name: "Google Play Store", url: "https://play.google.com/store/apps/details?id=com.app.halapark&pli=1" },
+      { name: "Web Platform", url: "https://halapark.com" },
+    ],
+  },
 };
 
 // Shallow-merge a CMS section over its default so missing keys fall back.

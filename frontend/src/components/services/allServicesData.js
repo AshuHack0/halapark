@@ -22,7 +22,7 @@ export const allServicesData = [
     mediaType: "image",
     mediaSrc: "/tenantsharing.jpeg",
     fullDesc:
-      "Turn your unused parking space into extra income with HalaPark's Tenant Sharing Slot feature. If you're away or not using your slot, simply share it with the public through your account in the HalaPark app and start earning effortlessly.",
+      "Turn unused or underutilized parking spaces into a new income stream through revenue-sharing programs.",
     whatsIncluded: [
       "Easy parking slot sharing through the app",
       "Real-time booking and availability management",

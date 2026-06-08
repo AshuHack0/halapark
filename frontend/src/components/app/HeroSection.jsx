@@ -61,7 +61,7 @@ function CityBackdrop() {
 
 function StatStrip() {
   return (
-    <div className="mt-7 w-full max-w-[620px] rounded-[24px] bg-white/92 px-4 py-3.5 shadow-[0_14px_38px_rgba(15,23,42,0.08)] backdrop-blur sm:px-5 lg:absolute lg:bottom-8 lg:left-8 lg:mt-0">
+    <div className="mt-7 w-full max-w-[620px] rounded-[24px] bg-white/92 px-4 py-3.5 shadow-[0_14px_38px_rgba(15,23,42,0.08)] backdrop-blur sm:px-5 lg:absolute lg:bottom-8 lg:left-8 lg:z-[99] lg:mt-0">
       <div className="grid gap-4 sm:grid-cols-3 sm:divide-x sm:divide-[#E4EAF2]">
         {stats.map((item) => {
           const Icon = item.icon;
@@ -106,7 +106,7 @@ function HeroPhone() {
         repeat: Number.POSITIVE_INFINITY,
         ease: "easeInOut",
       }}
-      className="relative z-20 w-[235px] rotate-[8deg] sm:w-[290px] lg:w-[340px] xl:w-[365px]"
+      className="relative z-20 w-[160px] rotate-[8deg] sm:w-[220px] md:w-[260px] lg:w-[290px] xl:w-[320px]"
     >
       <div className="absolute inset-x-[16%] bottom-2 h-14 rounded-full bg-[#0F172A]/18 blur-[24px]" />
       <div className="relative isolate aspect-[1439/2920] drop-shadow-[0_30px_58px_rgba(5,10,19,0.28)]">
@@ -237,10 +237,10 @@ export default function HeroSection() {
   const prefersReducedMotion = useReducedMotion();
 
   return (
-    <section className="relative overflow-hidden bg-[linear-gradient(118deg,#FFFFFF_0%,#F8FBFF_42%,#EAF3FF_100%)]">
+    <section className="relative overflow-visible bg-[linear-gradient(118deg,#FFFFFF_0%,#F8FBFF_42%,#EAF3FF_100%)]">
       <CityBackdrop />
 
-      <div className="relative mx-auto grid min-h-[640px] max-w-7xl items-center gap-8 px-4 pb-8 pt-10 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8 lg:pb-28 lg:pt-12 xl:min-h-[690px]">
+      <div className="relative mx-auto grid min-h-screen max-w-7xl items-center gap-8 px-4 pb-8 pt-10 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8 lg:pb-28 lg:pt-12">
         <motion.div
           initial={prefersReducedMotion ? false : { opacity: 0, x: -24 }}
           animate={prefersReducedMotion ? undefined : { opacity: 1, x: 0 }}

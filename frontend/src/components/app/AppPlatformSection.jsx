@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 
@@ -175,7 +176,7 @@ function SectionHeading({ brand, suffix }) {
 
 function PhonePreview({ screen = "/Booking.png", alt = "HalaPark app screen" }) {
   return (
-    <div className="relative mx-auto w-[205px] sm:w-[240px] lg:w-[260px]">
+    <div className="relative mx-auto w-[205px] sm:w-[240px] lg:w-[260px] ">
       <div className="absolute inset-x-[18%] bottom-3 h-10 rounded-full bg-[#0F172A]/14 blur-[26px]" />
 
       <div className="relative isolate aspect-[1439/2920] drop-shadow-[0_28px_58px_rgba(15,23,42,0.18)]">
@@ -300,8 +301,8 @@ export default function AppPlatformSection() {
   const prefersReducedMotion = useReducedMotion();
 
   return (
-    <section className="bg-white px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
-      <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-2 lg:gap-10">
+    <section className="bg-white px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20 z-[99]">
+      <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-2 lg:gap-10 z-[99]">
         <motion.article
           initial={prefersReducedMotion ? false : { opacity: 0, y: 24 }}
           whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
@@ -309,7 +310,7 @@ export default function AppPlatformSection() {
           transition={{ duration: 0.55, ease: "easeOut" }}
           className="relative overflow-hidden rounded-[28px] border border-[#E4EAF2] bg-[linear-gradient(135deg,#FFFFFF_0%,#F8FBFF_52%,#EEF6FF_100%)] p-6 shadow-[0_18px_46px_rgba(15,23,42,0.06)] sm:p-10"
         >
-          <div className="grid items-center gap-8 md:grid-cols-[1.05fr_0.95fr]">
+          <div className="grid items-center gap-8 md:grid-cols-[1.05fr_0.95fr] z-[99]">
             <div>
               <SectionHeading brand="Halapark" suffix="Online App" />
 
@@ -328,8 +329,10 @@ export default function AppPlatformSection() {
                 ))}
               </ul>
 
-              <button
-                type="button"
+              <Link
+                href="https://apps.apple.com/us/app/halapark-all-about-parking/id1590800416"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="mt-9 inline-flex items-center gap-3 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-[0_14px_28px_rgba(0,136,255,0.24)] transition hover:brightness-95"
                 style={{ backgroundColor: ACCENT }}
               >
@@ -343,7 +346,7 @@ export default function AppPlatformSection() {
                   />
                 </svg>
                 Download Now
-              </button>
+              </Link>
             </div>
 
             <div className="relative flex min-h-[360px] items-center justify-center sm:min-h-[420px]">
@@ -408,12 +411,14 @@ export default function AppPlatformSection() {
                 ))}
               </ul>
 
-              <button
-                type="button"
+              <Link
+                href="https://halapark.com/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="mt-9 inline-flex items-center gap-3 rounded-full border-2 px-6 py-2.5 text-sm font-semibold transition hover:bg-[#E8EFFF]"
                 style={{ borderColor: ACCENT, color: NAVY }}
               >
-                Log In
+                Visit Website
                 <span
                   className="flex h-7 w-7 items-center justify-center rounded-full"
                   style={{ backgroundColor: ACCENT }}
@@ -428,7 +433,7 @@ export default function AppPlatformSection() {
                     />
                   </svg>
                 </span>
-              </button>
+              </Link>
             </div>
 
             <div className="relative flex min-h-[360px] items-center justify-center sm:min-h-[420px]">

@@ -96,17 +96,6 @@ export default function ContactFormPanel() {
         </p>
       </div>
 
-      <div className="mt-6 flex flex-wrap gap-2">
-        {contactSubjects.map((subject) => (
-          <span
-            key={subject}
-            className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm font-medium text-slate-600"
-          >
-            {subject}
-          </span>
-        ))}
-      </div>
-
       <form onSubmit={handleSubmit} className="mt-8 space-y-5">
         <div className="grid gap-5 md:grid-cols-2">
           <FormField
@@ -195,7 +184,7 @@ export default function ContactFormPanel() {
           <button
             type="submit"
             disabled={submitting}
-            className="inline-flex items-center justify-center gap-2 rounded-full bg-[#0088FF] px-6 py-3.5 text-base font-semibold text-white transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-full bg-[#0088FF] px-6 py-3.5 text-base font-semibold text-white transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
           >
             <Send className="h-4 w-4" />
             {submitting ? "Sending…" : "Send Message"}

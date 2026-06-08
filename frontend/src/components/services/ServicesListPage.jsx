@@ -18,7 +18,7 @@ import {
 } from "framer-motion";
 import {
   X, ArrowUpRight, Check, Shield, Camera, BadgeCheck,
-  CreditCard, Lock, ChevronRight, MapPin, Clock, ParkingCircle, ArrowRight, Zap,
+  CreditCard, Lock, ChevronRight, ChevronDown, MapPin, Clock, ParkingCircle, ArrowRight, Zap, Search,
 } from "lucide-react";
 import { allServicesData, serviceNames } from "./allServicesData";
 import GoodLookingServiceHero from "./GoodLookingServiceHero";
@@ -279,7 +279,13 @@ function QuoteModal({ isOpen, onClose }) {
   const [done, setDone] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState("");
+  const [serviceSearch, setServiceSearch] = useState("");
+  const [serviceOpen, setServiceOpen] = useState(false);
   const recaptchaRef = useRef(null);
+
+  const filteredServices = serviceNames.filter((s) =>
+    s.toLowerCase().includes(serviceSearch.toLowerCase())
+  );
 
   useLayoutEffect(() => {
     if (!isOpen) return;
@@ -446,12 +452,54 @@ function QuoteModal({ isOpen, onClose }) {
                   </div>
                   <div>
                     <label className="mb-1 block text-[11px] font-medium text-slate-700 sm:mb-1.5 sm:text-xs">Select Service <span className="text-red-500">*</span></label>
-                    <select required name="service" value={form.service} onChange={onChange}
-                      className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-[#0088FF] focus:bg-white focus:ring-2 focus:ring-[rgba(0,136,255,0.12)] sm:rounded-xl sm:px-4 sm:py-2.5"
-                    >
-                      <option value="">Choose a service…</option>
-                      {serviceNames.map((n) => <option key={n} value={n}>{n}</option>)}
-                    </select>
+                    <div className="relative">
+                      <button
+                        type="button"
+                        onClick={() => setServiceOpen(!serviceOpen)}
+                        className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-left text-sm text-slate-900 outline-none transition focus:border-[#0088FF] focus:bg-white focus:ring-2 focus:ring-[rgba(0,136,255,0.12)] sm:rounded-xl sm:px-4 sm:py-2.5 flex items-center justify-between"
+                      >
+                        <span className={form.service ? "text-slate-900" : "text-slate-400"}>
+                          {form.service || "Choose a service…"}
+                        </span>
+                        <ChevronDown className={`h-4 w-4 transition-transform ${serviceOpen ? "rotate-180" : ""}`} />
+                      </button>
+
+                      {serviceOpen && (
+                        <div className="absolute z-50 mt-1 w-full rounded-lg border border-slate-200 bg-white shadow-lg">
+                          <input
+                            type="text"
+                            placeholder="Search services…"
+                            value={serviceSearch}
+                            onChange={(e) => setServiceSearch(e.target.value)}
+                            autoFocus
+                            className="w-full rounded-t-lg border-b border-slate-200 px-3 py-2 text-sm outline-none focus:ring-0 sm:px-4 sm:py-2.5"
+                          />
+                          <ul className="max-h-48 overflow-y-auto">
+                            {filteredServices.length === 0 ? (
+                              <li className="px-3 py-2 text-sm text-slate-400 sm:px-4">No services found</li>
+                            ) : (
+                              filteredServices.map((service) => (
+                                <li key={service}>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setForm((p) => ({ ...p, service }));
+                                      setServiceOpen(false);
+                                      setServiceSearch("");
+                                    }}
+                                    className={`w-full px-3 py-2 text-left text-sm transition hover:bg-slate-100 sm:px-4 sm:py-2.5 ${
+                                      form.service === service ? "bg-[#0088FF] text-white hover:bg-[#0088FF]" : "text-slate-700"
+                                    }`}
+                                  >
+                                    {service}
+                                  </button>
+                                </li>
+                              ))
+                            )}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
                   </div>
                   <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
                     <div>

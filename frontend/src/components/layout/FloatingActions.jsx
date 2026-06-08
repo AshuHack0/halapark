@@ -103,9 +103,10 @@ export default function FloatingActions() {
         <PayIcon />
       </FloatingIconButton>
       <FloatingIconButton
-        href="/app"
+        href="https://apps.apple.com/us/app/halapark-all-about-parking/id1590800416"
         label="Download App"
         prominent
+        external
         animationClass="motion-safe:animate-[floatButton_3.6s_ease-in-out_infinite,softPulse_2.4s_ease-in-out_infinite]"
         className="border-[#0088FF] bg-[linear-gradient(165deg,#0A97FF_0%,#0088FF_50%,#006FD2_100%)] text-white shadow-[0_16px_34px_rgba(0,136,255,0.45)] hover:shadow-[0_20px_42px_rgba(0,136,255,0.52)] active:scale-[0.98]"
       >

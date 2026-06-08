@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { motion } from "framer-motion";
 import {
   BadgePercent,
   BellRing,
@@ -128,6 +129,7 @@ function collectVideos(item) {
 
 export default function FAQCategorySection({ categories = [] }) {
   const [activeCategoryId, setActiveCategoryId] = useState(categories[0]?.id);
+  const [searchQuery, setSearchQuery] = useState("");
   const makeKey = (catId, itemId) => `${catId}::${itemId}`;
   const [openQuestionKey, setOpenQuestionKey] = useState(
     categories[0] ? makeKey(categories[0].id, categories[0].items?.[0]?.id ?? "") : null
@@ -137,6 +139,22 @@ export default function FAQCategorySection({ categories = [] }) {
     () => categories.find((c) => c.id === activeCategoryId),
     [activeCategoryId, categories]
   );
+
+  // Filter categories and items based on search query
+  const filteredCategories = useMemo(() => {
+    if (!searchQuery.trim()) return categories;
+    const query = searchQuery.toLowerCase();
+    return categories
+      .map((cat) => ({
+        ...cat,
+        items: (cat.items || []).filter(
+          (item) =>
+            item.question?.toLowerCase().includes(query) ||
+            item.answer?.toLowerCase().includes(query)
+        ),
+      }))
+      .filter((cat) => cat.items.length > 0);
+  }, [categories, searchQuery]);
 
   const handleCategoryClick = (category) => {
     setActiveCategoryId(category.id);
@@ -156,11 +174,35 @@ export default function FAQCategorySection({ categories = [] }) {
             </span>
           </h2>
           <p className="mx-auto mt-4 max-w-[560px] text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem]">
-            Browse by category to find quick answers, or scroll through all topics below.
+            Browse by category to find quick answers, or search below.
           </p>
+
+          {/* Search input */}
+          <div className="mt-8">
+            <input
+              type="text"
+              placeholder="Search FAQs..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="mx-auto block w-full max-w-md rounded-full border border-[#E7EAF0] bg-white px-5 py-3 text-sm placeholder-slate-400 outline-none transition focus:border-[#0088FF] focus:ring-2 focus:ring-[#0088FF]/20"
+              aria-label="Search FAQs"
+            />
+          </div>
         </div>
 
-        {categories.length === 0 ? (
+        {categories.length === 0 || (searchQuery && filteredCategories.length === 0) ? (
+          <div className="mx-auto max-w-3xl rounded-[20px] border border-[#E7EAF0] bg-[#F8FBFF] px-6 py-8 text-center">
+            {categories.length === 0 ? (
+              <p className="text-sm text-slate-500">
+                No FAQs configured yet. Add <code className="text-xs">sections.faqCategories</code> from admin panel for the FAQs page.
+              </p>
+            ) : (
+              <p className="text-sm text-slate-500">
+                No FAQs match your search. Try a different query.
+              </p>
+            )}
+          </div>
+        ) : categories.length === 0 ? (
           <div className="mx-auto max-w-3xl rounded-[20px] border border-[#E7EAF0] bg-[#F8FBFF] px-6 py-8 text-center">
             <p className="text-sm text-slate-500">
               No FAQs configured yet. Add <code className="text-xs">sections.faqCategories</code> from admin panel for the FAQs page.
@@ -174,7 +216,7 @@ export default function FAQCategorySection({ categories = [] }) {
             <div className="rounded-[20px] border border-[#E7EAF0] bg-white p-3 shadow-[0_4px_24px_rgba(6,6,22,0.05)]">
               <p className="mb-2 px-3 pt-1 text-[0.7rem] font-bold uppercase tracking-[0.18em] text-slate-400">Categories</p>
               <ul className="space-y-0.5">
-                {categories.map((category) => {
+                {filteredCategories.map((category) => {
                   const Icon = iconMap[category.icon] ?? Building2;
                   const isActive = category.id === activeCategoryId;
                   return (
@@ -242,8 +284,15 @@ export default function FAQCategorySection({ categories = [] }) {
                         <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} strokeWidth={2.5} aria-hidden />
                       </span>
                     </button>
-                    {isOpen && (
-                      <div id={`${key}-content`} className="px-4 pb-4 sm:px-6 sm:pb-5">
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: isOpen ? "auto" : 0, opacity: isOpen ? 1 : 0 }}
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                      overflow="hidden"
+                      id={`${key}-content`}
+                      className="overflow-hidden"
+                    >
+                      <div className="px-4 pb-4 sm:px-6 sm:pb-5">
                         {item.answer && (
                           <p className="text-[0.88rem] leading-6 text-slate-500">{item.answer}</p>
                         )}
@@ -309,7 +358,7 @@ export default function FAQCategorySection({ categories = [] }) {
                           );
                         })()}
                       </div>
-                    )}
+                    </motion.div>
                   </div>
                 );
               })}
