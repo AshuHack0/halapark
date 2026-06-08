@@ -184,3 +184,28 @@ export async function fetchAboutContent() {
   });
   return content;
 }
+
+let _businessSectionsPromise = null;
+
+function fetchBusinessSections() {
+  if (!_businessSectionsPromise) {
+    _businessSectionsPromise = fetchPage("business")
+      .then((page) => page?.sections ?? {})
+      .catch(() => ({}));
+  }
+  return _businessSectionsPromise;
+}
+
+export async function fetchBusinessContent() {
+  const sections = await fetchBusinessSections();
+  cmsLog("fetchBusinessContent", {
+    source: Object.keys(sections).length > 0 ? "api" : "none",
+    sections: Object.keys(sections),
+  });
+  return sections;
+}
+
+export async function fetchBusinessSection(key) {
+  const sections = await fetchBusinessSections();
+  return sections?.[key] ?? null;
+}

@@ -3,10 +3,12 @@
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
+import { useEffect, useState } from "react";
+import { fetchBusinessContent } from "@/lib/cms";
 
 const ease = [0.22, 1, 0.36, 1];
 
-const solutions = [
+const DEFAULT_SOLUTIONS = [
   {
     title: "Smart Public Parking",
     description: "Modernize public parking operations with mobile payments, virtual tickets, real-time availability tracking, and seamless digital parking experiences.",
@@ -83,6 +85,15 @@ const solutions = [
 
 export default function BusinessSolutions() {
   const reduced = useReducedMotion();
+  const [solutions, setSolutions] = useState(DEFAULT_SOLUTIONS);
+
+  useEffect(() => {
+    fetchBusinessContent().then((content) => {
+      if (content?.solutions && Array.isArray(content.solutions)) {
+        setSolutions(content.solutions);
+      }
+    });
+  }, []);
 
   return (
     <section className="bg-gradient-to-b from-white via-[#F8FAFC] to-white py-16 sm:py-20 lg:py-24">
