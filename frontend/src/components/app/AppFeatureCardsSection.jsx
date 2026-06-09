@@ -2,7 +2,6 @@
 
 import { motion, useReducedMotion } from "framer-motion";
 import {
-  ArrowRight,
   BarChart3,
   Check,
   CreditCard,
@@ -209,14 +208,6 @@ export default function AppFeatureCardsSection() {
                 </p>
 
                 <FeaturePreview type={item.preview} />
-
-                <button
-                  type="button"
-                  className="mt-5 inline-flex items-center gap-3 text-sm font-semibold text-[#0088FF] transition hover:text-[#006EDC]"
-                >
-                  Learn more
-                  <ArrowRight aria-hidden="true" className="h-4 w-4" />
-                </button>
               </motion.article>
             );
           })}

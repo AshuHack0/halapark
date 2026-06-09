@@ -386,8 +386,8 @@ export default function CareersPage({ content }) {
     <main className="min-h-screen bg-white">
       <CareersHero hero={content.hero} />
       <BuildingSmarterMobility building={content.building} />
-      <OpportunitiesSection opportunities={content.opportunities} />
       <JobOpenings openPositions={content.openPositions} />
+      <OpportunitiesSection opportunities={content.opportunities} />
       <WhyJoinUs whyJoin={content.whyJoin} />
       <CareersCTA
         cta={content.cta}
