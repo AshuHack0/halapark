@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 
@@ -26,19 +27,22 @@ export default function AppAiPromoSection() {
           </p>
 
           <div className="mt-8 flex items-center gap-5">
-            <button
-              type="button"
-              className="rounded-full bg-[#0088FF] px-7 py-3 text-sm font-semibold text-white transition hover:bg-[#0F62C7]"
-            >
-              Get the App →
-            </button>
-            <button
-              type="button"
-              className="text-sm font-semibold text-[#CFE3FF] transition hover:text-white"
-            >
-            More
-  
-            </button>
+            <a href="https://apps.apple.com" target="_blank" rel="noopener noreferrer">
+              <button
+                type="button"
+                className="rounded-full bg-[#0088FF] px-7 py-3 text-sm font-semibold text-white transition hover:bg-[#0F62C7]"
+              >
+                Get the App →
+              </button>
+            </a>
+            <Link href="/app">
+              <button
+                type="button"
+                className="text-sm font-semibold text-[#CFE3FF] transition hover:text-white"
+              >
+                More
+              </button>
+            </Link>
           </div>
 
           <div className="mt-10 flex items-center gap-10">

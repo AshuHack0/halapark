@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { ClipboardCheck, PhoneCall, Rocket, Wrench } from "lucide-react";
 
@@ -41,13 +42,15 @@ export default function BusinessHowToGetStarted() {
               How to Get Started
             </h2>
 
-            <motion.button
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              className="mt-8 rounded-full bg-[#0088FF] px-7 py-3 text-base font-medium text-white transition-colors hover:brightness-95"
-            >
-              Book a Consultation
-            </motion.button>
+            <Link href="/contact">
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                className="mt-8 rounded-full bg-[#0088FF] px-7 py-3 text-base font-medium text-white transition-colors hover:brightness-95"
+              >
+                Book a Consultation
+              </motion.button>
+            </Link>
           </div>
 
           <div className="relative mt-10 lg:mt-0">

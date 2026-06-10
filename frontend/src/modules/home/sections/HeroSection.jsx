@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { DEFAULT_HOME_SLIDES, fetchHomeHeroSlides } from "@/lib/cms";
 
@@ -153,9 +154,11 @@ export default function HeroSection() {
                 {currentSlide.title}
               </p>
 
-              <button className="mt-7 bg-[#0088FF] px-10 rounded-full py-3 text-white font-medium text-sm sm:text-base">
-                Get In Touch
-              </button>
+              <Link href="/contact">
+                <button className="mt-7 bg-[#0088FF] px-10 rounded-full py-3 text-white font-medium text-sm sm:text-base">
+                  Get In Touch
+                </button>
+              </Link>
 
               <div className="mt-8 flex items-center gap-2">
                 {visibleSlides.map((slide, index) => (

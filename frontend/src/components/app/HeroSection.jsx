@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import {
@@ -260,18 +261,20 @@ export default function HeroSection() {
             seamless app experience.
           </p>
 
-          <button
-            type="button"
-            className="mt-7 inline-flex w-full max-w-[295px] items-center justify-between rounded-2xl bg-[#005BFF] px-4 py-3.5 text-base font-semibold text-white shadow-[0_16px_34px_rgba(0,91,255,0.28)] transition hover:brightness-95 sm:px-5"
-          >
-            <span className="flex items-center gap-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#005BFF]">
-                <MapPin aria-hidden="true" className="h-6 w-6" fill="currentColor" />
+          <Link href="/app">
+            <button
+              type="button"
+              className="mt-7 inline-flex w-full max-w-[295px] items-center justify-between rounded-2xl bg-[#005BFF] px-4 py-3.5 text-base font-semibold text-white shadow-[0_16px_34px_rgba(0,91,255,0.28)] transition hover:brightness-95 sm:px-5"
+            >
+              <span className="flex items-center gap-3">
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#005BFF]">
+                  <MapPin aria-hidden="true" className="h-6 w-6" fill="currentColor" />
+                </span>
+                Explore Parking
               </span>
-              Explore Parking
-            </span>
-            <ArrowRight aria-hidden="true" className="h-5 w-5" />
-          </button>
+              <ArrowRight aria-hidden="true" className="h-5 w-5" />
+            </button>
+          </Link>
         </motion.div>
 
         <motion.div

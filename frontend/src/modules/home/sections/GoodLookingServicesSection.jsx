@@ -147,9 +147,9 @@ function ServiceCard({ service, index, cardRef, isActive }) {
       }`}
     >
       <Link
-        href={`/services/${service.slug}`}
+        href="/services"
         className="block overflow-hidden rounded-[22px] bg-[#fbfdff] shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_1px_4px_rgba(6,6,22,0.1),0_10px_24px_-6px_rgba(6,6,22,0.14)] transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-1 sm:rounded-[26px] lg:rounded-[30px] focus-visible:outline-none focus-visible:shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_1px_4px_rgba(6,6,22,0.1),0_10px_24px_-6px_rgba(6,6,22,0.14),0_0_34px_rgba(0,136,255,0.42)]"
-        aria-label={`Open service: ${service.name}`}
+        aria-label={`Open services page`}
       >
         <div className="relative h-[190px] w-full bg-[#d2dae2] sm:h-[230px] lg:h-[260px]">
           {service.mediaType === "video" && service.mediaSrc ? (
@@ -339,10 +339,10 @@ export default function GoodLookingServicesSection() {
 
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
-                href={`/services/${activeService.slug}`}
+                href="/services"
                 className="inline-flex min-h-[3.05rem] items-center justify-center rounded-full bg-[#0088FF] px-7 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(0,136,255,0.14)] transition hover:bg-[#0088FF]"
               >
-                Explore This Service
+                Explore Services
               </Link>
               <Link
                 href="/contact"

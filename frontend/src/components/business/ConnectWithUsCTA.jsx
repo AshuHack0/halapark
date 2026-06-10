@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
 
 export default function BusinessConnectWithUsCTA() {
@@ -29,23 +30,27 @@ export default function BusinessConnectWithUsCTA() {
               </p>
 
               <div className="mt-6 flex flex-wrap items-center gap-4 text-base md:text-lg font-medium">
-                <motion.button
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
-                  className="rounded-full bg-[#0088FF] px-7 py-3 text-white transition-colors hover:brightness-95"
-                >
-                  Get in Touch
-                </motion.button>
+                <Link href="/contact">
+                  <motion.button
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    className="rounded-full bg-[#0088FF] px-7 py-3 text-white transition-colors hover:brightness-95"
+                  >
+                    Get in Touch
+                  </motion.button>
+                </Link>
 
                 <span className="text-[#0088FF]">|</span>
 
-                <motion.button
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
-                  className="rounded-full border border-slate-300 px-7 py-3 text-slate-900 transition-colors hover:bg-slate-50"
-                >
-                  WhatsApp Us
-                </motion.button>
+                <a href="https://wa.me/971" target="_blank" rel="noopener noreferrer">
+                  <motion.button
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    className="rounded-full border border-slate-300 px-7 py-3 text-slate-900 transition-colors hover:bg-slate-50"
+                  >
+                    WhatsApp Us
+                  </motion.button>
+                </a>
               </div>
             </div>
           </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -125,13 +126,15 @@ export default function BusinessSolutions() {
               </p>
 
               {/* CTA Button */}
-              <motion.button
-                whileHover={{ x: 4 }}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-[#0088FF] text-white font-semibold rounded-full hover:bg-[#0066CC] transition"
-              >
-                Explore All Solutions
-                <ArrowRight className="h-4 w-4" />
-              </motion.button>
+              <Link href="/solutions">
+                <motion.button
+                  whileHover={{ x: 4 }}
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-[#0088FF] text-white font-semibold rounded-full hover:bg-[#0066CC] transition"
+                >
+                  Explore All Solutions
+                  <ArrowRight className="h-4 w-4" />
+                </motion.button>
+              </Link>
             </motion.div>
           </div>
 

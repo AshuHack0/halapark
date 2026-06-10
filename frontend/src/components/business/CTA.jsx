@@ -1,5 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 export default function BusinessCTA() {
   return (
@@ -47,26 +48,28 @@ export default function BusinessCTA() {
             interaction.
           </p>
 
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="
-              px-8 
-              py-3 
-              max-sm:px-6 
-              max-sm:py-3 
-              bg-[#0088FF] 
-              text-white 
-              rounded-full 
-              font-medium 
-              text-base 
-              max-sm:text-sm 
-              hover:brightness-95 
-              transition-colors
-            "
-          >
-            Let's Connect
-          </motion.button>
+          <Link href="/contact">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="
+                px-8
+                py-3
+                max-sm:px-6
+                max-sm:py-3
+                bg-[#0088FF]
+                text-white
+                rounded-full
+                font-medium
+                text-base
+                max-sm:text-sm
+                hover:brightness-95
+                transition-colors
+              "
+            >
+              Let's Connect
+            </motion.button>
+          </Link>
         </motion.div>
       </div>
     </section>
