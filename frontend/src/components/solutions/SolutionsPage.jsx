@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
+import { fetchPage } from "@/lib/cms";
 import {
   ArrowRight,
   Check,
@@ -150,7 +151,7 @@ function GlobalExpansionSection() {
 
 // ─── Our Solutions ─────────────────────────────────────────────────────────────
 
-const solutionItems = [
+const DEFAULT_SOLUTION_ITEMS = [
   { title: "Smart Parking Management",   description: "Centralized platform for monitoring occupancy, controlling parking operations, and managing multiple facilities in real time.", image: "/hf_20260327_064316_9c7b1a28-dbfa-456e-b88a-0087cb567a61.png" },
   { title: "Automated Access Control",   description: "ANPR and smart barrier systems enabling seamless and secure vehicle access.", image: "/hf_20260327_061010_f3bc038b-576f-4903-8896-5d998cc78527.png" },
   { title: "Parking Guidance System",    description: "Real-time wayfinding and space guidance to reduce congestion and improve traffic flow inside facilities.", image: "/hf_20260327_060926_cbb82448-441c-42ee-9589-785e7acd7565.png" },
@@ -162,6 +163,15 @@ const solutionItems = [
 
 function StatsSection() {
   const reduced = useReducedMotion();
+  const [solutionItems, setSolutionItems] = useState(DEFAULT_SOLUTION_ITEMS);
+
+  useEffect(() => {
+    fetchPage("solutions").then((data) => {
+      if (data?.sections?.solutions?.cards && Array.isArray(data.sections.solutions.cards)) {
+        setSolutionItems(data.sections.solutions.cards);
+      }
+    });
+  }, []);
   return (
     <section className="bg-[#F4F8FF] py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -242,7 +252,7 @@ function StatsSection() {
 
 // ─── Solution Integration ──────────────────────────────────────────────────────
 
-const integrationCards = [
+const DEFAULT_INTEGRATION_CARDS = [
   { title: "All-in-One Barrier Integration",  description: "All-in-one compact system with barriers, AI cameras, and lighting for efficient parking.",   points: ["Smart barrier control", "AI camera integration", "Automated lighting"],       image: "/hf_20260327_061900_db12a62e-2867-44b6-83f0-ea7f1a5442ef.png", gradient: "from-[#0078E0]/85 via-[#0088FF]/60 to-[#0088FF]/20" },
   { title: "ANPR & AI Camera Integration",    description: "ANPR and AI cameras enable secure, real-time parking detection.",                              points: ["License plate recognition", "Real-time detection", "Secure access control"],  image: "/hf_20260327_064316_9c7b1a28-dbfa-456e-b88a-0087cb567a61.png", gradient: "from-[#0050B3]/85 via-[#0066CC]/60 to-[#0088FF]/20" },
   { title: "Guidance Display Integration",    description: "Smart displays show real-time parking info for better user experience.",                        points: ["Live space availability", "Wayfinding signage", "Zone-level guidance"],        image: "/hf_20260327_062407_6dca49c0-90dd-468a-96f9-b36bba13ea8b.png", gradient: "from-[#004F9A]/85 via-[#0070D0]/60 to-[#1AB2FF]/20" },
@@ -275,6 +285,16 @@ function IntegrationCard({ card, i, reduced }) {
 
 function SectorSolutionsSection() {
   const reduced = useReducedMotion();
+  const [integrationCards, setIntegrationCards] = useState(DEFAULT_INTEGRATION_CARDS);
+
+  useEffect(() => {
+    fetchPage("solutions").then((data) => {
+      if (data?.sections?.integration?.cards && Array.isArray(data.sections.integration.cards)) {
+        setIntegrationCards(data.sections.integration.cards);
+      }
+    });
+  }, []);
+
   return (
     <section className="bg-white py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

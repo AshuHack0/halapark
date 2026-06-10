@@ -3,10 +3,12 @@
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, Check } from "lucide-react";
+import { useEffect, useState } from "react";
+import { fetchBusinessSection } from "@/lib/cms";
 
 const ease = [0.22, 1, 0.36, 1];
 
-const parkingPartnerPerks = [
+const DEFAULT_PARKING_PARTNER_PERKS = [
   "Smart parking management dashboard",
   "Digital payment integration",
   "Parking categorization & organization",
@@ -19,7 +21,7 @@ const parkingPartnerPerks = [
   "Flexible subscription & booking models",
 ];
 
-const servicePartnerPerks = [
+const DEFAULT_SERVICE_PARTNER_PERKS = [
   "Smart parking hardware",
   "AI & automation systems",
   "EV charging infrastructure",
@@ -32,6 +34,27 @@ const servicePartnerPerks = [
 
 export default function TransformParking() {
   const reduced = useReducedMotion();
+  const [transformData, setTransformData] = useState({
+    title: "Ready to Transform Your Parking Business?",
+    description: "Partner with HalaPark and unlock the future of intelligent parking management, smart mobility, and connected urban infrastructure.",
+    parkingPartnerTitle: "Become a Parking Partner",
+    parkingPartnerSubtitle: "Turn your parking assets into profitable smart mobility solutions.",
+    parkingPartnerDescription: "HalaPark enables landlords, parking operators, residential buildings, commercial properties, and public entities to digitize and monetize their parking infrastructure through advanced automation and intelligent management tools. Existing parking platforms increasingly focus on ticketless entry, occupancy optimization, AI-powered access control, and cloud-based management systems to improve efficiency and user convenience.",
+    parkingPartnerPerks: DEFAULT_PARKING_PARTNER_PERKS,
+    servicePartnerTitle: "Become a Service Partner",
+    servicePartnerSubtitle: "Join the future of smart mobility and parking innovation.",
+    servicePartnerDescription1: "HalaPark collaborates with service providers, technology suppliers, hardware manufacturers, and mobility partners to deliver integrated parking experiences across the UAE and beyond.",
+    servicePartnerDescription2: "Whether you specialize in automation, EV charging, security systems, maintenance services, mobility solutions, or smart city technologies, we create opportunities for strategic growth and long-term collaboration.",
+    servicePartnerPerks: DEFAULT_SERVICE_PARTNER_PERKS,
+  });
+
+  useEffect(() => {
+    fetchBusinessSection("transformParking").then((section) => {
+      if (section) {
+        setTransformData((prev) => ({ ...prev, ...section }));
+      }
+    });
+  }, []);
 
   return (
     <section className="bg-[#F4F8FF] py-16 sm:py-20 lg:py-24">
@@ -52,7 +75,7 @@ export default function TransformParking() {
             </span>
           </h2>
           <p className="mx-auto mt-5 max-w-[650px] text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem]">
-            Partner with HalaPark and unlock the future of intelligent parking management, smart mobility, and connected urban infrastructure.
+            {transformData.description}
           </p>
         </motion.div>
 
@@ -72,18 +95,18 @@ export default function TransformParking() {
               <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#0088FF]">Parking Partner</span>
             </div>
             <h3 className="mt-4 text-[clamp(1.6rem,2.5vw,2.2rem)] font-semibold leading-[1.1] tracking-[-0.04em] text-[#050A13]">
-              Become a Parking Partner
+              {transformData.parkingPartnerTitle}
             </h3>
             <p className="mt-2 text-[0.94rem] font-medium text-[#050A13]">
-              Turn your parking assets into profitable smart mobility solutions.
+              {transformData.parkingPartnerSubtitle}
             </p>
             <p className="mt-4 text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem]">
-              HalaPark enables landlords, parking operators, residential buildings, commercial properties, and public entities to digitize and monetize their parking infrastructure through advanced automation and intelligent management tools. Existing parking platforms increasingly focus on ticketless entry, occupancy optimization, AI-powered access control, and cloud-based management systems to improve efficiency and user convenience.
+              {transformData.parkingPartnerDescription}
             </p>
 
             <p className="mt-8 text-[0.78rem] font-bold uppercase tracking-[0.16em] text-[#0088FF]">What You Get</p>
             <ul className="mt-4 grid gap-2 sm:grid-cols-2">
-              {parkingPartnerPerks.map((perk, i) => (
+              {transformData.parkingPartnerPerks.map((perk, i) => (
                 <motion.li
                   key={perk}
                   initial={reduced ? false : { opacity: 0, x: -12 }}
@@ -123,21 +146,21 @@ export default function TransformParking() {
               <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/80">Service Partner</span>
             </div>
             <h3 className="mt-4 text-[clamp(1.6rem,2.5vw,2.2rem)] font-semibold leading-[1.1] tracking-[-0.04em] text-white">
-              Become a Service Partner
+              {transformData.servicePartnerTitle}
             </h3>
             <p className="mt-2 text-[0.94rem] font-medium text-white/80">
-              Join the future of smart mobility and parking innovation.
+              {transformData.servicePartnerSubtitle}
             </p>
             <p className="mt-4 text-[0.88rem] leading-6 text-white/55 sm:text-[0.94rem]">
-              HalaPark collaborates with service providers, technology suppliers, hardware manufacturers, and mobility partners to deliver integrated parking experiences across the UAE and beyond.
+              {transformData.servicePartnerDescription1}
             </p>
             <p className="mt-3 text-[0.88rem] leading-6 text-white/55 sm:text-[0.94rem]">
-              Whether you specialize in automation, EV charging, security systems, maintenance services, mobility solutions, or smart city technologies, we create opportunities for strategic growth and long-term collaboration.
+              {transformData.servicePartnerDescription2}
             </p>
 
             <p className="mt-8 text-[0.78rem] font-bold uppercase tracking-[0.16em] text-[#5BC4FF]">Partnership Opportunities</p>
             <ul className="mt-4 grid gap-2 sm:grid-cols-2">
-              {servicePartnerPerks.map((perk, i) => (
+              {transformData.servicePartnerPerks.map((perk, i) => (
                 <motion.li
                   key={perk}
                   initial={reduced ? false : { opacity: 0, x: 12 }}

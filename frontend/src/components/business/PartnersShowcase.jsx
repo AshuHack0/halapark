@@ -1,17 +1,38 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
+import { fetchBusinessSection } from "@/lib/cms";
 
 const ease = [0.22, 1, 0.36, 1];
 
-const stats = [
-  { value: "5th", label: "Field Expertise" },
-  { value: "95%", label: "Client Satisfaction" },
-  { value: "120", label: "CP Clients Trusted" },
-];
+const DEFAULT_SHOWCASE = {
+  heading: "Helping you to correctly",
+  headingGradient: "set-up, build,",
+  subheading: "and protect your brand and business",
+  description: "Unsure of the next steps toward your business expansion? Want to ensure your logistics are in order? With 20+ years of business experience & extensive legal training, we'll help you navigate your legal issue and provide the best solution for:",
+  image: "/hf_20260327_064457_c75923ba-dc06-4c6e-9b63-fa181e94bcfa.png",
+  stats: [
+    { value: "5th", label: "Field Expertise" },
+    { value: "95%", label: "Client Satisfaction" },
+    { value: "120", label: "CP Clients Trusted" },
+  ],
+  ctaLabel: "Get Started",
+  partners: {
+    heading: "Trusted by Industry Leaders",
+    subheading: "Work with some of the most recognized brands and organizations",
+    row1: [],
+    row2: [],
+  },
+  ctaSection: {
+    title: "Ready to Partner with HalaPark?",
+    description: "Join our growing network of trusted partners and transform your parking infrastructure today.",
+    image: "/hf_20260327_064457_c75923ba-dc06-4c6e-9b63-fa181e94bcfa.png",
+  },
+};
 
 const PARTNERS_ROW1 = [
   { name: "Emirates NBD",     initials: "EN", color: "#0088FF", industry: "Banking"         },
@@ -67,6 +88,15 @@ function MarqueeRow({ partners, reverse = false }) {
 
 export default function PartnersShowcase() {
   const reduced = useReducedMotion();
+  const [showcase, setShowcase] = useState(DEFAULT_SHOWCASE);
+
+  useEffect(() => {
+    fetchBusinessSection("partnersShowcase").then((section) => {
+      if (section) {
+        setShowcase(section);
+      }
+    });
+  }, []);
 
   return (
     <section className="bg-white py-16 sm:py-20 lg:py-24">
@@ -89,7 +119,7 @@ export default function PartnersShowcase() {
             className="relative h-80 sm:h-96 lg:h-[500px] rounded-[32px] overflow-hidden shadow-[0_20px_80px_rgba(0,136,255,0.15)] border border-[#E7EAF0]"
           >
             <Image
-              src="/hf_20260327_064457_c75923ba-dc06-4c6e-9b63-fa181e94bcfa.png"
+              src={showcase.image}
               alt="Trusted Partners"
               fill
               className="object-cover"
@@ -111,22 +141,22 @@ export default function PartnersShowcase() {
             transition={{ duration: 0.65, ease, delay: 0.2 }}
           >
             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight tracking-[-0.06em] text-[#050A13] mb-4">
-              Helping you to correctly{" "}
+              {showcase.heading}{" "}
               <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">
-                set-up, build,
+                {showcase.headingGradient}
               </span>
             </h2>
             <h3 className="text-3xl sm:text-4xl font-bold text-[#050A13] mb-6">
-              and protect your brand and business
+              {showcase.subheading}
             </h3>
 
             <p className="text-base leading-7 text-slate-600 mb-8">
-              Unsure of the next steps toward your business expansion? Want to ensure your logistics are in order? With 20+ years of business experience & extensive legal training, we'll help you navigate your legal issue and provide the best solution for:
+              {showcase.description}
             </p>
 
             {/* Stats Grid */}
             <div className="grid grid-cols-3 gap-4 mb-8">
-              {stats.map((stat, i) => (
+              {(showcase.stats || []).map((stat, i) => (
                 <motion.div
                   key={stat.label}
                   initial={reduced ? false : { opacity: 0, y: 20 }}
@@ -147,7 +177,7 @@ export default function PartnersShowcase() {
               whileTap={{ scale: 0.98 }}
               className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] text-white font-semibold rounded-full hover:shadow-lg hover:shadow-[#0088FF]/30 transition"
             >
-              Get Started
+              {showcase.ctaLabel}
               <ArrowRight className="h-4 w-4" />
             </motion.button>
           </motion.div>
@@ -179,12 +209,12 @@ export default function PartnersShowcase() {
           {/* Marquee rows */}
           {!reduced ? (
             <div className="space-y-4 overflow-hidden">
-              <MarqueeRow partners={PARTNERS_ROW1} />
-              <MarqueeRow partners={PARTNERS_ROW2} reverse />
+              <MarqueeRow partners={showcase.partners?.row1?.length ? showcase.partners.row1 : PARTNERS_ROW1} />
+              <MarqueeRow partners={showcase.partners?.row2?.length ? showcase.partners.row2 : PARTNERS_ROW2} reverse />
             </div>
           ) : (
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              {[...PARTNERS_ROW1, ...PARTNERS_ROW2].map((p) => (
+              {[...(showcase.partners?.row1?.length ? showcase.partners.row1 : PARTNERS_ROW1), ...(showcase.partners?.row2?.length ? showcase.partners.row2 : PARTNERS_ROW2)].map((p) => (
                 <div key={p.name} className="flex items-center gap-3 rounded-[16px] border border-[#E7EAF0] bg-white px-4 py-3.5 shadow-sm">
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] text-[13px] font-bold text-white" style={{ background: p.color }}>
                     {p.initials}
@@ -208,18 +238,15 @@ export default function PartnersShowcase() {
           className="relative mt-20 overflow-hidden rounded-[28px] bg-[#06111f]"
         >
           <div className="absolute inset-0">
-            <Image src="/hf_20260327_064457_c75923ba-dc06-4c6e-9b63-fa181e94bcfa.png" alt="" fill className="object-cover object-center opacity-25" aria-hidden />
+            <Image src={showcase.ctaSection?.image || "/hf_20260327_064457_c75923ba-dc06-4c6e-9b63-fa181e94bcfa.png"} alt="" fill className="object-cover object-center opacity-25" aria-hidden />
             <div className="absolute inset-0 bg-gradient-to-r from-[#06111f]/95 via-[#06111f]/75 to-[#06111f]/60" />
           </div>
           <div className="relative z-10 flex flex-col items-center px-6 py-12 text-center sm:px-10 sm:py-14">
             <h3 className="max-w-[580px] text-[clamp(1.6rem,3vw,2.4rem)] font-semibold leading-[1.1] tracking-[-0.04em] text-white">
-              Ready to Partner with{" "}
-              <span className="bg-gradient-to-r from-[#3AADFF] to-[#0088FF] bg-clip-text text-transparent">
-                HalaPark?
-              </span>
+              {showcase.ctaSection?.title}{" "}
             </h3>
             <p className="mx-auto mt-3 max-w-[500px] text-[0.88rem] leading-6 text-white/60 sm:text-[0.94rem]">
-              Join our growing network of trusted partners and transform your parking infrastructure today.
+              {showcase.ctaSection?.description}
             </p>
             <Link
               href="/contact"

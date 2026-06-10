@@ -158,11 +158,6 @@ export default function BusinessSolutions() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#050A13]/50 via-transparent to-transparent" />
 
-                  {/* Icon Badge */}
-                  <div className="absolute top-4 right-4 text-2xl bg-white/90 backdrop-blur-sm p-2 rounded-lg shadow-lg">
-                    {card.icon}
-                  </div>
-
                   {/* Hover Overlay */}
                   <motion.div
                     initial={{ opacity: 0 }}

@@ -4,10 +4,11 @@ import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
 import { ChevronLeft, ChevronRight, ArrowRight, Sparkles } from "lucide-react";
+import { fetchBusinessSection } from "@/lib/cms";
 
 const ease = [0.22, 1, 0.36, 1];
 
-const partners = [
+const DEFAULT_PARTNERS = [
   {
     title: "Property Developers",
     description: "Transform residential and commercial projects with intelligent parking infrastructure that increases property value, improves traffic flow, and delivers future-ready smart mobility experiences.",
@@ -78,7 +79,16 @@ const partners = [
 
 export default function WhoWeWorkWith() {
   const reduced = useReducedMotion();
+  const [partners, setPartners] = useState(DEFAULT_PARTNERS);
   const [activeIndex, setActiveIndex] = useState(0);
+
+  useEffect(() => {
+    fetchBusinessSection("whoWeWork").then((section) => {
+      if (Array.isArray(section) && section.length > 0) {
+        setPartners(section);
+      }
+    });
+  }, []);
   const [direction, setDirection] = useState(0);
   const scrollRef = useRef(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);

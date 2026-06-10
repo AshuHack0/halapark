@@ -1,28 +1,33 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { Network, Smartphone, Cpu, BarChart3 } from "lucide-react";
+import { fetchBusinessSection } from "@/lib/cms";
 
 const ease = [0.22, 1, 0.36, 1];
 
-const advantages = [
+const ICON_MAP = {
+  "Smart Mobility Ecosystem": Network,
+  "Seamless Digital Experience": Smartphone,
+  "Future-Ready Technology": Cpu,
+  "Data-Driven Operations": BarChart3,
+};
+
+const DEFAULT_ADVANTAGES = [
   {
-    icon: Network,
     title: "Smart Mobility Ecosystem",
     description: "We connect drivers, property owners, operators, and service providers through one intelligent platform.",
   },
   {
-    icon: Smartphone,
     title: "Seamless Digital Experience",
     description: "From booking to payment and access control, every interaction is optimized for speed, simplicity, and convenience.",
   },
   {
-    icon: Cpu,
     title: "Future-Ready Technology",
     description: "Built for modern cities, evolving mobility demands, and scalable smart infrastructure.",
   },
   {
-    icon: BarChart3,
     title: "Data-Driven Operations",
     description: "Make smarter business decisions using live operational insights, occupancy analytics, and performance reporting.",
   },
@@ -30,6 +35,15 @@ const advantages = [
 
 export default function HalaParkAdvantage() {
   const reduced = useReducedMotion();
+  const [advantages, setAdvantages] = useState(DEFAULT_ADVANTAGES);
+
+  useEffect(() => {
+    fetchBusinessSection("advantage").then((section) => {
+      if (section && Array.isArray(section)) {
+        setAdvantages(section);
+      }
+    });
+  }, []);
 
   return (
     <section className="bg-white py-16 sm:py-20 lg:py-24">
@@ -52,7 +66,7 @@ export default function HalaParkAdvantage() {
 
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {advantages.map((item, i) => {
-            const Icon = item.icon;
+            const Icon = ICON_MAP[item.title] || Network;
             return (
               <motion.div
                 key={item.title}
