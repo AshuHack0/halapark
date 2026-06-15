@@ -23,89 +23,95 @@ import {
 
 const ease = [0.22, 1, 0.36, 1];
 
-// ─── Hero (NEW — light split layout with a live "control room" panel) ──────────
+// ─── Hero (NEW — light split layout) ───────────────────────────────────────────
 // The client felt the old dark video hero (kept below as `OldNewHero`) looked too
-// much like the home page. This lighter, infrastructure-themed hero is distinct.
+// much like the home page. Unique concept: two columns of infrastructure imagery
+// scrolling in OPPOSITE directions ("many systems") converging on a central glass
+// "One Connected Platform" badge ("→ unified"). Distinct from every other hero.
+
+const SOL_COL_A = [
+  "/hf_20260327_064316_9c7b1a28-dbfa-456e-b88a-0087cb567a61.png",
+  "/hf_20260327_061010_f3bc038b-576f-4903-8896-5d998cc78527.png",
+  "/hf_20260327_060926_cbb82448-441c-42ee-9589-785e7acd7565.png",
+  "/AI-Driven Parking Intelligence.jpeg",
+];
+const SOL_COL_B = [
+  "/hf_20260327_065515_cd3808b8-d99d-4faa-817d-e3f772726da6.png",
+  "/hf_20260327_061900_db12a62e-2867-44b6-83f0-ea7f1a5442ef.png",
+  "/hf_20260327_070648_996630bc-828e-4cd7-8cb1-f42c30332d86.png",
+  "/Smart Public Parking.jpeg",
+];
+
+function SolutionImageColumn({ images, direction = "up", reduced }) {
+  // Duplicate the set so the marquee loops seamlessly.
+  const loop = [...images, ...images];
+  const animClass = reduced
+    ? ""
+    : direction === "up"
+      ? "sol-marquee-up"
+      : "sol-marquee-down";
+
+  return (
+    <div className="relative h-full w-[120px] overflow-hidden sm:w-[140px] lg:w-[160px] [mask-image:linear-gradient(to_bottom,transparent,black_14%,black_86%,transparent)] [-webkit-mask-image:linear-gradient(to_bottom,transparent,black_14%,black_86%,transparent)]">
+      <div className={`flex flex-col gap-4 ${animClass}`}>
+        {loop.map((src, i) => (
+          <div
+            key={`${src}-${i}`}
+            className="relative h-[150px] w-full shrink-0 overflow-hidden rounded-[20px] border border-white/70 shadow-[0_14px_34px_rgba(15,23,42,0.16)] sm:h-[170px] lg:h-[190px]"
+          >
+            <Image
+              src={src}
+              alt=""
+              fill
+              sizes="160px"
+              className="object-cover object-center"
+            />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#050A13]/30 to-transparent" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 function SolutionsControlPanel({ reduced }) {
-  const zones = [
-    { name: "Zone A · Levels 1-3", value: 92, tone: "#16B364" },
-    { name: "Zone B · Retail",     value: 64, tone: "#0088FF" },
-    { name: "Zone C · Towers",     value: 38, tone: "#F59E0B" },
-  ];
-
   return (
     <div className="relative flex items-center justify-center">
       {/* Soft glow halo */}
-      <div className="pointer-events-none absolute left-1/2 top-1/2 h-[360px] w-[360px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(0,136,255,0.16),rgba(37,99,235,0.06)_55%,transparent_75%)] blur-2xl lg:h-[460px] lg:w-[460px]" />
+      <div className="pointer-events-none absolute left-1/2 top-1/2 h-[380px] w-[380px] -translate-x-1/2 -translate-y-1/2 rounded-[80px] bg-[radial-gradient(circle,rgba(0,136,255,0.16),rgba(37,99,235,0.06)_55%,transparent_75%)] blur-2xl lg:h-[500px] lg:w-[500px]" />
 
-      {/* Main dashboard card */}
+      {/* Dual scrolling image columns */}
       <motion.div
-        initial={reduced ? false : { opacity: 0, y: 28 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={reduced ? false : { opacity: 0, scale: 0.96 }}
+        animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.7, ease, delay: 0.1 }}
-        className="relative z-20 w-[300px] overflow-hidden rounded-[26px] border border-white/80 bg-white/95 shadow-[0_30px_70px_rgba(15,23,42,0.16)] backdrop-blur sm:w-[360px] lg:w-[420px]"
+        className="relative z-20 flex h-[420px] items-stretch gap-4 sm:h-[480px] sm:gap-5 lg:h-[540px]"
       >
-        {/* Header bar */}
-        <div className="flex items-center justify-between bg-[linear-gradient(120deg,#0A3F84,#0088FF)] px-5 py-4 text-white">
-          <div className="flex items-center gap-2.5">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/15">
-              <Cctv className="h-4 w-4" aria-hidden />
-            </span>
-            <div>
-              <p className="text-[12px] font-semibold leading-none">Live Control Room</p>
-              <p className="mt-1 text-[10px] text-white/70">3 facilities · real-time</p>
-            </div>
-          </div>
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2 py-1 text-[9px] font-bold uppercase tracking-[0.14em]">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#5BE49B] animate-pulse" /> Live
+        <SolutionImageColumn images={SOL_COL_A} direction="up" reduced={reduced} />
+        <SolutionImageColumn images={SOL_COL_B} direction="down" reduced={reduced} />
+      </motion.div>
+
+      {/* Center connector line glow */}
+      <div aria-hidden className="pointer-events-none absolute left-1/2 top-1/2 z-20 h-[280px] w-px -translate-x-1/2 -translate-y-1/2 bg-gradient-to-b from-transparent via-[#0088FF]/40 to-transparent lg:h-[360px]" />
+
+      {/* Central glass "connected platform" badge */}
+      <motion.div
+        initial={reduced ? false : { opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.6, ease, delay: 0.45 }}
+        className="absolute left-1/2 top-1/2 z-30 -translate-x-1/2 -translate-y-1/2"
+      >
+        <div className="flex flex-col items-center gap-2 rounded-3xl border border-white/80 bg-white/90 px-6 py-5 text-center shadow-[0_24px_60px_rgba(15,23,42,0.22)] backdrop-blur-md">
+          <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#0A3F84] to-[#0088FF] shadow-[0_8px_22px_rgba(0,136,255,0.4)]">
+            <Image src="/Layer_1.svg" alt="HalaPark" width={26} height={32} className="h-7 w-auto" />
           </span>
-        </div>
-
-        {/* Occupancy stats */}
-        <div className="grid grid-cols-3 divide-x divide-slate-100 border-b border-slate-100">
-          {[
-            { v: "2,418", l: "Occupied" },
-            { v: "642",   l: "Available" },
-            { v: "79%",   l: "Utilization" },
-          ].map((s) => (
-            <div key={s.l} className="px-3 py-3.5 text-center">
-              <p className="text-[1.05rem] font-bold tracking-[-0.03em] text-[#050A13] sm:text-[1.2rem]">{s.v}</p>
-              <p className="mt-0.5 text-[9px] font-medium uppercase tracking-[0.1em] text-slate-400">{s.l}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* Zone occupancy bars */}
-        <div className="space-y-3 px-5 py-4">
-          {zones.map((z, i) => (
-            <div key={z.name}>
-              <div className="flex items-center justify-between text-[10px]">
-                <span className="font-medium text-slate-600">{z.name}</span>
-                <span className="font-semibold text-[#050A13]">{z.value}%</span>
-              </div>
-              <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
-                <motion.div
-                  className="h-full rounded-full"
-                  style={{ background: z.tone }}
-                  initial={{ width: "0%" }}
-                  animate={{ width: `${z.value}%` }}
-                  transition={{ duration: 1.2, ease: "easeOut", delay: 0.5 + i * 0.15 }}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Footer row — system status */}
-        <div className="flex items-center justify-between border-t border-slate-100 bg-[#F6FAFF] px-5 py-3">
-          <div className="flex items-center gap-2">
-            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[rgba(22,179,100,0.12)]">
-              <Check className="h-3 w-3 text-[#16B364]" strokeWidth={3} aria-hidden />
-            </span>
-            <p className="text-[10px] font-medium text-slate-600">All systems operational</p>
+          <div>
+            <p className="text-[0.95rem] font-bold leading-tight tracking-[-0.03em] text-[#050A13]">One Connected</p>
+            <p className="text-[0.95rem] font-bold leading-tight tracking-[-0.03em] text-[#0088FF]">Platform</p>
           </div>
-          <p className="text-[10px] font-semibold text-[#0088FF]">ANPR · EV · Barriers</p>
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-[rgba(22,179,100,0.1)] px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.12em] text-[#16B364]">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#16B364] animate-pulse" /> Unified
+          </span>
         </div>
       </motion.div>
 
@@ -113,10 +119,10 @@ function SolutionsControlPanel({ reduced }) {
       <motion.div
         initial={reduced ? false : { opacity: 0, y: -14, rotate: -5 }}
         animate={reduced ? undefined : { opacity: 1, y: 0, rotate: -5 }}
-        transition={{ duration: 0.6, ease, delay: 0.45 }}
-        className="absolute left-[-4%] top-2 z-30 hidden sm:block lg:left-[-12%] lg:top-4"
+        transition={{ duration: 0.6, ease, delay: 0.55 }}
+        className="absolute left-[-8%] top-[6%] z-40 hidden sm:block lg:left-[-16%]"
       >
-        <div className="flex items-center gap-2.5 rounded-2xl border border-white/80 bg-white px-3 py-2.5 shadow-[0_16px_40px_rgba(15,23,42,0.13)]">
+        <div className="flex items-center gap-2.5 rounded-2xl border border-white/80 bg-white px-3 py-2.5 shadow-[0_16px_40px_rgba(15,23,42,0.15)]">
           <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#0088FF] to-[#2563EB] text-white">
             <Car className="h-4.5 w-4.5" aria-hidden />
           </span>
@@ -131,10 +137,10 @@ function SolutionsControlPanel({ reduced }) {
       <motion.div
         initial={reduced ? false : { opacity: 0, x: 16, rotate: 5 }}
         animate={reduced ? undefined : { opacity: 1, x: 0, rotate: 5 }}
-        transition={{ duration: 0.6, ease, delay: 0.55 }}
-        className="absolute bottom-[6%] right-[-3%] z-30 hidden sm:block lg:right-[-10%]"
+        transition={{ duration: 0.6, ease, delay: 0.65 }}
+        className="absolute bottom-[6%] right-[-8%] z-40 hidden sm:block lg:right-[-14%]"
       >
-        <div className="w-[150px] rounded-2xl border border-white/80 bg-white p-3 shadow-[0_16px_40px_rgba(15,23,42,0.13)]">
+        <div className="w-[150px] rounded-2xl border border-white/80 bg-white p-3 shadow-[0_16px_40px_rgba(15,23,42,0.15)]">
           <div className="flex items-center gap-1.5">
             <Zap className="h-3.5 w-3.5 text-[#16B364]" fill="currentColor" aria-hidden />
             <p className="text-[11px] font-semibold text-[#050A13]">EV Bay · 12</p>
@@ -143,6 +149,22 @@ function SolutionsControlPanel({ reduced }) {
           <p className="text-[9px] text-slate-400">charging · 4 active</p>
         </div>
       </motion.div>
+
+      <style>{`
+        @keyframes solMarqueeUp {
+          from { transform: translateY(0); }
+          to   { transform: translateY(-50%); }
+        }
+        @keyframes solMarqueeDown {
+          from { transform: translateY(-50%); }
+          to   { transform: translateY(0); }
+        }
+        .sol-marquee-up { animation: solMarqueeUp 24s linear infinite; }
+        .sol-marquee-down { animation: solMarqueeDown 24s linear infinite; }
+        @media (prefers-reduced-motion: reduce) {
+          .sol-marquee-up, .sol-marquee-down { animation: none; }
+        }
+      `}</style>
     </div>
   );
 }
@@ -602,21 +624,77 @@ function TrustedBySection() {
               </ul>
             </motion.div>
 
-            <motion.div initial={reduced ? false : { opacity: 0, x: 28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease, delay: 0.1 }} className="relative overflow-hidden rounded-[28px] bg-[#06111f] p-8 sm:p-10 lg:p-12">
-              <div className="absolute right-0 top-0 h-64 w-64 rounded-full bg-[#0088FF]/15 blur-3xl" />
-              <div className="relative z-10 flex h-[260px] items-center justify-center">
-                <div className="relative flex h-24 w-24 items-center justify-center rounded-[20px] bg-[#0088FF] shadow-[0_0_50px_rgba(0,136,255,0.5)]">
-                  <Image src="/Layer_1.svg" alt="HalaPark" width={44} height={56} className="h-12 w-auto" />
+            <motion.div initial={reduced ? false : { opacity: 0, x: 28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease, delay: 0.1 }} className="relative overflow-hidden rounded-[28px] bg-[#06111f]">
+              {/* Smart-city image backdrop */}
+              <Image
+                src="/Smart Public Parking.jpeg"
+                alt="Smart public parking infrastructure"
+                fill
+                sizes="(min-width: 1024px) 50vw, 100vw"
+                className="object-cover object-center"
+              />
+              <div className="absolute inset-0 bg-[linear-gradient(150deg,rgba(6,17,31,0.92)_0%,rgba(6,17,31,0.6)_50%,rgba(6,17,31,0.85)_100%)]" />
+              <div className="absolute right-0 top-0 h-64 w-64 rounded-full bg-[#0088FF]/20 blur-3xl" />
+
+              <div className="relative z-10 h-[320px] p-6 sm:h-[360px] sm:p-8 lg:h-[400px]">
+                {/* Animated connecting lines: hub (center) → 4 corner nodes */}
+                <svg className="pointer-events-none absolute inset-0 z-10 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
+                  <line className="sc-connector" x1="50" y1="50" x2="17" y2="20" style={{ animationDelay: "0s" }} />
+                  <line className="sc-connector" x1="50" y1="50" x2="83" y2="20" style={{ animationDelay: "0.2s" }} />
+                  <line className="sc-connector" x1="50" y1="50" x2="17" y2="80" style={{ animationDelay: "0.4s" }} />
+                  <line className="sc-connector" x1="50" y1="50" x2="83" y2="80" style={{ animationDelay: "0.6s" }} />
+                </svg>
+
+                {/* Node dots at the line endpoints */}
+                {[
+                  { cls: "left-[12%] top-[16%]" },
+                  { cls: "right-[12%] top-[16%]" },
+                  { cls: "left-[12%] bottom-[16%]" },
+                  { cls: "right-[12%] bottom-[16%]" },
+                ].map((n, i) => (
+                  <span key={`dot-${i}`} className={`absolute z-20 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#5BC4FF] shadow-[0_0_10px_rgba(91,196,255,0.8)] ${n.cls}`} />
+                ))}
+
+                {/* Central HalaPark hub */}
+                <div className="absolute left-1/2 top-1/2 z-30 flex h-20 w-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-[20px] bg-[#0088FF] shadow-[0_0_50px_rgba(0,136,255,0.6)] sm:h-24 sm:w-24">
+                  <span className="absolute inset-0 rounded-[20px] bg-[#0088FF]/40 animate-ping" style={{ animationDuration: "2.6s" }} />
+                  <Image src="/Layer_1.svg" alt="HalaPark" width={44} height={56} className="relative h-11 w-auto sm:h-12" />
                 </div>
+
+                {/* Capability nodes (labels) at the corners */}
                 {smartCityCapabilities.map((cap, i) => {
-                  const pos = ["left-[6%] top-[14%]", "right-[6%] top-[14%]", "left-[6%] bottom-[14%]", "right-[6%] bottom-[14%]"];
+                  const pos = ["left-[3%] top-[6%]", "right-[3%] top-[6%]", "left-[3%] bottom-[6%]", "right-[3%] bottom-[6%]"];
                   return (
-                    <div key={cap} className={`absolute ${pos[i]} max-w-[130px] rounded-xl border border-white/15 bg-white/10 px-3 py-2 text-center text-[10px] font-medium leading-snug text-white/85 backdrop-blur-sm sm:text-[11px]`}>
+                    <motion.div
+                      key={cap}
+                      initial={reduced ? false : { opacity: 0, scale: 0.85 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.4, ease, delay: 0.3 + i * 0.12 }}
+                      className={`absolute z-20 ${pos[i]} max-w-[140px] rounded-xl border border-white/20 bg-white/10 px-3 py-2 text-center text-[10px] font-medium leading-snug text-white backdrop-blur-md sm:text-[11px]`}
+                    >
                       {cap}
-                    </div>
+                    </motion.div>
                   );
                 })}
               </div>
+
+              <style>{`
+                @keyframes scConnectorFlow {
+                  from { stroke-dashoffset: 0; }
+                  to   { stroke-dashoffset: -8; }
+                }
+                .sc-connector {
+                  fill: none;
+                  stroke: #5BC4FF;
+                  stroke-width: 0.5;
+                  stroke-linecap: round;
+                  stroke-dasharray: 2 1.6;
+                  animation: scConnectorFlow 1.3s linear infinite;
+                  filter: drop-shadow(0 0 3px rgba(91,196,255,0.45));
+                }
+                @media (prefers-reduced-motion: reduce) { .sc-connector { animation: none; } }
+              `}</style>
             </motion.div>
           </div>
         </div>

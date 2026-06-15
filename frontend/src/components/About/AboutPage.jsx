@@ -12,111 +12,122 @@ import {
 
 const ease = [0.22, 1, 0.36, 1];
 
-// ─── Hero (light split layout with imagery collage) ─────────────────────────────
+// ─── Hero (light split layout) ──────────────────────────────────────────────────
 
-// About layout: a two-column "magazine spread" — left tall card + right shorter
-// card dropped lower, each cross-fading on its own rhythm. Distinct from the
-// single-card Business / Careers compositions.
+// About layout: a single image shown at a time inside a tall rounded-rectangle
+// "frame", with each image SLIDING in horizontally (swipe transition) and a
+// thumbnail rail + step counter. Rectangular — distinct from the card-deck
+// (Business), mosaic (Careers), single card (Services) and dashboard (Solutions).
 
-const ABOUT_LEFT_SLIDES = [
-  "/AI-Driven Parking Intelligence.jpeg",
-  "/Smart Public Parking.jpeg",
-];
-const ABOUT_RIGHT_SLIDES = [
-  "/Smart & Seamless Experience.jpeg",
-  "/Maximize Parking Value dekhna ye.jpeg",
+const ABOUT_SLIDES = [
+  { img: "/AI-Driven Parking Intelligence.jpeg", label: "AI-Powered Technology" },
+  { img: "/Smart & Seamless Experience.jpeg",    label: "Seamless Experience" },
+  { img: "/Smart Public Parking.jpeg",           label: "Built for the UAE" },
+  { img: "/Maximize Parking Value dekhna ye.jpeg", label: "Maximizing Value" },
 ];
 
 function AboutVisual({ heroImage, reduced }) {
-  const leftSlides = [heroImage || ABOUT_LEFT_SLIDES[0], ...ABOUT_LEFT_SLIDES.slice(1)];
-  const [left, setLeft] = useState(0);
-  const [right, setRight] = useState(0);
+  const slides = [{ img: heroImage || ABOUT_SLIDES[0].img, label: ABOUT_SLIDES[0].label }, ...ABOUT_SLIDES.slice(1)];
+  const [active, setActive] = useState(0);
 
   useEffect(() => {
     if (reduced) return undefined;
-    const a = setInterval(() => setLeft((p) => (p + 1) % leftSlides.length), 3800);
-    const b = setInterval(() => setRight((p) => (p + 1) % ABOUT_RIGHT_SLIDES.length), 3000);
-    return () => {
-      clearInterval(a);
-      clearInterval(b);
-    };
+    const id = setInterval(() => setActive((p) => (p + 1) % slides.length), 3400);
+    return () => clearInterval(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reduced]);
+
+  const current = slides[active];
 
   return (
     <div className="relative flex items-center justify-center">
       {/* Glow halo */}
-      <div className="pointer-events-none absolute left-1/2 top-1/2 h-[380px] w-[380px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(0,136,255,0.15),rgba(37,99,235,0.05)_58%,transparent_76%)] blur-2xl lg:h-[500px] lg:w-[500px]" />
+      <div className="pointer-events-none absolute left-1/2 top-1/2 h-[380px] w-[380px] -translate-x-1/2 -translate-y-1/2 rounded-[60px] bg-[radial-gradient(circle,rgba(0,136,255,0.16),rgba(37,99,235,0.05)_58%,transparent_76%)] blur-2xl lg:h-[500px] lg:w-[500px]" />
 
-      {/* Two-card spread */}
-      <div className="relative z-20 flex items-start gap-4 sm:gap-5">
-        {/* LEFT tall card */}
-        <motion.div
-          initial={reduced ? false : { opacity: 0, y: 26 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease, delay: 0.1 }}
-          className="relative mt-8 h-[300px] w-[150px] overflow-hidden rounded-[26px] border border-white/80 shadow-[0_30px_70px_rgba(15,23,42,0.22)] sm:h-[360px] sm:w-[180px] lg:h-[420px] lg:w-[215px]"
-        >
-          <AnimatePresence mode="popLayout">
-            <motion.div
-              key={left}
-              initial={reduced ? false : { opacity: 0, scale: 1.08 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={reduced ? undefined : { opacity: 0 }}
-              transition={{ duration: 0.8, ease }}
-              className="absolute inset-0"
-            >
-              <Image
-                src={leftSlides[left]}
-                alt="HalaPark"
-                fill
-                sizes="215px"
-                className="object-cover object-center"
-                priority
-              />
-            </motion.div>
-          </AnimatePresence>
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#050A13]/55 to-transparent" />
-          <span className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-white backdrop-blur-sm">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#5BE49B] animate-pulse" /> Since day one
+      {/* Offset accent frame behind (gives depth) */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute z-10 h-[330px] w-[270px] translate-x-5 translate-y-5 rounded-[34px] border-2 border-[#0088FF]/25 sm:h-[390px] sm:w-[310px] lg:h-[450px] lg:w-[360px]"
+      />
+
+      {/* ── Single framed image, slide transition ── */}
+      <motion.div
+        animate={reduced ? undefined : { y: [0, -10, 0] }}
+        transition={{ duration: 6.5, repeat: Infinity, ease: "easeInOut" }}
+        className="relative z-20 h-[330px] w-[270px] overflow-hidden rounded-[34px] border-[6px] border-white shadow-[0_34px_80px_rgba(15,23,42,0.24)] sm:h-[390px] sm:w-[310px] lg:h-[450px] lg:w-[360px]"
+      >
+        <AnimatePresence mode="popLayout" initial={false}>
+          <motion.div
+            key={active}
+            initial={reduced ? false : { x: "100%" }}
+            animate={reduced ? { opacity: 1 } : { x: 0 }}
+            exit={reduced ? undefined : { x: "-100%" }}
+            transition={{ duration: 0.7, ease }}
+            className="absolute inset-0"
+          >
+            <Image
+              src={current.img}
+              alt={current.label}
+              fill
+              sizes="(min-width: 1024px) 360px, (min-width: 640px) 310px, 270px"
+              className="object-cover object-center"
+              priority
+            />
+          </motion.div>
+        </AnimatePresence>
+
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#050A13]/72 via-[#050A13]/8 to-[#050A13]/6" />
+
+        {/* Step counter — top-right */}
+        <div className="absolute right-4 top-4 z-10 rounded-full bg-black/35 px-2.5 py-1 text-[10px] font-bold text-white backdrop-blur-sm">
+          {String(active + 1).padStart(2, "0")} / {String(slides.length).padStart(2, "0")}
+        </div>
+
+        {/* Caption */}
+        <div className="absolute inset-x-0 bottom-0 p-6">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-white backdrop-blur-sm">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#5BE49B] animate-pulse" /> About HalaPark
           </span>
-        </motion.div>
-
-        {/* RIGHT shorter card, dropped lower */}
-        <motion.div
-          initial={reduced ? false : { opacity: 0, y: -26 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease, delay: 0.25 }}
-          className="relative mt-24 h-[230px] w-[140px] overflow-hidden rounded-[26px] border border-white/80 shadow-[0_30px_70px_rgba(15,23,42,0.22)] sm:h-[280px] sm:w-[170px] lg:mt-28 lg:h-[320px] lg:w-[200px]"
-        >
-          <AnimatePresence mode="popLayout">
-            <motion.div
-              key={right}
-              initial={reduced ? false : { opacity: 0, scale: 1.08 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={reduced ? undefined : { opacity: 0 }}
-              transition={{ duration: 0.8, ease }}
-              className="absolute inset-0"
+          <AnimatePresence mode="wait">
+            <motion.p
+              key={current.label}
+              initial={reduced ? false : { opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={reduced ? undefined : { opacity: 0, y: -6 }}
+              transition={{ duration: 0.4 }}
+              className="mt-2 text-[1.25rem] font-semibold leading-tight tracking-[-0.03em] text-white"
             >
-              <Image
-                src={ABOUT_RIGHT_SLIDES[right]}
-                alt="HalaPark"
-                fill
-                sizes="200px"
-                className="object-cover object-center"
-              />
-            </motion.div>
+              {current.label}
+            </motion.p>
           </AnimatePresence>
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#050A13]/55 to-transparent" />
-        </motion.div>
+        </div>
+      </motion.div>
+
+      {/* Thumbnail rail — single-image selector */}
+      <div className="absolute -bottom-3 left-1/2 z-40 flex -translate-x-1/2 gap-2">
+        {slides.map((s, i) => (
+          <button
+            key={s.label}
+            type="button"
+            aria-label={`Show ${s.label}`}
+            onClick={() => setActive(i)}
+            className={`relative h-10 w-10 overflow-hidden rounded-xl border-2 transition-all duration-300 ${
+              i === active
+                ? "border-[#0088FF] shadow-[0_8px_20px_rgba(0,136,255,0.3)] scale-105"
+                : "border-white/70 opacity-60 hover:opacity-100"
+            }`}
+          >
+            <Image src={s.img} alt="" fill sizes="40px" className="object-cover object-center" />
+          </button>
+        ))}
       </div>
 
-      {/* Floating stat ribbon — centered between the cards */}
+      {/* Floating stat ribbon — UAE-Born (top-left) */}
       <motion.div
-        initial={reduced ? false : { opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
+        initial={reduced ? false : { opacity: 0, y: -14, rotate: -5 }}
+        animate={reduced ? undefined : { opacity: 1, y: 0, rotate: -5 }}
         transition={{ duration: 0.6, ease, delay: 0.5 }}
-        className="absolute left-1/2 top-1/2 z-40 -translate-x-1/2 -translate-y-1/2"
+        className="absolute left-[-8%] top-2 z-40 hidden sm:block lg:left-[-16%] lg:top-4"
       >
         <div className="flex items-center gap-3 rounded-2xl border border-white/80 bg-white px-4 py-3 shadow-[0_18px_46px_rgba(15,23,42,0.18)]">
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#0088FF] to-[#2563EB] text-white shadow-[0_4px_10px_rgba(0,136,255,0.35)]">
@@ -124,17 +135,17 @@ function AboutVisual({ heroImage, reduced }) {
           </span>
           <div>
             <p className="text-[1.05rem] font-bold leading-none tracking-[-0.03em] text-[#050A13]">UAE-Born</p>
-            <p className="mt-1 text-[10px] font-medium text-slate-400">Built on local expertise</p>
+            <p className="mt-1 text-[10px] font-medium text-slate-400">Local expertise</p>
           </div>
         </div>
       </motion.div>
 
-      {/* Floating mini chip — trusted (bottom) */}
+      {/* Floating mini chip — trusted (bottom-right) */}
       <motion.div
-        initial={reduced ? false : { opacity: 0, y: 14 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={reduced ? false : { opacity: 0, x: 14, rotate: 5 }}
+        animate={reduced ? undefined : { opacity: 1, x: 0, rotate: 5 }}
         transition={{ duration: 0.6, ease, delay: 0.6 }}
-        className="absolute bottom-[2%] right-[2%] z-40 hidden sm:block lg:bottom-[4%] lg:right-[-6%]"
+        className="absolute bottom-[14%] right-[-6%] z-40 hidden sm:block lg:right-[-14%]"
       >
         <div className="flex items-center gap-2 rounded-full border border-white/80 bg-white px-3 py-2 shadow-[0_14px_36px_rgba(15,23,42,0.14)]">
           <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[rgba(22,179,100,0.12)]">

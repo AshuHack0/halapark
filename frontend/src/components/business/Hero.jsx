@@ -16,10 +16,10 @@ const DEFAULT_HERO = {
   image: "/HalaParkVideo.mp4",
 };
 
-// ─── Right-side visual: circular "portal" layout ────────────────────────────────
-// A round image lens cross-fading through business imagery, ringed by a rotating
-// orbit and surrounded by data chips. Geometrically distinct from the rectangular
-// card layouts used on Services / Solutions / About / Careers.
+// ─── Right-side visual: stacked tilted photo-card deck ──────────────────────────
+// A fanned deck of overlapping, slightly-rotated photo cards. The front card
+// cycles to the back on a timer, rotating the deck through the imagery.
+// Distinct from the other heroes' single-card / dashboard / mosaic layouts.
 
 const BIZ_SLIDES = [
   { img: "/Maximize Parking Value dekhna ye.jpeg", label: "Maximize Value" },
@@ -28,12 +28,20 @@ const BIZ_SLIDES = [
   { img: "/Smart Public Parking.jpeg",             label: "Scalable Growth" },
 ];
 
+// Per-depth transform for the fanned deck (index 0 = front).
+const DECK_LAYOUT = [
+  { x: 0,   y: 0,   rotate: -4, scale: 1,    opacity: 1,    z: 40 },
+  { x: 26,  y: 18,  rotate: 4,  scale: 0.95, opacity: 0.92, z: 30 },
+  { x: -22, y: 34,  rotate: -9, scale: 0.9,  opacity: 0.82, z: 20 },
+  { x: 18,  y: 50,  rotate: 9,  scale: 0.86, opacity: 0.7,  z: 10 },
+];
+
 function BusinessGrowthPanel({ reduced }) {
   const [active, setActive] = useState(0);
 
   useEffect(() => {
     if (reduced) return undefined;
-    const id = setInterval(() => setActive((p) => (p + 1) % BIZ_SLIDES.length), 3400);
+    const id = setInterval(() => setActive((p) => (p + 1) % BIZ_SLIDES.length), 3200);
     return () => clearInterval(id);
   }, [reduced]);
 
@@ -44,87 +52,94 @@ function BusinessGrowthPanel({ reduced }) {
       {/* Glow halo */}
       <div className="pointer-events-none absolute left-1/2 top-1/2 h-[380px] w-[380px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(0,136,255,0.18),rgba(37,99,235,0.06)_55%,transparent_74%)] blur-2xl lg:h-[500px] lg:w-[500px]" />
 
-      {/* Outer rotating dashed orbit ring */}
-      {!reduced && (
-        <div
-          aria-hidden
-          className="biz-orbit pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[360px] w-[360px] rounded-full border border-dashed border-[#0088FF]/25 lg:h-[480px] lg:w-[480px]"
-        />
-      )}
-      {/* Inner conic accent ring */}
-      {!reduced && (
-        <div
-          aria-hidden
-          className="biz-orbit-rev pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[320px] w-[320px] rounded-full lg:h-[430px] lg:w-[430px]"
-          style={{ background: "conic-gradient(from 0deg, transparent 68%, rgba(0,136,255,0.14) 84%, transparent 100%)" }}
-        />
-      )}
-
-      {/* ── Circular image lens ── */}
+      {/* ── Fanned deck of photo cards ── */}
       <motion.div
         animate={reduced ? undefined : { y: [0, -10, 0] }}
         transition={{ duration: 6.5, repeat: Infinity, ease: "easeInOut" }}
-        className="relative z-20 h-[260px] w-[260px] overflow-hidden rounded-full border-[6px] border-white shadow-[0_34px_80px_rgba(15,23,42,0.26)] sm:h-[310px] sm:w-[310px] lg:h-[380px] lg:w-[380px]"
+        className="relative z-20 h-[330px] w-[250px] sm:h-[380px] sm:w-[290px] lg:h-[430px] lg:w-[330px]"
+        style={{ perspective: 1200 }}
       >
-        <AnimatePresence mode="popLayout">
-          <motion.div
-            key={active}
-            initial={reduced ? false : { opacity: 0, scale: 1.1 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={reduced ? undefined : { opacity: 0, scale: 1.04 }}
-            transition={{ duration: 0.85, ease }}
-            className="absolute inset-0"
-          >
-            <Image
-              src={current.img}
-              alt={current.label}
-              fill
-              sizes="(min-width: 1024px) 380px, (min-width: 640px) 310px, 260px"
-              className="object-cover object-center"
-              priority
-            />
-          </motion.div>
-        </AnimatePresence>
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#050A13]/65 via-transparent to-[#050A13]/10" />
+        {BIZ_SLIDES.map((slide, i) => {
+          // Depth = how far this card is behind the active (front) one.
+          const depth = (i - active + BIZ_SLIDES.length) % BIZ_SLIDES.length;
+          const layout = DECK_LAYOUT[depth] || DECK_LAYOUT[DECK_LAYOUT.length - 1];
+          const isFront = depth === 0;
 
-        {/* Caption inside the lens */}
-        <div className="absolute inset-x-0 bottom-0 px-6 pb-7 text-center">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-white backdrop-blur-sm">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#5BE49B] animate-pulse" /> For Business
-          </span>
-          <AnimatePresence mode="wait">
-            <motion.p
-              key={current.label}
-              initial={reduced ? false : { opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={reduced ? undefined : { opacity: 0, y: -6 }}
-              transition={{ duration: 0.4 }}
-              className="mt-1.5 text-[1.15rem] font-semibold leading-tight tracking-[-0.03em] text-white"
+          return (
+            <motion.div
+              key={slide.label}
+              initial={false}
+              animate={
+                reduced
+                  ? { opacity: isFront ? 1 : 0.85 }
+                  : {
+                      x: layout.x,
+                      y: layout.y,
+                      rotate: layout.rotate,
+                      scale: layout.scale,
+                      opacity: layout.opacity,
+                    }
+              }
+              transition={{ duration: 0.7, ease }}
+              style={{ zIndex: layout.z }}
+              className="absolute inset-0 overflow-hidden rounded-[28px] border-[5px] border-white shadow-[0_30px_70px_rgba(15,23,42,0.24)]"
             >
-              {current.label}
-            </motion.p>
-          </AnimatePresence>
-        </div>
+              <Image
+                src={slide.img}
+                alt={slide.label}
+                fill
+                sizes="(min-width: 1024px) 330px, (min-width: 640px) 290px, 250px"
+                className="object-cover object-center"
+                priority={i === 0}
+              />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#050A13]/72 via-[#050A13]/10 to-[#050A13]/5" />
+
+              {/* Caption only on the front card */}
+              {isFront ? (
+                <div className="absolute inset-x-0 bottom-0 p-5">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-white backdrop-blur-sm">
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#5BE49B] animate-pulse" /> For Business
+                  </span>
+                  <AnimatePresence mode="wait">
+                    <motion.p
+                      key={current.label}
+                      initial={reduced ? false : { opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={reduced ? undefined : { opacity: 0, y: -6 }}
+                      transition={{ duration: 0.4 }}
+                      className="mt-2 text-[1.3rem] font-semibold leading-tight tracking-[-0.03em] text-white"
+                    >
+                      {current.label}
+                    </motion.p>
+                  </AnimatePresence>
+                </div>
+              ) : null}
+            </motion.div>
+          );
+        })}
       </motion.div>
 
-      {/* Progress dots beneath the lens */}
-      <div className="absolute bottom-[6%] left-1/2 z-30 flex -translate-x-1/2 gap-1.5 lg:bottom-[8%]">
+      {/* Progress dots */}
+      <div className="absolute -bottom-2 left-1/2 z-40 flex -translate-x-1/2 gap-1.5">
         {BIZ_SLIDES.map((s, i) => (
-          <span
+          <button
             key={s.label}
+            type="button"
+            aria-label={`Show ${s.label}`}
+            onClick={() => setActive(i)}
             className={`h-1.5 rounded-full transition-all duration-300 ${
-              i === active ? "w-5 bg-[#0088FF]" : "w-1.5 bg-[#0088FF]/30"
+              i === active ? "w-5 bg-[#0088FF]" : "w-1.5 bg-[#0088FF]/30 hover:bg-[#0088FF]/60"
             }`}
           />
         ))}
       </div>
 
-      {/* ── Orbiting data chip — revenue (top) ── */}
+      {/* ── Data chip — revenue (top-left) ── */}
       <motion.div
-        initial={reduced ? false : { opacity: 0, y: -14 }}
-        animate={reduced ? undefined : { opacity: 1, y: 0 }}
+        initial={reduced ? false : { opacity: 0, y: -14, rotate: -5 }}
+        animate={reduced ? undefined : { opacity: 1, y: 0, rotate: -5 }}
         transition={{ duration: 0.6, ease, delay: 0.5 }}
-        className="absolute -top-3 left-1/2 z-40 hidden -translate-x-1/2 sm:block"
+        className="absolute left-[-8%] top-2 z-40 hidden sm:block lg:left-[-16%] lg:top-4"
       >
         <div className="flex items-center gap-2.5 rounded-2xl border border-white/80 bg-white px-3 py-2.5 shadow-[0_16px_40px_rgba(15,23,42,0.15)]">
           <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[rgba(22,179,100,0.12)] text-[#16B364]">
@@ -137,12 +152,12 @@ function BusinessGrowthPanel({ reduced }) {
         </div>
       </motion.div>
 
-      {/* ── Orbiting data chip — occupancy (right) ── */}
+      {/* ── Data chip — occupancy (right) ── */}
       <motion.div
-        initial={reduced ? false : { opacity: 0, x: 16 }}
-        animate={reduced ? undefined : { opacity: 1, x: 0 }}
+        initial={reduced ? false : { opacity: 0, x: 16, rotate: 5 }}
+        animate={reduced ? undefined : { opacity: 1, x: 0, rotate: 5 }}
         transition={{ duration: 0.6, ease, delay: 0.6 }}
-        className="absolute right-[-4%] top-1/2 z-40 hidden -translate-y-1/2 sm:block lg:right-[-12%]"
+        className="absolute right-[-6%] top-[34%] z-40 hidden sm:block lg:right-[-16%]"
       >
         <div className="w-[150px] rounded-2xl border border-white/80 bg-white p-3 shadow-[0_16px_40px_rgba(15,23,42,0.15)]">
           <div className="flex items-center gap-1.5">
@@ -161,12 +176,12 @@ function BusinessGrowthPanel({ reduced }) {
         </div>
       </motion.div>
 
-      {/* ── Orbiting data chip — automated (bottom-left) ── */}
+      {/* ── Data chip — automated (bottom-right) ── */}
       <motion.div
-        initial={reduced ? false : { opacity: 0, x: -14 }}
-        animate={reduced ? undefined : { opacity: 1, x: 0 }}
+        initial={reduced ? false : { opacity: 0, x: 14, rotate: 6 }}
+        animate={reduced ? undefined : { opacity: 1, x: 0, rotate: 6 }}
         transition={{ duration: 0.6, ease, delay: 0.7 }}
-        className="absolute bottom-[8%] left-[-4%] z-40 hidden sm:block lg:left-[-12%]"
+        className="absolute bottom-[10%] right-[-4%] z-40 hidden sm:block lg:right-[-12%]"
       >
         <div className="flex items-center gap-2 rounded-full border border-white/80 bg-white px-3 py-2 shadow-[0_14px_36px_rgba(15,23,42,0.14)]">
           <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#0088FF] text-white">
@@ -175,22 +190,6 @@ function BusinessGrowthPanel({ reduced }) {
           <p className="text-[10px] font-semibold text-[#050A13]">Fully Automated</p>
         </div>
       </motion.div>
-
-      <style>{`
-        @keyframes biz-orbit-spin {
-          from { transform: translate(-50%,-50%) rotate(0deg); }
-          to   { transform: translate(-50%,-50%) rotate(360deg); }
-        }
-        @keyframes biz-orbit-rev {
-          from { transform: translate(-50%,-50%) rotate(0deg); }
-          to   { transform: translate(-50%,-50%) rotate(-360deg); }
-        }
-        .biz-orbit { animation: biz-orbit-spin 34s linear infinite; }
-        .biz-orbit-rev { animation: biz-orbit-rev 22s linear infinite; }
-        @media (prefers-reduced-motion: reduce) {
-          .biz-orbit, .biz-orbit-rev { animation: none; }
-        }
-      `}</style>
     </div>
   );
 }
