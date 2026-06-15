@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import {
   ArrowRight,
   Check,
@@ -22,35 +22,190 @@ const opportunityIcons = {
   Building2,
 };
 
-function CareersHero({ hero }) {
+// Careers layout: an asymmetric photo mosaic (one tall tile + two stacked tiles),
+// each cross-fading independently — a gallery feel, distinct from About/Business.
+
+const CAREERS_TILE_A = [
+  "/Smart & Seamless Experience.jpeg",
+  "/AI-Driven Parking Intelligence.jpeg",
+];
+const CAREERS_TILE_B = [
+  "/Smart Public Parking.jpeg",
+  "/Maximize Parking Value dekhna ye.jpeg",
+];
+const CAREERS_TILE_C = [
+  "/Maximize Parking Value dekhna ye.jpeg",
+  "/Smart & Seamless Experience.jpeg",
+];
+
+function MosaicTile({ slides, idx, reduced, sizes }) {
   return (
-    <section className="bg-white py-4 sm:py-5 lg:py-6">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="relative overflow-hidden rounded-[24px] bg-[#06111f] text-white">
-          <div className="absolute inset-0">
-            {hero?.image ? (
-              <Image
-                src={hero.image}
-                alt=""
-                fill
-                className="object-cover object-center"
-                aria-hidden
-                priority
-              />
-            ) : null}
-            <div className="absolute inset-0 bg-black/55" />
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/60" />
+    <div className="absolute inset-0 overflow-hidden">
+      <AnimatePresence mode="popLayout">
+        <motion.div
+          key={idx}
+          initial={reduced ? false : { opacity: 0, scale: 1.1 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={reduced ? undefined : { opacity: 0 }}
+          transition={{ duration: 0.8, ease }}
+          className="absolute inset-0"
+        >
+          <Image src={slides[idx]} alt="HalaPark team" fill sizes={sizes} className="object-cover object-center" />
+        </motion.div>
+      </AnimatePresence>
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#050A13]/35 to-transparent" />
+    </div>
+  );
+}
+
+function CareersVisual({ heroImage, reduced }) {
+  const tileA = [heroImage || CAREERS_TILE_A[0], ...CAREERS_TILE_A.slice(1)];
+  const [a, setA] = useState(0);
+  const [b, setB] = useState(0);
+  const [c, setC] = useState(0);
+
+  useEffect(() => {
+    if (reduced) return undefined;
+    const ta = setInterval(() => setA((p) => (p + 1) % tileA.length), 3800);
+    const tb = setInterval(() => setB((p) => (p + 1) % CAREERS_TILE_B.length), 3100);
+    const tc = setInterval(() => setC((p) => (p + 1) % CAREERS_TILE_C.length), 2600);
+    return () => {
+      clearInterval(ta);
+      clearInterval(tb);
+      clearInterval(tc);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reduced]);
+
+  return (
+    <div className="relative flex items-center justify-center">
+      {/* Glow halo */}
+      <div className="pointer-events-none absolute left-1/2 top-1/2 h-[380px] w-[380px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(0,136,255,0.15),rgba(37,99,235,0.05)_58%,transparent_76%)] blur-2xl lg:h-[500px] lg:w-[500px]" />
+
+      {/* Mosaic grid: left tall tile spans 2 rows, right column = 2 stacked tiles */}
+      <motion.div
+        initial={reduced ? false : { opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, ease, delay: 0.1 }}
+        className="relative z-20 grid h-[330px] w-[300px] grid-cols-2 grid-rows-2 gap-3 sm:h-[390px] sm:w-[360px] lg:h-[450px] lg:w-[420px]"
+      >
+        {/* Tall tile (col 1, both rows) */}
+        <div className="relative row-span-2 overflow-hidden rounded-[24px] border border-white/80 shadow-[0_30px_70px_rgba(15,23,42,0.2)]">
+          <MosaicTile slides={tileA} idx={a} reduced={reduced} sizes="(min-width: 1024px) 210px, 150px" />
+          <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2 py-1 text-[8.5px] font-bold uppercase tracking-[0.14em] text-white backdrop-blur-sm">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#5BE49B] animate-pulse" /> Our Team
+          </span>
+        </div>
+        {/* Top-right tile */}
+        <div className="relative overflow-hidden rounded-[24px] border border-white/80 shadow-[0_30px_70px_rgba(15,23,42,0.2)]">
+          <MosaicTile slides={CAREERS_TILE_B} idx={b} reduced={reduced} sizes="(min-width: 1024px) 210px, 150px" />
+        </div>
+        {/* Bottom-right tile */}
+        <div className="relative overflow-hidden rounded-[24px] border border-white/80 shadow-[0_30px_70px_rgba(15,23,42,0.2)]">
+          <MosaicTile slides={CAREERS_TILE_C} idx={c} reduced={reduced} sizes="(min-width: 1024px) 210px, 150px" />
+        </div>
+      </motion.div>
+
+      {/* Floating chip — we're hiring (top-left) */}
+      <motion.div
+        initial={reduced ? false : { opacity: 0, y: -14, rotate: -5 }}
+        animate={reduced ? undefined : { opacity: 1, y: 0, rotate: -5 }}
+        transition={{ duration: 0.6, ease, delay: 0.5 }}
+        className="absolute left-[-6%] top-[-4%] z-40 hidden sm:block lg:left-[-14%]"
+      >
+        <div className="flex items-center gap-2.5 rounded-2xl border border-white/80 bg-white px-3 py-2.5 shadow-[0_16px_40px_rgba(15,23,42,0.15)]">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#0088FF] to-[#2563EB] text-white shadow-[0_4px_10px_rgba(0,136,255,0.35)]">
+            <Briefcase className="h-4.5 w-4.5" aria-hidden />
+          </span>
+          <div>
+            <p className="text-[11px] font-semibold text-[#050A13]">We&apos;re Hiring</p>
+            <p className="text-[10px] text-[#667085]">Join the team</p>
           </div>
-          <div className="relative flex min-h-[500px] w-full flex-col items-center justify-center px-8 py-14 text-center sm:px-12 md:min-h-[620px] lg:px-20">
-            <div className="relative z-10 w-full max-w-3xl">
-              <h1 className="text-[clamp(2.4rem,5.5vw,5rem)] font-semibold leading-[1.04] tracking-[-0.05em] text-white">
-                {hero?.title}
-              </h1>
-              <p className="mx-auto mt-5 max-w-2xl text-sm leading-relaxed text-white/70 sm:text-base">
-                {hero?.description}
-              </p>
+        </div>
+      </motion.div>
+
+      {/* Floating chip — culture (bottom-right) */}
+      <motion.div
+        initial={reduced ? false : { opacity: 0, x: 16, rotate: 5 }}
+        animate={reduced ? undefined : { opacity: 1, x: 0, rotate: 5 }}
+        transition={{ duration: 0.6, ease, delay: 0.6 }}
+        className="absolute bottom-[-4%] right-[-6%] z-40 hidden sm:block lg:right-[-12%]"
+      >
+        <div className="w-[150px] rounded-2xl border border-white/80 bg-white p-3 shadow-[0_16px_40px_rgba(15,23,42,0.15)]">
+          <div className="flex items-center gap-1.5">
+            <Sparkles className="h-3.5 w-3.5 text-[#0088FF]" aria-hidden />
+            <p className="text-[11px] font-semibold text-[#050A13]">Culture</p>
+          </div>
+          <p className="mt-1.5 text-[0.92rem] font-bold leading-tight tracking-[-0.02em] text-[#050A13]">Innovate Daily</p>
+          <p className="text-[9px] text-slate-400">grow &amp; build</p>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
+function CareersHero({ hero }) {
+  const reduced = useReducedMotion();
+
+  return (
+    <section
+      id="careers-hero"
+      className="relative overflow-hidden bg-[linear-gradient(135deg,#EBF4FF_0%,#F8FBFF_38%,#F0F7FF_66%,#EAF3FF_100%)]"
+    >
+      {/* Dot grid */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(0,136,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(0,136,255,0.05)_1px,transparent_1px)] bg-[size:44px_44px] [mask-image:radial-gradient(ellipse_80%_60%_at_50%_35%,black,transparent)]"
+      />
+      <div aria-hidden className="pointer-events-none absolute -left-24 top-[12%] h-[360px] w-[360px] rounded-full bg-[radial-gradient(circle_at_38%_38%,rgba(0,136,255,0.12),transparent_68%)] blur-2xl" />
+      <div aria-hidden className="pointer-events-none absolute -right-28 bottom-[4%] h-[420px] w-[420px] rounded-full bg-[radial-gradient(circle,rgba(37,99,235,0.10),transparent_66%)] blur-2xl" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#0088FF]/20 to-transparent" />
+
+      <div className="relative z-[2] mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
+        <div className="lg:grid lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-14 xl:gap-20">
+
+          {/* LEFT — text */}
+          <motion.div
+            initial={reduced ? false : { opacity: 0, x: -28 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.65, ease }}
+          >
+            <h1 className="max-w-[600px] text-[clamp(2.4rem,4.8vw,4.2rem)] font-semibold leading-[1.02] tracking-[-0.055em] text-[#050A13]">
+              {hero?.title}
+            </h1>
+
+            <p className="mt-5 max-w-[470px] text-[0.95rem] leading-[1.75] text-slate-500">
+              {hero?.description}
+            </p>
+
+            <div className="mt-9 flex flex-wrap items-center gap-3">
+              <Link
+                href="#open-positions"
+                className="group inline-flex items-center gap-2.5 rounded-full bg-[#0088FF] px-7 py-3.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,136,255,0.32)] transition hover:brightness-110"
+              >
+                View Open Positions
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 transition-transform duration-200 group-hover:translate-x-0.5">
+                  <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+                </span>
+              </Link>
+              <Link
+                href="/contact"
+                className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-7 py-3.5 text-sm font-semibold text-slate-700 shadow-[0_2px_12px_rgba(6,6,22,0.07)] transition hover:border-[#0088FF]/50 hover:text-[#0088FF]"
+              >
+                Get In Touch
+              </Link>
             </div>
-          </div>
+          </motion.div>
+
+          {/* RIGHT — imagery collage */}
+          <motion.div
+            initial={reduced ? false : { opacity: 0, x: 32 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.75, ease, delay: 0.1 }}
+            className="relative mt-16 flex min-h-[420px] items-center justify-center lg:mt-0 lg:min-h-[560px]"
+          >
+            <CareersVisual heroImage={hero?.image} reduced={reduced} />
+          </motion.div>
         </div>
       </div>
     </section>

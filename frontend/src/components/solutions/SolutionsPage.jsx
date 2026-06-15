@@ -23,9 +23,228 @@ import {
 
 const ease = [0.22, 1, 0.36, 1];
 
-// ─── Hero ─────────────────────────────────────────────────────────────────────
+// ─── Hero (NEW — light split layout with a live "control room" panel) ──────────
+// The client felt the old dark video hero (kept below as `OldNewHero`) looked too
+// much like the home page. This lighter, infrastructure-themed hero is distinct.
+
+function SolutionsControlPanel({ reduced }) {
+  const zones = [
+    { name: "Zone A · Levels 1-3", value: 92, tone: "#16B364" },
+    { name: "Zone B · Retail",     value: 64, tone: "#0088FF" },
+    { name: "Zone C · Towers",     value: 38, tone: "#F59E0B" },
+  ];
+
+  return (
+    <div className="relative flex items-center justify-center">
+      {/* Soft glow halo */}
+      <div className="pointer-events-none absolute left-1/2 top-1/2 h-[360px] w-[360px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(0,136,255,0.16),rgba(37,99,235,0.06)_55%,transparent_75%)] blur-2xl lg:h-[460px] lg:w-[460px]" />
+
+      {/* Main dashboard card */}
+      <motion.div
+        initial={reduced ? false : { opacity: 0, y: 28 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, ease, delay: 0.1 }}
+        className="relative z-20 w-[300px] overflow-hidden rounded-[26px] border border-white/80 bg-white/95 shadow-[0_30px_70px_rgba(15,23,42,0.16)] backdrop-blur sm:w-[360px] lg:w-[420px]"
+      >
+        {/* Header bar */}
+        <div className="flex items-center justify-between bg-[linear-gradient(120deg,#0A3F84,#0088FF)] px-5 py-4 text-white">
+          <div className="flex items-center gap-2.5">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/15">
+              <Cctv className="h-4 w-4" aria-hidden />
+            </span>
+            <div>
+              <p className="text-[12px] font-semibold leading-none">Live Control Room</p>
+              <p className="mt-1 text-[10px] text-white/70">3 facilities · real-time</p>
+            </div>
+          </div>
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2 py-1 text-[9px] font-bold uppercase tracking-[0.14em]">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#5BE49B] animate-pulse" /> Live
+          </span>
+        </div>
+
+        {/* Occupancy stats */}
+        <div className="grid grid-cols-3 divide-x divide-slate-100 border-b border-slate-100">
+          {[
+            { v: "2,418", l: "Occupied" },
+            { v: "642",   l: "Available" },
+            { v: "79%",   l: "Utilization" },
+          ].map((s) => (
+            <div key={s.l} className="px-3 py-3.5 text-center">
+              <p className="text-[1.05rem] font-bold tracking-[-0.03em] text-[#050A13] sm:text-[1.2rem]">{s.v}</p>
+              <p className="mt-0.5 text-[9px] font-medium uppercase tracking-[0.1em] text-slate-400">{s.l}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Zone occupancy bars */}
+        <div className="space-y-3 px-5 py-4">
+          {zones.map((z, i) => (
+            <div key={z.name}>
+              <div className="flex items-center justify-between text-[10px]">
+                <span className="font-medium text-slate-600">{z.name}</span>
+                <span className="font-semibold text-[#050A13]">{z.value}%</span>
+              </div>
+              <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
+                <motion.div
+                  className="h-full rounded-full"
+                  style={{ background: z.tone }}
+                  initial={{ width: "0%" }}
+                  animate={{ width: `${z.value}%` }}
+                  transition={{ duration: 1.2, ease: "easeOut", delay: 0.5 + i * 0.15 }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Footer row — system status */}
+        <div className="flex items-center justify-between border-t border-slate-100 bg-[#F6FAFF] px-5 py-3">
+          <div className="flex items-center gap-2">
+            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[rgba(22,179,100,0.12)]">
+              <Check className="h-3 w-3 text-[#16B364]" strokeWidth={3} aria-hidden />
+            </span>
+            <p className="text-[10px] font-medium text-slate-600">All systems operational</p>
+          </div>
+          <p className="text-[10px] font-semibold text-[#0088FF]">ANPR · EV · Barriers</p>
+        </div>
+      </motion.div>
+
+      {/* Floating chip — ANPR capture (top-left) */}
+      <motion.div
+        initial={reduced ? false : { opacity: 0, y: -14, rotate: -5 }}
+        animate={reduced ? undefined : { opacity: 1, y: 0, rotate: -5 }}
+        transition={{ duration: 0.6, ease, delay: 0.45 }}
+        className="absolute left-[-4%] top-2 z-30 hidden sm:block lg:left-[-12%] lg:top-4"
+      >
+        <div className="flex items-center gap-2.5 rounded-2xl border border-white/80 bg-white px-3 py-2.5 shadow-[0_16px_40px_rgba(15,23,42,0.13)]">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#0088FF] to-[#2563EB] text-white">
+            <Car className="h-4.5 w-4.5" aria-hidden />
+          </span>
+          <div>
+            <p className="text-[11px] font-semibold text-[#050A13]">Plate Recognized</p>
+            <p className="text-[10px] font-mono text-[#667085]">DXB · A 48291</p>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Floating chip — EV charging (bottom-right) */}
+      <motion.div
+        initial={reduced ? false : { opacity: 0, x: 16, rotate: 5 }}
+        animate={reduced ? undefined : { opacity: 1, x: 0, rotate: 5 }}
+        transition={{ duration: 0.6, ease, delay: 0.55 }}
+        className="absolute bottom-[6%] right-[-3%] z-30 hidden sm:block lg:right-[-10%]"
+      >
+        <div className="w-[150px] rounded-2xl border border-white/80 bg-white p-3 shadow-[0_16px_40px_rgba(15,23,42,0.13)]">
+          <div className="flex items-center gap-1.5">
+            <Zap className="h-3.5 w-3.5 text-[#16B364]" fill="currentColor" aria-hidden />
+            <p className="text-[11px] font-semibold text-[#050A13]">EV Bay · 12</p>
+          </div>
+          <p className="mt-1.5 text-[1.1rem] font-bold tracking-[-0.03em] text-[#050A13]">7.4 kW</p>
+          <p className="text-[9px] text-slate-400">charging · 4 active</p>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
 
 function NewHero() {
+  const reduced = useReducedMotion();
+
+  const features = [
+    "AI-powered occupancy & guidance",
+    "ANPR access control & automation",
+    "Real-time multi-site control room",
+  ];
+
+  return (
+    <section
+      id="hero-section"
+      className="relative overflow-hidden bg-[linear-gradient(135deg,#EBF4FF_0%,#F8FBFF_38%,#F0F7FF_66%,#EAF3FF_100%)]"
+    >
+      {/* Dot grid */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(0,136,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(0,136,255,0.05)_1px,transparent_1px)] bg-[size:44px_44px] [mask-image:radial-gradient(ellipse_80%_60%_at_50%_35%,black,transparent)]"
+      />
+      {/* Decorative blobs */}
+      <div aria-hidden className="pointer-events-none absolute -left-24 top-[12%] h-[360px] w-[360px] rounded-full bg-[radial-gradient(circle_at_38%_38%,rgba(0,136,255,0.12),transparent_68%)] blur-2xl" />
+      <div aria-hidden className="pointer-events-none absolute -right-28 bottom-[4%] h-[420px] w-[420px] rounded-full bg-[radial-gradient(circle,rgba(37,99,235,0.10),transparent_66%)] blur-2xl" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#0088FF]/20 to-transparent" />
+
+      <div className="relative z-[2] mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
+        <div className="lg:grid lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-14 xl:gap-20">
+
+          {/* LEFT — text */}
+          <motion.div
+            initial={reduced ? false : { opacity: 0, x: -28 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.65, ease }}
+          >
+            <h1 className="max-w-[600px] text-[clamp(2.5rem,5vw,4.4rem)] font-semibold leading-[1.0] tracking-[-0.06em] text-[#050A13]">
+              Intelligent Parking{" "}
+              <span className="bg-[linear-gradient(120deg,#0060CC_0%,#0088FF_45%,#38BDF8_100%)] bg-clip-text text-transparent">
+                Infrastructure
+              </span>
+            </h1>
+
+            <p className="mt-6 max-w-[460px] text-[0.95rem] leading-[1.75] text-slate-500">
+              An AI-powered smart parking solution for large-scale residential, commercial, and mixed-use developments across the UAE — automated, connected, and managed in real time.
+            </p>
+
+            <ul className="mt-7 space-y-2.5">
+              {features.map((f, i) => (
+                <motion.li
+                  key={f}
+                  initial={reduced ? false : { opacity: 0, x: -14 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.45, ease, delay: 0.2 + i * 0.08 }}
+                  className="flex items-center gap-3 text-[0.9rem] font-medium text-slate-700"
+                >
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#0088FF]">
+                    <Check className="h-3 w-3 text-white" strokeWidth={3} aria-hidden />
+                  </span>
+                  {f}
+                </motion.li>
+              ))}
+            </ul>
+
+            <div className="mt-9 flex flex-wrap items-center gap-3">
+              <Link
+                href="/contact"
+                className="group inline-flex items-center gap-2.5 rounded-full bg-[#0088FF] px-7 py-3.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,136,255,0.32)] transition hover:brightness-110"
+              >
+                Get In Touch
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 transition-transform duration-200 group-hover:translate-x-0.5">
+                  <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+                </span>
+              </Link>
+              <a
+                href="#solutions-grid"
+                className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-7 py-3.5 text-sm font-semibold text-slate-700 shadow-[0_2px_12px_rgba(6,6,22,0.07)] transition hover:border-[#0088FF]/50 hover:text-[#0088FF]"
+              >
+                Explore Solutions
+              </a>
+            </div>
+          </motion.div>
+
+          {/* RIGHT — control panel mock */}
+          <motion.div
+            initial={reduced ? false : { opacity: 0, x: 32 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.75, ease, delay: 0.1 }}
+            className="relative mt-16 flex min-h-[420px] items-center justify-center lg:mt-0 lg:min-h-[560px]"
+          >
+            <SolutionsControlPanel reduced={reduced} />
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── OLD Hero (dark video — kept for reference, no longer rendered) ─────────────
+/*
+function OldNewHero() {
   const videoRef = useRef(null);
 
   useEffect(() => {
@@ -73,6 +292,7 @@ function NewHero() {
     </section>
   );
 }
+*/
 
 // ─── Parking Challenges ────────────────────────────────────────────────────────
 
@@ -152,14 +372,25 @@ function GlobalExpansionSection() {
 // ─── Our Solutions ─────────────────────────────────────────────────────────────
 
 const DEFAULT_SOLUTION_ITEMS = [
-  { title: "Smart Parking Management",   description: "Centralized platform for monitoring occupancy, controlling parking operations, and managing multiple facilities in real time.", image: "/hf_20260327_064316_9c7b1a28-dbfa-456e-b88a-0087cb567a61.png" },
-  { title: "Automated Access Control",   description: "ANPR and smart barrier systems enabling seamless and secure vehicle access.", image: "/hf_20260327_061010_f3bc038b-576f-4903-8896-5d998cc78527.png" },
-  { title: "Parking Guidance System",    description: "Real-time wayfinding and space guidance to reduce congestion and improve traffic flow inside facilities.", image: "/hf_20260327_060926_cbb82448-441c-42ee-9589-785e7acd7565.png" },
-  { title: "Mobile & Digital Experience",description: "Mobile reservations, digital payments, subscriptions, and contactless parking interactions.", image: "/hf_20260327_065515_cd3808b8-d99d-4faa-817d-e3f772726da6.png" },
-  { title: "Digital Valet Operations",   description: "Structured valet workflows with digital ticketing, vehicle tracking, and retrieval management.", image: "/hf_20260327_061900_db12a62e-2867-44b6-83f0-ea7f1a5442ef.png" },
-  { title: "EV Charging Integration",    description: "Integrated EV charging infrastructure with smart billing and charging management.", image: "/hf_20260327_070648_996630bc-828e-4cd7-8cb1-f42c30332d86.png" },
-  { title: "AI & Parking Analytics",     description: "Advanced occupancy analytics, traffic insights, predictive trends, and reporting dashboards.", image: "/hf_20260327_062407_6dca49c0-90dd-468a-96f9-b36bba13ea8b.png" },
+  { slug: "smart-parking-management", title: "Smart Parking Management",   description: "Centralized platform for monitoring occupancy, controlling parking operations, and managing multiple facilities in real time.", image: "/hf_20260327_064316_9c7b1a28-dbfa-456e-b88a-0087cb567a61.png" },
+  { slug: "automated-access-control", title: "Automated Access Control",   description: "ANPR and smart barrier systems enabling seamless and secure vehicle access.", image: "/hf_20260327_061010_f3bc038b-576f-4903-8896-5d998cc78527.png" },
+  { slug: "parking-guidance-system", title: "Parking Guidance System",    description: "Real-time wayfinding and space guidance to reduce congestion and improve traffic flow inside facilities.", image: "/hf_20260327_060926_cbb82448-441c-42ee-9589-785e7acd7565.png" },
+  { slug: "mobile-digital-experience", title: "Mobile & Digital Experience",description: "Mobile reservations, digital payments, subscriptions, and contactless parking interactions.", image: "/hf_20260327_065515_cd3808b8-d99d-4faa-817d-e3f772726da6.png" },
+  { slug: "digital-valet-operations", title: "Digital Valet Operations",   description: "Structured valet workflows with digital ticketing, vehicle tracking, and retrieval management.", image: "/hf_20260327_061900_db12a62e-2867-44b6-83f0-ea7f1a5442ef.png" },
+  { slug: "ev-charging-integration", title: "EV Charging Integration",    description: "Integrated EV charging infrastructure with smart billing and charging management.", image: "/hf_20260327_070648_996630bc-828e-4cd7-8cb1-f42c30332d86.png" },
+  { slug: "ai-parking-analytics", title: "AI & Parking Analytics",     description: "Advanced occupancy analytics, traffic insights, predictive trends, and reporting dashboards.", image: "/hf_20260327_062407_6dca49c0-90dd-468a-96f9-b36bba13ea8b.png" },
 ];
+
+// Build the link for a solution card. Uses an explicit `slug` when present
+// (CMS or defaults), otherwise slugifies the title. Falls back to /contact.
+function solutionCardHref(card) {
+  const slug =
+    card?.slug ||
+    (card?.title
+      ? card.title.toLowerCase().replace(/&/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "")
+      : "");
+  return slug ? `/solutions/${slug}` : "/contact";
+}
 
 function StatsSection() {
   const reduced = useReducedMotion();
@@ -209,7 +440,7 @@ function StatsSection() {
                     <h3 className="text-[1rem] font-semibold leading-tight tracking-[-0.02em] text-[#050A13] sm:text-[1.05rem]">{card.title}</h3>
                     <p className="mt-2 text-[0.82rem] leading-6 text-slate-500 sm:text-[0.88rem]">{card.description}</p>
                   </div>
-                  <Link href="/contact" className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EEF6FF] text-[#0088FF] transition group-hover:bg-[#0088FF] group-hover:text-white" aria-label={`Learn more about ${card.title}`}>
+                  <Link href={solutionCardHref(card)} className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EEF6FF] text-[#0088FF] transition group-hover:bg-[#0088FF] group-hover:text-white" aria-label={`Learn more about ${card.title}`}>
                     <ArrowRight className="h-4 w-4" aria-hidden />
                   </Link>
                 </div>
@@ -237,7 +468,7 @@ function StatsSection() {
                     <h3 className="text-[1rem] font-semibold leading-tight tracking-[-0.02em] text-[#050A13] sm:text-[1.05rem]">{card.title}</h3>
                     <p className="mt-2 text-[0.82rem] leading-6 text-slate-500 sm:text-[0.88rem]">{card.description}</p>
                   </div>
-                  <Link href="/contact" className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EEF6FF] text-[#0088FF] transition group-hover:bg-[#0088FF] group-hover:text-white" aria-label={`Learn more about ${card.title}`}>
+                  <Link href={solutionCardHref(card)} className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EEF6FF] text-[#0088FF] transition group-hover:bg-[#0088FF] group-hover:text-white" aria-label={`Learn more about ${card.title}`}>
                     <ArrowRight className="h-4 w-4" aria-hidden />
                   </Link>
                 </div>

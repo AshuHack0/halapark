@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { servicesData } from "@/modules/home/servicesData";
+import { DEFAULT_SOLUTION_DETAILS } from "@/lib/solutionDetailsDefaults";
 import SearchModal from "@/components/layout/SearchModal";
 
 const HamburgerIcon = () => (
@@ -91,7 +92,7 @@ const navLinks = [
   // { href: "/how-it-works", key: "howItWorks" },
   { href: "/app", key: "app" },
   { href: "/services", key: "services" },
-  { href: "/solutions", key: "solutions" },
+  { href: "/solutions", key: "solutions", hasDropdown: "solutions" },
   { href: "/business", key: "business" },
   { href: "/about", key: "aboutUs" },
   { href: "/faqs", key: "faqs" },
@@ -175,6 +176,17 @@ export default function Navbar() {
     href: `/services?open=${encodeURIComponent(service.slug)}`,
     label: isArabic ? (SERVICE_LABELS_AR[service.slug] || service.name) : service.name,
   }));
+  const solutionLinks = DEFAULT_SOLUTION_DETAILS.map((detail) => ({
+    href: `/solutions/${detail.slug}`,
+    label: detail.eyebrow || detail.title,
+  }));
+
+  // A dropdown nav item can be of type "services" or "solutions"; each has its
+  // own "View all" link, child links, and labels.
+  const dropdownConfig = {
+    services: { viewAllHref: "/services", viewAllLabel: "View All Services", links: serviceLinks },
+    solutions: { viewAllHref: "/solutions", viewAllLabel: "View All Solutions", links: solutionLinks },
+  };
 
   useEffect(() => {
     const handleResize = () => {
@@ -284,6 +296,9 @@ export default function Navbar() {
     if (href === "/services") {
       return pathname.startsWith("/services");
     }
+    if (href === "/solutions") {
+      return pathname.startsWith("/solutions");
+    }
     if (href.startsWith("#")) {
       return pathname === "/" && hash === href;
     }
@@ -316,6 +331,8 @@ export default function Navbar() {
                   const isActive = isLinkActive(link.href);
 
                   if (link.hasDropdown) {
+                    const dd = dropdownConfig[link.hasDropdown];
+
                     return (
                       <div
                         key={link.key}
@@ -342,7 +359,7 @@ export default function Navbar() {
                         </button>
 
                         <div
-                          className={`absolute left-1/2 top-full z-[60] mt-2 w-[320px] -translate-x-1/2 rounded-2xl border border-[#CFE2FA]/75 bg-white/95 p-2 shadow-[0_24px_60px_rgba(15,23,42,0.16)] backdrop-blur-sm transition ${
+                          className={`absolute left-1/2 top-full z-[60] mt-2 max-h-[70vh] w-[320px] -translate-x-1/2 overflow-y-auto rounded-2xl border border-[#CFE2FA]/75 bg-white/95 p-2 shadow-[0_24px_60px_rgba(15,23,42,0.16)] backdrop-blur-sm transition ${
                             servicesOpen
                               ? "pointer-events-auto opacity-100 translate-y-0"
                               : "pointer-events-none opacity-0 -translate-y-1"
@@ -350,26 +367,26 @@ export default function Navbar() {
                           role="menu"
                         >
                           <Link
-                            href="/services"
+                            href={dd.viewAllHref}
                             className="flex items-center justify-between rounded-xl bg-[rgba(0,136,255,0.06)] px-3 py-3 text-sm font-semibold text-[#0078E0] mb-1 transition hover:bg-[rgba(0,136,255,0.12)]"
                             onClick={() => setServicesOpen(false)}
                           >
-                            <span>View All Services</span>
+                            <span>{dd.viewAllLabel}</span>
                             <span className="shrink-0 opacity-80"><ArrowRightIcon /></span>
                           </Link>
                           <div className="my-1 border-t border-slate-100" />
-                          {serviceLinks.map((service) => (
+                          {dd.links.map((item) => (
                             <Link
-                              key={service.href}
-                              href={service.href}
+                              key={item.href}
+                              href={item.href}
                               className={`flex items-center justify-between rounded-xl px-3 py-3.5 text-sm transition ${
-                                pathname === service.href
+                                pathname === item.href
                                   ? "bg-[rgba(0,136,255,0.12)] font-semibold text-[#0078E0]"
                                   : "text-slate-700 hover:bg-[rgba(0,136,255,0.08)] hover:text-[#0078E0]"
                               }`}
                               onClick={() => setServicesOpen(false)}
                             >
-                              <span>{service.label}</span>
+                              <span>{item.label}</span>
                               <span className="shrink-0 opacity-80">
                                 <ArrowRightIcon />
                               </span>
@@ -507,6 +524,8 @@ export default function Navbar() {
               const isActive = isLinkActive(link.href);
 
               if (link.hasDropdown) {
+                const dd = dropdownConfig[link.hasDropdown];
+
                 return (
                   <div key={link.key} className="rounded-lg">
                     <button
@@ -523,34 +542,34 @@ export default function Navbar() {
                     </button>
                     <div
                       className={`overflow-hidden transition-all duration-200 ${
-                        mobileServicesOpen ? "max-h-[420px] opacity-100" : "max-h-0 opacity-0"
+                        mobileServicesOpen ? "max-h-[460px] opacity-100" : "max-h-0 opacity-0"
                       }`}
                     >
-                      <div className="mt-1 space-y-1 rounded-lg border border-slate-200 bg-slate-50 p-2">
+                      <div className="mt-1 space-y-1 overflow-y-auto rounded-lg border border-slate-200 bg-slate-50 p-2 max-h-[440px]">
                         <Link
-                          href="/services"
+                          href={dd.viewAllHref}
                           onClick={() => { setMenuOpen(false); setMobileServicesOpen(false); }}
                           className="flex items-center justify-between rounded-md bg-[rgba(0,136,255,0.08)] px-3 py-3 text-sm font-semibold text-[#0078E0] transition hover:bg-[rgba(0,136,255,0.14)]"
                         >
-                          <span>View All Services</span>
+                          <span>{dd.viewAllLabel}</span>
                           <span className="shrink-0 opacity-80"><ArrowRightIcon /></span>
                         </Link>
                         <div className="border-t border-slate-200 my-1" />
-                        {serviceLinks.map((service) => (
+                        {dd.links.map((item) => (
                           <Link
-                            key={service.href}
-                            href={service.href}
+                            key={item.href}
+                            href={item.href}
                             onClick={() => {
                               setMenuOpen(false);
                               setMobileServicesOpen(false);
                             }}
                             className={`flex items-center justify-between rounded-md px-3 py-3 text-sm transition ${
-                              pathname === service.href
+                              pathname === item.href
                                 ? "bg-[rgba(0,136,255,0.12)] font-semibold text-[#0078E0]"
                                 : "text-slate-700 hover:bg-[rgba(0,136,255,0.08)] hover:text-[#0078E0]"
                             }`}
                           >
-                            <span>{service.label}</span>
+                            <span>{item.label}</span>
                             <span className="shrink-0 opacity-80">
                               <ArrowRightIcon />
                             </span>

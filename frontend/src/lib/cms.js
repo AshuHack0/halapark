@@ -1,5 +1,6 @@
 import { API_URL } from "@/config/api";
 import { mergeAboutContent } from "@/lib/aboutDefaults";
+import { DEFAULT_SOLUTION_DETAILS, getSolutionDetailBySlug } from "@/lib/solutionDetailsDefaults";
 
 export const DEFAULT_HOME_SLIDES = [
   {
@@ -208,4 +209,26 @@ export async function fetchBusinessContent() {
 export async function fetchBusinessSection(key) {
   const sections = await fetchBusinessSections();
   return sections?.[key] ?? null;
+}
+
+// ─── Solutions: per-solution detail pages ─────────────────────────────────────
+// Detail content lives under the "solutions" page as `sections.details` (array,
+// keyed by slug). Falls back to local defaults so pages always render.
+
+export async function fetchSolutionDetails() {
+  const page = await fetchPage("solutions");
+  const details = page?.sections?.details;
+  if (Array.isArray(details) && details.length > 0) {
+    cmsLog("fetchSolutionDetails → using API", { count: details.length });
+    return details;
+  }
+  cmsLog("fetchSolutionDetails → using DEFAULT_SOLUTION_DETAILS", {
+    count: DEFAULT_SOLUTION_DETAILS.length,
+  });
+  return DEFAULT_SOLUTION_DETAILS;
+}
+
+export async function fetchSolutionDetail(slug) {
+  const details = await fetchSolutionDetails();
+  return getSolutionDetailBySlug(slug, details);
 }

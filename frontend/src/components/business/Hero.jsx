@@ -1,17 +1,311 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { ArrowRight, TrendingUp, Check, Gauge } from "lucide-react";
 import { fetchBusinessSection } from "@/lib/cms";
+
+const ease = [0.22, 1, 0.36, 1];
 
 const DEFAULT_HERO = {
   title: "Turning Smart Parking into Business Growth",
-  description: "HalaPark helps businesses maximize revenue, automate parking operations, and deliver seamless smart mobility experiences through AI-powered parking technology.",
+  description:
+    "HalaPark helps businesses maximize revenue, automate parking operations, and deliver seamless smart mobility experiences through AI-powered parking technology.",
   image: "/HalaParkVideo.mp4",
 };
 
+// ─── Right-side visual: circular "portal" layout ────────────────────────────────
+// A round image lens cross-fading through business imagery, ringed by a rotating
+// orbit and surrounded by data chips. Geometrically distinct from the rectangular
+// card layouts used on Services / Solutions / About / Careers.
+
+const BIZ_SLIDES = [
+  { img: "/Maximize Parking Value dekhna ye.jpeg", label: "Maximize Value" },
+  { img: "/AI-Driven Parking Intelligence.jpeg",   label: "AI Intelligence" },
+  { img: "/Smart & Seamless Experience.jpeg",      label: "Seamless Ops" },
+  { img: "/Smart Public Parking.jpeg",             label: "Scalable Growth" },
+];
+
+function BusinessGrowthPanel({ reduced }) {
+  const [active, setActive] = useState(0);
+
+  useEffect(() => {
+    if (reduced) return undefined;
+    const id = setInterval(() => setActive((p) => (p + 1) % BIZ_SLIDES.length), 3400);
+    return () => clearInterval(id);
+  }, [reduced]);
+
+  const current = BIZ_SLIDES[active];
+
+  return (
+    <div className="relative flex items-center justify-center">
+      {/* Glow halo */}
+      <div className="pointer-events-none absolute left-1/2 top-1/2 h-[380px] w-[380px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(0,136,255,0.18),rgba(37,99,235,0.06)_55%,transparent_74%)] blur-2xl lg:h-[500px] lg:w-[500px]" />
+
+      {/* Outer rotating dashed orbit ring */}
+      {!reduced && (
+        <div
+          aria-hidden
+          className="biz-orbit pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[360px] w-[360px] rounded-full border border-dashed border-[#0088FF]/25 lg:h-[480px] lg:w-[480px]"
+        />
+      )}
+      {/* Inner conic accent ring */}
+      {!reduced && (
+        <div
+          aria-hidden
+          className="biz-orbit-rev pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[320px] w-[320px] rounded-full lg:h-[430px] lg:w-[430px]"
+          style={{ background: "conic-gradient(from 0deg, transparent 68%, rgba(0,136,255,0.14) 84%, transparent 100%)" }}
+        />
+      )}
+
+      {/* ── Circular image lens ── */}
+      <motion.div
+        animate={reduced ? undefined : { y: [0, -10, 0] }}
+        transition={{ duration: 6.5, repeat: Infinity, ease: "easeInOut" }}
+        className="relative z-20 h-[260px] w-[260px] overflow-hidden rounded-full border-[6px] border-white shadow-[0_34px_80px_rgba(15,23,42,0.26)] sm:h-[310px] sm:w-[310px] lg:h-[380px] lg:w-[380px]"
+      >
+        <AnimatePresence mode="popLayout">
+          <motion.div
+            key={active}
+            initial={reduced ? false : { opacity: 0, scale: 1.1 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={reduced ? undefined : { opacity: 0, scale: 1.04 }}
+            transition={{ duration: 0.85, ease }}
+            className="absolute inset-0"
+          >
+            <Image
+              src={current.img}
+              alt={current.label}
+              fill
+              sizes="(min-width: 1024px) 380px, (min-width: 640px) 310px, 260px"
+              className="object-cover object-center"
+              priority
+            />
+          </motion.div>
+        </AnimatePresence>
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#050A13]/65 via-transparent to-[#050A13]/10" />
+
+        {/* Caption inside the lens */}
+        <div className="absolute inset-x-0 bottom-0 px-6 pb-7 text-center">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-white backdrop-blur-sm">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#5BE49B] animate-pulse" /> For Business
+          </span>
+          <AnimatePresence mode="wait">
+            <motion.p
+              key={current.label}
+              initial={reduced ? false : { opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={reduced ? undefined : { opacity: 0, y: -6 }}
+              transition={{ duration: 0.4 }}
+              className="mt-1.5 text-[1.15rem] font-semibold leading-tight tracking-[-0.03em] text-white"
+            >
+              {current.label}
+            </motion.p>
+          </AnimatePresence>
+        </div>
+      </motion.div>
+
+      {/* Progress dots beneath the lens */}
+      <div className="absolute bottom-[6%] left-1/2 z-30 flex -translate-x-1/2 gap-1.5 lg:bottom-[8%]">
+        {BIZ_SLIDES.map((s, i) => (
+          <span
+            key={s.label}
+            className={`h-1.5 rounded-full transition-all duration-300 ${
+              i === active ? "w-5 bg-[#0088FF]" : "w-1.5 bg-[#0088FF]/30"
+            }`}
+          />
+        ))}
+      </div>
+
+      {/* ── Orbiting data chip — revenue (top) ── */}
+      <motion.div
+        initial={reduced ? false : { opacity: 0, y: -14 }}
+        animate={reduced ? undefined : { opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease, delay: 0.5 }}
+        className="absolute -top-3 left-1/2 z-40 hidden -translate-x-1/2 sm:block"
+      >
+        <div className="flex items-center gap-2.5 rounded-2xl border border-white/80 bg-white px-3 py-2.5 shadow-[0_16px_40px_rgba(15,23,42,0.15)]">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[rgba(22,179,100,0.12)] text-[#16B364]">
+            <TrendingUp className="h-4.5 w-4.5" aria-hidden />
+          </span>
+          <div>
+            <p className="text-[11px] font-semibold text-[#050A13]">+34% Revenue</p>
+            <p className="text-[10px] text-[#667085]">vs. last year</p>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ── Orbiting data chip — occupancy (right) ── */}
+      <motion.div
+        initial={reduced ? false : { opacity: 0, x: 16 }}
+        animate={reduced ? undefined : { opacity: 1, x: 0 }}
+        transition={{ duration: 0.6, ease, delay: 0.6 }}
+        className="absolute right-[-4%] top-1/2 z-40 hidden -translate-y-1/2 sm:block lg:right-[-12%]"
+      >
+        <div className="w-[150px] rounded-2xl border border-white/80 bg-white p-3 shadow-[0_16px_40px_rgba(15,23,42,0.15)]">
+          <div className="flex items-center gap-1.5">
+            <Gauge className="h-3.5 w-3.5 text-[#0088FF]" aria-hidden />
+            <p className="text-[11px] font-semibold text-[#050A13]">Occupancy</p>
+          </div>
+          <p className="mt-1.5 text-[1.1rem] font-bold tracking-[-0.03em] text-[#050A13]">92%</p>
+          <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
+            <motion.div
+              className="h-full rounded-full bg-gradient-to-r from-[#0088FF] to-[#16B364]"
+              initial={{ width: "0%" }}
+              animate={{ width: "92%" }}
+              transition={{ duration: 1.3, ease: "easeOut", delay: 0.8 }}
+            />
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ── Orbiting data chip — automated (bottom-left) ── */}
+      <motion.div
+        initial={reduced ? false : { opacity: 0, x: -14 }}
+        animate={reduced ? undefined : { opacity: 1, x: 0 }}
+        transition={{ duration: 0.6, ease, delay: 0.7 }}
+        className="absolute bottom-[8%] left-[-4%] z-40 hidden sm:block lg:left-[-12%]"
+      >
+        <div className="flex items-center gap-2 rounded-full border border-white/80 bg-white px-3 py-2 shadow-[0_14px_36px_rgba(15,23,42,0.14)]">
+          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#0088FF] text-white">
+            <Check className="h-3 w-3" strokeWidth={3} aria-hidden />
+          </span>
+          <p className="text-[10px] font-semibold text-[#050A13]">Fully Automated</p>
+        </div>
+      </motion.div>
+
+      <style>{`
+        @keyframes biz-orbit-spin {
+          from { transform: translate(-50%,-50%) rotate(0deg); }
+          to   { transform: translate(-50%,-50%) rotate(360deg); }
+        }
+        @keyframes biz-orbit-rev {
+          from { transform: translate(-50%,-50%) rotate(0deg); }
+          to   { transform: translate(-50%,-50%) rotate(-360deg); }
+        }
+        .biz-orbit { animation: biz-orbit-spin 34s linear infinite; }
+        .biz-orbit-rev { animation: biz-orbit-rev 22s linear infinite; }
+        @media (prefers-reduced-motion: reduce) {
+          .biz-orbit, .biz-orbit-rev { animation: none; }
+        }
+      `}</style>
+    </div>
+  );
+}
+
+// ─── Hero (NEW — light split layout, growth themed) ─────────────────────────────
+
 export default function BusinessHero() {
+  const reduced = useReducedMotion();
+  const [hero, setHero] = useState(DEFAULT_HERO);
+
+  useEffect(() => {
+    fetchBusinessSection("hero").then((section) => {
+      if (section) {
+        setHero(section);
+      }
+    });
+  }, []);
+
+  const features = [
+    "Maximize parking revenue",
+    "Automate day-to-day operations",
+    "Seamless smart mobility experience",
+  ];
+
+  return (
+    <section
+      id="hero-section"
+      className="relative overflow-hidden bg-[linear-gradient(135deg,#EBF4FF_0%,#F8FBFF_38%,#F0F7FF_66%,#EAF3FF_100%)]"
+    >
+      {/* Dot grid */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(0,136,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(0,136,255,0.05)_1px,transparent_1px)] bg-[size:44px_44px] [mask-image:radial-gradient(ellipse_80%_60%_at_50%_35%,black,transparent)]"
+      />
+      {/* Decorative blobs */}
+      <div aria-hidden className="pointer-events-none absolute -left-24 top-[12%] h-[360px] w-[360px] rounded-full bg-[radial-gradient(circle_at_38%_38%,rgba(0,136,255,0.12),transparent_68%)] blur-2xl" />
+      <div aria-hidden className="pointer-events-none absolute -right-28 bottom-[4%] h-[420px] w-[420px] rounded-full bg-[radial-gradient(circle,rgba(37,99,235,0.10),transparent_66%)] blur-2xl" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#0088FF]/20 to-transparent" />
+
+      <div className="relative z-[2] mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
+        <div className="lg:grid lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-14 xl:gap-20">
+
+          {/* LEFT — text */}
+          <motion.div
+            initial={reduced ? false : { opacity: 0, x: -28 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.65, ease }}
+          >
+            <h1 className="max-w-[600px] text-[clamp(2.4rem,4.8vw,4.2rem)] font-semibold leading-[1.02] tracking-[-0.055em] text-[#050A13]">
+              {hero.title}
+            </h1>
+
+            <p className="mt-6 max-w-[470px] text-[0.95rem] leading-[1.75] text-slate-500">
+              {hero.description}
+            </p>
+
+            <ul className="mt-7 space-y-2.5">
+              {features.map((f, i) => (
+                <motion.li
+                  key={f}
+                  initial={reduced ? false : { opacity: 0, x: -14 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.45, ease, delay: 0.2 + i * 0.08 }}
+                  className="flex items-center gap-3 text-[0.9rem] font-medium text-slate-700"
+                >
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#0088FF]">
+                    <Check className="h-3 w-3 text-white" strokeWidth={3} aria-hidden />
+                  </span>
+                  {f}
+                </motion.li>
+              ))}
+            </ul>
+
+            <div className="mt-9 flex flex-wrap items-center gap-3">
+              <Link
+                href="/contact"
+                className="group inline-flex items-center gap-2.5 rounded-full bg-[#0088FF] px-7 py-3.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,136,255,0.32)] transition hover:brightness-110"
+              >
+                Get Proposal
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 transition-transform duration-200 group-hover:translate-x-0.5">
+                  <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+                </span>
+              </Link>
+              <Link
+                href="/contact"
+                className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-7 py-3.5 text-sm font-semibold text-slate-700 shadow-[0_2px_12px_rgba(6,6,22,0.07)] transition hover:border-[#0088FF]/50 hover:text-[#0088FF]"
+              >
+                Book a Free Consultation
+              </Link>
+            </div>
+          </motion.div>
+
+          {/* RIGHT — growth panel */}
+          <motion.div
+            initial={reduced ? false : { opacity: 0, x: 32 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.75, ease, delay: 0.1 }}
+            className="relative mt-16 flex min-h-[420px] items-center justify-center lg:mt-0 lg:min-h-[560px]"
+          >
+            <BusinessGrowthPanel reduced={reduced} />
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ───────────────────────────────────────────────────────────────────────────────
+   OLD hero (dark, with CMS image/video background — looked like the home page).
+   Kept here for reference; no longer rendered.
+
+import { useRef } from "react";
+import Image from "next/image";
+
+export function BusinessHeroOld() {
   const videoRef = useRef(null);
   const [hero, setHero] = useState(DEFAULT_HERO);
 
@@ -89,3 +383,4 @@ export default function BusinessHero() {
     </section>
   );
 }
+─────────────────────────────────────────────────────────────────────────────── */

@@ -21,7 +21,7 @@ import {
   CreditCard, Lock, ChevronRight, ChevronDown, MapPin, Clock, ParkingCircle, ArrowRight, Zap, Search,
 } from "lucide-react";
 import { allServicesData, serviceNames } from "./allServicesData";
-import GoodLookingServiceHero from "./GoodLookingServiceHero";
+// import GoodLookingServiceHero from "./GoodLookingServiceHero"; // OLD dark hero (looked like home page) — replaced by the light HeroSection below
 
 /* ─── Springs & easing ─── */
 const springPop  = { type: "spring", stiffness: 380, damping: 24, mass: 0.85 };
@@ -659,20 +659,43 @@ function ServiceCard({ service, index, onClick, category }) {
   );
 }
 
-/* ══════════════════════════ HERO PHONE ══════════════════════════════ */
+/* ══════════════════════════ HERO VISUAL ═════════════════════════════ */
+/* Auto-cycling stack of real service images + floating accent chips.
+   (Replaces the old phone mockup — client wanted service imagery here.) */
 
-function SvcHeroPhone({ reduced }) {
+const HERO_SERVICE_SLIDES = [
+  { img: "/valets.jpeg",                     name: "Valet Service",    tag: "Parking" },
+  { img: "/Electric Vehicle Charging.jpeg",  name: "EV Charging",      tag: "Vehicle Care" },
+  { img: "/Car Wash Services .jpeg",         name: "Car Wash",         tag: "Vehicle Care" },
+  { img: "/selfParking.jpeg",                name: "Self-Parking",     tag: "Parking" },
+  { img: "/Airport Parking Services  .jpeg", name: "Airport Parking",  tag: "Parking" },
+  { img: "/Battery Replacement Service.jpeg",name: "Battery Service",  tag: "Vehicle Care" },
+];
+
+function SvcHeroVisual({ reduced }) {
+  const [active, setActive] = useState(0);
+
+  useEffect(() => {
+    if (reduced) return undefined;
+    const id = setInterval(() => {
+      setActive((p) => (p + 1) % HERO_SERVICE_SLIDES.length);
+    }, 3200);
+    return () => clearInterval(id);
+  }, [reduced]);
+
+  const current = HERO_SERVICE_SLIDES[active];
+
   return (
     <div className="relative flex items-center justify-center">
 
-      {/* Deep glow halo behind phone */}
-      <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[340px] w-[340px] rounded-full bg-[radial-gradient(circle,rgba(0,136,255,0.18),rgba(37,99,235,0.08)_50%,transparent_75%)] blur-2xl lg:h-[440px] lg:w-[440px]" />
+      {/* Deep glow halo */}
+      <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[340px] w-[340px] rounded-full bg-[radial-gradient(circle,rgba(0,136,255,0.18),rgba(37,99,235,0.08)_50%,transparent_75%)] blur-2xl lg:h-[460px] lg:w-[460px]" />
 
       {/* Outer slow-rotating dashed orbit ring */}
       {!reduced && (
         <div
           aria-hidden
-          className="svc-orbit-ring pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[310px] w-[310px] rounded-full border border-dashed border-[#0088FF]/18 lg:h-[420px] lg:w-[420px]"
+          className="svc-orbit-ring pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[340px] w-[340px] rounded-full border border-dashed border-[#0088FF]/18 lg:h-[460px] lg:w-[460px]"
         />
       )}
 
@@ -680,17 +703,82 @@ function SvcHeroPhone({ reduced }) {
       {!reduced && (
         <div
           aria-hidden
-          className="svc-orbit-ring-rev pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[250px] w-[250px] rounded-full border border-[#0088FF]/10 lg:h-[340px] lg:w-[340px]"
+          className="svc-orbit-ring-rev pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[280px] w-[280px] rounded-full border border-[#0088FF]/10 lg:h-[380px] lg:w-[380px]"
           style={{ background: "conic-gradient(from 0deg, transparent 70%, rgba(0,136,255,0.12) 85%, transparent 100%)" }}
         />
       )}
+
+      {/* ── Stacked decorative cards behind the main one ── */}
+      <div aria-hidden className="absolute z-10 h-[300px] w-[230px] -rotate-6 rounded-[28px] bg-white/55 shadow-[0_20px_50px_rgba(15,23,42,0.10)] backdrop-blur-sm sm:h-[360px] sm:w-[270px] lg:h-[420px] lg:w-[320px]" />
+      <div aria-hidden className="absolute z-10 h-[300px] w-[230px] rotate-3 rounded-[28px] bg-white/70 shadow-[0_20px_50px_rgba(15,23,42,0.10)] sm:h-[360px] sm:w-[270px] lg:h-[420px] lg:w-[320px]" />
+
+      {/* ── Main image card (cross-fading service imagery) ── */}
+      <motion.div
+        animate={reduced ? undefined : { y: [0, -10, 0] }}
+        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+        className="relative z-20 h-[300px] w-[230px] overflow-hidden rounded-[28px] border border-white/80 shadow-[0_30px_70px_rgba(15,23,42,0.22)] sm:h-[360px] sm:w-[270px] lg:h-[420px] lg:w-[320px]"
+      >
+        <AnimatePresence mode="popLayout">
+          <motion.div
+            key={active}
+            initial={reduced ? false : { opacity: 0, scale: 1.08 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={reduced ? undefined : { opacity: 0, scale: 1.02 }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            className="absolute inset-0"
+          >
+            <Image
+              src={current.img}
+              alt={current.name}
+              fill
+              sizes="(min-width: 1024px) 320px, (min-width: 640px) 270px, 230px"
+              className="object-cover object-center"
+              priority
+            />
+          </motion.div>
+        </AnimatePresence>
+
+        {/* Gradient scrim */}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#050A13]/75 via-[#050A13]/10 to-transparent" />
+
+        {/* Caption */}
+        <div className="absolute inset-x-0 bottom-0 p-5">
+          <span className="inline-block rounded-full bg-[#0088FF] px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.14em] text-white shadow-[0_4px_12px_rgba(0,136,255,0.4)]">
+            {current.tag}
+          </span>
+          <AnimatePresence mode="wait">
+            <motion.p
+              key={current.name}
+              initial={reduced ? false : { opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={reduced ? undefined : { opacity: 0, y: -6 }}
+              transition={{ duration: 0.4 }}
+              className="mt-2 text-[1.25rem] font-semibold leading-tight tracking-[-0.03em] text-white"
+            >
+              {current.name}
+            </motion.p>
+          </AnimatePresence>
+        </div>
+
+        {/* Progress dots */}
+        <div className="absolute left-5 top-5 flex gap-1.5">
+          {HERO_SERVICE_SLIDES.map((s, i) => (
+            <span
+              key={s.name}
+              className={`h-1.5 rounded-full transition-all duration-300 ${
+                i === active ? "w-5 bg-white" : "w-1.5 bg-white/45"
+              }`}
+            />
+          ))}
+        </div>
+      </motion.div>
 
       {/* ── Floating card: Service Booked — top-left ── */}
       <motion.div
         initial={reduced ? false : { opacity: 0, y: -16, rotate: -6 }}
         animate={reduced ? undefined : { opacity: 1, y: 0, rotate: -6 }}
         transition={{ duration: 0.6, ease: [0.22,1,0.36,1], delay: 0.3 }}
-        className="absolute left-[-2%] top-6 z-30 hidden sm:block lg:left-[-12%] lg:top-10"
+        className="absolute left-[-6%] top-2 z-30 hidden sm:block lg:left-[-16%] lg:top-6"
       >
         <div className="flex items-center gap-2.5 rounded-2xl border border-white/80 bg-white px-3 py-2.5 shadow-[0_16px_40px_rgba(15,23,42,0.13)]">
           <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#0088FF] to-[#2563EB] text-white shadow-[0_4px_10px_rgba(0,136,255,0.35)]">
@@ -704,36 +792,6 @@ function SvcHeroPhone({ reduced }) {
             <Check aria-hidden className="h-3 w-3" strokeWidth={3} />
           </span>
         </div>
-        {/* Dashed connector */}
-        <svg className="ml-10 mt-1" width="66" height="34" viewBox="0 0 66 34" fill="none" aria-hidden>
-          <path d="M2 2C16 26 44 40 64 14" stroke="#0088FF" strokeWidth="1.3" strokeDasharray="4 4" strokeLinecap="round" />
-        </svg>
-      </motion.div>
-
-      {/* ── Services list card — right ── */}
-      <motion.div
-        initial={reduced ? false : { opacity: 0, x: 22, rotate: 4 }}
-        animate={reduced ? undefined : { opacity: 1, x: 0, rotate: 4 }}
-        transition={{ duration: 0.6, ease: [0.22,1,0.36,1], delay: 0.4 }}
-        className="absolute right-[-2%] top-[22%] z-30 hidden md:block lg:right-[-12%]"
-      >
-        <div className="w-[152px] overflow-hidden rounded-2xl border border-white/80 bg-white shadow-[0_16px_40px_rgba(15,23,42,0.13)]">
-          <div className="bg-gradient-to-r from-[#0078E0] to-[#2563EB] px-3 py-2.5">
-            <p className="text-[11px] font-bold text-white">18 Services</p>
-            <p className="text-[9px] text-white/70">Unified platform</p>
-          </div>
-          {[
-            { label: "Self-Parking",  color: "#0088FF" },
-            { label: "Valet Service", color: "#2563EB" },
-            { label: "EV Charging",   color: "#16B364" },
-            { label: "Car Storage",   color: "#F59E0B" },
-          ].map((item) => (
-            <div key={item.label} className="flex items-center gap-2 border-b border-slate-50 px-3 py-1.5 last:border-0">
-              <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: item.color }} />
-              <p className="text-[10px] font-medium text-[#1a1f2e]">{item.label}</p>
-            </div>
-          ))}
-        </div>
       </motion.div>
 
       {/* ── EV Charging progress — bottom-right ── */}
@@ -741,7 +799,7 @@ function SvcHeroPhone({ reduced }) {
         initial={reduced ? false : { opacity: 0, x: 16, rotate: 5 }}
         animate={reduced ? undefined : { opacity: 1, x: 0, rotate: 5 }}
         transition={{ duration: 0.6, ease: [0.22,1,0.36,1], delay: 0.5 }}
-        className="absolute bottom-[14%] right-[0%] z-30 hidden sm:block lg:right-[-8%]"
+        className="absolute bottom-[10%] right-[-6%] z-30 hidden sm:block lg:right-[-14%]"
       >
         <div className="w-[162px] rounded-2xl border border-white/80 bg-white p-3 shadow-[0_16px_40px_rgba(15,23,42,0.13)]">
           <div className="flex items-center justify-between">
@@ -771,7 +829,7 @@ function SvcHeroPhone({ reduced }) {
         <motion.div
           animate={{ y: [0, -9, 0] }}
           transition={{ duration: 3.6, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-[10%] left-[52%] z-30 hidden text-[#0088FF] sm:block"
+          className="absolute bottom-[6%] left-[6%] z-30 hidden text-[#0088FF] sm:block lg:left-[0%]"
         >
           <div className="relative">
             <motion.div
@@ -784,41 +842,6 @@ function SvcHeroPhone({ reduced }) {
           <span className="mt-1 block h-1.5 w-8 rounded-full bg-[#0088FF]/20 blur-sm" />
         </motion.div>
       )}
-
-      {/* ── Phone mockup ── */}
-      <motion.div
-        animate={reduced ? undefined : { y: [0, -11, 0] }}
-        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-        className="relative z-20 w-[210px] rotate-[5deg] sm:w-[255px] lg:w-[300px] xl:w-[328px]"
-      >
-        {/* Bottom shadow */}
-        <div className="absolute inset-x-[18%] bottom-[-2%] h-[8%] rounded-full bg-[#0F172A]/16 blur-[18px]" />
-
-        <div className="relative isolate aspect-[1439/2920] drop-shadow-[0_32px_60px_rgba(5,10,19,0.28)]">
-          {/* Screen */}
-          <div className="absolute bottom-[1.2%] left-[4.2%] right-[4.2%] top-[1%] z-20 translate-y-[1px] overflow-hidden rounded-[3.2rem] bg-white">
-            <Image
-              src="/Park.png"
-              alt="HalaPark services screen"
-              fill
-              sizes="(min-width: 1280px) 328px, (min-width: 1024px) 300px, (min-width: 640px) 255px, 210px"
-              className="object-cover object-center"
-              priority
-            />
-          </div>
-          {/* Frame */}
-          <div className="pointer-events-none absolute inset-0 z-10">
-            <Image
-              src="/mobileframe.png"
-              alt=""
-              fill
-              sizes="(min-width: 1280px) 328px, (min-width: 1024px) 300px, (min-width: 640px) 255px, 210px"
-              className="select-none object-contain"
-              priority
-            />
-          </div>
-        </div>
-      </motion.div>
     </div>
   );
 }
@@ -846,7 +869,6 @@ function HeroSection({ onGetQuote }) {
   const orbitRot  = useTransform(sp, [0, 1], reduced ? [0, 0] : [0, 108]);
   const gridFade  = useTransform(sp, [0, 0.25, 0.5, 0.75, 1], reduced ? [0.55,0.55,0.55,0.55,0.55] : [0.42, 0.58, 0.62, 0.55, 0.44]);
   const spotStr   = useTransform(sp, [0, 0.45, 0.55, 1], reduced ? [0.9,0.9,0.9,0.9] : [0.72, 1, 1, 0.78]);
-  const readProg  = useTransform(scrollYProgress, [0.08, 0.92], [0, 1], { clamp: true });
 
   const onMove = (e) => {
     if (reduced || !sectionRef.current) return;
@@ -881,7 +903,6 @@ function HeroSection({ onGetQuote }) {
   };
 
   const SERVICE_CHIPS = ["Self-Parking", "Valet Service", "EV Charging", "Car Storage", "Airport Parking", `+${allServicesData.length - 5} More`];
-  const AVATAR_COLORS = ["#0088FF", "#2563EB", "#16B364", "#F59E0B"];
 
   return (
     <section
@@ -949,26 +970,10 @@ function HeroSection({ onGetQuote }) {
           {/* ─── LEFT — text ─── */}
           <motion.div initial={reduced ? false : "hidden"} animate="visible" variants={container}>
 
-            {/* Badge */}
-            <motion.div {...fadeUp}>
-              <div className="relative inline-flex items-center gap-2.5 overflow-hidden rounded-full border border-[#0088FF]/30 bg-white/80 px-4 py-1.5 shadow-[0_2px_12px_rgba(0,136,255,0.10)] backdrop-blur-md">
-                {/* Glow sweep */}
-                <span className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-[#0088FF]/10 to-transparent" />
-                <motion.span
-                  className="relative h-2 w-2 rounded-full bg-[#0088FF]"
-                  animate={{ scale:[1,1.6,1], opacity:[1,0.5,1] }}
-                  transition={{ duration: 1.8, repeat: Infinity, ease:"easeInOut" }}
-                />
-                <p className="relative text-[11px] font-bold uppercase tracking-[0.18em] text-[#0088FF]">Our Services</p>
-                <span className="relative h-3.5 w-px bg-[#0088FF]/25" />
-                <p className="relative text-[11px] font-medium text-slate-500">HalaPark</p>
-              </div>
-            </motion.div>
-
             {/* Headline */}
             <motion.h1
               {...fadeUp}
-              className="mt-6 max-w-[580px] text-[clamp(2.6rem,5.2vw,4.6rem)] font-semibold leading-[1.0] tracking-[-0.065em]"
+              className="max-w-[580px] text-[clamp(2.6rem,5.2vw,4.6rem)] font-semibold leading-[1.0] tracking-[-0.065em]"
             >
               <span className="block text-[#050A13]">Smart Parking.</span>
               <span className="relative mt-1 block">
@@ -1040,69 +1045,20 @@ function HeroSection({ onGetQuote }) {
               </motion.button>
             </motion.div>
 
-            {/* Trust strip */}
-            <motion.div {...fadeUp} className="mt-5 flex items-center gap-3">
-              <div className="flex -space-x-1.5">
-                {AVATAR_COLORS.map((color, i) => (
-                  <span
-                    key={i}
-                    className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-white text-[9px] font-bold text-white shadow-sm"
-                    style={{ background: color }}
-                  >
-                    {["A","B","C","D"][i]}
-                  </span>
-                ))}
-              </div>
-              <p className="text-[12px] text-slate-500">
-                Trusted by <span className="font-semibold text-slate-700">500+</span> businesses across the UAE
-              </p>
-            </motion.div>
-
-            {/* Stats grid */}
-            <motion.div {...fadeUp} className="mt-10 grid grid-cols-4 gap-0 border-t border-slate-100/80 pt-8">
-              {[
-                { value: `${allServicesData.length}+`, label: "Services",        dot: "#0088FF" },
-                { value: "1",                          label: "Platform",         dot: "#2563EB" },
-                { value: "24/7",                       label: "Operations",       dot: "#16B364" },
-                { value: "UAE",                        label: "Coverage",         dot: "#F59E0B" },
-              ].map((s, i) => (
-                <motion.div
-                  key={s.label}
-                  initial={reduced ? false : { opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, ease, delay: 0.38 + i * 0.07 }}
-                  className={`${i > 0 ? "border-l border-slate-100 pl-4 sm:pl-6" : ""} pr-2`}
-                >
-                  <div className="flex items-center gap-1.5">
-                    <span className="h-1.5 w-1.5 rounded-full" style={{ background: s.dot }} />
-                    <p className="text-[clamp(1.5rem,2.8vw,2rem)] font-bold tracking-[-0.04em] text-[#050A13]">{s.value}</p>
-                  </div>
-                  <p className="mt-0.5 text-[11px] text-slate-400 sm:text-xs">{s.label}</p>
-                </motion.div>
-              ))}
-            </motion.div>
-
           </motion.div>
 
-          {/* ─── RIGHT — phone ─── */}
+          {/* ─── RIGHT — service imagery ─── */}
           <motion.div
             initial={reduced ? false : { opacity: 0, x: 40 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.75, ease, delay: 0.12 }}
             className="relative mt-16 flex min-h-[480px] items-center justify-center lg:mt-0 lg:min-h-[620px]"
           >
-            <SvcHeroPhone reduced={reduced} />
+            <SvcHeroVisual reduced={reduced} />
           </motion.div>
 
         </div>
       </div>
-
-      {/* Section progress bar */}
-      <motion.div
-        aria-hidden
-        className="pointer-events-none absolute bottom-0 left-0 right-0 z-[3] h-[3px] origin-left bg-gradient-to-r from-[#0060CC] via-[#0088FF] to-[#38BDF8] shadow-[0_0_14px_rgba(0,136,255,0.4)]"
-        style={{ scaleX: readProg }}
-      />
 
       <style>{`
         @keyframes svc-shimmer {
@@ -1605,7 +1561,9 @@ export default function ServicesListPage() {
       <QuoteModal   isOpen={quoteOpen}        onClose={() => setQuoteOpen(false)} />
 
       <main>
-        <GoodLookingServiceHero onGetQuote={() => setQuoteOpen(true)} />
+        {/* OLD hero (dark, mirrored the home page — client disliked it):
+        <GoodLookingServiceHero onGetQuote={() => setQuoteOpen(true)} /> */}
+        <HeroSection    onGetQuote={() => setQuoteOpen(true)} />
         <ServicesGrid   onServiceClick={setSelectedService} />
         <PartnersSection />
         <TrustSection />
