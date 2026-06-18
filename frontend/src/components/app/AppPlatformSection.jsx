@@ -180,7 +180,7 @@ function PhonePreview({ screen = "/Booking.png", alt = "HalaPark app screen" }) 
       <div className="absolute inset-x-[18%] bottom-3 h-10 rounded-full bg-[#0F172A]/14 blur-[26px]" />
 
       <div className="relative isolate aspect-[1439/2920] drop-shadow-[0_28px_58px_rgba(15,23,42,0.18)]">
-        <div className="absolute left-[3.8%] right-[3.8%] top-[1%] bottom-[1.2%] z-30 translate-y-[1px] overflow-hidden rounded-[2.45rem] bg-white">
+        <div className="absolute left-[3.8%] right-[3.8%] top-[1%] bottom-[1.2%] z-30 translate-y-[1px] overflow-hidden rounded-[1.4rem] bg-white sm:rounded-[2.45rem]">
           <Image
             src={screen}
             alt={alt}
@@ -308,7 +308,7 @@ export default function AppPlatformSection() {
           whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.25 }}
           transition={{ duration: 0.55, ease: "easeOut" }}
-          className="relative overflow-hidden rounded-[28px] border border-[#E4EAF2] bg-[linear-gradient(135deg,#FFFFFF_0%,#F8FBFF_52%,#EEF6FF_100%)] p-6 shadow-[0_18px_46px_rgba(15,23,42,0.06)] sm:p-10"
+          className="relative overflow-hidden rounded-[16px] border border-[#E4EAF2] bg-[linear-gradient(135deg,#FFFFFF_0%,#F8FBFF_52%,#EEF6FF_100%)] p-6 shadow-[0_18px_46px_rgba(15,23,42,0.06)] sm:rounded-[28px] sm:p-10"
         >
           <div className="grid items-center gap-8 md:grid-cols-[1.05fr_0.95fr] z-[99]">
             <div>
@@ -390,7 +390,7 @@ export default function AppPlatformSection() {
           whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.25 }}
           transition={{ duration: 0.55, ease: "easeOut", delay: 0.08 }}
-          className="relative overflow-hidden rounded-[28px] border border-[#E4EAF2] bg-[linear-gradient(135deg,#FFFFFF_0%,#FBFDFF_48%,#F3F8FF_100%)] p-6 shadow-[0_18px_46px_rgba(15,23,42,0.06)] sm:p-10"
+          className="relative overflow-hidden rounded-[16px] border border-[#E4EAF2] bg-[linear-gradient(135deg,#FFFFFF_0%,#FBFDFF_48%,#F3F8FF_100%)] p-6 shadow-[0_18px_46px_rgba(15,23,42,0.06)] sm:rounded-[28px] sm:p-10"
         >
           <div className="grid items-center gap-8 md:grid-cols-[1fr_1.05fr]">
             <div>
