@@ -172,12 +172,6 @@ function SolutionsControlPanel({ reduced }) {
 function NewHero() {
   const reduced = useReducedMotion();
 
-  const features = [
-    "AI-powered occupancy & guidance",
-    "ANPR access control & automation",
-    "Real-time multi-site control room",
-  ];
-
   return (
     <section
       id="hero-section"
@@ -213,22 +207,6 @@ function NewHero() {
               HalaPark delivers an AI-powered smart parking ecosystem designed for large-scale residential, commercial, and mixed-use developments across the UAE, enabling seamless mobility, automation, and real-time operational control.
             </p>
 
-            <ul className="mt-7 space-y-2.5">
-              {features.map((f, i) => (
-                <motion.li
-                  key={f}
-                  initial={reduced ? false : { opacity: 0, x: -14 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.45, ease, delay: 0.2 + i * 0.08 }}
-                  className="flex items-center gap-3 text-[0.9rem] font-medium text-slate-700"
-                >
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#0088FF]">
-                    <Check className="h-3 w-3 text-white" strokeWidth={3} aria-hidden />
-                  </span>
-                  {f}
-                </motion.li>
-              ))}
-            </ul>
 
             <div className="mt-9 flex flex-wrap items-center gap-3">
               <Link

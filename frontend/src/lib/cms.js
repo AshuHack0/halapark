@@ -228,6 +228,13 @@ export async function fetchSolutionDetails() {
   return DEFAULT_SOLUTION_DETAILS;
 }
 
+// The "Our Solutions" cards (with their CMS-managed images), keyed by slug.
+export async function fetchSolutionCards() {
+  const page = await fetchPage("solutions");
+  const cards = page?.sections?.solutions?.cards;
+  return Array.isArray(cards) ? cards : [];
+}
+
 // Shared "Advantages of Our Solutions" block, shown on every detail page.
 export async function fetchSolutionAdvantages() {
   const page = await fetchPage("solutions");

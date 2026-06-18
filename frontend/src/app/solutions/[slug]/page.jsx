@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowRight, Check, ChevronRight, ShieldCheck } from "lucide-react";
-import { fetchSolutionDetails, fetchSolutionAdvantages } from "@/lib/cms";
+import { fetchSolutionDetails, fetchSolutionAdvantages, fetchSolutionCards } from "@/lib/cms";
 import {
   DEFAULT_SOLUTION_DETAILS,
   getSolutionDetailBySlug,
@@ -26,15 +26,21 @@ export async function generateMetadata({ params }) {
 
 export default async function SolutionDetailPage({ params }) {
   const { slug } = await params;
-  const [details, advantages] = await Promise.all([
+  const [details, advantages, cards] = await Promise.all([
     fetchSolutionDetails(),
     fetchSolutionAdvantages(),
+    fetchSolutionCards(),
   ]);
   const detail = getSolutionDetailBySlug(slug, details);
 
   if (!detail) {
     notFound();
   }
+
+  // The card's image (managed via CMS "Our Solutions" cards) is the source of
+  // truth for this solution. Fall back to the detail's own image, then default.
+  const card = cards.find((c) => c.slug === slug);
+  const heroImage = card?.image || detail.image || "/hf_20260327_060926_cbb82448-441c-42ee-9589-785e7acd7565.png";
 
   // v14 uses `systemComponents`; older details use `systems`. Render whichever exists.
   const components = (Array.isArray(detail.systemComponents) && detail.systemComponents.length > 0)
@@ -53,7 +59,7 @@ export default async function SolutionDetailPage({ params }) {
         <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#0088FF]/20 to-transparent" />
 
         <div className="relative z-[2] mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
-          <div className="grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
+          <div className="grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-12">
             {/* LEFT — title, intro */}
             <div>
               <h1 className="max-w-[620px] text-[clamp(2.2rem,4.4vw,3.6rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-[#050A13]">
@@ -74,16 +80,15 @@ export default async function SolutionDetailPage({ params }) {
               ) : null}
             </div>
 
-            {/* RIGHT — diagram / image */}
-            {detail.image ? (
-              <div className="relative overflow-hidden rounded-[24px] border border-white/80 bg-white shadow-[0_30px_70px_rgba(15,23,42,0.14)]">
+            {/* RIGHT — diagram / image (uses the card image managed via CMS) */}
+            {heroImage ? (
+              <div className="relative mx-auto aspect-[4/3] w-full max-w-[560px] overflow-hidden rounded-[22px] border border-white/80 bg-white shadow-[0_24px_60px_rgba(15,23,42,0.14)] lg:mx-0 lg:ml-auto lg:max-w-[540px]">
                 <Image
-                  src={detail.image}
+                  src={heroImage}
                   alt={detail.title}
-                  width={900}
-                  height={680}
-                  className="h-auto w-full object-cover"
-                  sizes="(min-width: 1024px) 50vw, 100vw"
+                  fill
+                  className="object-cover object-center"
+                  sizes="(min-width: 1024px) 540px, 560px"
                   priority
                 />
               </div>
