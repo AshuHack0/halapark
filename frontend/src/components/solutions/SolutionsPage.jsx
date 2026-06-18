@@ -847,49 +847,97 @@ function TrustedBySection() {
 
 // ─── Industries + Deployment Journey ──────────────────────────────────────────
 
-const industryItems = [
-  { icon: Zap, label: "Airports" },
-  { icon: Building2, label: "Shopping Malls" },
-  { icon: BadgeCheck, label: "Hotels" },
-  { icon: Cctv, label: "Residential Towers" },
-  { icon: Shield, label: "Hospitals" },
-  { icon: MapPin, label: "Universities" },
-  { icon: Lock, label: "Government Facilities" },
-  { icon: TrendingUp, label: "Smart Cities" },
-];
+// Icon-name → component, so the Industries list is CMS-editable by icon name.
+const INDUSTRY_ICONS = {
+  Zap, Building2, BadgeCheck, Cctv, Shield, MapPin, Lock, TrendingUp, Car, CreditCard, Check,
+};
 
-const deploymentSteps = [
-  { step: "01", title: "Audit Current Setup", description: "Mapping gates, cameras, payment flows, access rules, and workflows." },
-  { step: "02", title: "Connect the Stack", description: "Integration with hardware, software, and payment systems while preserving operations." },
-  { step: "03", title: "Launch & Optimize", description: "Go live with dashboards, alerts, reporting, and continuous optimization." },
-];
+const DEFAULT_FEATURES = {
+  heading: "Built for High-Demand",
+  headingGradient: "Environments",
+  subtitle: "From airports to smart cities, HalaPark scales across every high-traffic environment.",
+  image: "/hf_20260327_061900_db12a62e-2867-44b6-83f0-ea7f1a5442ef.png",
+  industries: [
+    { icon: "Zap", label: "Airports" },
+    { icon: "Building2", label: "Shopping Malls" },
+    { icon: "BadgeCheck", label: "Hotels" },
+    { icon: "Cctv", label: "Residential Towers" },
+    { icon: "Shield", label: "Hospitals" },
+    { icon: "MapPin", label: "Universities" },
+    { icon: "Lock", label: "Government Facilities" },
+    { icon: "TrendingUp", label: "Smart Cities" },
+  ],
+};
+
+const DEFAULT_DEPLOYMENT = {
+  heading: "Deployment",
+  headingGradient: "Journey",
+  subtitle: "We ensure a smooth rollout by understanding your environment, integrating with existing systems, and improving performance over time without disruption.",
+  steps: [
+    { step: "01", title: "Audit Current Setup", description: "Mapping gates, cameras, payment flows, access rules, and workflows." },
+    { step: "02", title: "Connect the Stack", description: "Integration with hardware, software, and payment systems while preserving operations." },
+    { step: "03", title: "Launch & Optimize", description: "Go live with dashboards, alerts, reporting, and continuous optimization." },
+  ],
+  image: "/hf_20260327_061900_db12a62e-2867-44b6-83f0-ea7f1a5442ef.png",
+  panelTitle: "Go live in days,",
+  panelTitleAccent: "not months.",
+};
+
+// Merge CMS object over a default, ignoring empty values.
+function mergeSection(defaults, incoming) {
+  if (!incoming || typeof incoming !== "object") return defaults;
+  const out = { ...defaults };
+  for (const [k, v] of Object.entries(incoming)) {
+    if (v === "" || v == null) continue;
+    if (Array.isArray(v) && v.length === 0) continue;
+    out[k] = v;
+  }
+  return out;
+}
 
 function FeatureHighlightsSection() {
   const reduced = useReducedMotion();
+  const [features, setFeatures] = useState(DEFAULT_FEATURES);
+  const [deployment, setDeployment] = useState(DEFAULT_DEPLOYMENT);
+
+  useEffect(() => {
+    fetchPage("solutions").then((data) => {
+      setFeatures(mergeSection(DEFAULT_FEATURES, data?.sections?.features));
+      setDeployment(mergeSection(DEFAULT_DEPLOYMENT, data?.sections?.deployment));
+    });
+  }, []);
+
+  const industries = Array.isArray(features.industries) && features.industries.length > 0
+    ? features.industries
+    : DEFAULT_FEATURES.industries;
+  const steps = Array.isArray(deployment.steps) && deployment.steps.length > 0
+    ? deployment.steps
+    : DEFAULT_DEPLOYMENT.steps;
+
   return (
     <>
       {/* Industries */}
       <section className="relative overflow-hidden bg-[#06111f] py-16 sm:py-20 lg:py-24">
         <div className="pointer-events-none absolute inset-0" aria-hidden>
-          <Image src="/hf_20260327_061900_db12a62e-2867-44b6-83f0-ea7f1a5442ef.png" alt="" fill className="object-cover object-center opacity-20" />
+          <Image src={features.image || DEFAULT_FEATURES.image} alt="" fill className="object-cover object-center opacity-20" />
           <div className="absolute inset-0 bg-gradient-to-b from-[#06111f]/50 via-[#06111f]/30 to-[#06111f]/70" />
         </div>
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto mb-12 max-w-4xl text-center">
             <h2 className="text-[clamp(3rem,5.5vw,5rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-white">
-              Built for High-Demand{" "}
-              <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">Environments</span>
+              {features.heading}{" "}
+              <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">{features.headingGradient}</span>
             </h2>
             <p className="mt-4 text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-white/70">
-              From airports to smart cities, HalaPark scales across every high-traffic environment.
+              {features.subtitle}
             </p>
           </div>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
-            {industryItems.map((item, i) => {
-              const Icon = item.icon;
+            {industries.map((item, i) => {
+              const Icon = INDUSTRY_ICONS[item.icon] || Building2;
               return (
                 <motion.div
-                  key={item.label}
+                  key={`${item.label}-${i}`}
                   initial={reduced ? false : { opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
@@ -913,16 +961,16 @@ function FeatureHighlightsSection() {
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
             <motion.div initial={reduced ? false : { opacity: 0, x: -28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }}>
               <h2 className="text-[clamp(3rem,5.5vw,5rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
-                Deployment{" "}
-                <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">Journey</span>
+                {deployment.heading}{" "}
+                <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">{deployment.headingGradient}</span>
               </h2>
               <p className="mt-5 max-w-[520px] text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem]">
-                We ensure a smooth rollout by understanding your environment, integrating with existing systems, and improving performance over time without disruption.
+                {deployment.subtitle}
               </p>
               <div className="mt-10 space-y-5">
-                {deploymentSteps.map((step, i) => (
-                  <motion.div key={step.step} initial={reduced ? false : { opacity: 0, x: -16 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, ease, delay: i * 0.1 }} className="flex gap-5 rounded-2xl border border-slate-100 bg-[#F4F8FF] p-5">
-                    <span className="text-[1.6rem] font-bold leading-none tracking-[-0.04em] text-[#0088FF]/30">{step.step}</span>
+                {steps.map((step, i) => (
+                  <motion.div key={`${step.title}-${i}`} initial={reduced ? false : { opacity: 0, x: -16 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, ease, delay: i * 0.1 }} className="flex gap-5 rounded-2xl border border-slate-100 bg-[#F4F8FF] p-5">
+                    <span className="text-[1.6rem] font-bold leading-none tracking-[-0.04em] text-[#0088FF]/30">{step.step || String(i + 1).padStart(2, "0")}</span>
                     <div>
                       <h3 className="font-semibold text-[#050A13]">{step.title}</h3>
                       <p className="mt-1 text-[0.88rem] leading-6 text-slate-600">{step.description}</p>
@@ -934,7 +982,7 @@ function FeatureHighlightsSection() {
 
             <motion.div initial={reduced ? false : { opacity: 0, x: 28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease, delay: 0.1 }} className="relative overflow-hidden rounded-[28px] bg-[#06111f] p-8 sm:p-10">
               <div className="absolute inset-0">
-                <Image src="/hf_20260327_061900_db12a62e-2867-44b6-83f0-ea7f1a5442ef.png" alt="" fill className="object-cover object-center" aria-hidden />
+                <Image src={deployment.image || DEFAULT_DEPLOYMENT.image} alt="" fill className="object-cover object-center" aria-hidden />
                 <div className="absolute inset-0 bg-gradient-to-tr from-[#06111f]/90 via-[#06111f]/70 to-[#06111f]/40" />
               </div>
               <div className="relative z-10 flex h-[280px] items-center justify-center sm:h-[320px]">
@@ -944,8 +992,8 @@ function FeatureHighlightsSection() {
                   </div>
                   <p className="text-[0.82rem] font-semibold uppercase tracking-[0.2em] text-white/50">HalaPark</p>
                   <p className="mt-2 text-[1.2rem] font-semibold leading-snug tracking-[-0.03em] text-white">
-                    Go live in days,<br />
-                    <span className="text-[#5BC4FF]">not months.</span>
+                    {deployment.panelTitle}<br />
+                    <span className="text-[#5BC4FF]">{deployment.panelTitleAccent}</span>
                   </p>
                 </div>
               </div>
@@ -1039,15 +1087,40 @@ function WhyHalaparkSection() {
 
 // ─── Final CTA ─────────────────────────────────────────────────────────────────
 
+const DEFAULT_FINAL_CTA = {
+  heading: "Transform Parking Into a",
+  headingGradient: "Fully Connected Mobility Infrastructure",
+  subtitle:
+    "Halapark replaces fragmented parking systems with one intelligent platform that connects access control, real-time operations, and data-driven intelligence. Built for scale, designed for modern developments, and engineered to upgrade existing infrastructure without disruption.",
+  ctaLabel: "Request Demo",
+  ctaSecondaryLabel: "Talk to Our Team",
+  image: "/hf_20260327_064457_c75923ba-dc06-4c6e-9b63-fa181e94bcfa.png",
+};
+
 function NewFinalCTA() {
   const reduced = useReducedMotion();
+  const [cta, setCta] = useState(DEFAULT_FINAL_CTA);
+
+  useEffect(() => {
+    fetchPage("solutions").then((data) => {
+      const c = data?.sections?.cta;
+      if (c && typeof c === "object") {
+        // Merge over defaults so any empty CMS field falls back gracefully.
+        setCta((prev) => ({
+          ...prev,
+          ...Object.fromEntries(Object.entries(c).filter(([, v]) => v !== "" && v != null)),
+        }));
+      }
+    });
+  }, []);
+
   return (
     <section className="bg-white py-4 sm:py-5 lg:py-6">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="relative overflow-hidden rounded-[28px] bg-[#06111f]">
-          {/* Background: city skyline */}
+          {/* Background: city skyline (CMS-editable: sections.cta.image) */}
           <div className="absolute inset-0">
-            <Image src="/hf_20260327_064457_c75923ba-dc06-4c6e-9b63-fa181e94bcfa.png" alt="" fill className="object-cover object-center opacity-40" aria-hidden />
+            <Image src={cta.image || DEFAULT_FINAL_CTA.image} alt="" fill className="object-cover object-center opacity-40" aria-hidden />
             <div className="absolute inset-0 bg-gradient-to-b from-[#06111f]/60 via-[#06111f]/40 to-[#06111f]/80" />
           </div>
 
@@ -1077,21 +1150,21 @@ function NewFinalCTA() {
 
           <motion.div initial={reduced ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.65, ease }} className="relative z-10 flex flex-col items-center px-6 py-16 text-center sm:px-10 sm:py-20 lg:py-24">
             <h2 className="max-w-[720px] text-[clamp(2.65rem,4.5vw,4.2rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-white">
-              Transform Parking Into a{" "}
+              {cta.heading}{" "}
               <span className="bg-gradient-to-r from-[#3AADFF] to-[#0088FF] bg-clip-text text-transparent">
-                Fully Connected Mobility Infrastructure
+                {cta.headingGradient}
               </span>
             </h2>
             <p className="mt-5 max-w-[560px] text-[0.88rem] leading-6 text-white/65 sm:text-[0.94rem]">
-              Halapark replaces fragmented parking systems with one intelligent platform that connects access control, real-time operations, and data-driven intelligence. Built for scale, designed for modern developments, and engineered to upgrade existing infrastructure without disruption.
+              {cta.subtitle}
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               <Link href="/contact" className="inline-flex items-center gap-2 rounded-full bg-[#0088FF] px-8 py-3.5 text-sm font-semibold text-white shadow-[0_8px_28px_rgba(0,136,255,0.45)] transition hover:brightness-110">
-                Request Demo <ArrowRight className="h-4 w-4" aria-hidden />
+                {cta.ctaLabel || DEFAULT_FINAL_CTA.ctaLabel} <ArrowRight className="h-4 w-4" aria-hidden />
               </Link>
               <Link href="/contact" className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-8 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20">
                 <CalendarCheck className="h-4 w-4" aria-hidden />
-                Talk to Our Team
+                {cta.ctaSecondaryLabel || DEFAULT_FINAL_CTA.ctaSecondaryLabel}
               </Link>
             </div>
           </motion.div>
