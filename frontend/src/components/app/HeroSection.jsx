@@ -107,11 +107,11 @@ function HeroPhone() {
         repeat: Number.POSITIVE_INFINITY,
         ease: "easeInOut",
       }}
-      className="relative z-20 w-[160px] rotate-[8deg] sm:w-[220px] md:w-[260px] lg:w-[290px] xl:w-[320px]"
+      className="relative z-20 w-[160px] rotate-0 sm:w-[220px] md:w-[260px] lg:w-[290px] lg:rotate-[8deg] xl:w-[320px]"
     >
       <div className="absolute inset-x-[16%] bottom-2 h-14 rounded-full bg-[#0F172A]/18 blur-[24px]" />
       <div className="relative isolate aspect-[1439/2920] drop-shadow-[0_30px_58px_rgba(5,10,19,0.28)]">
-        <div className="absolute left-[4.2%] right-[4.2%] top-[1%] bottom-[1.2%] z-20 translate-y-[1px] overflow-hidden rounded-[3.2rem] bg-white">
+        <div className="absolute left-[4.2%] right-[4.2%] top-[1%] bottom-[1.2%] z-20 translate-y-[1px] overflow-hidden rounded-[1.6rem] bg-white lg:rounded-[3.2rem]">
           <Image
             src="/Park.png"
             alt="HalaPark booking screen"
@@ -143,7 +143,7 @@ function FloatingCards({ prefersReducedMotion }) {
         initial={prefersReducedMotion ? false : { opacity: 0, y: -14, rotate: -8 }}
         animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0, rotate: -8 }}
         transition={{ duration: 0.55, ease: "easeOut", delay: 0.25 }}
-        className="absolute left-[4%] top-8 z-30 hidden sm:block lg:left-[7%] lg:top-14"
+        className="absolute left-[4%] top-8 z-30 hidden lg:block lg:left-[7%] lg:top-14"
       >
         <div className="flex items-center gap-2.5 rounded-2xl bg-white px-3 py-2.5 shadow-[0_14px_32px_rgba(15,23,42,0.12)]">
           <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#0088FF] text-white">
@@ -170,7 +170,7 @@ function FloatingCards({ prefersReducedMotion }) {
         initial={prefersReducedMotion ? false : { opacity: 0, x: 18, rotate: 4 }}
         animate={prefersReducedMotion ? undefined : { opacity: 1, x: 0, rotate: 4 }}
         transition={{ duration: 0.55, ease: "easeOut", delay: 0.35 }}
-        className="absolute right-[2%] top-[30%] z-30 hidden md:block"
+        className="absolute right-[2%] top-[30%] z-30 hidden lg:block"
       >
         <div className="w-[148px] rounded-2xl bg-white p-2.5 shadow-[0_14px_34px_rgba(15,23,42,0.13)]">
           <p className="rounded-lg bg-[#0088FF] px-3 py-1.5 text-center text-[11px] font-semibold text-white">
@@ -199,7 +199,7 @@ function FloatingCards({ prefersReducedMotion }) {
         initial={prefersReducedMotion ? false : { opacity: 0, x: 22, rotate: 8 }}
         animate={prefersReducedMotion ? undefined : { opacity: 1, x: 0, rotate: 8 }}
         transition={{ duration: 0.55, ease: "easeOut", delay: 0.45 }}
-        className="absolute bottom-[19%] right-[7%] z-30 hidden sm:block"
+        className="absolute bottom-[19%] right-[7%] z-30 hidden lg:block"
       >
         <div className="w-[160px] rounded-2xl bg-white p-3 shadow-[0_14px_34px_rgba(15,23,42,0.13)]">
           <div className="flex items-center justify-between">
@@ -225,7 +225,7 @@ function FloatingCards({ prefersReducedMotion }) {
           repeat: Number.POSITIVE_INFINITY,
           ease: "easeInOut",
         }}
-        className="absolute bottom-[14%] left-[58%] z-30 hidden text-[#0088FF] sm:block"
+        className="absolute bottom-[14%] left-[58%] z-30 hidden text-[#0088FF] lg:block"
       >
         <MapPin aria-hidden="true" className="h-12 w-12 drop-shadow-[0_12px_18px_rgba(0,136,255,0.24)]" fill="currentColor" />
         <span className="absolute bottom-[-3px] left-1/2 h-2.5 w-10 -translate-x-1/2 rounded-full bg-[#0088FF]/25 blur-md" />
@@ -238,7 +238,7 @@ export default function HeroSection() {
   const prefersReducedMotion = useReducedMotion();
 
   return (
-    <section className="relative overflow-visible bg-[linear-gradient(118deg,#FFFFFF_0%,#F8FBFF_42%,#EAF3FF_100%)]">
+    <section className="relative overflow-x-hidden bg-[linear-gradient(118deg,#FFFFFF_0%,#F8FBFF_42%,#EAF3FF_100%)] lg:overflow-visible">
       <CityBackdrop />
 
       <div className="relative mx-auto grid min-h-screen max-w-7xl items-center gap-8 px-4 pb-8 pt-10 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8 lg:pb-28 lg:pt-12">
@@ -293,7 +293,7 @@ export default function HeroSection() {
               repeat: Number.POSITIVE_INFINITY,
               ease: "easeInOut",
             }}
-            className="pointer-events-none absolute bottom-[-32%] left-[-28%] right-[-18%] top-[-16%] z-0 opacity-75 sm:bottom-[-36%] sm:left-[-24%] sm:right-[-18%] sm:top-[-18%] lg:bottom-[-42%] lg:left-[-20%] lg:right-[-18%] lg:top-[-22%]"
+            className="pointer-events-none absolute bottom-[-20%] left-[-10%] right-[-10%] top-[-12%] z-0 opacity-75 sm:bottom-[-36%] sm:left-[-24%] sm:right-[-18%] sm:top-[-18%] lg:bottom-[-42%] lg:left-[-20%] lg:right-[-18%] lg:top-[-22%]"
           >
             <div className="absolute inset-x-[9%] bottom-[18%] z-0 h-[24%] rounded-full bg-[#0F172A]/20 blur-[42px] sm:inset-x-[12%] sm:bottom-[16%] lg:bottom-[14%] lg:blur-[56px]" />
             <Image
