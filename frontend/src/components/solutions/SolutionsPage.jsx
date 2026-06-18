@@ -203,14 +203,14 @@ function NewHero() {
             transition={{ duration: 0.65, ease }}
           >
             <h1 className="max-w-[600px] text-[clamp(2.5rem,5vw,4.4rem)] font-semibold leading-[1.0] tracking-[-0.06em] text-[#050A13]">
-              Intelligent Parking{" "}
+              Intelligent Parking Experiences{" "}
               <span className="bg-[linear-gradient(120deg,#0060CC_0%,#0088FF_45%,#38BDF8_100%)] bg-clip-text text-transparent">
-                Infrastructure
+                Built for the Future
               </span>
             </h1>
 
             <p className="mt-6 max-w-[460px] text-[0.95rem] leading-[1.75] text-slate-500">
-              An AI-powered smart parking solution for large-scale residential, commercial, and mixed-use developments across the UAE — automated, connected, and managed in real time.
+              HalaPark delivers an AI-powered smart parking ecosystem designed for large-scale residential, commercial, and mixed-use developments across the UAE, enabling seamless mobility, automation, and real-time operational control.
             </p>
 
             <ul className="mt-7 space-y-2.5">
@@ -244,7 +244,7 @@ function NewHero() {
                 href="#solutions-grid"
                 className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-7 py-3.5 text-sm font-semibold text-slate-700 shadow-[0_2px_12px_rgba(6,6,22,0.07)] transition hover:border-[#0088FF]/50 hover:text-[#0088FF]"
               >
-                Explore Solutions
+                Explore Our Parking Solutions
               </a>
             </div>
           </motion.div>
@@ -414,17 +414,78 @@ function solutionCardHref(card) {
   return slug ? `/solutions/${slug}` : "/contact";
 }
 
+function SolutionCard({ card, i, reduced }) {
+  return (
+    <motion.article
+      initial={reduced ? false : { opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.1 }}
+      transition={{ duration: 0.5, ease, delay: (i % 4) * 0.06 }}
+      className="group overflow-hidden rounded-[22px] bg-white shadow-[0_4px_24px_rgba(6,6,22,0.06)] transition hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(0,136,255,0.12)]"
+    >
+      <Link href={solutionCardHref(card)} className="block" aria-label={`Learn more about ${card.title}`}>
+        <div className="relative h-48 w-full overflow-hidden bg-slate-100">
+          <Image src={card.image} alt={card.title} fill className="object-cover transition duration-500 group-hover:scale-105" sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#050A13]/40 to-transparent" />
+        </div>
+        <div className="flex items-start justify-between gap-4 p-5">
+          <div className="flex-1">
+            <h3 className="text-[1rem] font-semibold leading-tight tracking-[-0.02em] text-[#050A13] sm:text-[1.05rem]">{card.title}</h3>
+            <p className="mt-2 line-clamp-3 text-[0.82rem] leading-6 text-slate-500 sm:text-[0.88rem]">{card.description}</p>
+          </div>
+          <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EEF6FF] text-[#0088FF] transition group-hover:bg-[#0088FF] group-hover:text-white">
+            <ArrowRight className="h-4 w-4" aria-hidden />
+          </span>
+        </div>
+      </Link>
+    </motion.article>
+  );
+}
+
+const DEFAULT_GROUP_ORDER = [
+  "Smart Parking Ecosystem",
+  "Digital Payments & User Experience",
+  "Access & Enforcement Systems",
+  "Property & Hospitality Solutions",
+  "Commercial & Retail Solutions",
+  "Large Infrastructure & City Solutions",
+  "Mobility & Energy Integration",
+];
+
 function StatsSection() {
   const reduced = useReducedMotion();
   const [solutionItems, setSolutionItems] = useState(DEFAULT_SOLUTION_ITEMS);
+  const [groupOrder, setGroupOrder] = useState(DEFAULT_GROUP_ORDER);
 
   useEffect(() => {
     fetchPage("solutions").then((data) => {
-      if (data?.sections?.solutions?.cards && Array.isArray(data.sections.solutions.cards)) {
-        setSolutionItems(data.sections.solutions.cards);
+      const sol = data?.sections?.solutions;
+      if (sol?.cards && Array.isArray(sol.cards)) {
+        setSolutionItems(sol.cards);
+      }
+      if (Array.isArray(sol?.groups) && sol.groups.length > 0) {
+        setGroupOrder(sol.groups);
       }
     });
   }, []);
+
+  // Group the cards. Cards without a group fall into "Other Solutions".
+  const hasGroups = solutionItems.some((c) => c.group);
+  const grouped = [];
+  if (hasGroups) {
+    const order = [...groupOrder];
+    // include any group names that appear on cards but aren't in groupOrder
+    solutionItems.forEach((c) => {
+      if (c.group && !order.includes(c.group)) order.push(c.group);
+    });
+    order.forEach((g) => {
+      const items = solutionItems.filter((c) => (c.group || "") === g);
+      if (items.length) grouped.push({ group: g, items });
+    });
+    const ungrouped = solutionItems.filter((c) => !c.group);
+    if (ungrouped.length) grouped.push({ group: "More Solutions", items: ungrouped });
+  }
+
   return (
     <section className="bg-[#F4F8FF] py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -441,62 +502,37 @@ function StatsSection() {
           </a>
         </div>
 
-        <div id="solutions-grid" className="space-y-5">
-          {/* Row 1 — 4 cards */}
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {solutionItems.slice(0, 4).map((card, i) => (
-              <motion.article
-                key={card.title}
-                initial={reduced ? false : { opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.1 }}
-                transition={{ duration: 0.5, ease, delay: i * 0.06 }}
-                className="group overflow-hidden rounded-[22px] bg-white shadow-[0_4px_24px_rgba(6,6,22,0.06)] transition hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(0,136,255,0.12)]"
-              >
-                <div className="relative h-52 w-full overflow-hidden bg-slate-100">
-                  <Image src={card.image} alt={card.title} fill className="object-cover transition duration-500 group-hover:scale-105" sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#050A13]/40 to-transparent" />
-                </div>
-                <div className="flex items-start justify-between gap-4 p-5">
-                  <div className="flex-1">
-                    <h3 className="text-[1rem] font-semibold leading-tight tracking-[-0.02em] text-[#050A13] sm:text-[1.05rem]">{card.title}</h3>
-                    <p className="mt-2 text-[0.82rem] leading-6 text-slate-500 sm:text-[0.88rem]">{card.description}</p>
+        <div id="solutions-grid">
+          {hasGroups ? (
+            <div className="space-y-14">
+              {grouped.map((g) => (
+                <div key={g.group}>
+                  {/* Group heading */}
+                  <div className="mb-6 flex items-center gap-4">
+                    <h3 className="text-[clamp(1.3rem,2.4vw,1.9rem)] font-semibold tracking-[-0.03em] text-[#050A13]">
+                      {g.group}
+                    </h3>
+                    <span className="h-px flex-1 bg-gradient-to-r from-[#0088FF]/30 to-transparent" />
+                    <span className="rounded-full bg-[#0088FF]/10 px-2.5 py-1 text-[11px] font-bold text-[#0088FF]">
+                      {g.items.length}
+                    </span>
                   </div>
-                  <Link href={solutionCardHref(card)} className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EEF6FF] text-[#0088FF] transition group-hover:bg-[#0088FF] group-hover:text-white" aria-label={`Learn more about ${card.title}`}>
-                    <ArrowRight className="h-4 w-4" aria-hidden />
-                  </Link>
-                </div>
-              </motion.article>
-            ))}
-          </div>
-
-          {/* Row 2 — 3 cards centered, same card width as row 1 (3/4 of container) */}
-          <div className="mx-auto grid w-full gap-5 sm:grid-cols-2 lg:w-3/4 lg:grid-cols-3">
-            {solutionItems.slice(4).map((card, i) => (
-              <motion.article
-                key={card.title}
-                initial={reduced ? false : { opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.1 }}
-                transition={{ duration: 0.5, ease, delay: i * 0.06 }}
-                className="group overflow-hidden rounded-[22px] bg-white shadow-[0_4px_24px_rgba(6,6,22,0.06)] transition hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(0,136,255,0.12)]"
-              >
-                <div className="relative h-52 w-full overflow-hidden bg-slate-100">
-                  <Image src={card.image} alt={card.title} fill className="object-cover transition duration-500 group-hover:scale-105" sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#050A13]/40 to-transparent" />
-                </div>
-                <div className="flex items-start justify-between gap-4 p-5">
-                  <div className="flex-1">
-                    <h3 className="text-[1rem] font-semibold leading-tight tracking-[-0.02em] text-[#050A13] sm:text-[1.05rem]">{card.title}</h3>
-                    <p className="mt-2 text-[0.82rem] leading-6 text-slate-500 sm:text-[0.88rem]">{card.description}</p>
+                  <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                    {g.items.map((card, i) => (
+                      <SolutionCard key={card.slug || card.title} card={card} i={i} reduced={reduced} />
+                    ))}
                   </div>
-                  <Link href={solutionCardHref(card)} className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EEF6FF] text-[#0088FF] transition group-hover:bg-[#0088FF] group-hover:text-white" aria-label={`Learn more about ${card.title}`}>
-                    <ArrowRight className="h-4 w-4" aria-hidden />
-                  </Link>
                 </div>
-              </motion.article>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            // Fallback (no groups): flat responsive grid
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {solutionItems.map((card, i) => (
+                <SolutionCard key={card.slug || card.title} card={card} i={i} reduced={reduced} />
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </section>

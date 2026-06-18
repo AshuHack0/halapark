@@ -228,6 +228,16 @@ export async function fetchSolutionDetails() {
   return DEFAULT_SOLUTION_DETAILS;
 }
 
+// Shared "Advantages of Our Solutions" block, shown on every detail page.
+export async function fetchSolutionAdvantages() {
+  const page = await fetchPage("solutions");
+  const adv = page?.sections?.solutions?.advantages;
+  if (adv && Array.isArray(adv.items) && adv.items.length > 0) {
+    return adv;
+  }
+  return null;
+}
+
 export async function fetchSolutionDetail(slug) {
   const details = await fetchSolutionDetails();
   return getSolutionDetailBySlug(slug, details);

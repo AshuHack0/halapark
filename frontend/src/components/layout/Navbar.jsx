@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { servicesData } from "@/modules/home/servicesData";
-import { DEFAULT_SOLUTION_DETAILS } from "@/lib/solutionDetailsDefaults";
+import { SOLUTION_NAV_GROUPS } from "@/lib/solutionDetailsDefaults";
 import SearchModal from "@/components/layout/SearchModal";
 
 const HamburgerIcon = () => (
@@ -176,16 +176,17 @@ export default function Navbar() {
     href: `/services?open=${encodeURIComponent(service.slug)}`,
     label: isArabic ? (SERVICE_LABELS_AR[service.slug] || service.name) : service.name,
   }));
-  const solutionLinks = DEFAULT_SOLUTION_DETAILS.map((detail) => ({
-    href: `/solutions/${detail.slug}`,
-    label: detail.eyebrow || detail.title,
+  // Solutions are grouped into categories for the dropdown.
+  const solutionGroups = SOLUTION_NAV_GROUPS.map((g) => ({
+    group: g.group,
+    links: g.items.map((it) => ({ href: `/solutions/${it.slug}`, label: it.label })),
   }));
 
-  // A dropdown nav item can be of type "services" or "solutions"; each has its
-  // own "View all" link, child links, and labels.
+  // A dropdown nav item can be of type "services" or "solutions". Services uses a
+  // flat `links` list; solutions uses grouped `groups`.
   const dropdownConfig = {
     services: { viewAllHref: "/services", viewAllLabel: "View All Services", links: serviceLinks },
-    solutions: { viewAllHref: "/solutions", viewAllLabel: "View All Solutions", links: solutionLinks },
+    solutions: { viewAllHref: "/solutions", viewAllLabel: "View All Solutions", groups: solutionGroups },
   };
 
   useEffect(() => {
@@ -359,7 +360,9 @@ export default function Navbar() {
                         </button>
 
                         <div
-                          className={`absolute left-1/2 top-full z-[60] mt-2 max-h-[70vh] w-[320px] -translate-x-1/2 overflow-y-auto rounded-2xl border border-[#CFE2FA]/75 bg-white/95 p-2 shadow-[0_24px_60px_rgba(15,23,42,0.16)] backdrop-blur-sm transition ${
+                          className={`absolute left-1/2 top-full z-[60] mt-2 max-h-[72vh] -translate-x-1/2 overflow-y-auto rounded-2xl border border-[#CFE2FA]/75 bg-white/95 p-2 shadow-[0_24px_60px_rgba(15,23,42,0.16)] backdrop-blur-sm transition ${
+                            dd.groups ? "w-[600px]" : "w-[320px]"
+                          } ${
                             servicesOpen
                               ? "pointer-events-auto opacity-100 translate-y-0"
                               : "pointer-events-none opacity-0 -translate-y-1"
@@ -375,23 +378,50 @@ export default function Navbar() {
                             <span className="shrink-0 opacity-80"><ArrowRightIcon /></span>
                           </Link>
                           <div className="my-1 border-t border-slate-100" />
-                          {dd.links.map((item) => (
-                            <Link
-                              key={item.href}
-                              href={item.href}
-                              className={`flex items-center justify-between rounded-xl px-3 py-3.5 text-sm transition ${
-                                pathname === item.href
-                                  ? "bg-[rgba(0,136,255,0.12)] font-semibold text-[#0078E0]"
-                                  : "text-slate-700 hover:bg-[rgba(0,136,255,0.08)] hover:text-[#0078E0]"
-                              }`}
-                              onClick={() => setServicesOpen(false)}
-                            >
-                              <span>{item.label}</span>
-                              <span className="shrink-0 opacity-80">
-                                <ArrowRightIcon />
-                              </span>
-                            </Link>
-                          ))}
+
+                          {dd.groups ? (
+                            <div className="grid grid-cols-2 gap-x-2 gap-y-3 p-1">
+                              {dd.groups.map((grp) => (
+                                <div key={grp.group}>
+                                  <p className="px-3 pb-1 pt-1 text-[10px] font-bold uppercase tracking-[0.12em] text-[#0088FF]">
+                                    {grp.group}
+                                  </p>
+                                  {grp.links.map((item) => (
+                                    <Link
+                                      key={item.href}
+                                      href={item.href}
+                                      className={`flex items-center justify-between rounded-lg px-3 py-2 text-[13px] transition ${
+                                        pathname === item.href
+                                          ? "bg-[rgba(0,136,255,0.12)] font-semibold text-[#0078E0]"
+                                          : "text-slate-700 hover:bg-[rgba(0,136,255,0.08)] hover:text-[#0078E0]"
+                                      }`}
+                                      onClick={() => setServicesOpen(false)}
+                                    >
+                                      <span className="leading-snug">{item.label}</span>
+                                    </Link>
+                                  ))}
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            dd.links.map((item) => (
+                              <Link
+                                key={item.href}
+                                href={item.href}
+                                className={`flex items-center justify-between rounded-xl px-3 py-3.5 text-sm transition ${
+                                  pathname === item.href
+                                    ? "bg-[rgba(0,136,255,0.12)] font-semibold text-[#0078E0]"
+                                    : "text-slate-700 hover:bg-[rgba(0,136,255,0.08)] hover:text-[#0078E0]"
+                                }`}
+                                onClick={() => setServicesOpen(false)}
+                              >
+                                <span>{item.label}</span>
+                                <span className="shrink-0 opacity-80">
+                                  <ArrowRightIcon />
+                                </span>
+                              </Link>
+                            ))
+                          )}
                         </div>
                       </div>
                     );
@@ -542,10 +572,10 @@ export default function Navbar() {
                     </button>
                     <div
                       className={`overflow-hidden transition-all duration-200 ${
-                        mobileServicesOpen ? "max-h-[460px] opacity-100" : "max-h-0 opacity-0"
+                        mobileServicesOpen ? "max-h-[520px] opacity-100" : "max-h-0 opacity-0"
                       }`}
                     >
-                      <div className="mt-1 space-y-1 overflow-y-auto rounded-lg border border-slate-200 bg-slate-50 p-2 max-h-[440px]">
+                      <div className="mt-1 space-y-1 overflow-y-auto rounded-lg border border-slate-200 bg-slate-50 p-2 max-h-[500px]">
                         <Link
                           href={dd.viewAllHref}
                           onClick={() => { setMenuOpen(false); setMobileServicesOpen(false); }}
@@ -555,26 +585,45 @@ export default function Navbar() {
                           <span className="shrink-0 opacity-80"><ArrowRightIcon /></span>
                         </Link>
                         <div className="border-t border-slate-200 my-1" />
-                        {dd.links.map((item) => (
-                          <Link
-                            key={item.href}
-                            href={item.href}
-                            onClick={() => {
-                              setMenuOpen(false);
-                              setMobileServicesOpen(false);
-                            }}
-                            className={`flex items-center justify-between rounded-md px-3 py-3 text-sm transition ${
-                              pathname === item.href
-                                ? "bg-[rgba(0,136,255,0.12)] font-semibold text-[#0078E0]"
-                                : "text-slate-700 hover:bg-[rgba(0,136,255,0.08)] hover:text-[#0078E0]"
-                            }`}
-                          >
-                            <span>{item.label}</span>
-                            <span className="shrink-0 opacity-80">
-                              <ArrowRightIcon />
-                            </span>
-                          </Link>
-                        ))}
+                        {dd.groups
+                          ? dd.groups.map((grp) => (
+                              <div key={grp.group} className="pt-1">
+                                <p className="px-3 pb-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-[#0088FF]">
+                                  {grp.group}
+                                </p>
+                                {grp.links.map((item) => (
+                                  <Link
+                                    key={item.href}
+                                    href={item.href}
+                                    onClick={() => { setMenuOpen(false); setMobileServicesOpen(false); }}
+                                    className={`flex items-center rounded-md px-3 py-2 text-[13px] transition ${
+                                      pathname === item.href
+                                        ? "bg-[rgba(0,136,255,0.12)] font-semibold text-[#0078E0]"
+                                        : "text-slate-700 hover:bg-[rgba(0,136,255,0.08)] hover:text-[#0078E0]"
+                                    }`}
+                                  >
+                                    {item.label}
+                                  </Link>
+                                ))}
+                              </div>
+                            ))
+                          : dd.links.map((item) => (
+                              <Link
+                                key={item.href}
+                                href={item.href}
+                                onClick={() => { setMenuOpen(false); setMobileServicesOpen(false); }}
+                                className={`flex items-center justify-between rounded-md px-3 py-3 text-sm transition ${
+                                  pathname === item.href
+                                    ? "bg-[rgba(0,136,255,0.12)] font-semibold text-[#0078E0]"
+                                    : "text-slate-700 hover:bg-[rgba(0,136,255,0.08)] hover:text-[#0078E0]"
+                                }`}
+                              >
+                                <span>{item.label}</span>
+                                <span className="shrink-0 opacity-80">
+                                  <ArrowRightIcon />
+                                </span>
+                              </Link>
+                            ))}
                       </div>
                     </div>
                   </div>

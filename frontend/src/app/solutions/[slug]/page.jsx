@@ -1,8 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight, Check, ChevronRight } from "lucide-react";
-import { fetchSolutionDetails } from "@/lib/cms";
+import { ArrowRight, Check, ChevronRight, ShieldCheck } from "lucide-react";
+import { fetchSolutionDetails, fetchSolutionAdvantages } from "@/lib/cms";
 import {
   DEFAULT_SOLUTION_DETAILS,
   getSolutionDetailBySlug,
@@ -26,12 +26,21 @@ export async function generateMetadata({ params }) {
 
 export default async function SolutionDetailPage({ params }) {
   const { slug } = await params;
-  const details = await fetchSolutionDetails();
+  const [details, advantages] = await Promise.all([
+    fetchSolutionDetails(),
+    fetchSolutionAdvantages(),
+  ]);
   const detail = getSolutionDetailBySlug(slug, details);
 
   if (!detail) {
     notFound();
   }
+
+  // v14 uses `systemComponents`; older details use `systems`. Render whichever exists.
+  const components = (Array.isArray(detail.systemComponents) && detail.systemComponents.length > 0)
+    ? detail.systemComponents
+    : (Array.isArray(detail.systems) ? detail.systems : []);
+  const componentsHeading = detail.systemComponentsHeading || detail.systemsHeading || "Integrated Systems";
 
   return (
     <main className="bg-white">
@@ -56,6 +65,13 @@ export default async function SolutionDetailPage({ params }) {
                   {detail.intro}
                 </p>
               ) : null}
+
+              {detail.howItOperates ? (
+                <div className="mt-6 max-w-[560px] rounded-2xl border border-[rgba(0,136,255,0.15)] bg-white/70 p-5 backdrop-blur">
+                  <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#0088FF]">How It Operates</p>
+                  <p className="mt-2 text-[0.95rem] leading-7 text-slate-600">{detail.howItOperates}</p>
+                </div>
+              ) : null}
             </div>
 
             {/* RIGHT — diagram / image */}
@@ -79,15 +95,15 @@ export default async function SolutionDetailPage({ params }) {
       {/* ── Integrated Systems + Key Benefit ─────────────────────────── */}
       <section className="bg-white py-14 sm:py-16 lg:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
-            {/* Integrated Systems */}
-            {Array.isArray(detail.systems) && detail.systems.length > 0 ? (
+          <div className={`grid gap-6 lg:gap-8 ${components.length > 0 ? "lg:grid-cols-2" : "lg:grid-cols-1"}`}>
+            {/* System Components / Integrated Systems */}
+            {components.length > 0 ? (
               <div className="rounded-[24px] border border-[rgba(0,136,255,0.14)] bg-[#F6FAFF] p-7 sm:p-9">
                 <h2 className="text-[1.4rem] font-semibold tracking-[-0.03em] text-[#050A13] sm:text-[1.6rem]">
-                  {detail.systemsHeading || "Integrated Systems"}
+                  {componentsHeading}
                 </h2>
                 <ul className="mt-6 space-y-3">
-                  {detail.systems.map((item) => (
+                  {components.map((item) => (
                     <li key={item} className="flex items-start gap-3">
                       <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#0088FF]/10 text-[#0088FF]">
                         <ChevronRight className="h-3.5 w-3.5" strokeWidth={3} aria-hidden />
@@ -105,7 +121,7 @@ export default async function SolutionDetailPage({ params }) {
                 <h2 className="text-[1.4rem] font-semibold tracking-[-0.03em] text-[#050A13] sm:text-[1.6rem]">
                   {detail.benefitsHeading || "Key Benefit"}
                 </h2>
-                <ul className="mt-6 space-y-3">
+                <ul className={`mt-6 grid gap-3 ${components.length > 0 ? "" : "sm:grid-cols-2"}`}>
                   {detail.benefits.map((item) => (
                     <li key={item} className="flex items-start gap-3">
                       <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#0088FF] text-white">
@@ -148,6 +164,37 @@ export default async function SolutionDetailPage({ params }) {
         </div>
       </section>
 
+      {/* ── Advantages of Our Solutions (shared) ─────────────────────── */}
+      {advantages && Array.isArray(advantages.items) && advantages.items.length > 0 ? (
+        <section className="bg-[#F4F8FF] py-14 sm:py-16 lg:py-20">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="mx-auto mb-10 max-w-2xl text-center">
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#0088FF]">
+                Why HalaPark
+              </p>
+              <h2 className="mt-2 text-[clamp(1.8rem,3vw,2.6rem)] font-semibold tracking-[-0.04em] text-[#050A13]">
+                {advantages.heading || "Advantages of Our Solutions"}
+              </h2>
+            </div>
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {advantages.items.map((adv) => (
+                <div
+                  key={adv.title}
+                  className="rounded-[22px] border border-[rgba(0,136,255,0.12)] bg-white p-6 shadow-[0_4px_24px_rgba(6,6,22,0.05)] transition hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(0,136,255,0.1)]"
+                >
+                  <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-[#0088FF] to-[#2563EB] text-white shadow-[0_6px_16px_rgba(0,136,255,0.3)]">
+                    <ShieldCheck className="h-5 w-5" aria-hidden />
+                  </span>
+                  <h3 className="mt-4 text-[1.05rem] font-semibold leading-tight tracking-[-0.02em] text-[#050A13]">
+                    {adv.title}
+                  </h3>
+                  <p className="mt-2 text-[0.88rem] leading-7 text-slate-500">{adv.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null}
     </main>
   );
 }

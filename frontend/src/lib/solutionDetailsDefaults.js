@@ -250,3 +250,65 @@ export function getSolutionDetailBySlug(slug, details) {
   const list = Array.isArray(details) && details.length ? details : DEFAULT_SOLUTION_DETAILS;
   return list.find((d) => d.slug === slug) || null;
 }
+
+// Lightweight nav list for the navbar "Solutions" dropdown — all 22 solutions
+// (v14), grouped into 7 categories. Labels mirror the card/detail eyebrows.
+export const SOLUTION_NAV_GROUPS = [
+  {
+    group: "Smart Parking Ecosystem",
+    items: [
+      { slug: "smart-ecosystem-integration", label: "Smart Ecosystem Integration" },
+      { slug: "seamless-integrations", label: "Seamless Integrations" },
+      { slug: "ai-powered-anpr-parking-management", label: "AI-Powered ANPR Parking Management" },
+    ],
+  },
+  {
+    group: "Digital Payments & User Experience",
+    items: [
+      { slug: "smart-mobility-payments-platform", label: "Smart Mobility Payments Platform" },
+      { slug: "smart-slot-reservation", label: "Smart Slot Reservation" },
+      { slug: "parking-guidance-system", label: "Parking Guidance System" },
+    ],
+  },
+  {
+    group: "Access & Enforcement Systems",
+    items: [
+      { slug: "parking-access-control-solutions", label: "Parking Access Control Solutions" },
+      { slug: "on-street-parking", label: "On-Street Parking" },
+      { slug: "multi-location-parking-control-platform", label: "Multi-Location Parking Control Platform" },
+    ],
+  },
+  {
+    group: "Property & Hospitality Solutions",
+    items: [
+      { slug: "hotel-restaurant-parking-solutions", label: "Hotel & Restaurant Parking Solutions" },
+      { slug: "private-property-parking-solutions", label: "Private Property Parking Solutions" },
+      { slug: "worship-center-parking-solution", label: "Worship Center Parking Solution" },
+    ],
+  },
+  {
+    group: "Commercial & Retail Solutions",
+    items: [
+      { slug: "commercial-parking", label: "Commercial Parking" },
+      { slug: "retail-shopping-center-parking-solution", label: "Retail & Shopping Center Parking Solution" },
+      { slug: "event-parking-solution", label: "Event Parking Solution" },
+      { slug: "space-sharing", label: "Space Sharing" },
+    ],
+  },
+  {
+    group: "Large Infrastructure & City Solutions",
+    items: [
+      { slug: "government-facilities-parking-solution", label: "Government Facilities Parking Solution" },
+      { slug: "smart-healthcare-parking-system", label: "Smart Healthcare Parking System" },
+      { slug: "university-parking-management-solution", label: "University Parking Management Solution" },
+      { slug: "airport-parking-management-solution", label: "Airport Parking Management Solution" },
+    ],
+  },
+  {
+    group: "Mobility & Energy Integration",
+    items: [
+      { slug: "ev-charging-integration", label: "EV Charging Integration" },
+      { slug: "fleet-parking-integration", label: "Fleet Parking Integration" },
+    ],
+  },
+];
