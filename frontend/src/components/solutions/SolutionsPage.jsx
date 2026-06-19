@@ -326,12 +326,43 @@ function OldNewHero() {
 
 function GlobalExpansionSection() {
   const reduced = useReducedMotion();
-  const challenges = [
-    "Limited real-time parking visibility",
-    "Manual vehicle entry and exit processes",
-    "Inefficient space utilization",
-    "Friction at access and payment points",
-  ];
+  const [content, setContent] = useState({
+    heading: "Parking Challenges",
+    headingGradient: "Challenges",
+    subtitle: "Solving Parking Inefficiencies Through Smart Mobility",
+    description: "Traditional parking systems are manual, fragmented, and lack real-time visibility, causing congestion, operational inefficiencies, and poor user experience. HalaPark transforms parking into a connected ecosystem powered by automation, AI, and real-time control.",
+    items: [
+      "Limited real-time parking visibility",
+      "Manual vehicle entry and exit processes",
+      "Inefficient space utilization",
+      "Friction at access and payment points",
+    ],
+    ctaLabel: "View App Features",
+    ctaLink: "/app",
+  });
+
+  useEffect(() => {
+    fetchPage("solutions").then((data) => {
+      const c = data?.sections?.challenges;
+      if (c && typeof c === "object") {
+        setContent((prev) => ({
+          ...prev,
+          ...Object.fromEntries(
+            Object.entries(c).filter(
+              ([k, v]) => v != null && (k === "items" ? Array.isArray(v) && v.length > 0 : v !== ""),
+            ),
+          ),
+        }));
+      }
+    });
+  }, []);
+
+  const gradient = content.headingGradient?.trim() || "";
+  const headBase =
+    gradient && content.heading.endsWith(gradient)
+      ? content.heading.slice(0, content.heading.length - gradient.length).trimEnd()
+      : content.heading;
+  const showGradient = gradient && content.heading.endsWith(gradient);
 
   return (
     <section className="bg-white py-16 sm:py-20 lg:py-24">
@@ -345,19 +376,24 @@ function GlobalExpansionSection() {
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.65, ease }}
           >
-            <h2 className="text-[clamp(3rem,5.5vw,5rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
-              Parking{" "}
-              <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">Challenges</span>
+            <h2 className="text-[clamp(3rem,5.5vw,5rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]">
+              {headBase}
+              {showGradient ? (
+                <>
+                  {" "}
+                  <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">{gradient}</span>
+                </>
+              ) : null}
             </h2>
-            <p className="mt-4 text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-[#050A13]">
-              Solving Parking Inefficiencies Through Smart Mobility
+            <p className="mt-4 text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-[#050A13] [overflow-wrap:anywhere]">
+              {content.subtitle}
             </p>
-            <p className="mt-5 text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem]">
-              Traditional parking systems are manual, fragmented, and lack real-time visibility, causing congestion, operational inefficiencies, and poor user experience. HalaPark transforms parking into a connected ecosystem powered by automation, AI, and real-time control.
+            <p className="mt-5 text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem] [overflow-wrap:anywhere]">
+              {content.description}
             </p>
 
             <ul className="mt-8 space-y-3">
-              {challenges.map((item) => (
+              {content.items.map((item) => (
                 <li key={item} className="flex items-center gap-3 rounded-xl border border-[rgba(0,136,255,0.12)] bg-[#F4F8FF] px-4 py-3.5 text-[0.88rem] font-medium text-slate-700 sm:text-[0.94rem]">
                   <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#0088FF]">
                     <Check className="h-3 w-3 text-white" strokeWidth={3} aria-hidden />
@@ -367,8 +403,8 @@ function GlobalExpansionSection() {
               ))}
             </ul>
 
-            <Link href="/app" className="mt-8 inline-flex items-center gap-2 rounded-full bg-[#0088FF] px-7 py-3.5 text-[0.95rem] font-semibold text-white shadow-[0_8px_28px_rgba(0,136,255,0.35)] transition hover:-translate-y-0.5 hover:brightness-110">
-              View App Features <ArrowRight className="h-4 w-4" aria-hidden />
+            <Link href={content.ctaLink || "/app"} className="mt-8 inline-flex items-center gap-2 rounded-full bg-[#0088FF] px-7 py-3.5 text-[0.95rem] font-semibold text-white shadow-[0_8px_28px_rgba(0,136,255,0.35)] transition hover:-translate-y-0.5 hover:brightness-110">
+              {content.ctaLabel} <ArrowRight className="h-4 w-4" aria-hidden />
             </Link>
           </motion.div>
 
@@ -639,6 +675,32 @@ const integrationSystems = [
 
 function TrustedBySection() {
   const reduced = useReducedMotion();
+  const [trust, setTrust] = useState({
+    heading: "Built for Smart Cities",
+    headingGradient: "Smart Cities",
+    subtitle: "HalaPark extends beyond parking into urban mobility infrastructure, supporting large-scale smart city development and city-wide optimization.",
+  });
+
+  useEffect(() => {
+    fetchPage("solutions").then((data) => {
+      const t = data?.sections?.trust;
+      if (t && typeof t === "object") {
+        setTrust((prev) => ({
+          ...prev,
+          ...Object.fromEntries(Object.entries(t).filter(([, v]) => v !== "" && v != null)),
+        }));
+      }
+    });
+  }, []);
+
+  // Render the heading with the gradient word highlighted if it appears at the end.
+  const gradient = trust.headingGradient?.trim() || "";
+  const headBase =
+    gradient && trust.heading.endsWith(gradient)
+      ? trust.heading.slice(0, trust.heading.length - gradient.length).trimEnd()
+      : trust.heading;
+  const showGradient = gradient && trust.heading.endsWith(gradient);
+
   return (
     <>
       {/* Built for Smart Cities */}
@@ -646,12 +708,17 @@ function TrustedBySection() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
             <motion.div initial={reduced ? false : { opacity: 0, x: -28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }}>
-              <h2 className="text-[clamp(3rem,5.5vw,5rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
-                Built for{" "}
-                <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">Smart Cities</span>
+              <h2 className="text-[clamp(3rem,5.5vw,5rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]">
+                {headBase}
+                {showGradient ? (
+                  <>
+                    {" "}
+                    <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">{gradient}</span>
+                  </>
+                ) : null}
               </h2>
-              <p className="mt-4 max-w-[520px] text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem]">
-                HalaPark extends beyond parking into urban mobility infrastructure, supporting large-scale smart city development and city-wide optimization.
+              <p className="mt-4 max-w-[520px] text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem] [overflow-wrap:anywhere]">
+                {trust.subtitle}
               </p>
               <ul className="mt-8 grid gap-3 sm:grid-cols-2">
                 {smartCityCapabilities.map((item) => (
@@ -1021,6 +1088,30 @@ function WhyHalaparkSection() {
     "Seamless user experience",
     "Built for UAE smart city standards",
   ];
+  const [why, setWhy] = useState({
+    heading: "Why Leading Developments Choose Halapark?",
+    headingGradient: "Choose Halapark?",
+  });
+
+  useEffect(() => {
+    fetchPage("solutions").then((data) => {
+      const w = data?.sections?.why;
+      if (w && typeof w === "object") {
+        setWhy((prev) => ({
+          ...prev,
+          ...Object.fromEntries(Object.entries(w).filter(([, v]) => v !== "" && v != null)),
+        }));
+      }
+    });
+  }, []);
+
+  const gradient = why.headingGradient?.trim() || "";
+  const headBase =
+    gradient && why.heading.endsWith(gradient)
+      ? why.heading.slice(0, why.heading.length - gradient.length).trimEnd()
+      : why.heading;
+  const showGradient = gradient && why.heading.endsWith(gradient);
+
   return (
     <section className="bg-[#F4F8FF] py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -1031,9 +1122,14 @@ function WhyHalaparkSection() {
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.65, ease }}
           >
-            <h2 className="text-[clamp(3rem,5.5vw,5rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
-              Why Leading Developments{" "}
-              <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">Choose Halapark?</span>
+            <h2 className="text-[clamp(3rem,5.5vw,5rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]">
+              {headBase}
+              {showGradient ? (
+                <>
+                  {" "}
+                  <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">{gradient}</span>
+                </>
+              ) : null}
             </h2>
             <ul className="mt-8 space-y-3">
               {points.map((point, i) => (

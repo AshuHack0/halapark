@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useLayoutEffect, useEffect } from "react";
+import { useState, useRef, useLayoutEffect, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
 import ReCAPTCHA from "react-google-recaptcha";
 import { RECAPTCHA_SITE_KEY } from "@/config/recaptcha.site";
@@ -21,6 +21,7 @@ import {
   CreditCard, Lock, ChevronRight, ChevronDown, MapPin, Clock, ParkingCircle, ArrowRight, Zap, Search,
 } from "lucide-react";
 import { allServicesData, serviceNames } from "./allServicesData";
+import { fetchPage } from "@/lib/cms";
 // import GoodLookingServiceHero from "./GoodLookingServiceHero"; // OLD dark hero (looked like home page) — replaced by the light HeroSection below
 
 /* ─── Springs & easing ─── */
@@ -848,9 +849,11 @@ function SvcHeroVisual({ reduced }) {
 
 /* ══════════════════════════ HERO SECTION ════════════════════════════ */
 
-function HeroSection({ onGetQuote }) {
+function HeroSection({ onGetQuote, hero }) {
   const sectionRef = useRef(null);
   const reduced    = useReducedMotion();
+  const heroTitle = hero?.title?.trim() || "Smart Parking. Vehicle Care Partner.";
+  const heroSubtitle = hero?.subtitle?.trim() || "Smart parking and vehicle care built for convenience, safety, and innovation.";
 
   /* Mouse spotlight */
   const mouseX = useMotionValue(0);
@@ -973,32 +976,16 @@ function HeroSection({ onGetQuote }) {
             {/* Headline */}
             <motion.h1
               {...fadeUp}
-              className="max-w-[580px] text-[clamp(2.6rem,5.2vw,4.6rem)] font-semibold leading-[1.0] tracking-[-0.065em]"
+              className="max-w-[580px] text-[clamp(2.6rem,5.2vw,4.6rem)] font-semibold leading-[1.0] tracking-[-0.065em] text-[#050A13] [overflow-wrap:anywhere]"
             >
-              <span className="block text-[#050A13]">Smart Parking.</span>
-              <span className="relative mt-1 block">
-                <span className="bg-[linear-gradient(120deg,#0060CC_0%,#0088FF_45%,#38BDF8_100%)] bg-clip-text text-transparent">
-                  Vehicle Care
-                </span>
-                <span className="text-[#050A13]"> Partner.</span>
-                {/* Underline decoration */}
-                <svg aria-hidden className="absolute -bottom-2 left-0 w-[58%] opacity-60" height="6" viewBox="0 0 260 6" fill="none">
-                  <path d="M1 5C60 1 140 1 259 5" stroke="url(#ug)" strokeWidth="2.5" strokeLinecap="round"/>
-                  <defs>
-                    <linearGradient id="ug" x1="0" y1="0" x2="260" y2="0" gradientUnits="userSpaceOnUse">
-                      <stop stopColor="#0060CC"/>
-                      <stop offset="1" stopColor="#38BDF8" stopOpacity="0"/>
-                    </linearGradient>
-                  </defs>
-                </svg>
-              </span>
+              {heroTitle}
             </motion.h1>
 
             {/* Description with left accent bar */}
             <motion.div {...fadeUp} className="mt-7 flex gap-4">
               <div className="mt-1 w-0.5 shrink-0 self-stretch rounded-full bg-gradient-to-b from-[#0088FF] via-[#0088FF]/40 to-transparent" />
-              <p className="max-w-[440px] text-[0.9rem] leading-[1.75] text-slate-500">
-                Smart parking and vehicle care built for convenience, safety, and innovation.
+              <p className="max-w-[440px] text-[0.9rem] leading-[1.75] text-slate-500 [overflow-wrap:anywhere] line-clamp-6">
+                {heroSubtitle}
               </p>
             </motion.div>
 
@@ -1115,7 +1102,7 @@ const FILTERS = [
   { id: "care",    label: "Vehicle Care",   emoji: "🔧" },
 ];
 
-function ServicesGrid({ onServiceClick }) {
+function ServicesGrid({ onServiceClick, cmsServices }) {
   const [activeFilter, setActiveFilter] = useState("all");
   const reduced  = useReducedMotion();
   const sectionRef = useRef(null);
@@ -1123,13 +1110,33 @@ function ServicesGrid({ onServiceClick }) {
   const blobA = useTransform(scrollYProgress, [0,1], reduced ? [0,0] : [0,-70]);
   const blobB = useTransform(scrollYProgress, [0,1], reduced ? [0,0] : [0, 90]);
 
+  // Merge CMS service edits (name / media / description) over the local data by
+  // slug, so modal-only fields (whatsIncluded, packages, etc.) are preserved.
+  const services = useMemo(() => {
+    if (!Array.isArray(cmsServices) || cmsServices.length === 0) return allServicesData;
+    const bySlug = new Map(cmsServices.map((s) => [s.slug, s]));
+    return allServicesData.map((local) => {
+      const cms = bySlug.get(local.slug);
+      if (!cms) return local;
+      return {
+        ...local,
+        name: cms.name || local.name,
+        mediaType: cms.mediaType || local.mediaType,
+        mediaSrc: cms.mediaSrc || local.mediaSrc,
+        fullDesc: cms.fullDesc || local.fullDesc,
+        includedLabel: cms.includedLabel || local.includedLabel,
+        whatsIncluded: Array.isArray(cms.whatsIncluded) && cms.whatsIncluded.length ? cms.whatsIncluded : local.whatsIncluded,
+      };
+    });
+  }, [cmsServices]);
+
   const filtered = activeFilter === "all"
-    ? allServicesData
-    : allServicesData.filter(s => SLUG_CATEGORY[s.slug] === activeFilter);
+    ? services
+    : services.filter(s => SLUG_CATEGORY[s.slug] === activeFilter);
 
   const counts = FILTERS.map(f =>
-    f.id === "all" ? allServicesData.length
-    : allServicesData.filter(s => SLUG_CATEGORY[s.slug] === f.id).length
+    f.id === "all" ? services.length
+    : services.filter(s => SLUG_CATEGORY[s.slug] === f.id).length
   );
 
   return (
@@ -1327,10 +1334,14 @@ function PartnerCard({ partner }) {
   );
 }
 
-function PartnersSection() {
+function PartnersSection({ partners }) {
   const reduced = useReducedMotion();
   const row1 = [...PARTNERS_ROW1, ...PARTNERS_ROW1];
   const row2 = [...PARTNERS_ROW2, ...PARTNERS_ROW2];
+  const heading = partners?.heading?.trim() || "Clients & Partners";
+  const headingGradient = partners?.headingGradient?.trim() || "";
+  const subtitle = partners?.subtitle?.trim() || "Trusted by the UAE's leading brands.";
+  const description = partners?.description?.trim() || "HalaPark partners with global hotel chains, residential towers, retail destinations, and enterprises across the UAE.";
 
   return (
     <section className="relative overflow-hidden bg-white py-20 sm:py-24">
@@ -1348,17 +1359,22 @@ function PartnersSection() {
           transition={{ duration: 0.65, ease }}
           className="flex flex-col items-center text-center"
         >
-          <h2 className="text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
-            Clients &{" "}
-            <span className="bg-[linear-gradient(120deg,#0060CC_0%,#0088FF_50%,#38BDF8_100%)] bg-clip-text text-transparent">
-              Partners
-            </span>
+          <h2 className="text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]">
+            {heading}
+            {headingGradient ? (
+              <>
+                {" "}
+                <span className="bg-[linear-gradient(120deg,#0060CC_0%,#0088FF_50%,#38BDF8_100%)] bg-clip-text text-transparent">
+                  {headingGradient}
+                </span>
+              </>
+            ) : null}
           </h2>
-          <p className="mt-3 max-w-[460px] text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-[#050A13]">
-            Trusted by the UAE&apos;s leading brands.
+          <p className="mt-3 max-w-[460px] text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-[#050A13] [overflow-wrap:anywhere]">
+            {subtitle}
           </p>
-          <p className="mt-3 max-w-[460px] text-[0.88rem] leading-6 text-slate-500">
-            HalaPark partners with global hotel chains, residential towers, retail destinations, and enterprises across the UAE.
+          <p className="mt-3 max-w-[460px] text-[0.88rem] leading-6 text-slate-500 [overflow-wrap:anywhere]">
+            {description}
           </p>
         </motion.div>
 
@@ -1436,8 +1452,11 @@ const TRUST = [
   { Icon: Lock,       label: "Controlled Access Zones"            },
 ];
 
-function TrustSection() {
+function TrustSection({ trust }) {
   const reduced = useReducedMotion();
+  const heading = trust?.heading?.trim() || "Trust & Safety";
+  const headingGradient = trust?.headingGradient?.trim() || "";
+  const subtitle = trust?.subtitle?.trim() || "Your safety is our priority.";
 
   return (
     <section className="relative overflow-hidden bg-[#F4F8FF] py-16 sm:py-20 lg:py-24">
@@ -1458,14 +1477,19 @@ function TrustSection() {
           transition={{ duration: 0.6, ease }}
           className="mb-12 text-center"
         >
-          <h2 className="text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
-            Trust &{" "}
-            <span className="bg-[linear-gradient(120deg,#0060CC_0%,#0088FF_50%,#38BDF8_100%)] bg-clip-text text-transparent">
-              Safety
-            </span>
+          <h2 className="text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]">
+            {heading}
+            {headingGradient ? (
+              <>
+                {" "}
+                <span className="bg-[linear-gradient(120deg,#0060CC_0%,#0088FF_50%,#38BDF8_100%)] bg-clip-text text-transparent">
+                  {headingGradient}
+                </span>
+              </>
+            ) : null}
           </h2>
-          <p className="mt-3 text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-[#050A13]">
-            Your safety is our priority.
+          <p className="mt-3 text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-[#050A13] [overflow-wrap:anywhere]">
+            {subtitle}
           </p>
         </motion.div>
 
@@ -1504,8 +1528,12 @@ function TrustSection() {
 
 /* ═══════════════════════ LONG-TERM CTA SECTION ═══════════════════════ */
 
-function LongTermCTA({ onGetQuote }) {
+function LongTermCTA({ onGetQuote, cta }) {
   const reduced = useReducedMotion();
+  const heading = cta?.heading?.trim() || "Looking for Long-Term Parking?";
+  const headingGradient = cta?.headingGradient?.trim() || "";
+  const subtitle = cta?.subtitle?.trim() || "Secure, flexible, and smart parking solutions for businesses, residents, airports, and yearly vehicle storage.";
+  const ctaLabel = cta?.ctaLabel?.trim() || "Get a Quote";
 
   return (
     <section className="bg-[#F4F8FF] py-16 sm:py-20 lg:py-24">
@@ -1516,19 +1544,24 @@ function LongTermCTA({ onGetQuote }) {
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.6, ease }}
         >
-          <h2 className="text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
-            Looking for Long-Term{" "}
-            <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">Parking?</span>
+          <h2 className="text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]">
+            {heading}
+            {headingGradient ? (
+              <>
+                {" "}
+                <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">{headingGradient}</span>
+              </>
+            ) : null}
           </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-[#050A13]">
-            Secure, flexible, and smart parking solutions for businesses, residents, airports, and yearly vehicle storage.
+          <p className="mx-auto mt-4 max-w-2xl text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-[#050A13] [overflow-wrap:anywhere]">
+            {subtitle}
           </p>
           <button
             type="button"
             onClick={onGetQuote}
             className="mt-8 inline-flex items-center justify-center rounded-full bg-[#0088FF] px-8 py-3.5 text-sm font-semibold text-white transition hover:brightness-110"
           >
-            Get a Quote
+            {ctaLabel}
           </button>
         </motion.div>
       </div>
@@ -1541,6 +1574,15 @@ function LongTermCTA({ onGetQuote }) {
 export default function ServicesListPage() {
   const [selectedService, setSelectedService] = useState(null);
   const [quoteOpen, setQuoteOpen]             = useState(false);
+  const [cms, setCms] = useState(null);
+
+  // Pull the Services page CMS content (hero + section text). Falls back to the
+  // hardcoded defaults when a field is empty/unavailable.
+  useEffect(() => {
+    fetchPage("services").then((page) => {
+      if (page?.sections) setCms(page.sections);
+    });
+  }, []);
 
   // Auto-open service modal when ?open=<slug> is in the URL.
   useEffect(() => {
@@ -1563,11 +1605,11 @@ export default function ServicesListPage() {
       <main>
         {/* OLD hero (dark, mirrored the home page — client disliked it):
         <GoodLookingServiceHero onGetQuote={() => setQuoteOpen(true)} /> */}
-        <HeroSection    onGetQuote={() => setQuoteOpen(true)} />
-        <ServicesGrid   onServiceClick={setSelectedService} />
-        <PartnersSection />
-        <TrustSection />
-        <LongTermCTA    onGetQuote={() => setQuoteOpen(true)} />
+        <HeroSection    onGetQuote={() => setQuoteOpen(true)} hero={cms?.hero} />
+        <ServicesGrid   onServiceClick={setSelectedService} cmsServices={cms?.services} />
+        <PartnersSection partners={cms?.partnersSection} />
+        <TrustSection trust={cms?.trustSection} />
+        <LongTermCTA    onGetQuote={() => setQuoteOpen(true)} cta={cms?.ctaSection} />
       </main>
     </>
   );
