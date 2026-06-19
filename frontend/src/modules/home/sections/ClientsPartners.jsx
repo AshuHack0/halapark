@@ -16,6 +16,7 @@ const DEFAULT_LOGOS = [
 const DEFAULT_CP = {
   heading: "Built Together with Our",
   headingEnd: "Clients & Partners",
+  logos: [],
   logoPlaceholders: DEFAULT_LOGOS,
 };
 
@@ -28,6 +29,7 @@ export default function ClientsPartners() {
         setCp({
           heading: d.heading || DEFAULT_CP.heading,
           headingEnd: d.headingEnd || DEFAULT_CP.headingEnd,
+          logos: Array.isArray(d.logos) ? d.logos.filter((l) => l && l.image) : [],
           logoPlaceholders:
             Array.isArray(d.logoPlaceholders) && d.logoPlaceholders.length
               ? d.logoPlaceholders
@@ -37,8 +39,9 @@ export default function ClientsPartners() {
     });
   }, []);
 
-  const logoPlaceholders = cp.logoPlaceholders;
-  const tickerItems = [...logoPlaceholders, ...logoPlaceholders];
+  // Prefer uploaded logo images; fall back to text placeholders if none.
+  const hasLogos = cp.logos.length > 0;
+  const placeholderItems = [...cp.logoPlaceholders, ...cp.logoPlaceholders];
 
   return (
     <section className="py-10 sm:py-12 md:py-14 bg-white">
@@ -83,14 +86,28 @@ export default function ClientsPartners() {
             <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-white via-white/90 to-transparent sm:w-24" />
 
             <div className="clients-ticker flex w-max items-center gap-5 sm:gap-7">
-              {tickerItems.map((name, index) => (
-                <div
-                  key={`${name}-${index}`}
-                  className="flex min-w-[140px] items-center justify-center rounded-xl border border-dashed border-slate-300 bg-white/80 px-4 py-5 text-center text-[0.78rem] font-medium text-slate-500 sm:min-w-[200px] sm:px-7 sm:py-6 sm:text-sm"
-                >
-                  {name}
-                </div>
-              ))}
+              {hasLogos
+                ? cp.logos.map((logo, index) => (
+                    <div
+                      key={`${logo.image}-${index}`}
+                      className="flex min-w-[140px] items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-5 sm:min-w-[200px] sm:px-7 sm:py-6"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={logo.image}
+                        alt={logo.alt || "Client logo"}
+                        className="max-h-12 w-auto max-w-[150px] object-contain sm:max-h-14"
+                      />
+                    </div>
+                  ))
+                : placeholderItems.map((name, index) => (
+                    <div
+                      key={`${name}-${index}`}
+                      className="flex min-w-[140px] items-center justify-center rounded-xl border border-dashed border-slate-300 bg-white/80 px-4 py-5 text-center text-[0.78rem] font-medium text-slate-500 sm:min-w-[200px] sm:px-7 sm:py-6 sm:text-sm"
+                    >
+                      {name}
+                    </div>
+                  ))}
             </div>
           </div>
           {/* ========================= from left to right =============================== */}

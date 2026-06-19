@@ -6,6 +6,28 @@ import { motion, useReducedMotion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { servicesData } from "@/modules/home/servicesData";
+import { fetchHomeSection } from "@/lib/cms";
+
+// Editable section text (heading / side copy / CTAs), managed in the Home editor
+// under "goodLookingServices". Cards themselves come from the Services CMS.
+const DEFAULT_SERVICES_COPY = {
+  heading: "SERVICES",
+  exploreCtaLabel: "Explore Services",
+  exploreCtaLink: "/services",
+  contactCtaLabel: "Talk to us",
+  contactCtaLink: "/contact",
+};
+
+// Map a CMS service (from the Services page) to the card shape this section uses.
+function toCard(svc) {
+  return {
+    slug: svc.slug,
+    name: svc.name,
+    summary: svc.summary || svc.fullDesc || svc.description || "",
+    mediaType: svc.mediaType,
+    mediaSrc: svc.mediaSrc,
+  };
+}
 
 const parkingIntegrations = [
   { name: "Technical Support", bgcolor: "bg-[#EC4899]", img: "/Group11.svg" },
@@ -164,6 +186,14 @@ function ServiceCard({ service, index, cardRef, isActive }) {
             />
           ) : service.mediaType === "integrations" ? (
             <IntegrationsMotionHeader active={!prefersReducedMotion} />
+          ) : service.mediaSrc ? (
+            <Image
+              src={service.mediaSrc}
+              alt={service.name}
+              fill
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              className="object-cover object-center"
+            />
           ) : null}
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.72)_0%,rgba(255,255,255,0)_55%)] opacity-70" />
         </div>
@@ -195,10 +225,35 @@ function ServiceCard({ service, index, cardRef, isActive }) {
 }
 
 export default function GoodLookingServicesSection() {
-  const featuredServices = useMemo(() => servicesData.slice(0, 10), []);
   const prefersReducedMotion = useReducedMotion();
   const [activeServiceIndex, setActiveServiceIndex] = useState(0);
   const cardRefs = useRef([]);
+
+  // Home Services cards are managed in the Home editor (goodLookingServices.cards).
+  // Fall back to the local servicesData only if the CMS has none yet.
+  const fallbackCards = useMemo(() => servicesData.slice(0, 10), []);
+  const [services, setServices] = useState(fallbackCards);
+  const [copy, setCopy] = useState(DEFAULT_SERVICES_COPY);
+
+  useEffect(() => {
+    fetchHomeSection("goodLookingServices").then((d) => {
+      if (d && typeof d === "object") {
+        if (Array.isArray(d.cards) && d.cards.length > 0) {
+          setServices(d.cards.map(toCard));
+        }
+        setCopy((prev) => ({
+          ...prev,
+          ...Object.fromEntries(
+            Object.entries(d)
+              .filter(([k]) => k !== "cards" && k !== "parkingIntegrations")
+              .filter(([, v]) => v !== "" && v != null),
+          ),
+        }));
+      }
+    });
+  }, []);
+
+  const featuredServices = services;
 
   useEffect(() => {
     const scrollContainer = document.querySelector("[data-scroll-container]");
@@ -282,9 +337,9 @@ export default function GoodLookingServicesSection() {
           
           <h2
             id="services-section-title"
-            className="mx-auto mt-4 max-w-[980px] text-[clamp(2.75rem,5vw,4.4rem)] font-medium leading-[1.02] tracking-[-0.06em] text-[#050A13]"
+            className="mx-auto mt-4 max-w-[980px] text-[clamp(2.75rem,5vw,4.4rem)] font-medium leading-[1.02] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]"
           >
-                   SERVICES
+            {copy.heading}
           </h2>
         </div>
 
@@ -339,16 +394,16 @@ export default function GoodLookingServicesSection() {
 
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
-                href="/services"
+                href={copy.exploreCtaLink || "/services"}
                 className="inline-flex min-h-[3.05rem] items-center justify-center rounded-full bg-[#0088FF] px-7 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(0,136,255,0.14)] transition hover:bg-[#0088FF]"
               >
-                Explore Services
+                {copy.exploreCtaLabel || "Explore Services"}
               </Link>
               <Link
-                href="/contact"
+                href={copy.contactCtaLink || "/contact"}
                 className="inline-flex min-h-[3.05rem] items-center justify-center rounded-full border border-slate-300/70 bg-white/60 px-7 text-sm font-semibold text-slate-800 backdrop-blur transition hover:border-[#0088FF] hover:text-[#0088FF]"
               >
-                Talk to us
+                {copy.contactCtaLabel || "Talk to us"}
               </Link>
             </div>
           </motion.div>

@@ -5,16 +5,14 @@ import Link from "next/link";
 const APP_STORE_URL = "https://apps.apple.com/us/app/halapark-all-about-parking/id1590800416";
 const PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=com.app.halapark&pli=1";
 
-// Returns the correct store URL for the current device. Falls back to the
-// on-site /app page on desktop (which lists both stores).
+// Returns the correct store URL for the current device:
+// Android → Play Store, iOS → App Store, everything else (desktop) → App Store.
 function getStoreUrl() {
-  if (typeof navigator === "undefined") return "/app";
+  if (typeof navigator === "undefined") return APP_STORE_URL;
   const ua = (navigator.userAgent || navigator.vendor || "").toLowerCase();
   if (/android/.test(ua)) return PLAY_STORE_URL;
-  if (/iphone|ipad|ipod/.test(ua) || (/macintosh/.test(ua) && "ontouchend" in document)) {
-    return APP_STORE_URL;
-  }
-  return "/app";
+  // iOS, iPadOS-as-desktop, and all desktop browsers → App Store.
+  return APP_STORE_URL;
 }
 
 const DownloadAppIcon = () => (
