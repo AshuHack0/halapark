@@ -1,5 +1,8 @@
 import ServicesListPage from "@/components/services/ServicesListPage";
 
+// CMS-driven page — render per request so admin edits show without a rebuild.
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Services — HalaPark",
   description:

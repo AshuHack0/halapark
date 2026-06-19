@@ -1,5 +1,8 @@
 import SolutionsPage from "@/components/solutions/SolutionsPage";
 
+// CMS-driven page — render per request so admin edits show without a rebuild.
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Solutions — HalaPark",
   description:

@@ -16,6 +16,9 @@ import AppUserSection from "@/components/app/AppUserSection";
 import AboutFeatures from "@/components/About/Features";
 import { featureHighlights } from "@/components/app/appContent";
 
+// CMS-driven page — render per request so admin edits show without a rebuild.
+export const dynamic = "force-dynamic";
+
 export default function AppPage() {
   return (
     <div className="min-h-screen bg-white">

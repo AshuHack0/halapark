@@ -4,6 +4,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { fetchHomeSection } from "@/lib/cms";
 
 const serviceAudienceCards = [
   {
@@ -181,7 +182,7 @@ function AudienceCard({
             pointerEvents: !isDesktop || active ? "auto" : "none",
           }}
         >
-          <p className="max-w-[31ch] text-[0.82rem] leading-[1.42] tracking-[-0.015em] text-black sm:text-[0.88rem] lg:max-w-[420px] lg:text-[14px] lg:leading-[1.38]">
+          <p className="max-w-[31ch] text-[0.82rem] leading-[1.42] tracking-[-0.015em] text-black [overflow-wrap:anywhere] line-clamp-5 sm:text-[0.88rem] lg:max-w-[420px] lg:text-[14px] lg:leading-[1.38]">
             {description}
           </p>
 
@@ -202,6 +203,17 @@ export default function AiPoweredParkingService() {
   const [activeCard, setActiveCard] = useState(null);
   const [isDesktop, setIsDesktop] = useState(false);
   const prefersReducedMotion = useReducedMotion();
+  // Merge CMS text fields onto the hardcoded cards (keep UI-only props like image).
+  const [cards, setCards] = useState(serviceAudienceCards);
+
+  useEffect(() => {
+    fetchHomeSection("aiPoweredParking").then((d) => {
+      const cmsCards = d?.cards;
+      if (Array.isArray(cmsCards) && cmsCards.length) {
+        setCards(serviceAudienceCards.map((base, i) => ({ ...base, ...(cmsCards[i] ?? {}) })));
+      }
+    });
+  }, []);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(min-width: 1024px)");
@@ -254,7 +266,7 @@ export default function AiPoweredParkingService() {
             className="flex flex-col gap-3 lg:flex-row"
             onMouseLeave={() => setActiveCard(null)}
           >
-            {serviceAudienceCards.map((card, index) => (
+            {cards.map((card, index) => (
               <AudienceCard
                 key={card.title}
                 {...card}

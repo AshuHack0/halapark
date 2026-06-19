@@ -83,23 +83,31 @@ function HeroBackgroundMedia({ slide, isActive, onVideoEnd }) {
 }
 
 export default function HeroSection() {
+  // Start with defaults purely as a first-paint placeholder; once the CMS fetch
+  // resolves we use whatever it returns — including an empty list (client deleted
+  // all slides → hero is hidden).
   const [slides, setSlides] = useState(DEFAULT_HOME_SLIDES);
+  const [resolved, setResolved] = useState(false);
   const visibleSlides = slides.slice(0, 3);
   const [activeSlide, setActiveSlide] = useState(0);
   const currentSlide = visibleSlides[activeSlide] ?? visibleSlides[0];
   const shouldWaitForVideoEnd = activeSlide === 0 && Boolean(currentSlide?.video);
 
   useEffect(() => {
-    fetchHomeHeroSlides().then((slides) => {
+    fetchHomeHeroSlides().then((cmsSlides) => {
       if (process.env.NODE_ENV === "development") {
-        console.log("[CMS] HeroSection slides loaded", { count: slides.length });
+        console.log("[CMS] HeroSection slides loaded", { count: cmsSlides?.length ?? null });
       }
-      setSlides(slides);
+      // null = fetch failed → keep placeholder; array (even empty) = use as-is.
+      if (Array.isArray(cmsSlides)) {
+        setSlides(cmsSlides);
+      }
+      setResolved(true);
     });
   }, []);
 
   useEffect(() => {
-    if (shouldWaitForVideoEnd) {
+    if (shouldWaitForVideoEnd || visibleSlides.length === 0) {
       return undefined;
     }
 
@@ -119,6 +127,11 @@ export default function HeroSection() {
   const showNextSlide = () => {
     setActiveSlide((current) => (current + 1) % visibleSlides.length);
   };
+
+  // Hero deleted in CMS (no slides) → render nothing once the fetch has resolved.
+  if (resolved && visibleSlides.length === 0) {
+    return null;
+  }
 
   return (
     <section id="hero-section" className="bg-white py-4 sm:py-5 lg:py-6">
@@ -144,13 +157,35 @@ export default function HeroSection() {
             ))}
           </div>
 
+          {/* Manual prev/next arrows */}
+          {visibleSlides.length > 1 ? (
+            <>
+              <button
+                type="button"
+                onClick={showPreviousSlide}
+                aria-label="Previous slide"
+                className="absolute left-3 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-sm transition hover:bg-white/30 sm:left-5 sm:h-11 sm:w-11"
+              >
+                <ArrowLeftIcon />
+              </button>
+              <button
+                type="button"
+                onClick={showNextSlide}
+                aria-label="Next slide"
+                className="absolute right-3 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-sm transition hover:bg-white/30 sm:right-5 sm:h-11 sm:w-11"
+              >
+                <ArrowRightIcon />
+              </button>
+            </>
+          ) : null}
+
           <div className="relative flex min-h-125 w-full flex-col justify-center px-8 py-14 sm:px-12 md:min-h-[620px] lg:px-20">
             <div className="relative z-10 w-full max-w-lg">
-              <h1 className="text-5xl font-semibold text-white sm:text-6xl md:text-7xl">
+              <h1 className="text-4xl font-semibold leading-tight text-white [overflow-wrap:anywhere] sm:text-5xl md:text-6xl line-clamp-3">
                 {currentSlide.tag}
               </h1>
 
-              <p className="mt-5 max-w-sm text-sm leading-relaxed text-white/90 sm:text-base">
+              <p className="mt-5 max-w-sm text-sm leading-relaxed text-white/90 [overflow-wrap:anywhere] line-clamp-4 sm:text-base">
                 {currentSlide.title}
               </p>
 

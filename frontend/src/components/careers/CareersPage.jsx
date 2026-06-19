@@ -11,6 +11,8 @@ import {
   Headset,
   Building2,
   Sparkles,
+  MapPin,
+  X,
 } from "lucide-react";
 import JobApplicationModal from "./JobApplicationModal";
 
@@ -301,10 +303,135 @@ function OpportunitiesSection({ opportunities }) {
   );
 }
 
+// Apply button — renders a form-trigger or a link depending on applyMode.
+function JobApplyButton({ post, onApply, className }) {
+  const useForm = post.applyMode === "form";
+  const applyHref = post.applyLink || "/contact";
+  if (useForm) {
+    return (
+      <button type="button" onClick={() => onApply(post)} className={className}>
+        {post.applyLabel ?? "Apply Now"}
+        <ArrowRight className="h-4 w-4" aria-hidden />
+      </button>
+    );
+  }
+  const ApplyTag = applyHref.startsWith("/") ? Link : "a";
+  return (
+    <ApplyTag href={applyHref} className={className}>
+      {post.applyLabel ?? "Apply Now"}
+      <ArrowRight className="h-4 w-4" aria-hidden />
+    </ApplyTag>
+  );
+}
+
+// Job detail modal — structured layout with rich (HTML) content support.
+function JobDetailModal({ job, onClose, onApply }) {
+  useEffect(() => {
+    if (!job) return undefined;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e) => e.key === "Escape" && onClose();
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [job, onClose]);
+
+  return (
+    <AnimatePresence>
+      {job ? (
+        <motion.div
+          className="fixed inset-0 z-[120] flex items-end justify-center bg-black/55 backdrop-blur-sm sm:items-center sm:p-6"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={onClose}
+        >
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 40 }}
+            transition={{ duration: 0.3, ease }}
+            onClick={(e) => e.stopPropagation()}
+            className="flex max-h-[92vh] w-full max-w-2xl flex-col overflow-hidden rounded-t-[26px] bg-white shadow-2xl sm:rounded-[26px]"
+          >
+            {/* Header */}
+            <div className="relative shrink-0 border-b border-slate-100 bg-[#F6FAFF] px-6 py-5 sm:px-8">
+              <button
+                type="button"
+                onClick={onClose}
+                aria-label="Close"
+                className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-white text-slate-500 shadow-sm transition hover:text-slate-800"
+              >
+                <X className="h-4 w-4" />
+              </button>
+              <h3 className="max-w-[90%] text-[1.3rem] font-semibold tracking-[-0.03em] text-[#050A13] sm:text-[1.6rem]">
+                {job.title}
+              </h3>
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                {job.department ? (
+                  <span className="rounded-full bg-[#EEF6FF] px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-wider text-[#0088FF]">
+                    {job.department}
+                  </span>
+                ) : null}
+                {job.employmentType ? (
+                  <span className="rounded-full border border-[#E7EAF0] bg-white px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-wider text-slate-600">
+                    {job.employmentType}
+                  </span>
+                ) : null}
+                {job.location ? (
+                  <span className="inline-flex items-center gap-1 text-[0.8rem] text-slate-500">
+                    <MapPin className="h-3.5 w-3.5" aria-hidden /> {job.location}
+                  </span>
+                ) : null}
+              </div>
+            </div>
+
+            {/* Body — HTML content if present, else the short description */}
+            <div className="min-h-0 flex-1 overflow-y-auto px-6 py-6 sm:px-8" data-lenis-prevent>
+              {job.fullDescription ? (
+                <div
+                  className="job-rich text-[0.92rem] leading-7 text-slate-600"
+                  dangerouslySetInnerHTML={{ __html: job.fullDescription }}
+                />
+              ) : (
+                <p className="text-[0.92rem] leading-7 text-slate-600">{job.description}</p>
+              )}
+            </div>
+
+            {/* Footer — apply */}
+            <div className="shrink-0 border-t border-slate-100 px-6 py-4 sm:px-8">
+              <JobApplyButton
+                post={job}
+                onApply={(p) => { onClose(); onApply(p); }}
+                className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#0088FF] px-6 py-3 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,136,255,0.35)] transition hover:brightness-110 sm:w-auto"
+              />
+            </div>
+          </motion.div>
+        </motion.div>
+      ) : null}
+
+      <style>{`
+        .job-rich h2, .job-rich h3 { font-weight: 600; color: #050A13; letter-spacing: -0.02em; margin-top: 1.25rem; margin-bottom: 0.5rem; font-size: 1.05rem; }
+        .job-rich h2:first-child, .job-rich h3:first-child { margin-top: 0; }
+        .job-rich p { margin-bottom: 0.75rem; }
+        .job-rich ul { list-style: disc; padding-left: 1.25rem; margin-bottom: 0.75rem; }
+        .job-rich ol { list-style: decimal; padding-left: 1.25rem; margin-bottom: 0.75rem; }
+        .job-rich li { margin-bottom: 0.35rem; }
+        .job-rich a { color: #0088FF; text-decoration: underline; }
+        .job-rich strong { color: #050A13; font-weight: 600; }
+      `}</style>
+    </AnimatePresence>
+  );
+}
+
 function JobOpenings({ openPositions }) {
   const reduced = useReducedMotion();
-  const posts = openPositions?.posts ?? [];
+  // Only show active jobs — closed ones are hidden from the website.
+  const posts = (openPositions?.posts ?? []).filter((p) => p?.status !== "closed");
   const [applyJob, setApplyJob] = useState(null);
+  const [detailJob, setDetailJob] = useState(null);
 
   if (posts.length === 0) return null;
 
@@ -315,91 +442,82 @@ function JobOpenings({ openPositions }) {
         onClose={() => setApplyJob(null)}
         job={applyJob}
       />
-    <section id="open-positions" className="bg-white py-16 sm:py-20 lg:py-24">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={reduced ? false : { opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.65, ease }}
-          className="mx-auto mb-12 max-w-[780px] text-center"
-        >
-          <h2 className="text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-[1.08] tracking-[-0.05em] text-[#050A13]">
-            {openPositions?.title ?? "Open Positions"}
-          </h2>
-          {openPositions?.subtitle ? (
-            <p className="mt-4 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500">
-              {openPositions.subtitle}
-            </p>
-          ) : null}
-        </motion.div>
+      <JobDetailModal job={detailJob} onClose={() => setDetailJob(null)} onApply={setApplyJob} />
 
-        <div className="mx-auto max-w-4xl space-y-4">
-          {posts.map((post, i) => {
-              const useForm = post.applyMode === "form";
-              const applyHref = post.applyLink || "/contact";
-              const ApplyTag = !useForm && applyHref.startsWith("/") ? Link : "a";
+      <section id="open-positions" className="bg-white py-16 sm:py-20 lg:py-24">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={reduced ? false : { opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.65, ease }}
+            className="mx-auto mb-12 max-w-[780px] text-center"
+          >
+            <h2 className="text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-[1.08] tracking-[-0.05em] text-[#050A13]">
+              {openPositions?.title ?? "Open Positions"}
+            </h2>
+            {openPositions?.subtitle ? (
+              <p className="mt-4 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500">
+                {openPositions.subtitle}
+              </p>
+            ) : null}
+          </motion.div>
 
-              return (
-                <motion.article
-                  key={`${post.title}-${i}`}
-                  initial={reduced ? false : { opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.1 }}
-                  transition={{ duration: 0.45, ease, delay: i * 0.05 }}
-                  className="rounded-[22px] border border-[#E7EAF0] bg-white p-6 shadow-[0_4px_24px_rgba(6,6,22,0.06)] sm:p-7"
-                >
-                  <div className="flex flex-wrap items-start justify-between gap-4">
-                    <div className="min-w-0 flex-1">
-                      <h3 className="text-[1.05rem] font-semibold tracking-[-0.02em] text-[#050A13] sm:text-lg">
-                        {post.title}
-                      </h3>
-                      <div className="mt-2 flex flex-wrap gap-2">
-                        {post.department ? (
-                          <span className="rounded-full bg-[#EEF6FF] px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-wider text-[#0088FF]">
-                            {post.department}
-                          </span>
-                        ) : null}
-                        {post.employmentType ? (
-                          <span className="rounded-full border border-[#E7EAF0] bg-slate-50 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-wider text-slate-600">
-                            {post.employmentType}
-                          </span>
-                        ) : null}
-                      </div>
-                      {post.location ? (
-                        <p className="mt-3 text-sm text-slate-500">{post.location}</p>
-                      ) : null}
-                      {post.description ? (
-                        <p className="mt-4 text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem]">
-                          {post.description}
-                        </p>
-                      ) : null}
-                    </div>
-                    {useForm ? (
-                      <button
-                        type="button"
-                        onClick={() => setApplyJob(post)}
-                        className="inline-flex shrink-0 items-center gap-2 rounded-full bg-[#0088FF] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_4px_16px_rgba(0,136,255,0.35)] transition hover:brightness-110"
-                      >
-                        {post.applyLabel ?? "Apply Now"}
-                        <ArrowRight className="h-4 w-4" aria-hidden />
-                      </button>
-                    ) : (
-                      <ApplyTag
-                        href={applyHref}
-                        className="inline-flex shrink-0 items-center gap-2 rounded-full bg-[#0088FF] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_4px_16px_rgba(0,136,255,0.35)] transition hover:brightness-110"
-                      >
-                        {post.applyLabel ?? "Apply Now"}
-                        <ArrowRight className="h-4 w-4" aria-hidden />
-                      </ApplyTag>
-                    )}
-                  </div>
-                </motion.article>
-              );
-            })}
+          <div className="mx-auto grid max-w-5xl gap-5 sm:grid-cols-2">
+            {posts.map((post, i) => (
+              <motion.article
+                key={`${post.title}-${i}`}
+                initial={reduced ? false : { opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.1 }}
+                transition={{ duration: 0.45, ease, delay: (i % 2) * 0.05 }}
+                className="group flex cursor-pointer flex-col rounded-[22px] border border-[#E7EAF0] bg-white p-6 shadow-[0_4px_24px_rgba(6,6,22,0.06)] transition hover:-translate-y-1 hover:border-[#0088FF]/40 hover:shadow-[0_16px_40px_rgba(0,136,255,0.12)] sm:p-7"
+                onClick={() => setDetailJob(post)}
+              >
+                <h3 className="text-[1.05rem] font-semibold tracking-[-0.02em] text-[#050A13] sm:text-lg">
+                  {post.title}
+                </h3>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {post.department ? (
+                    <span className="rounded-full bg-[#EEF6FF] px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-wider text-[#0088FF]">
+                      {post.department}
+                    </span>
+                  ) : null}
+                  {post.employmentType ? (
+                    <span className="rounded-full border border-[#E7EAF0] bg-slate-50 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-wider text-slate-600">
+                      {post.employmentType}
+                    </span>
+                  ) : null}
+                </div>
+                {post.location ? (
+                  <p className="mt-3 inline-flex items-center gap-1 text-sm text-slate-500">
+                    <MapPin className="h-3.5 w-3.5" aria-hidden /> {post.location}
+                  </p>
+                ) : null}
+                {post.description ? (
+                  <p className="mt-4 line-clamp-3 text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem]">
+                    {post.description}
+                  </p>
+                ) : null}
+
+                <div className="mt-5 flex items-center justify-between gap-3 border-t border-slate-100 pt-4">
+                  <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#0088FF]">
+                    View details
+                    <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden />
+                  </span>
+                  <span onClick={(e) => e.stopPropagation()} className="shrink-0">
+                    <JobApplyButton
+                      post={post}
+                      onApply={setApplyJob}
+                      className="inline-flex shrink-0 items-center gap-2 rounded-full border border-[#0088FF]/30 bg-[#EEF6FF] px-4 py-2 text-xs font-semibold text-[#0088FF] transition hover:bg-[#0088FF] hover:text-white"
+                    />
+                  </span>
+                </div>
+              </motion.article>
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
     </>
   );
 }
@@ -547,7 +665,7 @@ export default function CareersPage({ content }) {
       <CareersCTA
         cta={content.cta}
         heroImage={content.hero?.image}
-        hasOpenPositions={(content.openPositions?.posts?.length ?? 0) > 0}
+        hasOpenPositions={(content.openPositions?.posts ?? []).filter((p) => p?.status !== "closed").length > 0}
       />
     </main>
   );

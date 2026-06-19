@@ -1,4 +1,15 @@
+"use client";
+
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import { fetchHomeSection } from "@/lib/cms";
+
+const DEFAULT_SI = {
+  heading: "Solution",
+  headingGradient: "Integration",
+  subtitle:
+    "End-to-end integrated parking solution that connects hardware, software, and operations into one unified platform.",
+};
 import { Monitor, Radar, SmartphoneNfc, Workflow } from "lucide-react";
 import styles from "./SolutionIntegration.module.css";
 
@@ -309,6 +320,14 @@ function SolutionCardsCarousel() {
 }
 
 export default function SolutionIntegration() {
+  const [si, setSi] = useState(DEFAULT_SI);
+
+  useEffect(() => {
+    fetchHomeSection("solutionIntegration").then((d) => {
+      if (d && typeof d === "object") setSi({ ...DEFAULT_SI, ...d });
+    });
+  }, []);
+
   return (
     <section className="bg-white py-12 sm:py-14 lg:py-16">
       <div className="mx-auto w-full max-w-[min(100%,1400px)] px-4 sm:px-6 lg:px-8">
@@ -326,14 +345,13 @@ export default function SolutionIntegration() {
             id="ai-powered-parking-service-title"
             className="mx-auto mt-4 max-w-[940px] text-[clamp(2.65rem,4.5vw,4rem)] font-semibold uppercase leading-[1.01] tracking-[-0.06em] text-[#050A13]"
           >
-            Solution{" "}
+            {si.heading}{" "}
             <span className="bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">
-              Integration
+              {si.headingGradient}
             </span>
           </h2>
           <p className="mx-auto mt-3 max-w-[650px] text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem]">
-            End-to-end integrated parking solution that connects hardware,
-            software, and operations into one unified platform.
+            {si.subtitle}
           </p>
         </div>
 

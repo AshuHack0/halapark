@@ -1,5 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { fetchHomeSection } from "@/lib/cms";
+
 const partnerLogos = [
   "Parkin Dubai",
   "Darb",
@@ -192,6 +195,22 @@ export default function GlobalMobilityNetworkSection() {
     return acc;
   }, {});
 
+  // Merge CMS text onto the hardcoded capability/stat lists (keep icons by index).
+  const [caps, setCaps] = useState(capabilities);
+  const [stats, setStats] = useState(impactStats);
+
+  useEffect(() => {
+    fetchHomeSection("globalMobility").then((d) => {
+      if (!d || typeof d !== "object") return;
+      if (Array.isArray(d.capabilities) && d.capabilities.length) {
+        setCaps(capabilities.map((base, i) => ({ ...base, ...(d.capabilities[i] ?? {}) })));
+      }
+      if (Array.isArray(d.impactStats) && d.impactStats.length) {
+        setStats(impactStats.map((base, i) => ({ ...base, ...(d.impactStats[i] ?? {}) })));
+      }
+    });
+  }, []);
+
   return (
     <section className="relative overflow-hidden bg-[linear-gradient(180deg,#F6FAFF_0%,#FFFFFF_68%)] py-8 sm:py-10 md:py-12">
       <div className="pointer-events-none absolute -left-24 top-12 h-72 w-72 rounded-full bg-[#0088FF]/12 blur-3xl" />
@@ -296,7 +315,7 @@ export default function GlobalMobilityNetworkSection() {
                 </p>
 
                 <ul className="mt-3 space-y-2.5">
-                  {capabilities.map((item) => (
+                  {caps.map((item) => (
                     <li key={item.title}>
                       <div className="flex items-center gap-2.5">
                         <CapabilityIcon type={item.icon} />
@@ -316,7 +335,7 @@ export default function GlobalMobilityNetworkSection() {
           </div>
 
           <div className="relative z-20 grid gap-2 border-t border-[#DCE9F8] bg-[linear-gradient(180deg,#F8FBFF_0%,#F3F9FF_100%)] px-1 py-3 sm:grid-cols-2 sm:px-3 lg:grid-cols-4 lg:gap-0 lg:py-4">
-            {impactStats.map((item, index) => (
+            {stats.map((item, index) => (
               <div
                 key={item.label}
                 className={`px-2 py-2 text-center lg:px-5 ${index > 0 ? "lg:border-l lg:border-[#DCE9F8]" : ""}`}

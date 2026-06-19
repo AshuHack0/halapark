@@ -2,6 +2,21 @@
 
 import Link from "next/link";
 
+const APP_STORE_URL = "https://apps.apple.com/us/app/halapark-all-about-parking/id1590800416";
+const PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=com.app.halapark&pli=1";
+
+// Returns the correct store URL for the current device. Falls back to the
+// on-site /app page on desktop (which lists both stores).
+function getStoreUrl() {
+  if (typeof navigator === "undefined") return "/app";
+  const ua = (navigator.userAgent || navigator.vendor || "").toLowerCase();
+  if (/android/.test(ua)) return PLAY_STORE_URL;
+  if (/iphone|ipad|ipod/.test(ua) || (/macintosh/.test(ua) && "ontouchend" in document)) {
+    return APP_STORE_URL;
+  }
+  return "/app";
+}
+
 const DownloadAppIcon = () => (
   <svg
     width="18"
@@ -57,6 +72,7 @@ function FloatingIconButton({
   prominent = false,
   animationClass = "",
   external = false,
+  onClick,
 }) {
   return (
     <div className={`group relative ${animationClass}`}>
@@ -72,6 +88,7 @@ function FloatingIconButton({
       <Link
         href={href}
         aria-label={label}
+        onClick={onClick}
         {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
         className={`relative inline-flex h-12 w-12 items-center justify-center rounded-full border transition-all duration-300 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0088FF]/45 focus-visible:ring-offset-2 focus-visible:ring-offset-white ${className}`}
       >
@@ -103,10 +120,17 @@ export default function FloatingActions() {
         <PayIcon />
       </FloatingIconButton>
       <FloatingIconButton
-        href="https://apps.apple.com/us/app/halapark-all-about-parking/id1590800416"
+        href={APP_STORE_URL}
         label="Download App"
         prominent
         external
+        onClick={(e) => {
+          // Route to the correct store for the current device. Keep the href as a
+          // fallback for no-JS / "open in new tab".
+          const target = getStoreUrl();
+          e.preventDefault();
+          window.open(target, "_blank", "noopener,noreferrer");
+        }}
         animationClass="motion-safe:animate-[floatButton_3.6s_ease-in-out_infinite,softPulse_2.4s_ease-in-out_infinite]"
         className="border-[#0088FF] bg-[linear-gradient(165deg,#0A97FF_0%,#0088FF_50%,#006FD2_100%)] text-white shadow-[0_16px_34px_rgba(0,136,255,0.45)] hover:shadow-[0_20px_42px_rgba(0,136,255,0.52)] active:scale-[0.98]"
       >

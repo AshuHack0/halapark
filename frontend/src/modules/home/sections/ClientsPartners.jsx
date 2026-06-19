@@ -1,17 +1,43 @@
 "use client";
 
-export default function ClientsPartners() {
-  const logoPlaceholders = [
-    "Client Logo",
-    "Partner Logo",
-    "Retail Logo",
-    "Enterprise Logo",
-    "Property Logo",
-    "Technology Logo",
-    "Operator Logo",
-    "Platform Logo",
-  ];
+import { useEffect, useState } from "react";
+import { fetchHomeSection } from "@/lib/cms";
 
+const DEFAULT_LOGOS = [
+  "Client Logo",
+  "Partner Logo",
+  "Retail Logo",
+  "Enterprise Logo",
+  "Property Logo",
+  "Technology Logo",
+  "Operator Logo",
+  "Platform Logo",
+];
+const DEFAULT_CP = {
+  heading: "Built Together with Our",
+  headingEnd: "Clients & Partners",
+  logoPlaceholders: DEFAULT_LOGOS,
+};
+
+export default function ClientsPartners() {
+  const [cp, setCp] = useState(DEFAULT_CP);
+
+  useEffect(() => {
+    fetchHomeSection("clientsPartners").then((d) => {
+      if (d && typeof d === "object") {
+        setCp({
+          heading: d.heading || DEFAULT_CP.heading,
+          headingEnd: d.headingEnd || DEFAULT_CP.headingEnd,
+          logoPlaceholders:
+            Array.isArray(d.logoPlaceholders) && d.logoPlaceholders.length
+              ? d.logoPlaceholders
+              : DEFAULT_LOGOS,
+        });
+      }
+    });
+  }, []);
+
+  const logoPlaceholders = cp.logoPlaceholders;
   const tickerItems = [...logoPlaceholders, ...logoPlaceholders];
 
   return (
@@ -45,7 +71,7 @@ export default function ClientsPartners() {
                   id="ai-powered-parking-service-title"
                   className="mx-auto mt-4 max-w-[940px] text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]"
                 >
-                 Built Together with Our <br/>  Clients & Partners
+                 {cp.heading} <br/>  {cp.headingEnd}
 
                 </h2>
               </div>

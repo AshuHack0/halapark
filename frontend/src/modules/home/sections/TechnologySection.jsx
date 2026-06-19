@@ -1,6 +1,25 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import EasyIntegrationCard from "../../../components/ui/EasyIntegrationCard";
+import { fetchHomeSection } from "@/lib/cms";
+
+const DEFAULT_TECH = {
+  heading: "All-in-One Intelligent",
+  headingGradient: "System",
+  subtitle:
+    "Redefining the future of smart parking management with one connected system for automation, insights, and operations.",
+};
 
 export default function TechnologySection() {
+  const [tech, setTech] = useState(DEFAULT_TECH);
+
+  useEffect(() => {
+    fetchHomeSection("technologySection").then((d) => {
+      if (d && typeof d === "object") setTech({ ...DEFAULT_TECH, ...d });
+    });
+  }, []);
+
   const loop1 = [
     {
       id: 1,
@@ -155,14 +174,13 @@ export default function TechnologySection() {
               id="ai-powered-parking-service-title"
               className="mx-auto mt-4 max-w-[940px] text-[clamp(2.65rem,4.5vw,4rem)] font-semibold uppercase leading-[1.01] tracking-[-0.06em] text-[#050A13]"
             >
-              All-in-One Intelligent{" "}
+              {tech.heading}{" "}
               <span className="bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">
-                System
+                {tech.headingGradient}
               </span>
             </h2>
             <p className="mx-auto mt-3 max-w-[650px] text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem]">
-              Redefining the future of smart parking management with one
-              connected system for automation, insights, and operations.
+              {tech.subtitle}
             </p>
           </div>
           {/* <p className="text-sm sm:text-base lg:text-[16px] font-medium text-[#6D6D6D] max-w-2xl mx-auto px-4 sm:px-0">

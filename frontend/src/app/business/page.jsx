@@ -13,6 +13,9 @@ import SectionReveal from "@/components/common/SectionReveal";
 import HalaParkInAction from "@/modules/home/sections/HalaParkInAction";
 import BusinessCTA from "@/components/business/BusinessCTA";
 
+// CMS-driven page — render per request so admin edits show without a rebuild.
+export const dynamic = "force-dynamic";
+
 export default function BusinessPage() {
   return (
     <div className="min-h-screen bg-white">

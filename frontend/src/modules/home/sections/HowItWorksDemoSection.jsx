@@ -1,7 +1,19 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { CalendarCheck2, CarFront, CircleParking, Search } from "lucide-react";
+import { fetchHomeSection } from "@/lib/cms";
+
+const DEFAULT_HIW = {
+  heading: "HOW IT",
+  headingGradient: "WORKS",
+  subtitle:
+    "Watch the quick demo showing how easy it is to discover an open spot, reserve instantly, and complete payment inside HalaPark.",
+  ctaLabel: "Find Parking",
+  ctaHref: "/app",
+  videoUrl: "/HalaPark.mp4",
+};
 
 const steps = [
   {
@@ -27,6 +39,20 @@ const steps = [
 ];
 
 export default function HowItWorksDemoSection() {
+  const [content, setContent] = useState(DEFAULT_HIW);
+  const [stepItems, setStepItems] = useState(steps);
+
+  useEffect(() => {
+    fetchHomeSection("howItWorks").then((d) => {
+      if (!d || typeof d !== "object") return;
+      setContent({ ...DEFAULT_HIW, ...d });
+      if (Array.isArray(d.steps) && d.steps.length) {
+        // Merge CMS step text onto hardcoded steps (keep icons).
+        setStepItems(steps.map((base, i) => ({ ...base, ...(d.steps[i] ?? {}) })));
+      }
+    });
+  }, []);
+
   return (
     <section
       aria-labelledby="how-it-works-title"
@@ -42,14 +68,13 @@ export default function HowItWorksDemoSection() {
               id="how-it-works-title"
               className="mx-auto mt-4 max-w-[940px] text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]"
             >
-              HOW IT{" "}
+              {content.heading}{" "}
               <span className="bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">
-                WORKS
+                {content.headingGradient}
               </span>{" "}
             </h2>
             <p className="mx-auto mt-3 max-w-[650px] text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem]">
-              Watch the quick demo showing how easy it is to discover an open
-              spot, reserve instantly, and complete payment inside HalaPark.
+              {content.subtitle}
             </p>
           </div>
 
@@ -66,7 +91,7 @@ export default function HowItWorksDemoSection() {
                 />
 
                 <div className="space-y-3.5 sm:space-y-4">
-                  {steps.map((step) => {
+                  {stepItems.map((step) => {
                     const Icon = step.icon;
                     const AccentIcon = step.accent;
 
@@ -110,14 +135,14 @@ export default function HowItWorksDemoSection() {
 
               <div className="mt-4 flex flex-wrap items-center gap-3 pl-[88px] sm:pl-[116px]">
                 <Link
-                  href="/app"
+                  href={content.ctaHref || "/app"}
                   className="inline-flex min-h-11 items-center justify-center gap-3 rounded-[10px] bg-[#168EFF] px-7 py-3 text-[0.98rem] font-bold text-white shadow-[0_10px_24px_rgba(0,136,255,0.34)] transition hover:-translate-y-0.5 hover:brightness-95"
                 >
                   <CarFront
                     aria-hidden="true"
                     className="h-5 w-5 stroke-[2.6]"
                   />
-                  Find Parking
+                  {content.ctaLabel || "Find Parking"}
                 </Link>
                 {/* <span className="text-sm font-medium text-slate-500">
                   Takes less than a minute
@@ -130,7 +155,8 @@ export default function HowItWorksDemoSection() {
               <div className="relative overflow-hidden rounded-[24px] border border-[#D6E8FF] bg-[#08142A] p-2 shadow-[0_24px_46px_rgba(15,23,42,0.25)]">
                 <video
                   className="h-full w-full rounded-[18px] object-cover"
-                  src="/HalaPark.mp4"
+                  src={content.videoUrl || "/HalaPark.mp4"}
+                  key={content.videoUrl || "/HalaPark.mp4"}
                   autoPlay
                   muted
                   loop

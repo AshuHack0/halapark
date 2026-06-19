@@ -1,24 +1,33 @@
 "use client";
 
-const featureCard = {
-  title: "AI-Powered Smart Parking Solutions ",
+import { useEffect, useState } from "react";
+import { fetchHomeSection } from "@/lib/cms";
+
+const DEFAULT_BANNER = {
+  title: "AI-Powered Smart Parking Solutions",
   description:
     "Seamlessly manage parking experiences for both customers and landlords through intelligent automation, real-time insights, and optimized operations designed to improve efficiency and performance.",
   ctas: [
-    {
-      label: "View for Customers ",
-      href: "/solutions?view=customers",
-    },
-    {
-      label: "View for Landlords",
-      href: "/solutions?view=landlords",
-    },
+    { label: "View for Customers", href: "/solutions?view=customers" },
+    { label: "View for Landlords", href: "/solutions?view=landlords" },
   ],
 };
 
- 
-
 export default function BlackBanner() {
+  const [featureCard, setFeatureCard] = useState(DEFAULT_BANNER);
+
+  useEffect(() => {
+    fetchHomeSection("blackBanner").then((data) => {
+      if (data && typeof data === "object") {
+        setFeatureCard({
+          title: data.title || DEFAULT_BANNER.title,
+          description: data.description || DEFAULT_BANNER.description,
+          ctas: Array.isArray(data.ctas) && data.ctas.length ? data.ctas : DEFAULT_BANNER.ctas,
+        });
+      }
+    });
+  }, []);
+
   return (
     <section className="bg-white pb-4 pt-0 font-sans sm:pb-5 lg:pb-6">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -67,11 +76,11 @@ export default function BlackBanner() {
 
               <div className="relative z-10 grid flex-1 gap-10 sm:gap-12 lg:grid-cols-12 lg:items-center">
                 <div className="lg:col-span-8">
-                  <h2 className="max-w-[16ch] text-[clamp(2rem,4.5vw,4rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-white">
+                  <h2 className="max-w-[16ch] text-[clamp(2rem,4.5vw,4rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-white [overflow-wrap:anywhere]">
                     {featureCard.title}
                   </h2>
 
-                  <p className="mt-5 max-w-[650px] text-justify text-[0.88rem] leading-6 tracking-[-0.02em] text-white/74 sm:text-[0.94rem]">
+                  <p className="mt-5 max-w-[650px] text-justify text-[0.88rem] leading-6 tracking-[-0.02em] text-white/74 [overflow-wrap:anywhere] sm:text-[0.94rem]">
                     {featureCard.description}
                   </p>
 

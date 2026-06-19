@@ -128,17 +128,21 @@ export async function fetchPage(slug) {
   }
 }
 
+// Returns the CMS hero slides as stored. If the "home" page loaded, this returns
+// the actual array — INCLUDING an empty array when the client deleted all slides
+// (so the frontend can hide the hero rather than fall back to defaults). Returns
+// `null` only when the page itself couldn't be fetched, so the caller can keep a
+// placeholder instead of wrongly hiding the hero on a transient failure.
 export async function fetchHomeHeroSlides() {
   const page = await fetchPage("home");
-  const slides = page?.sections?.hero?.slides;
-  if (Array.isArray(slides) && slides.length > 0) {
-    cmsLog("fetchHomeHeroSlides → using API", { count: slides.length });
-    return slides;
+  if (!page) {
+    cmsLog("fetchHomeHeroSlides → page fetch failed (returning null)");
+    return null;
   }
-  cmsLog("fetchHomeHeroSlides → using DEFAULT_HOME_SLIDES", {
-    count: DEFAULT_HOME_SLIDES.length,
-  });
-  return DEFAULT_HOME_SLIDES;
+  const slides = page?.sections?.hero?.slides;
+  const result = Array.isArray(slides) ? slides : [];
+  cmsLog("fetchHomeHeroSlides → using API", { count: result.length });
+  return result;
 }
 
 // The home page has many CMS-editable sections; they each need its slice of

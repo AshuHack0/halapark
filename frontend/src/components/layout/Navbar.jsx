@@ -360,7 +360,8 @@ export default function Navbar() {
                         </button>
 
                         <div
-                          className={`absolute left-1/2 top-full z-[60] mt-2 max-h-[72vh] -translate-x-1/2 overflow-y-auto rounded-2xl border border-[#CFE2FA]/75 bg-white/95 p-2 shadow-[0_24px_60px_rgba(15,23,42,0.16)] backdrop-blur-sm transition ${
+                          data-lenis-prevent
+                          className={`absolute left-1/2 top-full z-[60] mt-2 max-h-[72vh] -translate-x-1/2 overflow-y-auto overscroll-contain rounded-2xl border border-[#CFE2FA]/75 bg-white/95 p-2 shadow-[0_24px_60px_rgba(15,23,42,0.16)] backdrop-blur-sm transition ${
                             dd.groups ? "w-[600px]" : "w-[320px]"
                           } ${
                             servicesOpen
@@ -575,7 +576,7 @@ export default function Navbar() {
                         mobileServicesOpen ? "max-h-[520px] opacity-100" : "max-h-0 opacity-0"
                       }`}
                     >
-                      <div className="mt-1 space-y-1 overflow-y-auto rounded-lg border border-slate-200 bg-slate-50 p-2 max-h-[500px]">
+                      <div data-lenis-prevent className="mt-1 space-y-1 overflow-y-auto overscroll-contain rounded-lg border border-slate-200 bg-slate-50 p-2 max-h-[500px]">
                         <Link
                           href={dd.viewAllHref}
                           onClick={() => { setMenuOpen(false); setMobileServicesOpen(false); }}

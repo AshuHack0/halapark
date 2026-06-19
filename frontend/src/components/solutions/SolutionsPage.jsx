@@ -169,8 +169,30 @@ function SolutionsControlPanel({ reduced }) {
   );
 }
 
+const DEFAULT_SOLUTIONS_HERO = {
+  title: "Intelligent Parking Experiences",
+  titleAccent: "Built for the Future",
+  subtitle:
+    "HalaPark delivers an AI-powered smart parking ecosystem designed for large-scale residential, commercial, and mixed-use developments across the UAE, enabling seamless mobility, automation, and real-time operational control.",
+  ctaLabel: "Get In Touch",
+  ctaLink: "/contact",
+};
+
 function NewHero() {
   const reduced = useReducedMotion();
+  const [hero, setHero] = useState(DEFAULT_SOLUTIONS_HERO);
+
+  useEffect(() => {
+    fetchPage("solutions").then((data) => {
+      const h = data?.sections?.hero;
+      if (h && typeof h === "object") {
+        setHero((prev) => ({
+          ...prev,
+          ...Object.fromEntries(Object.entries(h).filter(([, v]) => v !== "" && v != null)),
+        }));
+      }
+    });
+  }, []);
 
   return (
     <section
@@ -197,23 +219,28 @@ function NewHero() {
             transition={{ duration: 0.65, ease }}
           >
             <h1 className="max-w-[600px] text-[clamp(2.5rem,5vw,4.4rem)] font-semibold leading-[1.0] tracking-[-0.06em] text-[#050A13]">
-              Intelligent Parking Experiences{" "}
-              <span className="bg-[linear-gradient(120deg,#0060CC_0%,#0088FF_45%,#38BDF8_100%)] bg-clip-text text-transparent">
-                Built for the Future
-              </span>
+              {hero.title}
+              {hero.titleAccent ? (
+                <>
+                  {" "}
+                  <span className="bg-[linear-gradient(120deg,#0060CC_0%,#0088FF_45%,#38BDF8_100%)] bg-clip-text text-transparent">
+                    {hero.titleAccent}
+                  </span>
+                </>
+              ) : null}
             </h1>
 
             <p className="mt-6 max-w-[460px] text-[0.95rem] leading-[1.75] text-slate-500">
-              HalaPark delivers an AI-powered smart parking ecosystem designed for large-scale residential, commercial, and mixed-use developments across the UAE, enabling seamless mobility, automation, and real-time operational control.
+              {hero.subtitle}
             </p>
 
 
             <div className="mt-9 flex flex-wrap items-center gap-3">
               <Link
-                href="/contact"
+                href={hero.ctaLink || "/contact"}
                 className="group inline-flex items-center gap-2.5 rounded-full bg-[#0088FF] px-7 py-3.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,136,255,0.32)] transition hover:brightness-110"
               >
-                Get In Touch
+                {hero.ctaLabel || "Get In Touch"}
                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 transition-transform duration-200 group-hover:translate-x-0.5">
                   <ArrowRight className="h-3.5 w-3.5" aria-hidden />
                 </span>

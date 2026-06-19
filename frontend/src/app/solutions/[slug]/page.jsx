@@ -67,7 +67,7 @@ export default async function SolutionDetailPage({ params }) {
               </h1>
 
               {detail.intro ? (
-                <p className="mt-6 max-w-[560px] text-[1rem] italic leading-[1.8] text-slate-500">
+                <p className="mt-6 max-w-[560px] text-[1.05rem] leading-[1.85] text-slate-600 sm:text-[1.12rem]">
                   {detail.intro}
                 </p>
               ) : null}
