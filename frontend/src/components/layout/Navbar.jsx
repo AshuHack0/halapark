@@ -166,6 +166,9 @@ export default function Navbar() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
+  // Which solutions group is expanded in the dropdown (desktop hover, mobile tap).
+  const [activeGroup, setActiveGroup] = useState(null);
+  const [mobileActiveGroup, setMobileActiveGroup] = useState(null);
   const [language, setLanguage] = useState(getInitialLanguage);
   const [hash, setHash] = useState("");
   const isArabic = language === "ar";
@@ -269,6 +272,7 @@ export default function Navbar() {
     }
     servicesCloseTimerRef.current = window.setTimeout(() => {
       setServicesOpen(false);
+      setActiveGroup(null);
       servicesCloseTimerRef.current = null;
     }, DROPDOWN_CLOSE_DELAY_MS);
   };
@@ -361,8 +365,8 @@ export default function Navbar() {
 
                         <div
                           data-lenis-prevent
-                          className={`absolute left-1/2 top-full z-[60] mt-2 max-h-[72vh] -translate-x-1/2 overflow-y-auto overscroll-contain rounded-2xl border border-[#CFE2FA]/75 bg-white/95 p-2 shadow-[0_24px_60px_rgba(15,23,42,0.16)] backdrop-blur-sm transition ${
-                            dd.groups ? "w-[600px]" : "w-[320px]"
+                          className={`absolute left-1/2 top-full z-[60] mt-2 max-h-[72vh] -translate-x-1/2 overflow-hidden overscroll-contain rounded-2xl border border-[#CFE2FA]/75 bg-white/95 p-2 shadow-[0_24px_60px_rgba(15,23,42,0.16)] backdrop-blur-sm transition ${
+                            dd.groups ? "w-[680px]" : "w-[320px]"
                           } ${
                             servicesOpen
                               ? "pointer-events-auto opacity-100 translate-y-0"
@@ -381,29 +385,63 @@ export default function Navbar() {
                           <div className="my-1 border-t border-slate-100" />
 
                           {dd.groups ? (
-                            <div className="grid grid-cols-2 gap-x-2 gap-y-3 p-1">
-                              {dd.groups.map((grp) => (
-                                <div key={grp.group}>
-                                  <p className="px-3 pb-1 pt-1 text-[10px] font-bold uppercase tracking-[0.12em] text-[#0088FF]">
-                                    {grp.group}
-                                  </p>
-                                  {grp.links.map((item) => (
-                                    <Link
-                                      key={item.href}
-                                      href={item.href}
-                                      className={`flex items-center justify-between rounded-lg px-3 py-2 text-[13px] transition ${
-                                        pathname === item.href
-                                          ? "bg-[rgba(0,136,255,0.12)] font-semibold text-[#0078E0]"
-                                          : "text-slate-700 hover:bg-[rgba(0,136,255,0.08)] hover:text-[#0078E0]"
-                                      }`}
-                                      onClick={() => setServicesOpen(false)}
-                                    >
-                                      <span className="leading-snug">{item.label}</span>
-                                    </Link>
-                                  ))}
+                            (() => {
+                              // Two-pane: group list (left) + selected group's items (right).
+                              const selected = dd.groups.find((g) => g.group === activeGroup) ?? dd.groups[0];
+                              return (
+                                <div className="flex gap-1">
+                                  {/* LEFT: group names */}
+                                  <div className="w-[44%] shrink-0 border-r border-slate-100 pr-1">
+                                    {dd.groups.map((grp) => {
+                                      const isSel = selected?.group === grp.group;
+                                      return (
+                                        <button
+                                          key={grp.group}
+                                          type="button"
+                                          onMouseEnter={() => setActiveGroup(grp.group)}
+                                          onFocus={() => setActiveGroup(grp.group)}
+                                          onClick={() => setActiveGroup(grp.group)}
+                                          className={`flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-left text-[12px] font-semibold transition ${
+                                            isSel
+                                              ? "bg-[rgba(0,136,255,0.10)] text-[#0078E0]"
+                                              : "text-slate-700 hover:bg-[rgba(0,136,255,0.06)] hover:text-[#0078E0]"
+                                          }`}
+                                          aria-current={isSel}
+                                        >
+                                          <span className="leading-snug">{grp.group}</span>
+                                          <span className={`shrink-0 opacity-70 transition-transform ${isSel ? "translate-x-0.5" : ""}`}>
+                                            <ArrowRightIcon />
+                                          </span>
+                                        </button>
+                                      );
+                                    })}
+                                  </div>
+
+                                  {/* RIGHT: selected group's items */}
+                                  <div className="min-w-0 flex-1 pl-1.5">
+                                    <p className="px-3 pb-1 pt-1.5 text-[10px] font-bold uppercase tracking-[0.14em] text-[#0088FF]">
+                                      {selected?.group}
+                                    </p>
+                                    <div className="max-h-[58vh] overflow-y-auto overscroll-contain">
+                                      {selected?.links.map((item) => (
+                                        <Link
+                                          key={item.href}
+                                          href={item.href}
+                                          className={`flex items-center justify-between rounded-lg px-3 py-2 text-[13px] transition ${
+                                            pathname === item.href
+                                              ? "bg-[rgba(0,136,255,0.12)] font-semibold text-[#0078E0]"
+                                              : "text-slate-700 hover:bg-[rgba(0,136,255,0.08)] hover:text-[#0078E0]"
+                                          }`}
+                                          onClick={() => setServicesOpen(false)}
+                                        >
+                                          <span className="leading-snug">{item.label}</span>
+                                        </Link>
+                                      ))}
+                                    </div>
+                                  </div>
                                 </div>
-                              ))}
-                            </div>
+                              );
+                            })()
                           ) : (
                             dd.links.map((item) => (
                               <Link
@@ -587,27 +625,49 @@ export default function Navbar() {
                         </Link>
                         <div className="border-t border-slate-200 my-1" />
                         {dd.groups
-                          ? dd.groups.map((grp) => (
-                              <div key={grp.group} className="pt-1">
-                                <p className="px-3 pb-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-[#0088FF]">
-                                  {grp.group}
-                                </p>
-                                {grp.links.map((item) => (
-                                  <Link
-                                    key={item.href}
-                                    href={item.href}
-                                    onClick={() => { setMenuOpen(false); setMobileServicesOpen(false); }}
-                                    className={`flex items-center rounded-md px-3 py-2 text-[13px] transition ${
-                                      pathname === item.href
-                                        ? "bg-[rgba(0,136,255,0.12)] font-semibold text-[#0078E0]"
-                                        : "text-slate-700 hover:bg-[rgba(0,136,255,0.08)] hover:text-[#0078E0]"
+                          ? dd.groups.map((grp) => {
+                              const isExpanded = mobileActiveGroup === grp.group;
+                              return (
+                                <div key={grp.group} className="pt-0.5">
+                                  {/* Group heading — tap to reveal sub-items */}
+                                  <button
+                                    type="button"
+                                    onClick={() => setMobileActiveGroup((g) => (g === grp.group ? null : grp.group))}
+                                    className={`flex w-full items-center justify-between rounded-md px-3 py-2.5 text-left text-[10px] font-bold uppercase tracking-[0.12em] transition ${
+                                      isExpanded ? "bg-[rgba(0,136,255,0.08)] text-[#0078E0]" : "text-[#0088FF]"
+                                    }`}
+                                    aria-expanded={isExpanded}
+                                  >
+                                    <span>{grp.group}</span>
+                                    <span className={`shrink-0 transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}>
+                                      <ChevronDownIcon open={isExpanded} />
+                                    </span>
+                                  </button>
+                                  <div
+                                    className={`overflow-hidden transition-all duration-200 ease-out ${
+                                      isExpanded ? "max-h-[480px] opacity-100" : "max-h-0 opacity-0"
                                     }`}
                                   >
-                                    {item.label}
-                                  </Link>
-                                ))}
-                              </div>
-                            ))
+                                    <div className="pb-1 pl-1.5">
+                                      {grp.links.map((item) => (
+                                        <Link
+                                          key={item.href}
+                                          href={item.href}
+                                          onClick={() => { setMenuOpen(false); setMobileServicesOpen(false); }}
+                                          className={`flex items-center rounded-md px-3 py-2 text-[13px] transition ${
+                                            pathname === item.href
+                                              ? "bg-[rgba(0,136,255,0.12)] font-semibold text-[#0078E0]"
+                                              : "text-slate-700 hover:bg-[rgba(0,136,255,0.08)] hover:text-[#0078E0]"
+                                          }`}
+                                        >
+                                          {item.label}
+                                        </Link>
+                                      ))}
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            })
                           : dd.links.map((item) => (
                               <Link
                                 key={item.href}
