@@ -852,8 +852,8 @@ function SvcHeroVisual({ reduced }) {
 function HeroSection({ onGetQuote, hero }) {
   const sectionRef = useRef(null);
   const reduced    = useReducedMotion();
-  const heroTitle = hero?.title?.trim() || "Smart Parking. Vehicle Care Partner.";
-  const heroSubtitle = hero?.subtitle?.trim() || "Smart parking and vehicle care built for convenience, safety, and innovation.";
+  const heroTitle = hero?.title?.trim() || "";
+  const heroSubtitle = hero?.subtitle?.trim() || "";
 
   /* Mouse spotlight */
   const mouseX = useMotionValue(0);
@@ -1110,23 +1110,15 @@ function ServicesGrid({ onServiceClick, cmsServices }) {
   const blobA = useTransform(scrollYProgress, [0,1], reduced ? [0,0] : [0,-70]);
   const blobB = useTransform(scrollYProgress, [0,1], reduced ? [0,0] : [0, 90]);
 
-  // Merge CMS service edits (name / media / description) over the local data by
-  // slug, so modal-only fields (whatsIncluded, packages, etc.) are preserved.
+  // CMS-only: render exactly the services from the CMS (empty → empty grid).
+  // Each CMS service is enriched with any matching local extras (subCategories,
+  // packages, etc.) so the detail modal still works for known slugs.
   const services = useMemo(() => {
-    if (!Array.isArray(cmsServices) || cmsServices.length === 0) return allServicesData;
-    const bySlug = new Map(cmsServices.map((s) => [s.slug, s]));
-    return allServicesData.map((local) => {
-      const cms = bySlug.get(local.slug);
-      if (!cms) return local;
-      return {
-        ...local,
-        name: cms.name || local.name,
-        mediaType: cms.mediaType || local.mediaType,
-        mediaSrc: cms.mediaSrc || local.mediaSrc,
-        fullDesc: cms.fullDesc || local.fullDesc,
-        includedLabel: cms.includedLabel || local.includedLabel,
-        whatsIncluded: Array.isArray(cms.whatsIncluded) && cms.whatsIncluded.length ? cms.whatsIncluded : local.whatsIncluded,
-      };
+    if (!Array.isArray(cmsServices) || cmsServices.length === 0) return [];
+    const localBySlug = new Map(allServicesData.map((s) => [s.slug, s]));
+    return cmsServices.map((cms) => {
+      const local = localBySlug.get(cms.slug);
+      return local ? { ...local, ...cms } : cms;
     });
   }, [cmsServices]);
 
@@ -1355,10 +1347,10 @@ function PartnersSection({ partners }) {
   }
   const row1 = [...base1, ...base1];
   const row2 = [...base2, ...base2];
-  const heading = partners?.heading?.trim() || "Clients & Partners";
+  const heading = partners?.heading?.trim() || "";
   const headingGradient = partners?.headingGradient?.trim() || "";
-  const subtitle = partners?.subtitle?.trim() || "Trusted by the UAE's leading brands.";
-  const description = partners?.description?.trim() || "HalaPark partners with global hotel chains, residential towers, retail destinations, and enterprises across the UAE.";
+  const subtitle = partners?.subtitle?.trim() || "";
+  const description = partners?.description?.trim() || "";
 
   return (
     <section className="relative overflow-hidden bg-white py-20 sm:py-24">
@@ -1471,9 +1463,9 @@ const TRUST = [
 
 function TrustSection({ trust }) {
   const reduced = useReducedMotion();
-  const heading = trust?.heading?.trim() || "Trust & Safety";
+  const heading = trust?.heading?.trim() || "";
   const headingGradient = trust?.headingGradient?.trim() || "";
-  const subtitle = trust?.subtitle?.trim() || "Your safety is our priority.";
+  const subtitle = trust?.subtitle?.trim() || "";
 
   return (
     <section className="relative overflow-hidden bg-[#F4F8FF] py-16 sm:py-20 lg:py-24">
@@ -1547,10 +1539,10 @@ function TrustSection({ trust }) {
 
 function LongTermCTA({ onGetQuote, cta }) {
   const reduced = useReducedMotion();
-  const heading = cta?.heading?.trim() || "Looking for Long-Term Parking?";
+  const heading = cta?.heading?.trim() || "";
   const headingGradient = cta?.headingGradient?.trim() || "";
-  const subtitle = cta?.subtitle?.trim() || "Secure, flexible, and smart parking solutions for businesses, residents, airports, and yearly vehicle storage.";
-  const ctaLabel = cta?.ctaLabel?.trim() || "Get a Quote";
+  const subtitle = cta?.subtitle?.trim() || "";
+  const ctaLabel = cta?.ctaLabel?.trim() || "";
 
   return (
     <section className="bg-[#F4F8FF] py-16 sm:py-20 lg:py-24">
