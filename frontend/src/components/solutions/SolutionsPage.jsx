@@ -1081,36 +1081,27 @@ function FeatureHighlightsSection() {
 
 function WhyHalaparkSection() {
   const reduced = useReducedMotion();
-  const points = [
-    "End-to-end parking automation",
-    "Real-time operational visibility",
-    "Scalable multi-site infrastructure",
-    "Seamless user experience",
-    "Built for UAE smart city standards",
-  ];
-  const [why, setWhy] = useState({
-    heading: "Why Leading Developments Choose Halapark?",
-    headingGradient: "Choose Halapark?",
-  });
+  // Rendered purely from CMS (sections.why) — no hardcoded fallbacks.
+  const [why, setWhy] = useState(null);
 
   useEffect(() => {
     fetchPage("solutions").then((data) => {
       const w = data?.sections?.why;
-      if (w && typeof w === "object") {
-        setWhy((prev) => ({
-          ...prev,
-          ...Object.fromEntries(Object.entries(w).filter(([, v]) => v !== "" && v != null)),
-        }));
-      }
+      if (w && typeof w === "object") setWhy(w);
     });
   }, []);
 
+  if (!why) return null;
+
+  const points = Array.isArray(why.points) ? why.points : [];
+
+  const heading = why.heading || "";
   const gradient = why.headingGradient?.trim() || "";
   const headBase =
-    gradient && why.heading.endsWith(gradient)
-      ? why.heading.slice(0, why.heading.length - gradient.length).trimEnd()
-      : why.heading;
-  const showGradient = gradient && why.heading.endsWith(gradient);
+    gradient && heading.endsWith(gradient)
+      ? heading.slice(0, heading.length - gradient.length).trimEnd()
+      : heading;
+  const showGradient = gradient && heading.endsWith(gradient);
 
   return (
     <section className="bg-[#F4F8FF] py-16 sm:py-20 lg:py-24">
@@ -1158,24 +1149,33 @@ function WhyHalaparkSection() {
             className="relative overflow-hidden rounded-[28px] bg-[#06111f]"
           >
             <div className="absolute inset-0">
-              <Image
-                src="/hf_20260327_064316_9c7b1a28-dbfa-456e-b88a-0087cb567a61.png"
-                alt=""
-                fill
-                className="object-cover object-center"
-                aria-hidden
-              />
+              {why.image ? (
+                <Image
+                  src={why.image}
+                  alt=""
+                  fill
+                  className="object-cover object-center"
+                  aria-hidden
+                />
+              ) : null}
               <div className="absolute inset-0 bg-gradient-to-t from-[#06111f]/80 via-[#06111f]/30 to-transparent" />
             </div>
             <div className="relative z-10 flex h-[340px] items-end p-8 sm:h-[400px] sm:p-10">
               <div>
-                <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 backdrop-blur-sm">
-                  <span className="h-2 w-2 rounded-full bg-[#5BC4FF] animate-pulse" />
-                  <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/80">Live Operations</span>
-                </div>
-                <p className="text-[1.15rem] font-semibold leading-snug tracking-[-0.03em] text-white">
-                  Control room visibility<br />
-                  <span className="text-[#5BC4FF]">across every site.</span>
+                {why.badge ? (
+                  <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 backdrop-blur-sm">
+                    <span className="h-2 w-2 rounded-full bg-[#5BC4FF] animate-pulse" />
+                    <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/80">{why.badge}</span>
+                  </div>
+                ) : null}
+                <p className="text-[1.15rem] font-semibold leading-snug tracking-[-0.03em] text-white [overflow-wrap:anywhere]">
+                  {why.panelTitle}
+                  {why.panelTitleAccent ? (
+                    <>
+                      <br />
+                      <span className="text-[#5BC4FF]">{why.panelTitleAccent}</span>
+                    </>
+                  ) : null}
                 </p>
               </div>
             </div>

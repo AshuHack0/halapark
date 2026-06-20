@@ -1315,14 +1315,21 @@ function PartnerCard({ partner }) {
       {/* Hover glow */}
       <div className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-300 group-hover/partner:opacity-100"
         style={{ background: `radial-gradient(circle at 20% 50%, ${partner.color}0C, transparent 70%)` }} />
-      {/* Logo mark */}
-      <div
-        className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-[13px] font-bold text-white shadow-sm"
-        style={{ background: `linear-gradient(135deg, ${partner.color}, ${partner.color}CC)` }}
-      >
-        {partner.initials}
-        <div className="pointer-events-none absolute inset-0 rounded-xl bg-gradient-to-br from-white/20 to-transparent" />
-      </div>
+      {/* Logo mark — uploaded image if present, else colored initials */}
+      {partner.logo ? (
+        <div className="relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-slate-100 bg-white shadow-sm">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={partner.logo} alt={partner.name} className="h-full w-full object-contain p-1" />
+        </div>
+      ) : (
+        <div
+          className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-[13px] font-bold text-white shadow-sm"
+          style={{ background: `linear-gradient(135deg, ${partner.color}, ${partner.color}CC)` }}
+        >
+          {partner.initials}
+          <div className="pointer-events-none absolute inset-0 rounded-xl bg-gradient-to-br from-white/20 to-transparent" />
+        </div>
+      )}
       {/* Text */}
       <div className="min-w-0">
         <p className="truncate text-[0.82rem] font-semibold text-[#050A13] transition-colors duration-200 group-hover/partner:text-[#0088FF]">
@@ -1336,8 +1343,18 @@ function PartnerCard({ partner }) {
 
 function PartnersSection({ partners }) {
   const reduced = useReducedMotion();
-  const row1 = [...PARTNERS_ROW1, ...PARTNERS_ROW1];
-  const row2 = [...PARTNERS_ROW2, ...PARTNERS_ROW2];
+  // Use the CMS partner list when provided; otherwise the built-in defaults.
+  // A single CMS list is split across the two marquee rows.
+  const cmsList = Array.isArray(partners?.partners) ? partners.partners.filter((p) => p && (p.name || p.logo)) : [];
+  let base1 = PARTNERS_ROW1;
+  let base2 = PARTNERS_ROW2;
+  if (cmsList.length > 0) {
+    const mid = Math.ceil(cmsList.length / 2);
+    base1 = cmsList.slice(0, mid);
+    base2 = cmsList.slice(mid).length > 0 ? cmsList.slice(mid) : cmsList.slice(0, mid);
+  }
+  const row1 = [...base1, ...base1];
+  const row2 = [...base2, ...base2];
   const heading = partners?.heading?.trim() || "Clients & Partners";
   const headingGradient = partners?.headingGradient?.trim() || "";
   const subtitle = partners?.subtitle?.trim() || "Trusted by the UAE's leading brands.";
