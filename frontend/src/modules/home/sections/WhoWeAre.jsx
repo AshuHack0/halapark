@@ -123,10 +123,6 @@ export default function WhoWeAre() {
     [0, 0.45, 0.55, 1],
     reduced ? [0.9, 0.9, 0.9, 0.9] : [0.72, 1, 1, 0.78],
   );
-  const sectionReadProgress = useTransform(scrollYProgress, [0.08, 0.92], [0, 1], {
-    clamp: true,
-  });
-
   const onSectionPointerMove = (e) => {
     if (reduced || !sectionRef.current) return;
     const r = sectionRef.current.getBoundingClientRect();
@@ -501,12 +497,6 @@ export default function WhoWeAre() {
           </motion.div>
         </div>
       </div>
-
-      <motion.div
-        aria-hidden
-        className="pointer-events-none absolute bottom-0 left-0 right-0 z-[3] h-[3px] origin-left rounded-full bg-gradient-to-r from-[#0088FF] via-[#0ea5e9] to-[#2563EB] opacity-90 shadow-[0_0_12px_rgba(0,136,255,0.35)]"
-        style={{ scaleX: sectionReadProgress }}
-      />
     </section>
   );
 }

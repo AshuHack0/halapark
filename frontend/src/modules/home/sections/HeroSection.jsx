@@ -63,6 +63,7 @@ function HeroBackgroundMedia({ slide, isActive, onVideoEnd }) {
       <video
         ref={videoRef}
         src={slide.video}
+        poster={slide.image || undefined}
         muted
         autoPlay
         playsInline
@@ -127,8 +128,14 @@ export default function HeroSection() {
     setActiveSlide((current) => (current + 1) % visibleSlides.length);
   };
 
-  // Hero deleted in CMS (no slides) → render nothing once the fetch has resolved.
-  if (resolved && visibleSlides.length === 0) {
+  // While the CMS slides are still loading, render nothing (avoids a flash of the
+  // empty dark hero box + the first video popping in/autoplaying before it's ready).
+  if (!resolved) {
+    return null;
+  }
+
+  // Hero deleted in CMS (no slides) → render nothing.
+  if (visibleSlides.length === 0) {
     return null;
   }
 
