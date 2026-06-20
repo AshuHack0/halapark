@@ -122,7 +122,8 @@ export default function HalaParkInAction({ cmsKey = "halaParkInAction", pageSlug
     const apply = (d) => {
       if (!d || typeof d !== "object") return;
       setCopy({
-        title: d.title || "",
+        // Admin saves the heading as `heading`; accept `title` too for safety.
+        title: d.heading || d.title || "",
         subtitle: d.subtitle || "",
         storeLinks: Array.isArray(d.storeLinks) ? d.storeLinks : [],
       });
