@@ -203,7 +203,7 @@ function AboutHero({ hero }) {
                 href={hero?.primaryCtaLink || "/contact"}
                 className="group inline-flex items-center gap-2.5 rounded-full bg-[#0088FF] px-7 py-3.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,136,255,0.32)] transition hover:brightness-110"
               >
-                {hero?.primaryCtaText || "Get In Touch"}
+                {hero?.primaryCtaText || ""}
                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 transition-transform duration-200 group-hover:translate-x-0.5">
                   <ArrowRight className="h-3.5 w-3.5" aria-hidden />
                 </span>

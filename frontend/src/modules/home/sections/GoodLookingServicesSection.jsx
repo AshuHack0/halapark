@@ -397,13 +397,13 @@ export default function GoodLookingServicesSection() {
                 href={copy.exploreCtaLink || "/services"}
                 className="inline-flex min-h-[3.05rem] items-center justify-center rounded-full bg-[#0088FF] px-7 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(0,136,255,0.14)] transition hover:bg-[#0088FF]"
               >
-                {copy.exploreCtaLabel || "Explore Services"}
+                {copy.exploreCtaLabel || ""}
               </Link>
               <Link
                 href={copy.contactCtaLink || "/contact"}
                 className="inline-flex min-h-[3.05rem] items-center justify-center rounded-full border border-slate-300/70 bg-white/60 px-7 text-sm font-semibold text-slate-800 backdrop-blur transition hover:border-[#0088FF] hover:text-[#0088FF]"
               >
-                {copy.contactCtaLabel || "Talk to us"}
+                {copy.contactCtaLabel || ""}
               </Link>
             </div>
           </motion.div>

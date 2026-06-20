@@ -142,7 +142,7 @@ export default function HowItWorksDemoSection() {
                     aria-hidden="true"
                     className="h-5 w-5 stroke-[2.6]"
                   />
-                  {content.ctaLabel || "Find Parking"}
+                  {content.ctaLabel || ""}
                 </Link>
                 {/* <span className="text-sm font-medium text-slate-500">
                   Takes less than a minute

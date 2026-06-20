@@ -310,7 +310,7 @@ function JobApplyButton({ post, onApply, className }) {
   if (useForm) {
     return (
       <button type="button" onClick={() => onApply(post)} className={className}>
-        {post.applyLabel ?? "Apply Now"}
+        {post.applyLabel ?? ""}
         <ArrowRight className="h-4 w-4" aria-hidden />
       </button>
     );
@@ -318,7 +318,7 @@ function JobApplyButton({ post, onApply, className }) {
   const ApplyTag = applyHref.startsWith("/") ? Link : "a";
   return (
     <ApplyTag href={applyHref} className={className}>
-      {post.applyLabel ?? "Apply Now"}
+      {post.applyLabel ?? ""}
       <ArrowRight className="h-4 w-4" aria-hidden />
     </ApplyTag>
   );
@@ -454,7 +454,7 @@ function JobOpenings({ openPositions }) {
             className="mx-auto mb-12 max-w-[780px] text-center"
           >
             <h2 className="text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-[1.08] tracking-[-0.05em] text-[#050A13]">
-              {openPositions?.title ?? "Open Positions"}
+              {openPositions?.title ?? ""}
             </h2>
             {openPositions?.subtitle ? (
               <p className="mt-4 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500">
