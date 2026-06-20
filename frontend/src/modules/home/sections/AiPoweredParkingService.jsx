@@ -205,13 +205,28 @@ export default function AiPoweredParkingService() {
   const prefersReducedMotion = useReducedMotion();
   // Merge CMS text fields onto the hardcoded cards (keep UI-only props like image).
   const [cards, setCards] = useState(serviceAudienceCards);
+  const [copy, setCopy] = useState({
+    heading: "AI-POWERED PARKING",
+    headingGradient: "SERVICE",
+    description:
+      "Smarter Parking Operations with AI Intelligence. AI-powered automation enhances the parking experience for both users and operators with faster access, smoother operations, and reliable management.",
+  });
 
   useEffect(() => {
     fetchHomeSection("aiPoweredParking").then((d) => {
-      const cmsCards = d?.cards;
+      if (!d || typeof d !== "object") return;
+      const cmsCards = d.cards;
       if (Array.isArray(cmsCards) && cmsCards.length) {
         setCards(serviceAudienceCards.map((base, i) => ({ ...base, ...(cmsCards[i] ?? {}) })));
       }
+      setCopy((prev) => ({
+        ...prev,
+        ...Object.fromEntries(
+          ["heading", "headingGradient", "description"]
+            .filter((k) => d[k] != null && d[k] !== "")
+            .map((k) => [k, d[k]]),
+        ),
+      }));
     });
   }, []);
 
@@ -244,18 +259,20 @@ export default function AiPoweredParkingService() {
         <div className="mx-auto max-w-[980px] text-center">
           <h2
             id="ai-powered-parking-service-title"
-            className="mx-auto mt-4 max-w-[940px] text-[clamp(2.65rem,4.5vw,4rem)] font-semibold uppercase leading-[1.01] tracking-[-0.06em] text-[#050A13]"
+            className="mx-auto mt-4 max-w-[940px] text-[clamp(2.65rem,4.5vw,4rem)] font-semibold uppercase leading-[1.01] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]"
           >
-            AI-POWERED PARKING{" "}
-            <span className="bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">
-              SERVICE
-            </span>
+            {copy.heading}
+            {copy.headingGradient ? (
+              <>
+                {" "}
+                <span className="bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">
+                  {copy.headingGradient}
+                </span>
+              </>
+            ) : null}
           </h2>
-          <p className="mx-auto mt-3 max-w-[650px] text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem]">
-            Smarter Parking Operations with AI Intelligence. AI-powered
-            automation enhances the parking experience for both users and
-            operators with faster access, smoother operations, and reliable
-            management.
+          <p className="mx-auto mt-3 max-w-[650px] text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem] [overflow-wrap:anywhere]">
+            {copy.description}
           </p>
         </div>
 
