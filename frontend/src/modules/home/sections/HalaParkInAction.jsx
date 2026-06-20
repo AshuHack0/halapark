@@ -5,27 +5,6 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { fetchHomeSection, fetchPage } from "@/lib/cms";
 
-const DEFAULT_STORE_LINKS = [
-  {
-    icon: "/image--04.png",
-    alt: "App Store",
-    eyebrow: "Download Now On",
-    label: "App Store",
-  },
-  {
-    icon: "/image 4.png",
-    alt: "Play Store",
-    eyebrow: "Download Now On",
-    label: "Play Store",
-  },
-  {
-    icon: "/channels4_profile.jpg",
-    alt: "Huawei AppGallery",
-    eyebrow: "Download Now On",
-    label: "Huawei",
-  },
-];
-
 const sectionEase = [0.22, 1, 0.36, 1];
 
 const copyStackVariants = {
@@ -132,31 +111,21 @@ function StoreBadge({
   );
 }
 
-const DEFAULT_HALAPARK_COPY = {
-  title: "Next-Gen Parking at Your Fingertips",
-  subtitle:
-    "Find, book, and manage parking easily from your phone. Get real-time availability, quick booking, and a smooth, hassle-free experience anytime, anywhere.",
-  storeLinks: DEFAULT_STORE_LINKS,
-};
-
 // `cmsKey`/`pageSlug` let the same component pull from the right CMS section:
 //   • Home page  → fetchHomeSection("halaParkInAction")
 //   • App page   → fetchPage("app").sections.halapark
 export default function HalaParkInAction({ cmsKey = "halaParkInAction", pageSlug }) {
   const prefersReducedMotion = useReducedMotion();
-  const [copy, setCopy] = useState(DEFAULT_HALAPARK_COPY);
+  const [copy, setCopy] = useState({});
 
   useEffect(() => {
     const apply = (d) => {
       if (!d || typeof d !== "object") return;
-      setCopy((prev) => ({
-        title: d.title || prev.title,
-        subtitle: d.subtitle || prev.subtitle,
-        storeLinks:
-          Array.isArray(d.storeLinks) && d.storeLinks.length > 0
-            ? d.storeLinks.map((s, i) => ({ ...(DEFAULT_STORE_LINKS[i] ?? {}), ...s }))
-            : prev.storeLinks,
-      }));
+      setCopy({
+        title: d.title || "",
+        subtitle: d.subtitle || "",
+        storeLinks: Array.isArray(d.storeLinks) ? d.storeLinks : [],
+      });
     };
     if (pageSlug) {
       fetchPage(pageSlug).then((data) => apply(data?.sections?.[cmsKey]));
@@ -165,7 +134,7 @@ export default function HalaParkInAction({ cmsKey = "halaParkInAction", pageSlug
     }
   }, [cmsKey, pageSlug]);
 
-  const storeLinks = copy.storeLinks;
+  const storeLinks = copy.storeLinks || [];
 
   return (
     <motion.section

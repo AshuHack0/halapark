@@ -9,31 +9,6 @@ import { fetchBusinessSection } from "@/lib/cms";
 
 const ease = [0.22, 1, 0.36, 1];
 
-const DEFAULT_SHOWCASE = {
-  heading: "Helping you to correctly",
-  headingGradient: "set-up, build,",
-  subheading: "and protect your brand and business",
-  description: "Unsure of the next steps toward your business expansion? Want to ensure your logistics are in order? With 20+ years of business experience & extensive legal training, we'll help you navigate your legal issue and provide the best solution for:",
-  image: "/hf_20260327_064457_c75923ba-dc06-4c6e-9b63-fa181e94bcfa.png",
-  stats: [
-    { value: "5th", label: "Field Expertise" },
-    { value: "95%", label: "Client Satisfaction" },
-    { value: "120", label: "CP Clients Trusted" },
-  ],
-  ctaLabel: "Get Started",
-  partners: {
-    heading: "Trusted by Industry Leaders",
-    subheading: "Work with some of the most recognized brands and organizations",
-    row1: [],
-    row2: [],
-  },
-  ctaSection: {
-    title: "Ready to Partner with HalaPark?",
-    description: "Join our growing network of trusted partners and transform your parking infrastructure today.",
-    image: "/hf_20260327_064457_c75923ba-dc06-4c6e-9b63-fa181e94bcfa.png",
-  },
-};
-
 const PARTNERS_ROW1 = [
   { name: "Emirates NBD",     initials: "EN", color: "#0088FF", industry: "Banking"         },
   { name: "Emaar Properties", initials: "EP", color: "#6366F1", industry: "Real Estate"     },
@@ -88,7 +63,7 @@ function MarqueeRow({ partners, reverse = false }) {
 
 export default function PartnersShowcase() {
   const reduced = useReducedMotion();
-  const [showcase, setShowcase] = useState(DEFAULT_SHOWCASE);
+  const [showcase, setShowcase] = useState({});
 
   useEffect(() => {
     fetchBusinessSection("partnersShowcase").then((section) => {
@@ -119,7 +94,7 @@ export default function PartnersShowcase() {
             className="relative h-80 sm:h-96 lg:h-[500px] rounded-[32px] overflow-hidden shadow-[0_20px_80px_rgba(0,136,255,0.15)] border border-[#E7EAF0]"
           >
             <Image
-              src={showcase.image}
+              src={showcase.image || "/hf_20260327_064457_c75923ba-dc06-4c6e-9b63-fa181e94bcfa.png"}
               alt="Trusted Partners"
               fill
               className="object-cover"

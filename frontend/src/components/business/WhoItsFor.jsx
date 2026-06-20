@@ -12,24 +12,17 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { fetchBusinessContent } from "@/lib/cms";
 
-const audienceSegments = [
-  { title: "Residential Towers", icon: Building2 },
-  { title: "Commercial Properties", icon: Landmark },
-  { title: "Retail Centres", icon: Store },
-  { title: "Hospitals & Healthcare", icon: HeartPulse },
-  { title: "Corporate Campuses", icon: BriefcaseBusiness },
-  { title: "Hospitality & Hotels", icon: Hotel },
+const SEGMENT_ICONS = [
+  Building2,
+  Landmark,
+  Store,
+  HeartPulse,
+  BriefcaseBusiness,
+  Hotel,
 ];
 
-const DEFAULT_CONTENT = {
-  heading: "Who It's For",
-  description:
-    "Designed for residential, commercial, retail, healthcare, and hospitality environments, HalaPark adapts to the needs of every property with smoother access, better control, and a more efficient parking experience.",
-  items: audienceSegments,
-};
-
 export default function BusinessWhoItsFor() {
-  const [content, setContent] = useState(DEFAULT_CONTENT);
+  const [content, setContent] = useState({});
 
   useEffect(() => {
     fetchBusinessContent().then((data) => {
@@ -46,10 +39,10 @@ export default function BusinessWhoItsFor() {
           next.description = w.description;
         }
         if (Array.isArray(w.items) && w.items.length > 0) {
-          next.items = w.items.map((item, index) => {
-            const base = audienceSegments[index] || { icon: Building2 };
-            return { ...base, ...item };
-          });
+          next.items = w.items.map((item, index) => ({
+            icon: SEGMENT_ICONS[index] || Building2,
+            ...item,
+          }));
         }
 
         return next;
@@ -57,7 +50,7 @@ export default function BusinessWhoItsFor() {
     });
   }, []);
 
-  const segments = content.items;
+  const segments = content.items || [];
 
   return (
     <section className="bg-white py-20 max-md:py-16 max-sm:py-14">

@@ -169,18 +169,9 @@ function SolutionsControlPanel({ reduced }) {
   );
 }
 
-const DEFAULT_SOLUTIONS_HERO = {
-  title: "Intelligent Parking Experiences",
-  titleAccent: "Built for the Future",
-  subtitle:
-    "HalaPark delivers an AI-powered smart parking ecosystem designed for large-scale residential, commercial, and mixed-use developments across the UAE, enabling seamless mobility, automation, and real-time operational control.",
-  ctaLabel: "Get In Touch",
-  ctaLink: "/contact",
-};
-
 function NewHero() {
   const reduced = useReducedMotion();
-  const [hero, setHero] = useState(DEFAULT_SOLUTIONS_HERO);
+  const [hero, setHero] = useState({});
 
   useEffect(() => {
     fetchPage("solutions").then((data) => {
@@ -434,16 +425,6 @@ function GlobalExpansionSection() {
 
 // ─── Our Solutions ─────────────────────────────────────────────────────────────
 
-const DEFAULT_SOLUTION_ITEMS = [
-  { slug: "smart-parking-management", title: "Smart Parking Management",   description: "Centralized platform for monitoring occupancy, controlling parking operations, and managing multiple facilities in real time.", image: "/hf_20260327_064316_9c7b1a28-dbfa-456e-b88a-0087cb567a61.png" },
-  { slug: "automated-access-control", title: "Automated Access Control",   description: "ANPR and smart barrier systems enabling seamless and secure vehicle access.", image: "/hf_20260327_061010_f3bc038b-576f-4903-8896-5d998cc78527.png" },
-  { slug: "parking-guidance-system", title: "Parking Guidance System",    description: "Real-time wayfinding and space guidance to reduce congestion and improve traffic flow inside facilities.", image: "/hf_20260327_060926_cbb82448-441c-42ee-9589-785e7acd7565.png" },
-  { slug: "mobile-digital-experience", title: "Mobile & Digital Experience",description: "Mobile reservations, digital payments, subscriptions, and contactless parking interactions.", image: "/hf_20260327_065515_cd3808b8-d99d-4faa-817d-e3f772726da6.png" },
-  { slug: "digital-valet-operations", title: "Digital Valet Operations",   description: "Structured valet workflows with digital ticketing, vehicle tracking, and retrieval management.", image: "/hf_20260327_061900_db12a62e-2867-44b6-83f0-ea7f1a5442ef.png" },
-  { slug: "ev-charging-integration", title: "EV Charging Integration",    description: "Integrated EV charging infrastructure with smart billing and charging management.", image: "/hf_20260327_070648_996630bc-828e-4cd7-8cb1-f42c30332d86.png" },
-  { slug: "ai-parking-analytics", title: "AI & Parking Analytics",     description: "Advanced occupancy analytics, traffic insights, predictive trends, and reporting dashboards.", image: "/hf_20260327_062407_6dca49c0-90dd-468a-96f9-b36bba13ea8b.png" },
-];
-
 // Build the link for a solution card. Uses an explicit `slug` when present
 // (CMS or defaults), otherwise slugifies the title. Falls back to /contact.
 function solutionCardHref(card) {
@@ -483,20 +464,10 @@ function SolutionCard({ card, i, reduced }) {
   );
 }
 
-const DEFAULT_GROUP_ORDER = [
-  "Smart Parking Ecosystem",
-  "Digital Payments & User Experience",
-  "Access & Enforcement Systems",
-  "Property & Hospitality Solutions",
-  "Commercial & Retail Solutions",
-  "Large Infrastructure & City Solutions",
-  "Mobility & Energy Integration",
-];
-
 function StatsSection() {
   const reduced = useReducedMotion();
-  const [solutionItems, setSolutionItems] = useState(DEFAULT_SOLUTION_ITEMS);
-  const [groupOrder, setGroupOrder] = useState(DEFAULT_GROUP_ORDER);
+  const [solutionItems, setSolutionItems] = useState([]);
+  const [groupOrder, setGroupOrder] = useState([]);
 
   useEffect(() => {
     fetchPage("solutions").then((data) => {
@@ -582,15 +553,6 @@ function StatsSection() {
 
 // ─── Solution Integration ──────────────────────────────────────────────────────
 
-const DEFAULT_INTEGRATION_CARDS = [
-  { title: "All-in-One Barrier Integration",  description: "All-in-one compact system with barriers, AI cameras, and lighting for efficient parking.",   points: ["Smart barrier control", "AI camera integration", "Automated lighting"],       image: "/hf_20260327_061900_db12a62e-2867-44b6-83f0-ea7f1a5442ef.png", gradient: "from-[#0078E0]/85 via-[#0088FF]/60 to-[#0088FF]/20" },
-  { title: "ANPR & AI Camera Integration",    description: "ANPR and AI cameras enable secure, real-time parking detection.",                              points: ["License plate recognition", "Real-time detection", "Secure access control"],  image: "/hf_20260327_064316_9c7b1a28-dbfa-456e-b88a-0087cb567a61.png", gradient: "from-[#0050B3]/85 via-[#0066CC]/60 to-[#0088FF]/20" },
-  { title: "Guidance Display Integration",    description: "Smart displays show real-time parking info for better user experience.",                        points: ["Live space availability", "Wayfinding signage", "Zone-level guidance"],        image: "/hf_20260327_062407_6dca49c0-90dd-468a-96f9-b36bba13ea8b.png", gradient: "from-[#004F9A]/85 via-[#0070D0]/60 to-[#1AB2FF]/20" },
-  { title: "Software & Kiosk Integration",    description: "Unified system with apps, operations, and kiosks for quick payments and access.",              points: ["Mobile app & web portal", "Self-service kiosks", "Integrated payments"],     image: "/hf_20260327_065515_cd3808b8-d99d-4faa-817d-e3f772726da6.png", gradient: "from-[#005FA3]/85 via-[#0078C8]/60 to-[#1AB2FF]/20" },
-  { title: "Sensor-Based Parking Management", description: "IoT sensors enable real-time parking tracking and space management.",                           points: ["Bay-level occupancy", "Instant alerts", "Predictive analytics"],              image: "/hf_20260327_071129_800d49da-6fb8-4b7e-a1ba-b32db4c31565.png", gradient: "from-[#003F7F]/85 via-[#005BB8]/60 to-[#0088FF]/20" },
-  { title: "End-to-End System Integration",   description: "Integrated platform for scalable, automated parking operations.",                               points: ["IoT sensor management", "Guidance display system", "Full stack automation"], image: "/hf_20260327_060926_cbb82448-441c-42ee-9589-785e7acd7565.png", gradient: "from-[#003F7F]/85 via-[#0060B8]/60 to-[#0088FF]/20" },
-];
-
 function IntegrationCard({ card, i, reduced }) {
   return (
     <motion.article
@@ -615,7 +577,7 @@ function IntegrationCard({ card, i, reduced }) {
 
 function SectorSolutionsSection() {
   const reduced = useReducedMotion();
-  const [integrationCards, setIntegrationCards] = useState(DEFAULT_INTEGRATION_CARDS);
+  const [integrationCards, setIntegrationCards] = useState([]);
 
   useEffect(() => {
     fetchPage("solutions").then((data) => {
@@ -955,36 +917,22 @@ const DEFAULT_DEPLOYMENT = {
   panelTitleAccent: "not months.",
 };
 
-// Merge CMS object over a default, ignoring empty values.
-function mergeSection(defaults, incoming) {
-  if (!incoming || typeof incoming !== "object") return defaults;
-  const out = { ...defaults };
-  for (const [k, v] of Object.entries(incoming)) {
-    if (v === "" || v == null) continue;
-    if (Array.isArray(v) && v.length === 0) continue;
-    out[k] = v;
-  }
-  return out;
-}
-
 function FeatureHighlightsSection() {
   const reduced = useReducedMotion();
-  const [features, setFeatures] = useState(DEFAULT_FEATURES);
-  const [deployment, setDeployment] = useState(DEFAULT_DEPLOYMENT);
+  const [features, setFeatures] = useState({});
+  const [deployment, setDeployment] = useState({});
 
   useEffect(() => {
     fetchPage("solutions").then((data) => {
-      setFeatures(mergeSection(DEFAULT_FEATURES, data?.sections?.features));
-      setDeployment(mergeSection(DEFAULT_DEPLOYMENT, data?.sections?.deployment));
+      const f = data?.sections?.features;
+      if (f && typeof f === "object") setFeatures(f);
+      const d = data?.sections?.deployment;
+      if (d && typeof d === "object") setDeployment(d);
     });
   }, []);
 
-  const industries = Array.isArray(features.industries) && features.industries.length > 0
-    ? features.industries
-    : DEFAULT_FEATURES.industries;
-  const steps = Array.isArray(deployment.steps) && deployment.steps.length > 0
-    ? deployment.steps
-    : DEFAULT_DEPLOYMENT.steps;
+  const industries = Array.isArray(features.industries) ? features.industries : [];
+  const steps = Array.isArray(deployment.steps) ? deployment.steps : [];
 
   return (
     <>
@@ -1200,7 +1148,7 @@ const DEFAULT_FINAL_CTA = {
 
 function NewFinalCTA() {
   const reduced = useReducedMotion();
-  const [cta, setCta] = useState(DEFAULT_FINAL_CTA);
+  const [cta, setCta] = useState({});
 
   useEffect(() => {
     fetchPage("solutions").then((data) => {
@@ -1261,11 +1209,11 @@ function NewFinalCTA() {
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               <Link href="/contact" className="inline-flex items-center gap-2 rounded-full bg-[#0088FF] px-8 py-3.5 text-sm font-semibold text-white shadow-[0_8px_28px_rgba(0,136,255,0.45)] transition hover:brightness-110">
-                {cta.ctaLabel || DEFAULT_FINAL_CTA.ctaLabel} <ArrowRight className="h-4 w-4" aria-hidden />
+                {cta.ctaLabel || ""} <ArrowRight className="h-4 w-4" aria-hidden />
               </Link>
               <Link href="/contact" className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-8 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20">
                 <CalendarCheck className="h-4 w-4" aria-hidden />
-                {cta.ctaSecondaryLabel || DEFAULT_FINAL_CTA.ctaSecondaryLabel}
+                {cta.ctaSecondaryLabel || ""}
               </Link>
             </div>
           </motion.div>

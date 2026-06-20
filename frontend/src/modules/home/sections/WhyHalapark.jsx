@@ -12,7 +12,6 @@ import {
   ScanLine,
   Zap,
 } from "lucide-react";
-import { DEFAULT_HOME_CONTENT, mergeHomeSection } from "@/lib/homeDefaults";
 import { fetchHomeSection } from "@/lib/cms";
 
 const DESKTOP_NAV_OFFSET = 70;
@@ -161,11 +160,11 @@ function FeatureVisual({ item, compact = false }) {
 }
 
 export default function WhyHalapark() {
-  const [content, setContent] = useState(DEFAULT_HOME_CONTENT.whyHalapark);
+  const [content, setContent] = useState({});
 
   useEffect(() => {
     fetchHomeSection("whyHalapark").then((cms) => {
-      if (cms) setContent(mergeHomeSection("whyHalapark", cms));
+      if (cms && typeof cms === "object") setContent(cms);
     });
   }, []);
 
@@ -242,7 +241,7 @@ export default function WhyHalapark() {
   return (
     <section className="bg-white py-10 sm:py-12 lg:py-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <SectionIntro heading={content.heading} subtitle={content.subtitle} />
+        <SectionIntro heading={content.heading || ""} subtitle={content.subtitle || ""} />
       </div>
       <div className="mx-auto mt-10 max-w-7xl px-4 sm:px-6 lg:px-8 lg:mt-12">
         <div className="lg:hidden">

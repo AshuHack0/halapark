@@ -9,13 +9,6 @@ import { fetchBusinessSection } from "@/lib/cms";
 
 const ease = [0.22, 1, 0.36, 1];
 
-const DEFAULT_HERO = {
-  title: "Turning Smart Parking into Business Growth",
-  description:
-    "HalaPark helps businesses maximize revenue, automate parking operations, and deliver seamless smart mobility experiences through AI-powered parking technology.",
-  image: "/HalaParkVideo.mp4",
-};
-
 // ─── Right-side visual: stacked tilted photo-card deck ──────────────────────────
 // A fanned deck of overlapping, slightly-rotated photo cards. The front card
 // cycles to the back on a timer, rotating the deck through the imagery.
@@ -198,7 +191,7 @@ function BusinessGrowthPanel({ reduced }) {
 
 export default function BusinessHero() {
   const reduced = useReducedMotion();
-  const [hero, setHero] = useState(DEFAULT_HERO);
+  const [hero, setHero] = useState({});
 
   useEffect(() => {
     fetchBusinessSection("hero").then((section) => {

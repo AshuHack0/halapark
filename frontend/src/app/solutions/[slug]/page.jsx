@@ -3,15 +3,15 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowRight, Check, ChevronRight, ShieldCheck } from "lucide-react";
 import { fetchSolutionDetails, fetchSolutionAdvantages, fetchSolutionCards } from "@/lib/cms";
-import {
-  DEFAULT_SOLUTION_DETAILS,
-  getSolutionDetailBySlug,
-} from "@/lib/solutionDetailsDefaults";
+import { getSolutionDetailBySlug } from "@/lib/solutionDetailsDefaults";
 
 export const dynamic = "force-dynamic";
 
-export function generateStaticParams() {
-  return DEFAULT_SOLUTION_DETAILS.map((d) => ({ slug: d.slug }));
+// Dynamic route — slugs resolve from the CMS at request time. A deleted solution
+// resolves to null → notFound(). No pre-rendered default slugs.
+export async function generateStaticParams() {
+  const details = await fetchSolutionDetails();
+  return details.map((d) => ({ slug: d.slug }));
 }
 
 export async function generateMetadata({ params }) {

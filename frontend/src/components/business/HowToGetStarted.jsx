@@ -6,34 +6,10 @@ import { ClipboardCheck, PhoneCall, Rocket, Wrench } from "lucide-react";
 import { useEffect, useState } from "react";
 import { fetchBusinessContent } from "@/lib/cms";
 
-const DEFAULT_STEPS = [
-  {
-    title: "Book a free consultation",
-    icon: PhoneCall,
-  },
-  {
-    title: "We assess your site and design a custom setup",
-    icon: ClipboardCheck,
-  },
-  {
-    title: "Installation and onboarding",
-    icon: Wrench,
-  },
-  {
-    title: "Go live -- fully managed from day one",
-    icon: Rocket,
-  },
-];
-
-const DEFAULT_CONTENT = {
-  eyebrow: "How It Works",
-  heading: "How to Get Started",
-  description: "",
-  steps: DEFAULT_STEPS,
-};
+const STEP_ICONS = [PhoneCall, ClipboardCheck, Wrench, Rocket];
 
 export default function BusinessHowToGetStarted() {
-  const [content, setContent] = useState(DEFAULT_CONTENT);
+  const [content, setContent] = useState({});
 
   useEffect(() => {
     fetchBusinessContent().then((data) => {
@@ -45,9 +21,10 @@ export default function BusinessHowToGetStarted() {
         if (typeof h.heading === "string" && h.heading !== "") next.heading = h.heading;
         if (typeof h.description === "string" && h.description !== "") next.description = h.description;
         if (Array.isArray(h.steps) && h.steps.length > 0) {
-          next.steps = DEFAULT_STEPS.map((defaultStep, i) =>
-            h.steps[i] ? { ...defaultStep, ...h.steps[i] } : defaultStep
-          );
+          next.steps = h.steps.map((step, i) => ({
+            icon: STEP_ICONS[i] || PhoneCall,
+            ...step,
+          }));
         }
         return next;
       });
@@ -98,8 +75,8 @@ export default function BusinessHowToGetStarted() {
             />
 
             <div className="space-y-9">
-              {content.steps.map((step, index) => {
-                const Icon = step.icon;
+              {(content.steps || []).map((step, index) => {
+                const Icon = step.icon || PhoneCall;
 
                 return (
                   <motion.div

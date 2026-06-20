@@ -5,16 +5,6 @@ import { useEffect, useState } from "react";
 import { CalendarCheck2, CarFront, CircleParking, Search } from "lucide-react";
 import { fetchHomeSection } from "@/lib/cms";
 
-const DEFAULT_HIW = {
-  heading: "HOW IT",
-  headingGradient: "WORKS",
-  subtitle:
-    "Watch the quick demo showing how easy it is to discover an open spot, reserve instantly, and complete payment inside HalaPark.",
-  ctaLabel: "Find Parking",
-  ctaHref: "/app",
-  videoUrl: "/HalaPark.mp4",
-};
-
 const steps = [
   {
     id: "01",
@@ -39,13 +29,13 @@ const steps = [
 ];
 
 export default function HowItWorksDemoSection() {
-  const [content, setContent] = useState(DEFAULT_HIW);
-  const [stepItems, setStepItems] = useState(steps);
+  const [content, setContent] = useState({});
+  const [stepItems, setStepItems] = useState([]);
 
   useEffect(() => {
     fetchHomeSection("howItWorks").then((d) => {
       if (!d || typeof d !== "object") return;
-      setContent({ ...DEFAULT_HIW, ...d });
+      setContent({ ...d });
       if (Array.isArray(d.steps) && d.steps.length) {
         // Merge CMS step text onto hardcoded steps (keep icons).
         setStepItems(steps.map((base, i) => ({ ...base, ...(d.steps[i] ?? {}) })));

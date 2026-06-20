@@ -11,43 +11,14 @@ const valuePropImages = [
   "/ea3689b3ea3d1b451f1ff37653eab8a9.jpg-removebg-preview.png",
 ];
 
-const valueProps = [
-  {
-    title: "Revenue Generation",
-    description:
-      "Stop leaving money on the table. Our platform maximises occupancy and automates payments 24/7.",
-    theme: "light",
-    ticketTilt: "-rotate-6",
-    rounded: "bl",
-  },
-  {
-    title: "Operational Control",
-    description:
-      "One dashboard for access, reporting, and management across all your locations.",
-    theme: "dark",
-    ticketTilt: "-rotate-1",
-    rounded: "none",
-  },
-  {
-    title: "Full Support",
-    description:
-      "From installation to daily ops, our team handles the technical side so you can focus on your business.",
-    theme: "light",
-    ticketTilt: "rotate-6",
-    rounded: "tr",
-  },
+const CARD_STYLES = [
+  { theme: "light", ticketTilt: "-rotate-6", rounded: "bl" },
+  { theme: "dark", ticketTilt: "-rotate-1", rounded: "none" },
+  { theme: "light", ticketTilt: "rotate-6", rounded: "tr" },
 ];
 
-const DEFAULT_CONTENT = {
-  eyebrow: "How It Works",
-  heading: "Why Businesses Choose HalaPark",
-  description:
-    "Built for modern parking operations, HalaPark helps businesses increase revenue, simplify management, and deliver a smoother experience for every driver.",
-  items: valueProps,
-};
-
 export default function BusinessValueProps() {
-  const [content, setContent] = useState(DEFAULT_CONTENT);
+  const [content, setContent] = useState({});
 
   useEffect(() => {
     fetchBusinessContent().then((data) => {
@@ -66,9 +37,10 @@ export default function BusinessValueProps() {
           next.description = vp.description;
         }
         if (Array.isArray(vp.items) && vp.items.length > 0) {
-          next.items = valueProps.map((defaultCard, i) =>
-            vp.items[i] ? { ...defaultCard, ...vp.items[i] } : defaultCard
-          );
+          next.items = vp.items.map((item, i) => ({
+            ...(CARD_STYLES[i % CARD_STYLES.length]),
+            ...item,
+          }));
         }
         return next;
       });
@@ -131,7 +103,7 @@ export default function BusinessValueProps() {
         </motion.div>
 
         <div className="grid gap-4 md:grid-cols-3 lg:gap-4">
-          {content.items.map((item, index) => {
+          {(content.items || []).map((item, index) => {
             const valuePropImage =
               valuePropImages[index % valuePropImages.length];
 

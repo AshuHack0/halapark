@@ -3,26 +3,16 @@
 import { useEffect, useState } from "react";
 import { fetchHomeSection } from "@/lib/cms";
 
-const DEFAULT_BANNER = {
-  title: "AI-Powered Smart Parking Solutions",
-  description:
-    "Seamlessly manage parking experiences for both customers and landlords through intelligent automation, real-time insights, and optimized operations designed to improve efficiency and performance.",
-  ctas: [
-    { label: "View for Customers", href: "/solutions?view=customers" },
-    { label: "View for Landlords", href: "/solutions?view=landlords" },
-  ],
-};
-
 export default function BlackBanner() {
-  const [featureCard, setFeatureCard] = useState(DEFAULT_BANNER);
+  const [featureCard, setFeatureCard] = useState({});
 
   useEffect(() => {
     fetchHomeSection("blackBanner").then((data) => {
       if (data && typeof data === "object") {
         setFeatureCard({
-          title: data.title || DEFAULT_BANNER.title,
-          description: data.description || DEFAULT_BANNER.description,
-          ctas: Array.isArray(data.ctas) && data.ctas.length ? data.ctas : DEFAULT_BANNER.ctas,
+          title: data.title || "",
+          description: data.description || "",
+          ctas: Array.isArray(data.ctas) ? data.ctas : [],
         });
       }
     });
@@ -85,7 +75,7 @@ export default function BlackBanner() {
                   </p>
 
                   <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                    {featureCard.ctas.map((cta, index) => (
+                    {(featureCard.ctas || []).map((cta, index) => (
                       <a
                         key={cta.label}
                         href={cta.href}

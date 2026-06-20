@@ -12,7 +12,6 @@ import {
 } from "framer-motion";
 import Image from "next/image";
 import { Building2, Layers, TrendingUp } from "lucide-react";
-import { DEFAULT_HOME_CONTENT, mergeHomeSection } from "@/lib/homeDefaults";
 import { fetchHomeSection } from "@/lib/cms";
 
 // Map serializable icon names (stored in CMS) to lucide components.
@@ -29,7 +28,7 @@ const chipLabels = [
 ];
 
 function MagicHeading({ text, reduced }) {
-  const words = text.split(" ");
+  const words = (text || "").split(" ");
   const accent = new Set(
     words
       .map((w, i) =>
@@ -67,18 +66,19 @@ export default function WhoWeAre() {
   const prefersReducedMotion = useReducedMotion();
   const reduced = !!prefersReducedMotion;
   const [activeAudience, setActiveAudience] = useState("business");
-  const [content, setContent] = useState(DEFAULT_HOME_CONTENT.whoWeAre);
+  const [content, setContent] = useState({});
 
   useEffect(() => {
     fetchHomeSection("whoWeAre").then((cms) => {
-      if (cms) setContent(mergeHomeSection("whoWeAre", cms));
+      if (cms && typeof cms === "object") setContent(cms);
     });
   }, []);
 
   const headingText = content.eyebrowHeading;
-  const audienceContent = content.audiences;
+  const audienceContent = content.audiences ?? {};
   const highlights = content.highlights ?? [];
-  const activeContent = audienceContent[activeAudience] ?? audienceContent.business;
+  const activeContent =
+    audienceContent[activeAudience] ?? audienceContent.business ?? {};
 
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);

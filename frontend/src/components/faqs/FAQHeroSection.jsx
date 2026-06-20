@@ -11,7 +11,7 @@ const DEFAULT_HERO = {
 };
 
 export default function FAQHeroSection() {
-  const [hero, setHero] = useState(DEFAULT_HERO);
+  const [hero, setHero] = useState({});
 
   useEffect(() => {
     fetchPage("faqs").then((data) => {
@@ -21,8 +21,8 @@ export default function FAQHeroSection() {
     });
   }, []);
 
-  const titleParts = hero.title.split("?");
-  const firstPart = titleParts[0] + "?";
+  const titleParts = (hero.title || "").split("?");
+  const firstPart = titleParts[0] ? titleParts[0] + "?" : "";
   const secondPart = titleParts[1]?.trim() || "";
 
   return (
@@ -31,7 +31,7 @@ export default function FAQHeroSection() {
         <div className="relative overflow-hidden rounded-[24px] bg-[#06111f] text-white">
           <div className="absolute inset-0">
             <Image
-              src={hero.image}
+              src={hero.image || DEFAULT_HERO.image}
               alt=""
               fill
               className="object-cover object-center opacity-30"

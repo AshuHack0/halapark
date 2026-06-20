@@ -4,19 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { servicesData } from "@/modules/home/servicesData";
+import { useEffect, useRef, useState } from "react";
 import { fetchHomeSection } from "@/lib/cms";
-
-// Editable section text (heading / side copy / CTAs), managed in the Home editor
-// under "goodLookingServices". Cards themselves come from the Services CMS.
-const DEFAULT_SERVICES_COPY = {
-  heading: "SERVICES",
-  exploreCtaLabel: "Explore Services",
-  exploreCtaLink: "/services",
-  contactCtaLabel: "Talk to us",
-  contactCtaLink: "/contact",
-};
 
 // Map a CMS service (from the Services page) to the card shape this section uses.
 function toCard(svc) {
@@ -230,10 +219,8 @@ export default function GoodLookingServicesSection() {
   const cardRefs = useRef([]);
 
   // Home Services cards are managed in the Home editor (goodLookingServices.cards).
-  // Fall back to the local servicesData only if the CMS has none yet.
-  const fallbackCards = useMemo(() => servicesData.slice(0, 10), []);
-  const [services, setServices] = useState(fallbackCards);
-  const [copy, setCopy] = useState(DEFAULT_SERVICES_COPY);
+  const [services, setServices] = useState([]);
+  const [copy, setCopy] = useState({});
 
   useEffect(() => {
     fetchHomeSection("goodLookingServices").then((d) => {
@@ -317,7 +304,7 @@ export default function GoodLookingServicesSection() {
     };
   }, []);
 
-  const activeService = featuredServices[activeServiceIndex] ?? featuredServices[0];
+  const activeService = featuredServices[activeServiceIndex] ?? featuredServices[0] ?? {};
   const activeHighlights = Array.isArray(activeService?.highlights)
     ? activeService.highlights.slice(0, 3)
     : [];

@@ -4,19 +4,12 @@ import { useEffect, useState } from "react";
 import EasyIntegrationCard from "../../../components/ui/EasyIntegrationCard";
 import { fetchHomeSection } from "@/lib/cms";
 
-const DEFAULT_TECH = {
-  heading: "All-in-One Intelligent",
-  headingGradient: "System",
-  subtitle:
-    "Redefining the future of smart parking management with one connected system for automation, insights, and operations.",
-};
-
 export default function TechnologySection() {
-  const [tech, setTech] = useState(DEFAULT_TECH);
+  const [tech, setTech] = useState({});
 
   useEffect(() => {
     fetchHomeSection("technologySection").then((d) => {
-      if (d && typeof d === "object") setTech({ ...DEFAULT_TECH, ...d });
+      if (d && typeof d === "object") setTech({ ...d });
     });
   }, []);
 

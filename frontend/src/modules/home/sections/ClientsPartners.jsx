@@ -3,45 +3,27 @@
 import { useEffect, useState } from "react";
 import { fetchHomeSection } from "@/lib/cms";
 
-const DEFAULT_LOGOS = [
-  "Client Logo",
-  "Partner Logo",
-  "Retail Logo",
-  "Enterprise Logo",
-  "Property Logo",
-  "Technology Logo",
-  "Operator Logo",
-  "Platform Logo",
-];
-const DEFAULT_CP = {
-  heading: "Built Together with Our",
-  headingEnd: "Clients & Partners",
-  logos: [],
-  logoPlaceholders: DEFAULT_LOGOS,
-};
-
 export default function ClientsPartners() {
-  const [cp, setCp] = useState(DEFAULT_CP);
+  const [cp, setCp] = useState({});
 
   useEffect(() => {
     fetchHomeSection("clientsPartners").then((d) => {
       if (d && typeof d === "object") {
         setCp({
-          heading: d.heading || DEFAULT_CP.heading,
-          headingEnd: d.headingEnd || DEFAULT_CP.headingEnd,
+          heading: d.heading || "",
+          headingEnd: d.headingEnd || "",
           logos: Array.isArray(d.logos) ? d.logos.filter((l) => l && l.image) : [],
-          logoPlaceholders:
-            Array.isArray(d.logoPlaceholders) && d.logoPlaceholders.length
-              ? d.logoPlaceholders
-              : DEFAULT_LOGOS,
+          logoPlaceholders: Array.isArray(d.logoPlaceholders)
+            ? d.logoPlaceholders
+            : [],
         });
       }
     });
   }, []);
 
   // Prefer uploaded logo images; fall back to text placeholders if none.
-  const hasLogos = cp.logos.length > 0;
-  const placeholderItems = [...cp.logoPlaceholders, ...cp.logoPlaceholders];
+  const hasLogos = (cp.logos || []).length > 0;
+  const placeholderItems = [...(cp.logoPlaceholders || []), ...(cp.logoPlaceholders || [])];
 
   return (
     <section className="py-10 sm:py-12 md:py-14 bg-white">

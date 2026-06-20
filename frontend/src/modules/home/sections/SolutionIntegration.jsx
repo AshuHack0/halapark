@@ -4,12 +4,6 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { fetchHomeSection } from "@/lib/cms";
 
-const DEFAULT_SI = {
-  heading: "Solution",
-  headingGradient: "Integration",
-  subtitle:
-    "End-to-end integrated parking solution that connects hardware, software, and operations into one unified platform.",
-};
 import { Monitor, Radar, SmartphoneNfc, Workflow } from "lucide-react";
 import styles from "./SolutionIntegration.module.css";
 
@@ -320,11 +314,11 @@ function SolutionCardsCarousel() {
 }
 
 export default function SolutionIntegration() {
-  const [si, setSi] = useState(DEFAULT_SI);
+  const [si, setSi] = useState({});
 
   useEffect(() => {
     fetchHomeSection("solutionIntegration").then((d) => {
-      if (d && typeof d === "object") setSi({ ...DEFAULT_SI, ...d });
+      if (d && typeof d === "object") setSi({ ...d });
     });
   }, []);
 

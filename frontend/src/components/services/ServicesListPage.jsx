@@ -58,9 +58,9 @@ function ServiceModal({ service, onClose }) {
 
   if (!service || !mounted) return null;
 
-  const includedLabel = service.includedLabel || "What's Included";
+  const includedLabel = service.includedLabel || "";
   const subCategoriesLabel =
-    service.subCategoriesLabel || "Service Categories";
+    service.subCategoriesLabel || "";
   const normalizedSubCategories = (service.subCategories || []).map((cat) =>
     typeof cat === "string" ? { title: cat, description: null } : cat,
   );

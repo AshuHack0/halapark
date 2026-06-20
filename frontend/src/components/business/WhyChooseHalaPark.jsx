@@ -7,51 +7,12 @@ import { fetchBusinessSection } from "@/lib/cms";
 
 const ease = [0.22, 1, 0.36, 1];
 
-const DEFAULT_REASONS = [
-  {
-    title: "Increase Revenue",
-    description: "Transform unused or underutilized parking spaces into new revenue opportunities through hourly bookings, subscriptions, reservations, and dynamic parking management.",
-    bgGradient: "from-[#0088FF] to-[#0066CC]",
-    accentColor: "bg-[#0088FF]",
-  },
-  {
-    title: "Reduce Operational Costs",
-    description: "Automate parking operations with ticketless systems, digital payments, and intelligent access management that reduce manpower dependency and operational overhead.",
-    bgGradient: "from-[#1AB2FF] to-[#0088FF]",
-    accentColor: "bg-[#1AB2FF]",
-  },
-  {
-    title: "AI-Powered Parking Management",
-    description: "Leverage smart automation, license plate recognition, occupancy monitoring, and real-time parking intelligence to create seamless vehicle experiences.",
-    bgGradient: "from-[#0088FF] to-[#005FA3]",
-    accentColor: "bg-[#0088FF]",
-  },
-  {
-    title: "Improve Customer Experience",
-    description: "Deliver fast, frictionless entry and exit experiences with cashless payments, mobile booking, digital passes, and automated parking access.",
-    bgGradient: "from-[#1AB2FF] to-[#0066CC]",
-    accentColor: "bg-[#1AB2FF]",
-  },
-  {
-    title: "Real-Time Monitoring & Reporting",
-    description: "Access live dashboards, occupancy analytics, business intelligence reports, traffic insights, and parking performance data anytime, anywhere.",
-    bgGradient: "from-[#0088FF] to-[#0070B3]",
-    accentColor: "bg-[#0088FF]",
-  },
-  {
-    title: "Scalable & Flexible Solutions",
-    description: "Whether you manage one parking space or a city-wide parking operation, HalaPark scales with your business and adapts to your operational requirements.",
-    bgGradient: "from-[#1AB2FF] to-[#0088FF]",
-    accentColor: "bg-[#1AB2FF]",
-  },
-];
-
 export default function WhyChooseHalaPark() {
   const reduced = useReducedMotion();
   const scrollRef = useRef(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
-  const [reasons, setReasons] = useState(DEFAULT_REASONS);
+  const [reasons, setReasons] = useState([]);
 
   useEffect(() => {
     fetchBusinessSection("whyChoose").then((section) => {
@@ -117,7 +78,7 @@ export default function WhyChooseHalaPark() {
             onScroll={checkScroll}
             className="flex gap-5 overflow-x-auto scroll-smooth scrollbar-hide pb-4"
           >
-            {reasons.map((item, i) => (
+            {(reasons || []).map((item, i) => (
               <motion.div
                 key={item.title}
                 data-card

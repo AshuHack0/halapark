@@ -6,14 +6,9 @@ import { fetchBusinessSection } from "@/lib/cms";
 
 const ease = [0.22, 1, 0.36, 1];
 
-const DEFAULT_DATA = {
-  title: "Built for Every Space Where Vehicles Move",
-  description: "From luxury towers and shopping malls to smart cities and large-scale mobility hubs, HalaPark powers intelligent parking experiences that make movement faster, smarter, and more connected.",
-};
-
 export default function BuiltForEverySpace() {
   const reduced = useReducedMotion();
-  const [data, setData] = useState(DEFAULT_DATA);
+  const [data, setData] = useState({});
 
   useEffect(() => {
     fetchBusinessSection("builtForSpace").then((section) => {
@@ -32,13 +27,13 @@ export default function BuiltForEverySpace() {
           className="mx-auto max-w-[980px] text-center"
         >
           <h2 className="text-[clamp(3rem,5.5vw,5rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
-            {data.title.split(" ").slice(0, -2).join(" ")}{" "}
+            {(data.title || "").split(" ").slice(0, -2).join(" ")}{" "}
             <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">
-              {data.title.split(" ").slice(-2).join(" ")}
+              {(data.title || "").split(" ").slice(-2).join(" ")}
             </span>
           </h2>
           <p className="mx-auto mt-5 max-w-[650px] text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem]">
-            {data.description}
+            {data.description || ""}
           </p>
         </motion.div>
       </div>

@@ -9,90 +9,10 @@ import { fetchBusinessContent } from "@/lib/cms";
 
 const ease = [0.22, 1, 0.36, 1];
 
-const DEFAULT_SOLUTIONS = [
-  {
-    title: "Smart Public Parking",
-    description: "Modernize public parking operations with mobile payments, virtual tickets, real-time availability tracking, and seamless digital parking experiences.",
-    image: "/hf_20260327_064316_9c7b1a28-dbfa-456e-b88a-0087cb567a61.png",
-    icon: "🅿️",
-  },
-  {
-    title: "Private Parking Rental",
-    description: "Enable property owners and businesses to monetize unused parking spaces through hourly, daily, monthly, or annual rentals.",
-    image: "/hf_20260327_062407_6dca49c0-90dd-468a-96f9-b36bba13ea8b.png",
-    icon: "🏠",
-  },
-  {
-    title: "Residential Parking Management",
-    description: "Simplify resident and visitor parking with secure access control, automated entry systems, guest management, and smart allocation tools.",
-    image: "/hf_20260327_065515_cd3808b8-d99d-4faa-817d-e3f772726da6.png",
-    icon: "🏢",
-  },
-  {
-    title: "Commercial & Retail Parking",
-    description: "Enhance customer convenience with frictionless parking experiences designed for malls, offices, retail destinations, and hospitality environments.",
-    image: "/hf_20260327_061010_f3bc038b-576f-4903-8896-5d998cc78527.png",
-    icon: "🛍️",
-  },
-  {
-    title: "AI Access & Gate Control",
-    description: "Automate entry and exit using smart gate systems, license plate recognition, and digital verification technologies.",
-    image: "/hf_20260327_070648_996630bc-828e-4cd7-8cb1-f42c30332d86.png",
-    icon: "🤖",
-  },
-  {
-    title: "Fleet & Mobility Solutions",
-    description: "Support businesses with fleet parking management, mobility integration, logistics coordination, and operational parking optimization.",
-    image: "/hf_20260327_061900_db12a62e-2867-44b6-83f0-ea7f1a5442ef.png",
-    icon: "🚗",
-  },
-  {
-    title: "Smart City Parking Integration",
-    description: "Connect parking systems with city infrastructure for real-time traffic coordination, municipal dashboards, and urban mobility optimization.",
-    image: "/hf_20260327_064457_c75923ba-dc06-4c6e-9b63-fa181e94bcfa.png",
-    icon: "🌆",
-  },
-  {
-    title: "Mobile App Parking Ecosystem",
-    description: "Provide users with booking, payments, navigation, and parking history in one seamless mobile platform.",
-    image: "/hf_20260327_060926_cbb82448-441c-42ee-9589-785e7acd7565.png",
-    icon: "📱",
-  },
-  {
-    title: "Data & AI Analytics Dashboard",
-    description: "Deliver actionable insights on occupancy trends, peak hours, revenue performance, and space utilization.",
-    image: "/hf_20260327_064316_9c7b1a28-dbfa-456e-b88a-0087cb567a61.png",
-    icon: "📊",
-  },
-  {
-    title: "Cashless Payment Ecosystem",
-    description: "Support multiple payment methods including cards, wallets, QR payments, and subscription billing models.",
-    image: "/hf_20260327_062407_6dca49c0-90dd-468a-96f9-b36bba13ea8b.png",
-    icon: "💳",
-  },
-  {
-    title: "Security & Surveillance Integration",
-    description: "Integrate CCTV, ANPR/LPR systems, and automated alerts to enhance safety and compliance.",
-    image: "/hf_20260327_061010_f3bc038b-576f-4903-8896-5d998cc78527.png",
-    icon: "🔒",
-  },
-  {
-    title: "EV Charging Parking Integration",
-    description: "Combine parking with electric vehicle charging stations for future-ready mobility infrastructure.",
-    image: "/hf_20260327_070648_996630bc-828e-4cd7-8cb1-f42c30332d86.png",
-    icon: "⚡",
-  },
-];
-
 export default function BusinessSolutions() {
   const reduced = useReducedMotion();
-  const [solutions, setSolutions] = useState(DEFAULT_SOLUTIONS);
-  const [header, setHeader] = useState({
-    heading: "Our Business",
-    headingAccent: "Solutions",
-    description: "Intelligent parking systems built for every business type, from single sites to large-scale multi-location operations.",
-    description2: "We make it possible to invest in parking infrastructure with simple, transparent and comprehensive protection.",
-  });
+  const [solutions, setSolutions] = useState([]);
+  const [header, setHeader] = useState({});
 
   useEffect(() => {
     fetchBusinessContent().then((content) => {
@@ -154,7 +74,7 @@ export default function BusinessSolutions() {
 
           {/* RIGHT: 2-Column Grid of Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 lg:gap-6">
-            {solutions.map((card, i) => (
+            {(solutions || []).map((card, i) => (
               <motion.article
                 key={card.title}
                 initial={reduced ? false : { opacity: 0, y: 20 }}

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { DEFAULT_HOME_SLIDES, fetchHomeHeroSlides } from "@/lib/cms";
+import { fetchHomeHeroSlides } from "@/lib/cms";
 
 const AUTO_SLIDE_DELAY = 4500;
 
@@ -83,10 +83,9 @@ function HeroBackgroundMedia({ slide, isActive, onVideoEnd }) {
 }
 
 export default function HeroSection() {
-  // Start with defaults purely as a first-paint placeholder; once the CMS fetch
-  // resolves we use whatever it returns — including an empty list (client deleted
-  // all slides → hero is hidden).
-  const [slides, setSlides] = useState(DEFAULT_HOME_SLIDES);
+  // Start empty; once the CMS fetch resolves we use whatever it returns —
+  // including an empty list (client deleted all slides → hero is hidden).
+  const [slides, setSlides] = useState([]);
   const [resolved, setResolved] = useState(false);
   const visibleSlides = slides.slice(0, 3);
   const [activeSlide, setActiveSlide] = useState(0);
@@ -182,11 +181,11 @@ export default function HeroSection() {
           <div className="relative flex min-h-125 w-full flex-col justify-center px-8 py-14 sm:px-12 md:min-h-[620px] lg:px-20">
             <div className="relative z-10 w-full max-w-lg">
               <h1 className="text-4xl font-semibold leading-tight text-white [overflow-wrap:anywhere] sm:text-5xl md:text-6xl line-clamp-3">
-                {currentSlide.tag}
+                {currentSlide?.tag}
               </h1>
 
               <p className="mt-5 max-w-sm text-sm leading-relaxed text-white/90 [overflow-wrap:anywhere] line-clamp-4 sm:text-base">
-                {currentSlide.title}
+                {currentSlide?.title}
               </p>
 
               <Link href="/contact">

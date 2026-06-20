@@ -14,28 +14,9 @@ const ICON_MAP = {
   "Data-Driven Operations": BarChart3,
 };
 
-const DEFAULT_ADVANTAGES = [
-  {
-    title: "Smart Mobility Ecosystem",
-    description: "We connect drivers, property owners, operators, and service providers through one intelligent platform.",
-  },
-  {
-    title: "Seamless Digital Experience",
-    description: "From booking to payment and access control, every interaction is optimized for speed, simplicity, and convenience.",
-  },
-  {
-    title: "Future-Ready Technology",
-    description: "Built for modern cities, evolving mobility demands, and scalable smart infrastructure.",
-  },
-  {
-    title: "Data-Driven Operations",
-    description: "Make smarter business decisions using live operational insights, occupancy analytics, and performance reporting.",
-  },
-];
-
 export default function HalaParkAdvantage() {
   const reduced = useReducedMotion();
-  const [advantages, setAdvantages] = useState(DEFAULT_ADVANTAGES);
+  const [advantages, setAdvantages] = useState([]);
 
   useEffect(() => {
     fetchBusinessSection("advantage").then((section) => {
@@ -65,7 +46,7 @@ export default function HalaParkAdvantage() {
         </motion.div>
 
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {advantages.map((item, i) => {
+          {(advantages || []).map((item, i) => {
             const Icon = ICON_MAP[item.title] || Network;
             return (
               <motion.div

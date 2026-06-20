@@ -8,78 +8,9 @@ import { fetchBusinessSection } from "@/lib/cms";
 
 const ease = [0.22, 1, 0.36, 1];
 
-const DEFAULT_PARTNERS = [
-  {
-    title: "Property Developers",
-    description: "Transform residential and commercial projects with intelligent parking infrastructure that increases property value, improves traffic flow, and delivers future-ready smart mobility experiences.",
-    image: "/hf_20260327_065515_cd3808b8-d99d-4faa-817d-e3f772726da6.png",
-    benefits: ["Increased Property Value", "Smart Infrastructure", "Future-Ready Design"],
-  },
-  {
-    title: "Shopping Malls & Retail",
-    description: "Create faster, smoother, and stress-free visitor experiences with automated parking, digital payments, real-time availability tracking, and seamless customer journeys.",
-    image: "/hf_20260327_061010_f3bc038b-576f-4903-8896-5d998cc78527.png",
-    benefits: ["Better Customer Experience", "Increased Foot Traffic", "Digital Payments"],
-  },
-  {
-    title: "Residential Communities",
-    description: "Deliver secure, organized, and hassle-free parking management for residents, visitors, and tenants with smart access control and automated entry systems.",
-    image: "/hf_20260327_061900_db12a62e-2867-44b6-83f0-ea7f1a5442ef.png",
-    benefits: ["Secure Access Control", "Visitor Management", "Resident Satisfaction"],
-  },
-  {
-    title: "Hotels & Hospitality",
-    description: "Enhance guest experiences with premium valet integration, frictionless parking access, digital visitor management, and luxury smart parking services.",
-    image: "/hf_20260327_060926_cbb82448-441c-42ee-9589-785e7acd7565.png",
-    benefits: ["Premium Guest Experience", "Valet Integration", "Digital Management"],
-  },
-  {
-    title: "Government & Public",
-    description: "Support smart city initiatives with scalable parking ecosystems, AI-powered mobility solutions, real-time analytics, and intelligent urban traffic management.",
-    image: "/hf_20260327_064457_c75923ba-dc06-4c6e-9b63-fa181e94bcfa.png",
-    benefits: ["Smart City Solutions", "Traffic Management", "Real-Time Analytics"],
-  },
-  {
-    title: "Service Providers",
-    description: "Collaborate with HalaPark to integrate innovative parking technologies, EV charging systems, automation tools, and mobility solutions into a growing smart ecosystem.",
-    image: "/hf_20260327_070648_996630bc-828e-4cd7-8cb1-f42c30332d86.png",
-    benefits: ["Technology Integration", "Scalable Solutions", "Growing Ecosystem"],
-  },
-  {
-    title: "Commercial Towers",
-    description: "Simplify employee and visitor parking with automated access control, reserved parking management, and seamless daily parking experiences for modern workplaces.",
-    image: "/hf_20260327_064316_9c7b1a28-dbfa-456e-b88a-0087cb567a61.png",
-    benefits: ["Employee Satisfaction", "Automated Access", "Reserved Spaces"],
-  },
-  {
-    title: "Airports & Hubs",
-    description: "Reduce congestion and improve vehicle movement with intelligent parking systems designed for high-traffic environments and large-scale mobility operations.",
-    image: "/hf_20260327_062407_6dca49c0-90dd-468a-96f9-b36bba13ea8b.png",
-    benefits: ["Congestion Reduction", "High-Volume Handling", "Smooth Traffic"],
-  },
-  {
-    title: "Universities",
-    description: "Manage student, faculty, and visitor parking efficiently using smart permits, digital parking management, and real-time occupancy monitoring.",
-    image: "/hf_20260327_065515_cd3808b8-d99d-4faa-817d-e3f772726da6.png",
-    benefits: ["Smart Permits", "Digital Management", "Occupancy Tracking"],
-  },
-  {
-    title: "Healthcare Facilities",
-    description: "Provide stress-free parking experiences for patients, staff, and visitors with smart guidance systems, automated entry, and optimized traffic flow.",
-    image: "/hf_20260327_061010_f3bc038b-576f-4903-8896-5d998cc78527.png",
-    benefits: ["Patient Comfort", "Staff Efficiency", "Visitor Guidance"],
-  },
-  {
-    title: "Event Venues",
-    description: "Handle large parking demand during concerts, exhibitions, and events with intelligent crowd management, dynamic parking allocation, and faster vehicle access.",
-    image: "/hf_20260327_064457_c75923ba-dc06-4c6e-9b63-fa181e94bcfa.png",
-    benefits: ["Crowd Management", "Dynamic Allocation", "Fast Access"],
-  },
-];
-
 export default function WhoWeWorkWith() {
   const reduced = useReducedMotion();
-  const [partners, setPartners] = useState(DEFAULT_PARTNERS);
+  const [partners, setPartners] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
@@ -100,7 +31,7 @@ export default function WhoWeWorkWith() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setActiveIndex((prev) => (prev + 1) % partners.length);
+      setActiveIndex((prev) => (partners.length ? (prev + 1) % partners.length : 0));
       setDirection(1);
     }, 5000);
 
@@ -131,7 +62,7 @@ export default function WhoWeWorkWith() {
     setActiveIndex(index);
   };
 
-  const activePartner = partners[activeIndex];
+  const activePartner = partners[activeIndex] || {};
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -286,7 +217,7 @@ export default function WhoWeWorkWith() {
                 initial="hidden"
                 animate="visible"
               >
-                {activePartner.benefits.map((benefit) => (
+                {(activePartner.benefits || []).map((benefit) => (
                   <motion.li
                     key={benefit}
                     variants={itemVariants}
@@ -324,8 +255,8 @@ export default function WhoWeWorkWith() {
             className="relative h-80 sm:h-96 lg:h-[480px] rounded-[32px] overflow-hidden shadow-[0_20px_80px_rgba(0,136,255,0.2)] border border-[#E7EAF0]"
           >
             <Image
-              src={activePartner.image}
-              alt={activePartner.title}
+              src={activePartner.image || "/hf_20260327_065515_cd3808b8-d99d-4faa-817d-e3f772726da6.png"}
+              alt={activePartner.title || ""}
               fill
               className="object-cover"
               priority
