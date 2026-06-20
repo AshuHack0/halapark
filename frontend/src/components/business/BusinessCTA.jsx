@@ -4,11 +4,28 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
+import { useEffect, useState } from "react";
+import { fetchBusinessContent } from "@/lib/cms";
 
 const ease = [0.22, 1, 0.36, 1];
 
 export default function BusinessCTA() {
   const reduced = useReducedMotion();
+  const [cta, setCta] = useState({
+    heading: "Start a Smart Parking Business with",
+    headingAccent: "No Upfront Investment",
+    description: "Partner with HalaPark to launch intelligent parking solutions powered by automation, AI, and seamless digital operations.",
+    ctaLabel: "Book a Free Consultation",
+    ctaLink: "/contact",
+  });
+
+  useEffect(() => {
+    fetchBusinessContent().then((content) => {
+      if (content?.cta && typeof content.cta === "object") {
+        setCta((prev) => ({ ...prev, ...Object.fromEntries(Object.entries(content.cta).filter(([, v]) => v !== "" && v != null)) }));
+      }
+    });
+  }, []);
 
   return (
     <section className="bg-white py-4 sm:py-5 lg:py-6">
@@ -48,21 +65,26 @@ export default function BusinessCTA() {
             className="relative z-10 flex flex-col items-start gap-4 px-6 py-8 sm:flex-row sm:items-center sm:justify-between sm:px-10 sm:py-10"
           >
             <div className="max-w-[580px]">
-              <h2 className="text-[1.35rem] font-semibold leading-snug tracking-[-0.03em] text-white sm:text-[1.6rem]">
-                Start a Smart Parking Business with{" "}
-                <span className="bg-gradient-to-r from-[#3AADFF] to-[#0088FF] bg-clip-text text-transparent">
-                  No Upfront Investment
-                </span>
+              <h2 className="text-[1.35rem] font-semibold leading-snug tracking-[-0.03em] text-white sm:text-[1.6rem] [overflow-wrap:anywhere]">
+                {cta.heading}
+                {cta.headingAccent ? (
+                  <>
+                    {" "}
+                    <span className="bg-gradient-to-r from-[#3AADFF] to-[#0088FF] bg-clip-text text-transparent">
+                      {cta.headingAccent}
+                    </span>
+                  </>
+                ) : null}
               </h2>
-              <p className="mt-1.5 text-[0.82rem] leading-5 text-white/60 sm:text-[0.88rem]">
-                Partner with HalaPark to launch intelligent parking solutions powered by automation, AI, and seamless digital operations.
+              <p className="mt-1.5 text-[0.82rem] leading-5 text-white/60 sm:text-[0.88rem] [overflow-wrap:anywhere]">
+                {cta.description}
               </p>
             </div>
             <Link
-              href="/contact"
+              href={cta.ctaLink}
               className="shrink-0 inline-flex items-center gap-2 rounded-full bg-[#0088FF] px-6 py-2.5 text-sm font-semibold text-white shadow-[0_4px_20px_rgba(0,136,255,0.4)] transition hover:brightness-110"
             >
-              Book a Free Consultation <ArrowRight className="h-4 w-4" aria-hidden />
+              {cta.ctaLabel} <ArrowRight className="h-4 w-4" aria-hidden />
             </Link>
           </motion.div>
         </div>

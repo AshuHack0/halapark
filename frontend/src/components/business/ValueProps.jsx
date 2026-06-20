@@ -2,6 +2,8 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import { fetchBusinessContent } from "@/lib/cms";
 
 const valuePropImages = [
   "/hf_20260327_074228_600dfc1a-c1a5-43ad-99e3-3e4d48603f22-removebg-preview.png",
@@ -36,7 +38,43 @@ const valueProps = [
   },
 ];
 
+const DEFAULT_CONTENT = {
+  eyebrow: "How It Works",
+  heading: "Why Businesses Choose HalaPark",
+  description:
+    "Built for modern parking operations, HalaPark helps businesses increase revenue, simplify management, and deliver a smoother experience for every driver.",
+  items: valueProps,
+};
+
 export default function BusinessValueProps() {
+  const [content, setContent] = useState(DEFAULT_CONTENT);
+
+  useEffect(() => {
+    fetchBusinessContent().then((data) => {
+      const vp = data?.valueProps;
+      if (!vp || typeof vp !== "object") return;
+
+      setContent((prev) => {
+        const next = { ...prev };
+        if (typeof vp.eyebrow === "string" && vp.eyebrow.trim() !== "") {
+          next.eyebrow = vp.eyebrow;
+        }
+        if (typeof vp.heading === "string" && vp.heading.trim() !== "") {
+          next.heading = vp.heading;
+        }
+        if (typeof vp.description === "string" && vp.description.trim() !== "") {
+          next.description = vp.description;
+        }
+        if (Array.isArray(vp.items) && vp.items.length > 0) {
+          next.items = valueProps.map((defaultCard, i) =>
+            vp.items[i] ? { ...defaultCard, ...vp.items[i] } : defaultCard
+          );
+        }
+        return next;
+      });
+    });
+  }, []);
+
   return (
     <section className="py-20 max-md:py-16 max-sm:py-14 bg-white">
       <div className="container mx-auto sm:px-0 px-4 max-w-7xl">
@@ -67,7 +105,7 @@ export default function BusinessValueProps() {
                 <path d="M5 12h14" />
               </svg>
             </span>
-            <span>How It Works</span>
+            <span>{content.eyebrow}</span>
             <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/90 text-[#0088FF]">
               <svg
                 viewBox="0 0 24 24"
@@ -84,18 +122,16 @@ export default function BusinessValueProps() {
               </svg>
             </span>
           </button>
-          <h2 className="text-3xl max-sm:text-2xl font-bold text-slate-900">
-            Why Businesses Choose HalaPark
+          <h2 className="text-3xl max-sm:text-2xl font-bold text-slate-900 [overflow-wrap:anywhere]">
+            {content.heading}
           </h2>
-          <p className="mt-4 text-lg max-sm:text-base leading-relaxed text-[#5E6578]">
-            Built for modern parking operations, HalaPark helps businesses
-            increase revenue, simplify management, and deliver a smoother
-            experience for every driver.
+          <p className="mt-4 text-lg max-sm:text-base leading-relaxed text-[#5E6578] [overflow-wrap:anywhere]">
+            {content.description}
           </p>
         </motion.div>
 
         <div className="grid gap-4 md:grid-cols-3 lg:gap-4">
-          {valueProps.map((item, index) => {
+          {content.items.map((item, index) => {
             const valuePropImage =
               valuePropImages[index % valuePropImages.length];
 
@@ -158,7 +194,7 @@ export default function BusinessValueProps() {
                   <div className="max-w-[16rem]">
                     <h3
                       className={[
-                        "text-[2rem] leading-tight max-sm:text-[1.7rem] font-semibold",
+                        "text-[2rem] leading-tight max-sm:text-[1.7rem] font-semibold [overflow-wrap:anywhere]",
                         item.theme === "dark" ? "text-white" : "text-slate-900",
                       ].join(" ")}
                     >
@@ -166,7 +202,7 @@ export default function BusinessValueProps() {
                     </h3>
                     <p
                       className={[
-                        "mt-4 text-base max-sm:text-sm leading-7",
+                        "mt-4 text-base max-sm:text-sm leading-7 [overflow-wrap:anywhere]",
                         item.theme === "dark"
                           ? "text-white/72"
                           : "text-slate-700/80",

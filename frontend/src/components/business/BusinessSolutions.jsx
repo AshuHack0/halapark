@@ -87,11 +87,20 @@ const DEFAULT_SOLUTIONS = [
 export default function BusinessSolutions() {
   const reduced = useReducedMotion();
   const [solutions, setSolutions] = useState(DEFAULT_SOLUTIONS);
+  const [header, setHeader] = useState({
+    heading: "Our Business",
+    headingAccent: "Solutions",
+    description: "Intelligent parking systems built for every business type, from single sites to large-scale multi-location operations.",
+    description2: "We make it possible to invest in parking infrastructure with simple, transparent and comprehensive protection.",
+  });
 
   useEffect(() => {
     fetchBusinessContent().then((content) => {
       if (content?.solutions && Array.isArray(content.solutions)) {
         setSolutions(content.solutions);
+      }
+      if (content?.solutionsHeader && typeof content.solutionsHeader === "object") {
+        setHeader((prev) => ({ ...prev, ...Object.fromEntries(Object.entries(content.solutionsHeader).filter(([, v]) => v !== "" && v != null)) }));
       }
     });
   }, []);
@@ -110,19 +119,24 @@ export default function BusinessSolutions() {
               viewport={{ once: true, amount: 0.2 }}
               transition={{ duration: 0.65, ease }}
             >
-              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight tracking-[-0.06em] text-[#050A13] mb-6">
-                Our Business{" "}
-                <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">
-                  Solutions
-                </span>
+              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight tracking-[-0.06em] text-[#050A13] mb-6 [overflow-wrap:anywhere]">
+                {header.heading}
+                {header.headingAccent ? (
+                  <>
+                    {" "}
+                    <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">
+                      {header.headingAccent}
+                    </span>
+                  </>
+                ) : null}
               </h2>
 
-              <p className="text-base leading-7 text-slate-600 mb-4">
-                Intelligent parking systems built for every business type, from single sites to large-scale multi-location operations.
+              <p className="text-base leading-7 text-slate-600 mb-4 [overflow-wrap:anywhere]">
+                {header.description}
               </p>
 
-              <p className="text-sm leading-6 text-slate-500 mb-8">
-                We make it possible to invest in parking infrastructure with simple, transparent and comprehensive protection.
+              <p className="text-sm leading-6 text-slate-500 mb-8 [overflow-wrap:anywhere]">
+                {header.description2}
               </p>
 
               {/* CTA Button */}

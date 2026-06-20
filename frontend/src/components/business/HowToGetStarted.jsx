@@ -3,8 +3,10 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ClipboardCheck, PhoneCall, Rocket, Wrench } from "lucide-react";
+import { useEffect, useState } from "react";
+import { fetchBusinessContent } from "@/lib/cms";
 
-const steps = [
+const DEFAULT_STEPS = [
   {
     title: "Book a free consultation",
     icon: PhoneCall,
@@ -23,7 +25,35 @@ const steps = [
   },
 ];
 
+const DEFAULT_CONTENT = {
+  eyebrow: "How It Works",
+  heading: "How to Get Started",
+  description: "",
+  steps: DEFAULT_STEPS,
+};
+
 export default function BusinessHowToGetStarted() {
+  const [content, setContent] = useState(DEFAULT_CONTENT);
+
+  useEffect(() => {
+    fetchBusinessContent().then((data) => {
+      const h = data?.howToGetStarted;
+      if (!h || typeof h !== "object") return;
+      setContent((prev) => {
+        const next = { ...prev };
+        if (typeof h.eyebrow === "string" && h.eyebrow !== "") next.eyebrow = h.eyebrow;
+        if (typeof h.heading === "string" && h.heading !== "") next.heading = h.heading;
+        if (typeof h.description === "string" && h.description !== "") next.description = h.description;
+        if (Array.isArray(h.steps) && h.steps.length > 0) {
+          next.steps = DEFAULT_STEPS.map((defaultStep, i) =>
+            h.steps[i] ? { ...defaultStep, ...h.steps[i] } : defaultStep
+          );
+        }
+        return next;
+      });
+    });
+  }, []);
+
   return (
     <section className="bg-white py-20 max-md:py-16 max-sm:py-14">
       <div className="container mx-auto max-w-7xl px-4 sm:px-0">
@@ -35,12 +65,20 @@ export default function BusinessHowToGetStarted() {
           className="rounded-[30px]  bg-white px-6 py-8  md:px-8 md:py-10 lg:grid lg:grid-cols-[minmax(260px,0.88fr)_minmax(0,1.12fr)] lg:gap-16"
         >
           <div className="max-w-md lg:pt-2">
-            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#0088FF]">
-              How It Works
-            </p>
-            <h2 className="mt-4 text-4xl font-bold leading-[1.02] text-slate-900 max-sm:text-3xl">
-              How to Get Started
+            {content.eyebrow ? (
+              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#0088FF]">
+                {content.eyebrow}
+              </p>
+            ) : null}
+            <h2 className="mt-4 text-4xl font-bold leading-[1.02] text-slate-900 max-sm:text-3xl [overflow-wrap:anywhere]">
+              {content.heading}
             </h2>
+
+            {content.description ? (
+              <p className="mt-4 text-base leading-7 text-slate-600 [overflow-wrap:anywhere]">
+                {content.description}
+              </p>
+            ) : null}
 
             <Link href="/contact">
               <motion.button
@@ -60,7 +98,7 @@ export default function BusinessHowToGetStarted() {
             />
 
             <div className="space-y-9">
-              {steps.map((step, index) => {
+              {content.steps.map((step, index) => {
                 const Icon = step.icon;
 
                 return (
@@ -80,9 +118,14 @@ export default function BusinessHowToGetStarted() {
                       <p className="text-sm font-semibold text-[#0088FF]">
                         Step {String(index + 1).padStart(2, "0")}
                       </p>
-                      <h3 className="mt-1.5 max-w-[34rem] text-[1.7rem] font-semibold leading-[1.15] text-slate-900 max-md:text-[1.35rem] max-sm:text-xl">
+                      <h3 className="mt-1.5 max-w-[34rem] text-[1.7rem] font-semibold leading-[1.15] text-slate-900 max-md:text-[1.35rem] max-sm:text-xl [overflow-wrap:anywhere]">
                         {step.title}
                       </h3>
+                      {step.description ? (
+                        <p className="mt-2 max-w-[34rem] text-base leading-7 text-slate-600 [overflow-wrap:anywhere]">
+                          {step.description}
+                        </p>
+                      ) : null}
                     </div>
                   </motion.div>
                 );
