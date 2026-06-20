@@ -10,6 +10,8 @@ import {
   WalletCards,
   Zap,
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { fetchPage } from "@/lib/cms";
 
 const features = [
   {
@@ -158,6 +160,19 @@ function FeaturePreview({ type }) {
 
 export default function AppFeatureCardsSection() {
   const prefersReducedMotion = useReducedMotion();
+  // Merge CMS text fields onto the hardcoded cards (keep UI-only props like icon/preview visual).
+  const [cards, setCards] = useState(features);
+
+  useEffect(() => {
+    fetchPage("app").then((data) => {
+      const cmsCards = data?.sections?.featureCards;
+      if (Array.isArray(cmsCards) && cmsCards.length) {
+        setCards(
+          cmsCards.map((cms, i) => ({ ...(features[i] ?? {}), ...cms })),
+        );
+      }
+    });
+  }, []);
 
   return (
     <section className="bg-white px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
@@ -179,12 +194,12 @@ export default function AppFeatureCardsSection() {
         </motion.div>
 
         <div className="mt-8 grid gap-6 lg:grid-cols-3">
-          {features.map((item, index) => {
-            const Icon = item.icon;
+          {cards.map((item, index) => {
+            const Icon = item.icon ?? BarChart3;
 
             return (
               <motion.article
-                key={item.title}
+                key={`${item.title ?? "card"}-${index}`}
                 initial={prefersReducedMotion ? false : { opacity: 0, y: 22 }}
                 whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.22 }}
@@ -196,14 +211,14 @@ export default function AppFeatureCardsSection() {
                     <Icon aria-hidden="true" className="h-8 w-8" strokeWidth={2.4} />
                   </span>
                   <div>
-                    <h3 className="whitespace-pre-line text-[1.6rem] font-semibold leading-[1.05] tracking-tight text-[#050A13]">
+                    <h3 className="whitespace-pre-line text-[1.6rem] font-semibold leading-[1.05] tracking-tight text-[#050A13] [overflow-wrap:anywhere]">
                       {item.title}
                     </h3>
                     <span className="mt-4 block h-0.5 w-8 rounded-full bg-[#0088FF]" />
                   </div>
                 </div>
 
-                <p className="mt-6 min-h-[4.5rem] text-[15px] font-medium leading-6 text-[#4F5B6F]">
+                <p className="mt-6 min-h-[4.5rem] text-[15px] font-medium leading-6 text-[#4F5B6F] [overflow-wrap:anywhere]">
                   {item.description}
                 </p>
 

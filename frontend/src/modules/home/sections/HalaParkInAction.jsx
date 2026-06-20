@@ -2,8 +2,10 @@
 
 import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import { fetchHomeSection, fetchPage } from "@/lib/cms";
 
-const storeLinks = [
+const DEFAULT_STORE_LINKS = [
   {
     icon: "/image--04.png",
     alt: "App Store",
@@ -130,8 +132,40 @@ function StoreBadge({
   );
 }
 
-export default function HalaParkInAction() {
+const DEFAULT_HALAPARK_COPY = {
+  title: "Next-Gen Parking at Your Fingertips",
+  subtitle:
+    "Find, book, and manage parking easily from your phone. Get real-time availability, quick booking, and a smooth, hassle-free experience anytime, anywhere.",
+  storeLinks: DEFAULT_STORE_LINKS,
+};
+
+// `cmsKey`/`pageSlug` let the same component pull from the right CMS section:
+//   • Home page  → fetchHomeSection("halaParkInAction")
+//   • App page   → fetchPage("app").sections.halapark
+export default function HalaParkInAction({ cmsKey = "halaParkInAction", pageSlug }) {
   const prefersReducedMotion = useReducedMotion();
+  const [copy, setCopy] = useState(DEFAULT_HALAPARK_COPY);
+
+  useEffect(() => {
+    const apply = (d) => {
+      if (!d || typeof d !== "object") return;
+      setCopy((prev) => ({
+        title: d.title || prev.title,
+        subtitle: d.subtitle || prev.subtitle,
+        storeLinks:
+          Array.isArray(d.storeLinks) && d.storeLinks.length > 0
+            ? d.storeLinks.map((s, i) => ({ ...(DEFAULT_STORE_LINKS[i] ?? {}), ...s }))
+            : prev.storeLinks,
+      }));
+    };
+    if (pageSlug) {
+      fetchPage(pageSlug).then((data) => apply(data?.sections?.[cmsKey]));
+    } else {
+      fetchHomeSection(cmsKey).then(apply);
+    }
+  }, [cmsKey, pageSlug]);
+
+  const storeLinks = copy.storeLinks;
 
   return (
     <motion.section
@@ -150,18 +184,16 @@ export default function HalaParkInAction() {
               <div className="max-w-[560px]">
                 <motion.h1
                   variants={prefersReducedMotion ? undefined : copyItemVariants}
-                  className="max-w-[560px] text-[clamp(2rem,4.5vw,4rem)] font-semibold leading-[1.05] tracking-[-0.06em] text-[#050A13]"
+                  className="max-w-[560px] text-[clamp(2rem,4.5vw,4rem)] font-semibold leading-[1.05] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]"
                 >
-                 Next-Gen Parking at Your Fingertips
+                  {copy.title}
                 </motion.h1>
 
                 <motion.p
                   variants={prefersReducedMotion ? undefined : copyItemVariants}
-                  className="mt-3 max-w-[650px] text-[0.88rem] font-light leading-6 text-[#8A94A6] sm:text-[0.94rem]"
+                  className="mt-3 max-w-[650px] text-[0.88rem] font-light leading-6 text-[#8A94A6] sm:text-[0.94rem] [overflow-wrap:anywhere]"
                 >
-                 Find, book, and manage parking easily from your phone. Get real-
-time availability, quick booking, and a smooth, hassle-free experience
-anytime, anywhere.
+                  {copy.subtitle}
                 </motion.p>
 
                

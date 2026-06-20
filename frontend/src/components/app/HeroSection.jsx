@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
+import { fetchPage } from "@/lib/cms";
 import {
   ArrowRight,
   Car,
@@ -234,8 +236,31 @@ function FloatingCards({ prefersReducedMotion }) {
   );
 }
 
+const DEFAULTS = {
+  eyebrow: "",
+  title: "Find Parking in Seconds Across UAE",
+  subtitle: "",
+  description:
+    "Find nearby parking, reserve instantly, and pay cashless, all in one seamless app experience.",
+  image: "/j3.png",
+};
+
 export default function HeroSection() {
   const prefersReducedMotion = useReducedMotion();
+  const [content, setContent] = useState(DEFAULTS);
+
+  useEffect(() => {
+    fetchPage("app").then((data) => {
+      const h = data?.sections?.hero;
+      if (!h || typeof h !== "object") return;
+      setContent((prev) => ({
+        ...prev,
+        ...Object.fromEntries(
+          Object.entries(h).filter(([, v]) => v !== "" && v != null),
+        ),
+      }));
+    });
+  }, []);
 
   return (
     <section className="relative overflow-x-hidden bg-[linear-gradient(118deg,#FFFFFF_0%,#F8FBFF_42%,#EAF3FF_100%)] lg:overflow-visible">
@@ -248,17 +273,24 @@ export default function HeroSection() {
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="relative z-20"
         >
-          <h1 className="max-w-[580px] text-[clamp(2.7rem,6vw,4.9rem)] font-semibold leading-[0.98] tracking-tight text-[#050A13]">
-            Find Parking
-            <br />
-            <span className="text-[#0088FF]">in Seconds</span>
-            <br />
-            <span className="text-[#0088FF]">Across UAE</span>
+          {content.eyebrow ? (
+            <p className="mb-3 text-sm font-semibold tracking-[0.16em] text-[#0088FF] [overflow-wrap:anywhere]">
+              {content.eyebrow}
+            </p>
+          ) : null}
+
+          <h1 className="max-w-[580px] text-[clamp(2.7rem,6vw,4.9rem)] font-semibold leading-[0.98] tracking-tight text-[#050A13] [overflow-wrap:anywhere]">
+            {content.title}
           </h1>
 
-          <p className="mt-5 max-w-[460px] text-base font-light leading-7 text-[#4F5B6F] sm:text-[17px]">
-            Find nearby parking, reserve instantly, and pay cashless, all in one
-            seamless app experience.
+          {content.subtitle ? (
+            <p className="mt-4 max-w-[460px] text-lg font-medium leading-7 text-[#0088FF] [overflow-wrap:anywhere]">
+              {content.subtitle}
+            </p>
+          ) : null}
+
+          <p className="mt-5 max-w-[460px] text-base font-light leading-7 text-[#4F5B6F] sm:text-[17px] [overflow-wrap:anywhere]">
+            {content.description}
           </p>
 
           <Link href="/app">
@@ -297,7 +329,7 @@ export default function HeroSection() {
           >
             <div className="absolute inset-x-[9%] bottom-[18%] z-0 h-[24%] rounded-full bg-[#0F172A]/20 blur-[42px] sm:inset-x-[12%] sm:bottom-[16%] lg:bottom-[14%] lg:blur-[56px]" />
             <Image
-              src="/j3.png"
+              src={content.image || DEFAULTS.image}
               alt=""
               fill
               sizes="(min-width: 1024px) 1240px, 155vw"

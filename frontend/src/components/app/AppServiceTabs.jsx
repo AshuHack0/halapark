@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { serviceFlows } from "./appContent";
+import { fetchPage } from "@/lib/cms";
 
 const AUTO_STEP_INTERVAL_MS = 2400;
 const LAST_STEP_TICK_HOLD_MS = 260;
@@ -174,28 +175,50 @@ function StepStatusIcon({ state, stepNumber }) {
 }
 
 export default function AppServiceTabs() {
+  // Merge CMS text fields onto the hardcoded tabs (keep UI-only key used for showcase data).
+  const [tabs, setTabs] = useState(serviceFlows);
   const [activeTab, setActiveTab] = useState(serviceFlows[0].key);
   const [activeStep, setActiveStep] = useState(serviceFlows[0].steps[0]);
   const [showLastStepTick, setShowLastStepTick] = useState(false);
+
+  useEffect(() => {
+    fetchPage("app").then((data) => {
+      const cmsTabs = data?.sections?.serviceTabs?.tabs;
+      if (Array.isArray(cmsTabs) && cmsTabs.length) {
+        const merged = cmsTabs.map((cmsTab, i) => ({
+          ...(serviceFlows[i] ?? {}),
+          ...cmsTab,
+        }));
+        setTabs(merged);
+      }
+    });
+  }, []);
+
+  // Derive a valid active tab/step so CMS tab changes never leave a stale selection.
   const activeService =
-    serviceFlows.find((service) => service.key === activeTab) ||
-    serviceFlows[0];
+    tabs.find((service) => service.key === activeTab) || tabs[0];
+  const safeActiveStep = activeService.steps.includes(activeStep)
+    ? activeStep
+    : activeService.steps[0];
   const activeShowcase =
     serviceShowcase[activeService.key] || serviceShowcase.public;
   const activeScreen =
-    activeShowcase.stepScreens?.[activeStep] || activeShowcase.screen;
-  const activeStepIndex = Math.max(activeService.steps.indexOf(activeStep), 0);
+    activeShowcase.stepScreens?.[safeActiveStep] || activeShowcase.screen;
+  const activeStepIndex = Math.max(
+    activeService.steps.indexOf(safeActiveStep),
+    0,
+  );
   const displayStepIndex = showLastStepTick
     ? activeService.steps.length
     : activeStepIndex;
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
-      const currentTabIndex = serviceFlows.findIndex(
+      const currentTabIndex = tabs.findIndex(
         (service) => service.key === activeTab,
       );
       const safeTabIndex = currentTabIndex >= 0 ? currentTabIndex : 0;
-      const currentService = serviceFlows[safeTabIndex];
+      const currentService = tabs[safeTabIndex];
       const currentStepIndex = currentService.steps.indexOf(activeStep);
       const safeStepIndex = currentStepIndex >= 0 ? currentStepIndex : 0;
       const isLastStep = safeStepIndex >= currentService.steps.length - 1;
@@ -205,7 +228,7 @@ export default function AppServiceTabs() {
           setShowLastStepTick(true);
           return;
         }
-        const nextTab = serviceFlows[(safeTabIndex + 1) % serviceFlows.length];
+        const nextTab = tabs[(safeTabIndex + 1) % tabs.length];
         setShowLastStepTick(false);
         setActiveTab(nextTab.key);
         setActiveStep(nextTab.steps[0]);
@@ -218,7 +241,7 @@ export default function AppServiceTabs() {
     }, showLastStepTick ? LAST_STEP_TICK_HOLD_MS : AUTO_STEP_INTERVAL_MS);
 
     return () => window.clearTimeout(timer);
-  }, [activeTab, activeStep, showLastStepTick]);
+  }, [activeTab, activeStep, showLastStepTick, tabs]);
 
   return (
     <section className="w-full bg-white px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
@@ -229,10 +252,10 @@ export default function AppServiceTabs() {
             aria-label="App services"
             className="grid min-w-max border-b border-[#D8DDE5] sm:min-w-0"
             style={{
-              gridTemplateColumns: `repeat(${serviceFlows.length}, minmax(180px, 1fr))`,
+              gridTemplateColumns: `repeat(${tabs.length}, minmax(180px, 1fr))`,
             }}
           >
-            {serviceFlows.map((service) => {
+            {tabs.map((service) => {
               const isActive = service.key === activeService.key;
 
               return (
@@ -252,7 +275,7 @@ export default function AppServiceTabs() {
                       : "text-[#D2D6DD] hover:text-[#7C8596]"
                   }`}
                 >
-                  <span className="whitespace-nowrap">{service.label}</span>
+                  <span className="whitespace-nowrap [overflow-wrap:anywhere]">{service.label}</span>
                   <span
                     className={`absolute bottom-[-1px] left-0 h-0.5 bg-[#0088FF]/70 transition-all duration-300 ${
                       isActive ? "w-full opacity-100" : "w-0 opacity-0"
@@ -266,11 +289,11 @@ export default function AppServiceTabs() {
 
         <div className="flex flex-col items-center gap-10 text-center md:flex-row md:items-center md:justify-between md:text-left">
           <div className="w-full max-w-[360px] md:flex-1 md:max-w-[500px] md:pt-6 lg:max-w-[560px] lg:pt-10">
-            <h3 className="text-[30px] font-medium tracking-[-0.04em] text-black sm:text-[34px] lg:text-[42px] lg:leading-[0.98]">
+            <h3 className="text-[30px] font-medium tracking-[-0.04em] text-black sm:text-[34px] lg:text-[42px] lg:leading-[0.98] [overflow-wrap:anywhere]">
               {activeService.label}
             </h3>
 
-            <p className="mt-5 text-[16px] leading-[1.7] text-[#667085] sm:text-[17px]">
+            <p className="mt-5 text-[16px] leading-[1.7] text-[#667085] sm:text-[17px] [overflow-wrap:anywhere]">
               {activeService.description}
             </p>
 
@@ -371,7 +394,7 @@ export default function AppServiceTabs() {
                         <span className="text-[12px] font-medium uppercase tracking-[0.12em] text-[#667085]">
                           Step {index + 1}
                         </span>
-                        <span className="text-[19px] font-medium leading-[1.15] text-[#101828] sm:text-[22px]">
+                        <span className="text-[19px] font-medium leading-[1.15] text-[#101828] sm:text-[22px] [overflow-wrap:anywhere]">
                           {step}
                         </span>
                       </span>
@@ -385,7 +408,7 @@ export default function AppServiceTabs() {
           <div className="mt-4 flex h-full w-full justify-center md:mt-8 md:w-[44%] md:flex-none md:justify-end lg:mt-10">
             <PhonePreview
               screen={activeScreen}
-              label={`${activeService.label} ${activeStep}`}
+              label={`${activeService.label} ${safeActiveStep}`}
             />
           </div>
         </div>

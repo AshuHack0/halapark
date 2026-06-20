@@ -1,8 +1,10 @@
 "use client";
 
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { CalendarCheck, Check, MapPin, Send, WalletCards } from "lucide-react";
+import { fetchPage } from "@/lib/cms";
 import { appScreenshots } from "./appContent";
 
 const phoneFrameSrc = "/mobileframe.png";
@@ -96,7 +98,7 @@ function PhoneFrame({ screen, index, prefersReducedMotion }) {
           className={`absolute z-30 translate-y-[1px] overflow-hidden bg-white ${screenBounds}`}
         >
           <Image
-            src={screen.image}
+            src={screen.image || appScreenshots[index]?.image || phoneFrameSrc}
             alt={screen.title}
             fill
             sizes="(min-width: 1280px) 260px, (min-width: 1024px) 220px, (min-width: 640px) 250px, 230px"
@@ -122,6 +124,22 @@ function PhoneFrame({ screen, index, prefersReducedMotion }) {
 
 export default function AppScreenshots() {
   const prefersReducedMotion = useReducedMotion();
+  // Merge CMS screenshot fields onto the hardcoded defaults (keep UI-only props
+  // like id/step/label/phoneLayouts so layout + animations stay intact).
+  const [screens, setScreens] = useState(appScreenshots);
+
+  useEffect(() => {
+    fetchPage("app").then((page) => {
+      const cms = page?.sections?.screenshots;
+      if (!Array.isArray(cms) || cms.length === 0) return;
+      const count = Math.max(appScreenshots.length, cms.length);
+      const merged = Array.from({ length: count }, (_, i) => ({
+        ...(appScreenshots[i] ?? {}),
+        ...(cms[i] ?? {}),
+      }));
+      setScreens(merged);
+    });
+  }, []);
 
   return (
     <section className="overflow-hidden bg-white px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
@@ -186,9 +204,9 @@ export default function AppScreenshots() {
           />
 
           <div className="relative grid grid-cols-1 gap-7 sm:grid-cols-2 md:grid-cols-3 lg:flex lg:items-start lg:justify-center lg:gap-4">
-            {appScreenshots.map((screen, index) => (
+            {screens.map((screen, index) => (
               <PhoneFrame
-                key={screen.id}
+                key={screen.id ?? `screen-${index}`}
                 screen={screen}
                 index={index}
                 prefersReducedMotion={prefersReducedMotion}

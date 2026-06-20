@@ -3,13 +3,15 @@
 import Link from "next/link";
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { fetchPage } from "@/lib/cms";
 
 const NAVY = "#050A13";
 const ACCENT = "#0088FF";
 const ACCENT_SOFT = "#EAF3FF";
 const phoneFrameSrc = "/mobileframe.png";
 
-const appFeatures = [
+const defaultAppFeatures = [
   {
     title: "Manage with ease",
     description:
@@ -61,7 +63,7 @@ const appFeatures = [
   },
 ];
 
-const websiteFeatures = [
+const defaultWebsiteFeatures = [
   {
     title: "Simple & intuitive",
     description:
@@ -120,6 +122,36 @@ const websiteFeatures = [
   },
 ];
 
+const appFeatureIcons = defaultAppFeatures.map((f) => f.icon);
+const websiteFeatureIcons = defaultWebsiteFeatures.map((f) => f.icon);
+
+const defaultFeatureIcon = (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+    <circle cx="12" cy="12" r="8.5" stroke={ACCENT} strokeWidth="1.6" />
+    <path
+      d="M8.5 12l2.4 2.4 4.6-5"
+      stroke={ACCENT}
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+const defaultContent = {
+  title: "Your parking, in\nyour hands.",
+  subtitle: "Smarter parking,\nright from your browser.",
+  description: "",
+  appFeatures: defaultAppFeatures.map(({ title, description }) => ({
+    title,
+    description,
+  })),
+  websiteFeatures: defaultWebsiteFeatures.map(({ title, description }) => ({
+    title,
+    description,
+  })),
+};
+
 function HalaparkMonogram({ size = 28, color = ACCENT }) {
   return (
     <svg
@@ -150,10 +182,15 @@ function FeatureRow({ icon, title, description }) {
         {icon}
       </span>
       <div>
-        <p className="text-[15px] font-semibold" style={{ color: NAVY }}>
+        <p
+          className="text-[15px] font-semibold [overflow-wrap:anywhere]"
+          style={{ color: NAVY }}
+        >
           {title}
         </p>
-        <p className="mt-1 text-[13px] leading-6 text-[#5C667A]">{description}</p>
+        <p className="mt-1 text-[13px] leading-6 text-[#5C667A] [overflow-wrap:anywhere]">
+          {description}
+        </p>
       </div>
     </li>
   );
@@ -162,7 +199,7 @@ function FeatureRow({ icon, title, description }) {
 function SectionHeading({ brand, suffix }) {
   return (
     <div>
-      <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
+      <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl [overflow-wrap:anywhere]">
         <span style={{ color: ACCENT }}>{brand}</span>{" "}
         <span style={{ color: NAVY }}>{suffix}</span>
       </h2>
@@ -299,6 +336,29 @@ function WebsitePreview() {
 
 export default function AppPlatformSection() {
   const prefersReducedMotion = useReducedMotion();
+  const [content, setContent] = useState(defaultContent);
+
+  useEffect(() => {
+    fetchPage("app").then((data) => {
+      const p = data?.sections?.platform;
+      if (!p || typeof p !== "object") return;
+      setContent((prev) => {
+        const next = { ...prev };
+        for (const key of ["title", "subtitle", "description"]) {
+          if (typeof p[key] === "string" && p[key].trim() !== "") {
+            next[key] = p[key];
+          }
+        }
+        if (Array.isArray(p.appFeatures) && p.appFeatures.length > 0) {
+          next.appFeatures = p.appFeatures;
+        }
+        if (Array.isArray(p.websiteFeatures) && p.websiteFeatures.length > 0) {
+          next.websiteFeatures = p.websiteFeatures;
+        }
+        return next;
+      });
+    });
+  }, []);
 
   return (
     <section className="bg-white px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20 z-[99]">
@@ -315,17 +375,26 @@ export default function AppPlatformSection() {
               <SectionHeading brand="Halapark" suffix="Online App" />
 
               <p
-                className="mt-7 text-2xl font-semibold leading-snug sm:text-[26px]"
+                className="mt-7 whitespace-pre-line text-2xl font-semibold leading-snug sm:text-[26px] [overflow-wrap:anywhere]"
                 style={{ color: NAVY }}
               >
-                Your parking, in
-                <br />
-                your hands.
+                {content.title}
               </p>
 
+              {content.description ? (
+                <p className="mt-3 text-[14px] leading-6 text-[#5C667A] [overflow-wrap:anywhere]">
+                  {content.description}
+                </p>
+              ) : null}
+
               <ul className="mt-7 space-y-5">
-                {appFeatures.map((feature) => (
-                  <FeatureRow key={feature.title} {...feature} />
+                {content.appFeatures.map((feature, i) => (
+                  <FeatureRow
+                    key={feature.title ?? i}
+                    icon={appFeatureIcons[i] ?? defaultFeatureIcon}
+                    title={feature.title}
+                    description={feature.description}
+                  />
                 ))}
               </ul>
 
@@ -397,17 +466,20 @@ export default function AppPlatformSection() {
               <SectionHeading brand="Halapark" suffix="Online Website" />
 
               <p
-                className="mt-7 text-2xl font-semibold leading-snug sm:text-[26px]"
+                className="mt-7 whitespace-pre-line text-2xl font-semibold leading-snug sm:text-[26px] [overflow-wrap:anywhere]"
                 style={{ color: NAVY }}
               >
-                Smarter parking,
-                <br />
-                right from your browser.
+                {content.subtitle}
               </p>
 
               <ul className="mt-7 space-y-5">
-                {websiteFeatures.map((feature) => (
-                  <FeatureRow key={feature.title} {...feature} />
+                {content.websiteFeatures.map((feature, i) => (
+                  <FeatureRow
+                    key={feature.title ?? i}
+                    icon={websiteFeatureIcons[i] ?? defaultFeatureIcon}
+                    title={feature.title}
+                    description={feature.description}
+                  />
                 ))}
               </ul>
 

@@ -36,7 +36,7 @@ export default function AppPage() {
 
       {/* <AppFeatureHighlights /> */}
       {/* <AboutFeatures data={featureHighlights} /> */}
-      <HalaParkInAction />
+      <HalaParkInAction pageSlug="app" cmsKey="halapark" />
     </div>
   );
 }

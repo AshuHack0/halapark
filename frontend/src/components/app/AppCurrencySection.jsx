@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
+import { useEffect, useState } from "react";
 import {
   ArrowRight,
   Check,
@@ -10,12 +11,21 @@ import {
   ShieldCheck,
   WalletCards,
 } from "lucide-react";
+import { fetchPage } from "@/lib/cms";
 
 const quickFeatures = [
   { title: "Top Up", subtitle: "your wallet", icon: WalletCards },
   { title: "Book & Pay", subtitle: "in seconds", icon: ParkingCircle },
   { title: "Track", subtitle: "in real-time", icon: MapPinned },
 ];
+
+const defaultContent = {
+  title: "Pay Instantly. Park Effortlessly. Stay in Control.",
+  subtitle: "Smart Parking Flow",
+  description:
+    "Fast, cashless parking across the UAE with wallet, Apple Pay, and card options.",
+  cardFeatures: quickFeatures,
+};
 
 function PhonePreview() {
   return (
@@ -64,6 +74,28 @@ function PhonePreview() {
 
 export default function AppCurrencySection() {
   const prefersReducedMotion = useReducedMotion();
+  const [content, setContent] = useState(defaultContent);
+
+  useEffect(() => {
+    fetchPage("app").then((data) => {
+      const c = data?.sections?.currency;
+      if (!c || typeof c !== "object") return;
+
+      setContent((prev) => {
+        const next = { ...prev };
+        if (c.title) next.title = c.title;
+        if (c.subtitle) next.subtitle = c.subtitle;
+        if (c.description) next.description = c.description;
+        if (Array.isArray(c.cardFeatures) && c.cardFeatures.length > 0) {
+          next.cardFeatures = c.cardFeatures.map((cmsCard, i) => ({
+            ...(prev.cardFeatures[i] ?? {}),
+            ...cmsCard,
+          }));
+        }
+        return next;
+      });
+    });
+  }, []);
 
   return (
     <motion.section
@@ -101,21 +133,16 @@ export default function AppCurrencySection() {
               </span>
             </div>
 
-            <p className="mt-8 inline-flex w-fit rounded-full border border-[#D7E7FF] bg-white px-4 py-1.5 text-[12px] font-semibold uppercase tracking-[0.14em] text-[#0088FF] shadow-[0_8px_22px_rgba(15,23,42,0.04)]">
-              Smart Parking Flow
+            <p className="mt-8 inline-flex w-fit rounded-full border border-[#D7E7FF] bg-white px-4 py-1.5 text-[12px] font-semibold uppercase tracking-[0.14em] text-[#0088FF] shadow-[0_8px_22px_rgba(15,23,42,0.04)] [overflow-wrap:anywhere]">
+              {content.subtitle}
             </p>
 
-            <h2 className="mt-5 max-w-[590px] text-[clamp(2.25rem,5.6vw,4.25rem)] font-semibold leading-[1.03] tracking-tight text-[#050A13] lg:leading-[0.99]">
-              Pay Instantly.
-              <br />
-              Park Effortlessly.
-              <br />
-              <span className="text-[#0088FF]">Stay in Control.</span>
+            <h2 className="mt-5 max-w-[590px] text-[clamp(2.25rem,5.6vw,4.25rem)] font-semibold leading-[1.03] tracking-tight text-[#050A13] lg:leading-[0.99] [overflow-wrap:anywhere]">
+              {content.title}
             </h2>
 
-            <p className="mt-5 max-w-[500px] text-base font-light leading-7 text-[#667085] sm:text-[17px]">
-              Fast, cashless parking across the UAE with wallet, Apple Pay, and
-              card options.
+            <p className="mt-5 max-w-[500px] text-base font-light leading-7 text-[#667085] sm:text-[17px] [overflow-wrap:anywhere]">
+              {content.description}
             </p>
 
             <button
@@ -137,18 +164,18 @@ export default function AppCurrencySection() {
             </p>
 
             <div className="mt-8 grid gap-3 sm:grid-cols-3 lg:mt-auto lg:max-w-[610px]">
-              {quickFeatures.map((item, index) => {
-                const Icon = item.icon;
+              {content.cardFeatures.map((item, index) => {
+                const Icon = item.icon ?? quickFeatures[index]?.icon ?? WalletCards;
 
                 return (
                   <div
-                    key={item.title}
+                    key={`${item.title}-${index}`}
                     className="flex items-center gap-3 rounded-2xl border border-[#E4EAF2] bg-white/82 p-3 shadow-[0_10px_26px_rgba(15,23,42,0.04)]"
                   >
                     <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#E9F3FF] text-[#0088FF]">
                       <Icon aria-hidden="true" className="h-6 w-6" />
                     </span>
-                    <p className="text-sm leading-5 text-[#344054]">
+                    <p className="text-sm leading-5 text-[#344054] [overflow-wrap:anywhere]">
                       <span className="font-semibold">{item.title}</span>
                       <br />
                       <span className="text-[#667085]">{item.subtitle}</span>
