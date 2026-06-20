@@ -162,6 +162,11 @@ export default function AppFeatureCardsSection() {
   const prefersReducedMotion = useReducedMotion();
   // Merge CMS text fields onto the hardcoded cards (keep UI-only props like icon/preview visual).
   const [cards, setCards] = useState(features);
+  const [header, setHeader] = useState({
+    heading: "Parking Made",
+    headingAccent: "Simple, Smart & Reliable",
+    description: "Powerful features designed to save you time, money, and effort.",
+  });
 
   useEffect(() => {
     fetchPage("app").then((data) => {
@@ -170,6 +175,13 @@ export default function AppFeatureCardsSection() {
         setCards(
           cmsCards.map((cms, i) => ({ ...(features[i] ?? {}), ...cms })),
         );
+      }
+      const h = data?.sections?.featureCardsHeader;
+      if (h && typeof h === "object") {
+        setHeader((prev) => ({
+          ...prev,
+          ...Object.fromEntries(Object.entries(h).filter(([, v]) => v !== "" && v != null)),
+        }));
       }
     });
   }, []);
@@ -184,12 +196,17 @@ export default function AppFeatureCardsSection() {
           transition={{ duration: 0.45, ease: "easeOut" }}
           className="mx-auto max-w-4xl text-center"
         >
-          <h2 className="text-[clamp(2rem,4vw,3.5rem)] font-semibold leading-tight tracking-tight text-[#050A13]">
-            Parking Made{" "}
-            <span className="text-[#0088FF]">Simple, Smart & Reliable</span>
+          <h2 className="text-[clamp(2rem,4vw,3.5rem)] font-semibold leading-tight tracking-tight text-[#050A13] [overflow-wrap:anywhere]">
+            {header.heading}
+            {header.headingAccent ? (
+              <>
+                {" "}
+                <span className="text-[#0088FF]">{header.headingAccent}</span>
+              </>
+            ) : null}
           </h2>
-          <p className="mt-3 text-base font-medium text-[#667085]">
-            Powerful features designed to save you time, money, and effort.
+          <p className="mt-3 text-base font-medium text-[#667085] [overflow-wrap:anywhere]">
+            {header.description}
           </p>
         </motion.div>
 

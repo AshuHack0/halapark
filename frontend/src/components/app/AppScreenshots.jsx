@@ -127,17 +127,32 @@ export default function AppScreenshots() {
   // Merge CMS screenshot fields onto the hardcoded defaults (keep UI-only props
   // like id/step/label/phoneLayouts so layout + animations stay intact).
   const [screens, setScreens] = useState(appScreenshots);
+  const [header, setHeader] = useState({
+    eyebrow: "Built for a cleaner parking flow",
+    heading: "Parking made simple.",
+    headingAccent: "From start to finish.",
+    description:
+      "Find your spot, book in seconds, pay securely, and get instant confirmation all in the HalaPark app.",
+  });
 
   useEffect(() => {
     fetchPage("app").then((page) => {
       const cms = page?.sections?.screenshots;
-      if (!Array.isArray(cms) || cms.length === 0) return;
-      const count = Math.max(appScreenshots.length, cms.length);
-      const merged = Array.from({ length: count }, (_, i) => ({
-        ...(appScreenshots[i] ?? {}),
-        ...(cms[i] ?? {}),
-      }));
-      setScreens(merged);
+      if (Array.isArray(cms) && cms.length > 0) {
+        const count = Math.max(appScreenshots.length, cms.length);
+        const merged = Array.from({ length: count }, (_, i) => ({
+          ...(appScreenshots[i] ?? {}),
+          ...(cms[i] ?? {}),
+        }));
+        setScreens(merged);
+      }
+      const h = page?.sections?.screenshotsHeader;
+      if (h && typeof h === "object") {
+        setHeader((prev) => ({
+          ...prev,
+          ...Object.fromEntries(Object.entries(h).filter(([, v]) => v !== "" && v != null)),
+        }));
+      }
     });
   }, []);
 
@@ -155,18 +170,21 @@ export default function AppScreenshots() {
             <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[rgba(0,136,255,0.1)] text-[#0088FF]">
               <Check aria-hidden="true" className="h-2.5 w-2.5" strokeWidth={3} />
             </span>
-            Built for a cleaner parking flow
+            {header.eyebrow}
           </p>
 
-          <h2 className="mx-auto mt-4 max-w-[760px] text-[clamp(2.25rem,12vw,4.9rem)] font-semibold leading-[0.98] tracking-tight text-[#050A13] sm:leading-[0.95]">
-            Parking made simple.
-            <br />
-            From <span className="text-[#0088FF]">start to finish.</span>
+          <h2 className="mx-auto mt-4 max-w-[760px] text-[clamp(2.25rem,12vw,4.9rem)] font-semibold leading-[0.98] tracking-tight text-[#050A13] sm:leading-[0.95] [overflow-wrap:anywhere]">
+            {header.heading}
+            {header.headingAccent ? (
+              <>
+                <br />
+                <span className="text-[#0088FF]">{header.headingAccent}</span>
+              </>
+            ) : null}
           </h2>
 
-          <p className="mx-auto mt-5 max-w-[520px] text-sm font-light leading-6 text-[#8A94A6] sm:text-[15px]">
-            Find your spot, book in seconds, pay securely, and get instant
-            confirmation all in the HalaPark app.
+          <p className="mx-auto mt-5 max-w-[520px] text-sm font-light leading-6 text-[#8A94A6] sm:text-[15px] [overflow-wrap:anywhere]">
+            {header.description}
           </p>
         </motion.div>
 
