@@ -247,7 +247,9 @@ export const DEFAULT_SOLUTION_DETAILS = [
 ];
 
 export function getSolutionDetailBySlug(slug, details) {
-  const list = Array.isArray(details) && details.length ? details : DEFAULT_SOLUTION_DETAILS;
+  // CMS-only: resolve strictly from the provided list (no DEFAULT fallback), so a
+  // deleted solution returns null → its detail page 404s.
+  const list = Array.isArray(details) ? details : [];
   return list.find((d) => d.slug === slug) || null;
 }
 

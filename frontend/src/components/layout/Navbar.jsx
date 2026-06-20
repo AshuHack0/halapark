@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { servicesData } from "@/modules/home/servicesData";
-import { SOLUTION_NAV_GROUPS } from "@/lib/solutionDetailsDefaults";
+import { fetchPage } from "@/lib/cms";
 import SearchModal from "@/components/layout/SearchModal";
 
 const HamburgerIcon = () => (
@@ -169,6 +169,40 @@ export default function Navbar() {
   // Which solutions group is expanded in the dropdown (desktop hover, mobile tap).
   const [activeGroup, setActiveGroup] = useState(null);
   const [mobileActiveGroup, setMobileActiveGroup] = useState(null);
+  // Solutions dropdown built from the CMS (cards + group order). Empty when the
+  // admin has no solutions — deleting them all empties the dropdown.
+  const [solutionGroups, setSolutionGroups] = useState([]);
+
+  useEffect(() => {
+    fetchPage("solutions").then((page) => {
+      const sol = page?.sections?.solutions;
+      const cards = Array.isArray(sol?.cards) ? sol.cards.filter((c) => c && c.slug) : [];
+      if (cards.length === 0) {
+        setSolutionGroups([]);
+        return;
+      }
+      const order = Array.isArray(sol?.groups) ? [...sol.groups] : [];
+      cards.forEach((c) => {
+        if (c.group && !order.includes(c.group)) order.push(c.group);
+      });
+      const grouped = order
+        .map((g) => ({
+          group: g,
+          links: cards
+            .filter((c) => (c.group || "") === g)
+            .map((c) => ({ href: `/solutions/${c.slug}`, label: c.name || c.slug })),
+        }))
+        .filter((g) => g.links.length > 0);
+      const ungrouped = cards.filter((c) => !c.group);
+      if (ungrouped.length > 0) {
+        grouped.push({
+          group: "Solutions",
+          links: ungrouped.map((c) => ({ href: `/solutions/${c.slug}`, label: c.name || c.slug })),
+        });
+      }
+      setSolutionGroups(grouped);
+    });
+  }, []);
   const [language, setLanguage] = useState(getInitialLanguage);
   const [hash, setHash] = useState("");
   const isArabic = language === "ar";
@@ -179,12 +213,6 @@ export default function Navbar() {
     href: `/services?open=${encodeURIComponent(service.slug)}`,
     label: isArabic ? (SERVICE_LABELS_AR[service.slug] || service.name) : service.name,
   }));
-  // Solutions are grouped into categories for the dropdown.
-  const solutionGroups = SOLUTION_NAV_GROUPS.map((g) => ({
-    group: g.group,
-    links: g.items.map((it) => ({ href: `/solutions/${it.slug}`, label: it.label })),
-  }));
-
   // A dropdown nav item can be of type "services" or "solutions". Services uses a
   // flat `links` list; solutions uses grouped `groups`.
   const dropdownConfig = {

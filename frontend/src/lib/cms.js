@@ -1,6 +1,6 @@
 import { API_URL } from "@/config/api";
 import { mergeAboutContent } from "@/lib/aboutDefaults";
-import { DEFAULT_SOLUTION_DETAILS, getSolutionDetailBySlug } from "@/lib/solutionDetailsDefaults";
+import { getSolutionDetailBySlug } from "@/lib/solutionDetailsDefaults";
 
 export const DEFAULT_HOME_SLIDES = [
   {
@@ -222,14 +222,11 @@ export async function fetchBusinessSection(key) {
 export async function fetchSolutionDetails() {
   const page = await fetchPage("solutions");
   const details = page?.sections?.details;
-  if (Array.isArray(details) && details.length > 0) {
-    cmsLog("fetchSolutionDetails → using API", { count: details.length });
-    return details;
-  }
-  cmsLog("fetchSolutionDetails → using DEFAULT_SOLUTION_DETAILS", {
-    count: DEFAULT_SOLUTION_DETAILS.length,
-  });
-  return DEFAULT_SOLUTION_DETAILS;
+  // CMS-only: return exactly what's in the CMS (empty array when none).
+  // No fallback to DEFAULT_SOLUTION_DETAILS — deleting all solutions should
+  // actually empty the navbar + detail pages.
+  cmsLog("fetchSolutionDetails", { count: Array.isArray(details) ? details.length : 0 });
+  return Array.isArray(details) ? details : [];
 }
 
 // The "Our Solutions" cards (with their CMS-managed images), keyed by slug.
