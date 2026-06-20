@@ -36,6 +36,7 @@ export default function TransformParking() {
   const reduced = useReducedMotion();
   const [transformData, setTransformData] = useState({
     title: "Ready to Transform Your Parking Business?",
+    titleAccent: "Parking Business?",
     description: "Partner with HalaPark and unlock the future of intelligent parking management, smart mobility, and connected urban infrastructure.",
     parkingPartnerTitle: "Become a Parking Partner",
     parkingPartnerSubtitle: "Turn your parking assets into profitable smart mobility solutions.",
@@ -68,11 +69,26 @@ export default function TransformParking() {
           transition={{ duration: 0.65, ease }}
           className="mx-auto mb-14 max-w-[980px] text-center"
         >
-          <h2 className="text-[clamp(3rem,5.5vw,5rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
-            Ready to Transform Your{" "}
-            <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">
-              Parking Business?
-            </span>
+          <h2 className="text-[clamp(3rem,5.5vw,5rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]">
+            {(() => {
+              const accent = transformData.titleAccent?.trim() || "";
+              const full = transformData.title || "";
+              const base = accent && full.endsWith(accent) ? full.slice(0, full.length - accent.length).trimEnd() : full;
+              const showAccent = accent && full.endsWith(accent);
+              return (
+                <>
+                  {base}
+                  {showAccent ? (
+                    <>
+                      {" "}
+                      <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">
+                        {accent}
+                      </span>
+                    </>
+                  ) : null}
+                </>
+              );
+            })()}
           </h2>
           <p className="mx-auto mt-5 max-w-[650px] text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem]">
             {transformData.description}

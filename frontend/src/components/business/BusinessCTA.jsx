@@ -17,6 +17,7 @@ export default function BusinessCTA() {
     description: "Partner with HalaPark to launch intelligent parking solutions powered by automation, AI, and seamless digital operations.",
     ctaLabel: "Book a Free Consultation",
     ctaLink: "/contact",
+    image: "/hf_20260327_064457_c75923ba-dc06-4c6e-9b63-fa181e94bcfa.png",
   });
 
   useEffect(() => {
@@ -32,7 +33,7 @@ export default function BusinessCTA() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="relative overflow-hidden rounded-[28px] bg-[#06111f]">
           <div className="absolute inset-0">
-            <Image src="/hf_20260327_064457_c75923ba-dc06-4c6e-9b63-fa181e94bcfa.png" alt="" fill className="object-cover object-center opacity-40" aria-hidden />
+            <Image src={cta.image || "/hf_20260327_064457_c75923ba-dc06-4c6e-9b63-fa181e94bcfa.png"} alt="" fill className="object-cover object-center opacity-40" aria-hidden />
             <div className="absolute inset-0 bg-gradient-to-b from-[#06111f]/60 via-[#06111f]/40 to-[#06111f]/80" />
           </div>
 
