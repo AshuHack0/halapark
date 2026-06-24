@@ -85,6 +85,8 @@ const UI_LABELS = {
   viewAppFeatures: { en: "View App Features", ar: "عرض ميزات التطبيق" },
   downloadNow: { en: "Download Now", ar: "حمّل الآن" },
   visitWebsite: { en: "Visit Website", ar: "زيارة الموقع" },
+  findMyParking: { en: "Find My Parking", ar: "ابحث عن موقفي" },
+  step: { en: "Step", ar: "خطوة" },
 };
 
 /** Translate a fixed UI label by key:  ui("getInTouch", language). */

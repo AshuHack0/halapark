@@ -158,6 +158,16 @@ export default function AppScreenshots() {
     });
   }, []);
 
+  // Merge CMS step copy onto the hardcoded steps (keep the icon by position).
+  const displaySteps = processSteps.map((step, i) => {
+    const cms = Array.isArray(header.processSteps) ? header.processSteps[i] : null;
+    return {
+      icon: step.icon,
+      title: cms ? t(cms, "title", language) : language === "ar" ? "" : step.title,
+      text: cms ? t(cms, "text", language) : language === "ar" ? "" : step.text,
+    };
+  });
+
   return (
     <section className="overflow-hidden bg-white px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
       <div className="mx-auto max-w-7xl">
@@ -192,9 +202,9 @@ export default function AppScreenshots() {
 
         <div className="mx-auto mt-8 max-w-[1180px] pb-2 sm:mt-9">
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:flex md:min-w-[930px] md:items-center md:justify-center md:gap-2">
-            {processSteps.map((step, index) => (
+            {displaySteps.map((step, index) => (
               <div
-                key={step.title}
+                key={index}
                 className={`flex items-center gap-2 rounded-2xl border border-[#E4EAF2] bg-white p-3 shadow-[0_10px_26px_rgba(15,23,42,0.04)] md:rounded-none md:border-0 md:bg-transparent md:p-0 md:shadow-none ${
                   index === processSteps.length - 1
                     ? "sm:col-span-2 sm:mx-auto sm:w-full sm:max-w-[22rem] md:col-span-1 md:mx-0 md:max-w-none"

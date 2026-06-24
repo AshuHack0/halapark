@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { serviceFlows } from "./appContent";
 import { fetchPage } from "@/lib/cms";
-import { useLanguage, t } from "@/context/LanguageContext";
+import { useLanguage, t, ui } from "@/context/LanguageContext";
 
 const AUTO_STEP_INTERVAL_MS = 2400;
 const LAST_STEP_TICK_HOLD_MS = 260;
@@ -182,10 +182,13 @@ export default function AppServiceTabs() {
   const [activeTab, setActiveTab] = useState(serviceFlows[0].key);
   const [activeStep, setActiveStep] = useState(serviceFlows[0].steps[0]);
   const [showLastStepTick, setShowLastStepTick] = useState(false);
+  const [content, setContent] = useState({});
 
   useEffect(() => {
     fetchPage("app").then((data) => {
-      const cmsTabs = data?.sections?.serviceTabs?.tabs;
+      const section = data?.sections?.serviceTabs;
+      if (section && typeof section === "object") setContent(section);
+      const cmsTabs = section?.tabs;
       if (Array.isArray(cmsTabs) && cmsTabs.length) {
         const merged = cmsTabs.map((cmsTab, i) => ({
           ...(serviceFlows[i] ?? {}),
@@ -299,46 +302,43 @@ export default function AppServiceTabs() {
               {t(activeService, "description", language)}
             </p>
 
-            <p className="mt-3 text-[15px] leading-[1.7] text-[#7A8599] sm:text-[16px]">
-              <span className="font-semibold text-[#344054]">
-                {activeShowcase.cardTitle}
-              </span>{" "}
-              is built for {activeShowcase.cardCaption.toLowerCase()}, helping users
-              move from {activeService.steps[0]} to{" "}
-              {activeService.steps[activeService.steps.length - 1]} with fewer taps.
+            <p className="mt-3 text-[15px] leading-[1.7] text-[#7A8599] sm:text-[16px] [overflow-wrap:anywhere]">
+              {t(activeService, "builtFor", language)}
             </p>
 
 
             <div className="mt-5 flex flex-wrap items-center gap-3">
-              <span className="inline-flex items-center rounded-full border border-[#D7E7FF] bg-[#F3F8FF] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#0F4B86]">
-                {activeShowcase.cardKicker}
-              </span>
-              <button
-                type="button"
-                className="inline-flex items-center rounded-full border border-[#CFE3FF] bg-white px-3 py-1 text-xs font-semibold text-[#0F62C7] transition-colors duration-200 hover:bg-[#F5F9FF]"
-              >
-                {activeShowcase.cta}
-              </button>
+              {t(activeService, "cardKicker", language) ? (
+                <span className="inline-flex items-center rounded-full border border-[#D7E7FF] bg-[#F3F8FF] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#0F4B86]">
+                  {t(activeService, "cardKicker", language)}
+                </span>
+              ) : null}
+              {t(activeService, "cta", language) ? (
+                <button
+                  type="button"
+                  className="inline-flex items-center rounded-full border border-[#CFE3FF] bg-white px-3 py-1 text-xs font-semibold text-[#0F62C7] transition-colors duration-200 hover:bg-[#F5F9FF]"
+                >
+                  {t(activeService, "cta", language)}
+                </button>
+              ) : null}
             </div>
 
             <div className="mt-4 flex flex-wrap gap-2">
-              <span className="inline-flex items-center rounded-full border border-[#E4E7EC] bg-white px-3 py-1 text-xs font-medium text-[#475467]">
-                Real-time updates
-              </span>
-              <span className="inline-flex items-center rounded-full border border-[#E4E7EC] bg-white px-3 py-1 text-xs font-medium text-[#475467]">
-                Seamless checkout
-              </span>
-              <span className="inline-flex items-center rounded-full border border-[#E4E7EC] bg-white px-3 py-1 text-xs font-medium text-[#475467]">
-                Mobile-first flow
-              </span>
-              
+              {(language === "ar"
+                ? (Array.isArray(content.ar?.featureChips) ? content.ar.featureChips : [])
+                : (Array.isArray(content.featureChips) ? content.featureChips : ["Real-time updates", "Seamless checkout", "Mobile-first flow"])
+              ).map((chip) => (
+                <span key={chip} className="inline-flex items-center rounded-full border border-[#E4E7EC] bg-white px-3 py-1 text-xs font-medium text-[#475467]">
+                  {chip}
+                </span>
+              ))}
             </div>
 
             <button
               type="button"
               className="mt-6 inline-flex items-center gap-3 rounded-xl bg-[#1F6BFF] px-5 py-3 text-sm font-semibold text-white shadow-[0_14px_28px_rgba(31,107,255,0.28)] transition-colors duration-200 hover:bg-[#0F62C7]"
             >
-              Find My Parking
+              {t(content, "ctaLabel", language) || ui("findMyParking", language)}
               <span aria-hidden className="text-base leading-none">
                 →
               </span>
@@ -394,10 +394,10 @@ export default function AppServiceTabs() {
 
                       <span className="mt-4 flex flex-col gap-1">
                         <span className="text-[12px] font-medium uppercase tracking-[0.12em] text-[#667085]">
-                          Step {index + 1}
+                          {ui("step", language)} {index + 1}
                         </span>
                         <span className="text-[19px] font-medium leading-[1.15] text-[#101828] sm:text-[22px] [overflow-wrap:anywhere]">
-                          {step}
+                          {language === "ar" ? (activeService.ar?.steps?.[index] ?? "") : step}
                         </span>
                       </span>
                     </button>
