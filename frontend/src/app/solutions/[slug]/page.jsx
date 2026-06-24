@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { fetchSolutionDetails, fetchSolutionAdvantages, fetchSolutionCards } from "@/lib/cms";
+import { fetchSolutionDetails, fetchSolutionCards } from "@/lib/cms";
 import { getSolutionDetailBySlug } from "@/lib/solutionDetailsDefaults";
 import SolutionDetailBody from "@/components/solutions/SolutionDetailBody";
 
@@ -24,9 +24,8 @@ export async function generateMetadata({ params }) {
 
 export default async function SolutionDetailPage({ params }) {
   const { slug } = await params;
-  const [details, advantages, cards] = await Promise.all([
+  const [details, cards] = await Promise.all([
     fetchSolutionDetails(),
-    fetchSolutionAdvantages(),
     fetchSolutionCards(),
   ]);
   const detail = getSolutionDetailBySlug(slug, details);
@@ -40,6 +39,8 @@ export default async function SolutionDetailPage({ params }) {
   const card = cards.find((c) => c.slug === slug);
   const heroImage = card?.image || detail.image || "/hf_20260327_060926_cbb82448-441c-42ee-9589-785e7acd7565.png";
 
-  // Render through a client body so the language toggle + t() apply (Arabic).
-  return <SolutionDetailBody detail={detail} advantages={advantages} heroImage={heroImage} />;
+  // `details` is passed as relatedList so "Other Related Services" can resolve
+  // each related slug to a live solution title + link. Render through a client
+  // body so the language toggle + t() apply (Arabic).
+  return <SolutionDetailBody detail={detail} heroImage={heroImage} relatedList={details} />;
 }
