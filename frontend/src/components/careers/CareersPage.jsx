@@ -15,9 +15,22 @@ import {
   X,
 } from "lucide-react";
 import JobApplicationModal from "./JobApplicationModal";
-import { useLanguage, t } from "@/context/LanguageContext";
+import { useLanguage, t, ui } from "@/context/LanguageContext";
 
 const ease = [0.22, 1, 0.36, 1];
+
+// Fixed Careers chrome (overlay chips, buttons, headings) — inline EN/AR.
+const CAREERS_TEXT = {
+  ourTeam: { en: "Our Team", ar: "فريقنا" },
+  hiring: { en: "We're Hiring", ar: "نحن نوظّف" },
+  joinTeam: { en: "Join the team", ar: "انضم إلى الفريق" },
+  culture: { en: "Culture", ar: "ثقافتنا" },
+  innovateDaily: { en: "Innovate Daily", ar: "نبتكر يوميًا" },
+  growBuild: { en: "grow & build", ar: "ننمو ونبني" },
+  opportunities: { en: "Opportunities with HalaPark", ar: "الفرص الوظيفية في هالا بارك" },
+  oneTeam: { en: "More Than Colleagues. One Team.", ar: "أكثر من زملاء. فريق واحد." },
+};
+const ct = (key, language) => CAREERS_TEXT[key]?.[language] ?? CAREERS_TEXT[key]?.en ?? "";
 
 const opportunityIcons = {
   Briefcase,
@@ -62,6 +75,7 @@ function MosaicTile({ slides, idx, reduced, sizes }) {
 }
 
 function CareersVisual({ heroImage, reduced }) {
+  const { language } = useLanguage();
   const tileA = [heroImage || CAREERS_TILE_A[0], ...CAREERS_TILE_A.slice(1)];
   const [a, setA] = useState(0);
   const [b, setB] = useState(0);
@@ -96,7 +110,7 @@ function CareersVisual({ heroImage, reduced }) {
         <div className="relative row-span-2 overflow-hidden rounded-[24px] border border-white/80 shadow-[0_30px_70px_rgba(15,23,42,0.2)]">
           <MosaicTile slides={tileA} idx={a} reduced={reduced} sizes="(min-width: 1024px) 210px, 150px" />
           <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2 py-1 text-[8.5px] font-bold uppercase tracking-[0.14em] text-white backdrop-blur-sm">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#5BE49B] animate-pulse" /> Our Team
+            <span className="h-1.5 w-1.5 rounded-full bg-[#5BE49B] animate-pulse" /> {ct("ourTeam", language)}
           </span>
         </div>
         {/* Top-right tile */}
@@ -121,8 +135,8 @@ function CareersVisual({ heroImage, reduced }) {
             <Briefcase className="h-4.5 w-4.5" aria-hidden />
           </span>
           <div>
-            <p className="text-[11px] font-semibold text-[#050A13]">We&apos;re Hiring</p>
-            <p className="text-[10px] text-[#667085]">Join the team</p>
+            <p className="text-[11px] font-semibold text-[#050A13]" dir={language === "ar" ? "rtl" : "ltr"}>{ct("hiring", language)}</p>
+            <p className="text-[10px] text-[#667085]" dir={language === "ar" ? "rtl" : "ltr"}>{ct("joinTeam", language)}</p>
           </div>
         </div>
       </motion.div>
@@ -137,10 +151,10 @@ function CareersVisual({ heroImage, reduced }) {
         <div className="w-[150px] rounded-2xl border border-white/80 bg-white p-3 shadow-[0_16px_40px_rgba(15,23,42,0.15)]">
           <div className="flex items-center gap-1.5">
             <Sparkles className="h-3.5 w-3.5 text-[#0088FF]" aria-hidden />
-            <p className="text-[11px] font-semibold text-[#050A13]">Culture</p>
+            <p className="text-[11px] font-semibold text-[#050A13]" dir={language === "ar" ? "rtl" : "ltr"}>{ct("culture", language)}</p>
           </div>
-          <p className="mt-1.5 text-[0.92rem] font-bold leading-tight tracking-[-0.02em] text-[#050A13]">Innovate Daily</p>
-          <p className="text-[9px] text-slate-400">grow &amp; build</p>
+          <p className="mt-1.5 text-[0.92rem] font-bold leading-tight tracking-[-0.02em] text-[#050A13]" dir={language === "ar" ? "rtl" : "ltr"}>{ct("innovateDaily", language)}</p>
+          <p className="text-[9px] text-slate-400" dir={language === "ar" ? "rtl" : "ltr"}>{ct("growBuild", language)}</p>
         </div>
       </motion.div>
     </div>
@@ -187,7 +201,7 @@ function CareersHero({ hero }) {
                 href="#open-positions"
                 className="group inline-flex items-center gap-2.5 rounded-full bg-[#0088FF] px-7 py-3.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,136,255,0.32)] transition hover:brightness-110"
               >
-                View Open Positions
+                {ui("viewOpenPositions", language)}
                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 transition-transform duration-200 group-hover:translate-x-0.5">
                   <ArrowRight className="h-3.5 w-3.5" aria-hidden />
                 </span>
@@ -196,7 +210,7 @@ function CareersHero({ hero }) {
                 href="/contact"
                 className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-7 py-3.5 text-sm font-semibold text-slate-700 shadow-[0_2px_12px_rgba(6,6,22,0.07)] transition hover:border-[#0088FF]/50 hover:text-[#0088FF]"
               >
-                Get In Touch
+                {ui("getInTouch", language)}
               </Link>
             </div>
           </motion.div>
@@ -270,8 +284,8 @@ function OpportunitiesSection({ opportunities }) {
           transition={{ duration: 0.65, ease }}
           className="mx-auto mb-12 max-w-[780px] text-center"
         >
-          <h2 className="text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-[1.08] tracking-[-0.05em] text-[#050A13]">
-            Opportunities with HalaPark
+          <h2 className="text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-[1.08] tracking-[-0.05em] text-[#050A13] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
+            {ct("opportunities", language)}
           </h2>
         </motion.div>
 
@@ -555,8 +569,8 @@ function WhyJoinUs({ whyJoin }) {
               {t(whyJoin, "subtitle", language)}
             </p>
             <div className="mt-8 rounded-[20px] border border-[#E7EAF0] bg-white p-6">
-              <h3 className="text-lg font-semibold text-[#050A13]">
-                More Than Colleagues. One Team.
+              <h3 className="text-lg font-semibold text-[#050A13] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
+                {ct("oneTeam", language)}
               </h3>
               <p className="mt-3 text-[0.93rem] leading-7 text-slate-500">
                 {t(whyJoin, "bodyParagraph", language)}

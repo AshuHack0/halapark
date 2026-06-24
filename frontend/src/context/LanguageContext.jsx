@@ -87,6 +87,7 @@ const UI_LABELS = {
   visitWebsite: { en: "Visit Website", ar: "زيارة الموقع" },
   findMyParking: { en: "Find My Parking", ar: "ابحث عن موقفي" },
   step: { en: "Step", ar: "خطوة" },
+  viewOpenPositions: { en: "View Open Positions", ar: "عرض الوظائف المتاحة" },
 };
 
 /** Translate a fixed UI label by key:  ui("getInTouch", language). */
