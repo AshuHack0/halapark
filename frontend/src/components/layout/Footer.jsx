@@ -8,24 +8,46 @@ import {
   SiTiktok,
 } from "react-icons/si";
 import { SlSocialLinkedin } from "react-icons/sl";
+import { useLanguage } from "@/context/LanguageContext";
+
+// Fixed footer chrome (nav + legal). Inline EN/AR — same approach as the navbar.
+const FOOTER_TEXT = {
+  tagline: {
+    en: "Smart parking solutions across the UAE, making parking simple and efficient.",
+    ar: "حلول ركن ذكية في جميع أنحاء الإمارات، تجعل ركن السيارات بسيطًا وفعّالًا.",
+  },
+  quickLinksHeading: { en: "Quick Links", ar: "روابط سريعة" },
+  getTheApp: { en: "Get The App", ar: "حمّل التطبيق" },
+  scanQr: {
+    en: "Scan the QR code to download the HalaPark app.",
+    ar: "امسح رمز الاستجابة السريعة لتحميل تطبيق هالا بارك.",
+  },
+  getItOn: { en: "Get it on", ar: "متوفر على" },
+  rights: { en: "All rights reserved.", ar: "جميع الحقوق محفوظة." },
+  dataSafe: { en: "Your data is safe with us.", ar: "بياناتك بأمان معنا." },
+  uaeProud: { en: "UAE made, UAE proud.", ar: "صُنع في الإمارات، فخر الإمارات." },
+};
 
 export default function Footer() {
+  const { language } = useLanguage();
+  const tr = (key) => FOOTER_TEXT[key]?.[language] ?? FOOTER_TEXT[key]?.en ?? "";
+
   const appDownloadUrl = "https://halapark.com/app";
   const qrCodeSrc = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(
     appDownloadUrl,
   )}`;
 
   const quickLinks = [
-    { name: "Home", href: "/" },
-    { name: "App", href: "/app" },
-    { name: "Services", href: "/solutions" },
-    { name: "Solutions", href: "/solutions" },
-    { name: "Business", href: "/business" },
-    { name: "Terms & Conditions", href: "/terms-and-conditions" },
-    { name: "Privacy Policy", href: "/privacy-policy" },
-    { name: "Refund Policy", href: "/refund-policy" },
-    { name: "About Us", href: "/about" },
-    { name: "FAQ", href: "/faqs" },
+    { name: { en: "Home", ar: "الرئيسية" }, href: "/" },
+    { name: { en: "App", ar: "التطبيق" }, href: "/app" },
+    { name: { en: "Services", ar: "الخدمات" }, href: "/solutions" },
+    { name: { en: "Solutions", ar: "الحلول" }, href: "/solutions" },
+    { name: { en: "Business", ar: "الأعمال" }, href: "/business" },
+    { name: { en: "Terms & Conditions", ar: "الشروط والأحكام" }, href: "/terms-and-conditions" },
+    { name: { en: "Privacy Policy", ar: "سياسة الخصوصية" }, href: "/privacy-policy" },
+    { name: { en: "Refund Policy", ar: "سياسة الاسترداد" }, href: "/refund-policy" },
+    { name: { en: "About Us", ar: "من نحن" }, href: "/about" },
+    { name: { en: "FAQ", ar: "الأسئلة الشائعة" }, href: "/faqs" },
   ];
 
   const socialLinks = [
@@ -101,9 +123,8 @@ export default function Footer() {
                   className="h-10 w-auto"
                 />
               </Link>
-              <p className="mt-2 max-w-[17rem] text-sm leading-5 text-[#667085]">
-                Smart parking solutions across the UAE, making parking simple and
-                efficient.
+              <p className="mt-2 max-w-[17rem] text-sm leading-5 text-[#667085] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
+                {tr("tagline")}
               </p>
             </div>
 
@@ -148,17 +169,17 @@ export default function Footer() {
           </div>
 
           <div className="w-full md:justify-self-start">
-            <h4 className="text-sm font-semibold uppercase tracking-[0.1em] text-[#050A13]">
-              Quick Links
+            <h4 className="text-sm font-semibold uppercase tracking-[0.1em] text-[#050A13]" dir={language === "ar" ? "rtl" : "ltr"}>
+              {tr("quickLinksHeading")}
             </h4>
-            <ul className="mt-3 grid grid-cols-2 gap-x-7 gap-y-2.5 text-left md:gap-x-10">
+            <ul className="mt-3 grid grid-cols-2 gap-x-7 gap-y-2.5 text-left md:gap-x-10" dir={language === "ar" ? "rtl" : "ltr"}>
               {quickLinks.map((link) => (
-                <li key={link.name}>
+                <li key={link.href + link.name.en}>
                   <Link
                     href={link.href}
-                    className="text-sm text-[#667085] transition hover:text-[#0088FF]"
+                    className="text-sm text-[#667085] transition hover:text-[#0088FF] [overflow-wrap:anywhere]"
                   >
-                    {link.name}
+                    {link.name[language] ?? link.name.en}
                   </Link>
                 </li>
               ))}
@@ -166,11 +187,11 @@ export default function Footer() {
           </div>
 
           <div className="w-full md:max-w-[22.5rem] md:justify-self-end md:text-right">
-            <h4 className="text-sm font-semibold uppercase tracking-[0.1em] text-[#050A13] md:text-right">
-              Get The App
+            <h4 className="text-sm font-semibold uppercase tracking-[0.1em] text-[#050A13] md:text-right" dir={language === "ar" ? "rtl" : "ltr"}>
+              {tr("getTheApp")}
             </h4>
-            <p className="mt-3 max-w-sm text-sm leading-6 text-[#667085] md:ml-auto md:text-right">
-              Scan the QR code to download the HalaPark app.
+            <p className="mt-3 max-w-sm text-sm leading-6 text-[#667085] md:ml-auto md:text-right [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
+              {tr("scanQr")}
             </p>
             <div className="mt-4 flex flex-col gap-4 min-[420px]:flex-row min-[420px]:items-start md:justify-end">
               <Link
@@ -210,7 +231,7 @@ export default function Footer() {
                   />
                   <span className="flex flex-col leading-none text-white">
                     <span className="text-[7px] font-medium opacity-90">
-                      Get it on
+                      {tr("getItOn")}
                     </span>
                     <span className="mt-0.5 text-[13px] font-semibold">
                       Huawei 
@@ -223,15 +244,15 @@ export default function Footer() {
         </div>
 
         <div className="mt-6 flex flex-col gap-3 pt-4 text-sm font-medium text-[#667085] sm:text-base md:flex-row md:items-center md:justify-between">
-          <p className="text-left">© {new Date().getFullYear()} HalaPark. All rights reserved.</p>
-          <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-left text-[#050A13] md:justify-end md:text-right">
+          <p className="text-left" dir={language === "ar" ? "rtl" : "ltr"}>© {new Date().getFullYear()} HalaPark. {tr("rights")}</p>
+          <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-left text-[#050A13] md:justify-end md:text-right" dir={language === "ar" ? "rtl" : "ltr"}>
             <span className="inline-flex items-center gap-1.5">
               <ShieldCheck className="h-4 w-4 text-[#0088FF]" aria-hidden="true" />
-              Your data is safe with us.
+              {tr("dataSafe")}
             </span>
             <span className="inline-flex items-center gap-1.5">
               <span className="text-base leading-none" aria-hidden="true">🇦🇪</span>
-              UAE made, UAE proud.
+              {tr("uaeProud")}
             </span>
           </p>
         </div>
