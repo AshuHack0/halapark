@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { Network, Smartphone, Cpu, BarChart3 } from "lucide-react";
 import { fetchBusinessSection } from "@/lib/cms";
+import { useLanguage, t } from "@/context/LanguageContext";
 
 const ease = [0.22, 1, 0.36, 1];
 
@@ -16,6 +17,7 @@ const ICON_MAP = {
 
 export default function HalaParkAdvantage() {
   const reduced = useReducedMotion();
+  const { language } = useLanguage();
   const [advantages, setAdvantages] = useState([]);
 
   useEffect(() => {
@@ -61,10 +63,10 @@ export default function HalaParkAdvantage() {
                   <Icon className="h-5 w-5 text-[#0088FF] transition duration-300 group-hover:text-white" strokeWidth={1.7} aria-hidden />
                 </div>
                 <h3 className="mt-5 text-[1rem] font-semibold leading-tight tracking-[-0.02em] text-[#050A13] sm:text-[1.05rem]">
-                  {item.title}
+                  {t(item, "title", language)}
                 </h3>
                 <p className="mt-3 text-[0.82rem] leading-6 text-slate-500 sm:text-[0.88rem]">
-                  {item.description}
+                  {t(item, "description", language)}
                 </p>
               </motion.div>
             );

@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { fetchHomeSection } from "@/lib/cms";
+import { useLanguage, t } from "@/context/LanguageContext";
 
 const serviceAudienceCards = [
   {
@@ -200,6 +201,7 @@ function AudienceCard({
 }
 //
 export default function AiPoweredParkingService() {
+  const { language } = useLanguage();
   const [activeCard, setActiveCard] = useState(null);
   const [isDesktop, setIsDesktop] = useState(false);
   const prefersReducedMotion = useReducedMotion();
@@ -221,6 +223,7 @@ export default function AiPoweredParkingService() {
       }
       setCopy((prev) => ({
         ...prev,
+        ar: d.ar,
         ...Object.fromEntries(
           ["heading", "headingGradient", "description"]
             .filter((k) => d[k] != null && d[k] !== "")
@@ -261,18 +264,18 @@ export default function AiPoweredParkingService() {
             id="ai-powered-parking-service-title"
             className="mx-auto mt-4 max-w-[940px] text-[clamp(2.65rem,4.5vw,4rem)] font-semibold uppercase leading-[1.01] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]"
           >
-            {copy.heading}
-            {copy.headingGradient ? (
+            {t(copy, "heading", language)}
+            {t(copy, "headingGradient", language) ? (
               <>
                 {" "}
                 <span className="bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">
-                  {copy.headingGradient}
+                  {t(copy, "headingGradient", language)}
                 </span>
               </>
             ) : null}
           </h2>
           <p className="mx-auto mt-3 max-w-[650px] text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem] [overflow-wrap:anywhere]">
-            {copy.description}
+            {t(copy, "description", language)}
           </p>
         </div>
 
@@ -287,6 +290,10 @@ export default function AiPoweredParkingService() {
               <AudienceCard
                 key={card.title}
                 {...card}
+                title={t(card, "title", language)}
+                description={t(card, "description", language)}
+                ctaLabel={t(card, "ctaLabel", language)}
+                audienceTag={t(card, "audienceTag", language)}
                 active={activeCard === index}
                 desktopWeight={
                   activeCard === null ? 1 : activeCard === index ? 1.086 : 0.914

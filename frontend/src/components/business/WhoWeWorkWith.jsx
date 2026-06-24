@@ -5,11 +5,13 @@ import { motion, useReducedMotion } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
 import { ChevronLeft, ChevronRight, ArrowRight, Sparkles } from "lucide-react";
 import { fetchBusinessSection } from "@/lib/cms";
+import { useLanguage, t } from "@/context/LanguageContext";
 
 const ease = [0.22, 1, 0.36, 1];
 
 export default function WhoWeWorkWith() {
   const reduced = useReducedMotion();
+  const { language } = useLanguage();
   const [partners, setPartners] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -63,6 +65,10 @@ export default function WhoWeWorkWith() {
   };
 
   const activePartner = partners[activeIndex] || {};
+  const activeBenefits =
+    language === "ar" && Array.isArray(activePartner.ar?.benefits) && activePartner.ar.benefits.length
+      ? activePartner.ar.benefits
+      : activePartner.benefits || [];
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -150,7 +156,7 @@ export default function WhoWeWorkWith() {
                       : "text-slate-700 hover:bg-slate-200 border-[#E7EAF0]"
                   }`}
                 >
-                  {partner.title}
+                  {t(partner, "title", language)}
                 </motion.button>
               ))}
             </div>
@@ -193,7 +199,7 @@ export default function WhoWeWorkWith() {
                 Category
               </span>
               <h3 className="text-3xl sm:text-4xl font-bold text-[#050A13]">
-                {activePartner.title}
+                {t(activePartner, "title", language)}
               </h3>
             </motion.div>
 
@@ -202,7 +208,7 @@ export default function WhoWeWorkWith() {
               variants={itemVariants}
               className="text-base leading-7 text-slate-600 mb-8"
             >
-              {activePartner.description}
+              {t(activePartner, "description", language)}
             </motion.p>
 
             {/* Benefits List */}
@@ -217,7 +223,7 @@ export default function WhoWeWorkWith() {
                 initial="hidden"
                 animate="visible"
               >
-                {(activePartner.benefits || []).map((benefit) => (
+                {activeBenefits.map((benefit) => (
                   <motion.li
                     key={benefit}
                     variants={itemVariants}

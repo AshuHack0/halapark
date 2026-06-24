@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { serviceFlows } from "./appContent";
 import { fetchPage } from "@/lib/cms";
+import { useLanguage, t } from "@/context/LanguageContext";
 
 const AUTO_STEP_INTERVAL_MS = 2400;
 const LAST_STEP_TICK_HOLD_MS = 260;
@@ -176,6 +177,7 @@ function StepStatusIcon({ state, stepNumber }) {
 
 export default function AppServiceTabs() {
   // Merge CMS text fields onto the hardcoded tabs (keep UI-only key used for showcase data).
+  const { language } = useLanguage();
   const [tabs, setTabs] = useState(serviceFlows);
   const [activeTab, setActiveTab] = useState(serviceFlows[0].key);
   const [activeStep, setActiveStep] = useState(serviceFlows[0].steps[0]);
@@ -275,7 +277,7 @@ export default function AppServiceTabs() {
                       : "text-[#D2D6DD] hover:text-[#7C8596]"
                   }`}
                 >
-                  <span className="whitespace-nowrap [overflow-wrap:anywhere]">{service.label}</span>
+                  <span className="whitespace-nowrap [overflow-wrap:anywhere]">{t(service, "label", language)}</span>
                   <span
                     className={`absolute bottom-[-1px] left-0 h-0.5 bg-[#0088FF]/70 transition-all duration-300 ${
                       isActive ? "w-full opacity-100" : "w-0 opacity-0"
@@ -290,11 +292,11 @@ export default function AppServiceTabs() {
         <div className="flex flex-col items-center gap-10 text-center md:flex-row md:items-center md:justify-between md:text-left">
           <div className="w-full max-w-[360px] md:flex-1 md:max-w-[500px] md:pt-6 lg:max-w-[560px] lg:pt-10">
             <h3 className="text-[30px] font-medium tracking-[-0.04em] text-black sm:text-[34px] lg:text-[42px] lg:leading-[0.98] [overflow-wrap:anywhere]">
-              {activeService.label}
+              {t(activeService, "label", language)}
             </h3>
 
             <p className="mt-5 text-[16px] leading-[1.7] text-[#667085] sm:text-[17px] [overflow-wrap:anywhere]">
-              {activeService.description}
+              {t(activeService, "description", language)}
             </p>
 
             <p className="mt-3 text-[15px] leading-[1.7] text-[#7A8599] sm:text-[16px]">

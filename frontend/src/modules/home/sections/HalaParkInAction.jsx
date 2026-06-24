@@ -4,6 +4,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { fetchHomeSection, fetchPage } from "@/lib/cms";
+import { useLanguage, t } from "@/context/LanguageContext";
 
 const sectionEase = [0.22, 1, 0.36, 1];
 
@@ -116,13 +117,16 @@ function StoreBadge({
 //   • App page   → fetchPage("app").sections.halapark
 export default function HalaParkInAction({ cmsKey = "halaParkInAction", pageSlug }) {
   const prefersReducedMotion = useReducedMotion();
+  const { language } = useLanguage();
   const [copy, setCopy] = useState({});
 
   useEffect(() => {
     const apply = (d) => {
       if (!d || typeof d !== "object") return;
       setCopy({
-        // Admin saves the heading as `heading`; accept `title` too for safety.
+        // Admin saves the heading as `heading` (EN + ar.heading); the render reads
+        // `title`, so remap the `ar` sub-object's heading→title to match.
+        ar: { ...d.ar, title: d.ar?.heading ?? d.ar?.title, subtitle: d.ar?.subtitle },
         title: d.heading || d.title || "",
         subtitle: d.subtitle || "",
         storeLinks: Array.isArray(d.storeLinks) ? d.storeLinks : [],
@@ -156,14 +160,14 @@ export default function HalaParkInAction({ cmsKey = "halaParkInAction", pageSlug
                   variants={prefersReducedMotion ? undefined : copyItemVariants}
                   className="max-w-[560px] text-[clamp(2rem,4.5vw,4rem)] font-semibold leading-[1.05] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]"
                 >
-                  {copy.title}
+                  {t(copy, "title", language)}
                 </motion.h1>
 
                 <motion.p
                   variants={prefersReducedMotion ? undefined : copyItemVariants}
                   className="mt-3 max-w-[650px] text-[0.88rem] font-light leading-6 text-[#8A94A6] sm:text-[0.94rem] [overflow-wrap:anywhere]"
                 >
-                  {copy.subtitle}
+                  {t(copy, "subtitle", language)}
                 </motion.p>
 
                
@@ -177,6 +181,8 @@ export default function HalaParkInAction({ cmsKey = "halaParkInAction", pageSlug
                   <StoreBadge
                     key={store.label}
                     {...store}
+                    eyebrow={t(store, "eyebrow", language)}
+                    label={t(store, "label", language)}
                     index={index}
                     prefersReducedMotion={prefersReducedMotion}
                   />

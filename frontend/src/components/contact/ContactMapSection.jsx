@@ -3,7 +3,41 @@
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
 import { useState } from "react";
 
+import { useLanguage } from "@/context/LanguageContext";
+
+// Fixed UI copy (not CMS-driven) — translated inline.
+const COPY = {
+  en: {
+    eyebrow: "Map",
+    heading: "Office location",
+    addressLabel: "Address",
+    phoneLabel: "Phone",
+    emailLabel: "Email",
+    hoursLabel: "Business Hours",
+    officeName: "HalaPark Office",
+    address: "Dubai, United Arab Emirates",
+    hours: "Monday - Friday: 9:00 AM - 6:00 PM",
+    weekend: "Saturday & Sunday: Closed",
+    loading: "Loading map...",
+  },
+  ar: {
+    eyebrow: "الخريطة",
+    heading: "موقع المكتب",
+    addressLabel: "العنوان",
+    phoneLabel: "الهاتف",
+    emailLabel: "البريد الإلكتروني",
+    hoursLabel: "ساعات العمل",
+    officeName: "مكتب هالا بارك",
+    address: "دبي، الإمارات العربية المتحدة",
+    hours: "الاثنين - الجمعة: 9:00 صباحًا - 6:00 مساءً",
+    weekend: "السبت والأحد: مغلق",
+    loading: "جارٍ تحميل الخريطة...",
+  },
+};
+
 export default function ContactMapSection() {
+  const { language } = useLanguage();
+  const c = COPY[language] || COPY.en;
   const [mapLoaded, setMapLoaded] = useState(true);
 
   const officeLocation = {
@@ -25,10 +59,10 @@ export default function ContactMapSection() {
         {/* Left Panel: Office Info */}
         <div className="border-b border-slate-200 bg-[linear-gradient(180deg,rgba(0,136,255,0.05)_0%,#FFFFFF_100%)] p-6 sm:p-8 lg:border-b-0 lg:border-r">
           <span className="inline-flex rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.26em] text-slate-600">
-            Map
+            {c.eyebrow}
           </span>
-          <h2 className="mt-5 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">
-            Office location
+          <h2 className="mt-5 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl [overflow-wrap:anywhere]">
+            {c.heading}
           </h2>
 
           <div className="mt-8 space-y-6">
@@ -39,13 +73,13 @@ export default function ContactMapSection() {
               </div>
               <div>
                 <p className="text-sm font-semibold text-slate-600 uppercase tracking-[0.08em]">
-                  Address
+                  {c.addressLabel}
                 </p>
-                <p className="mt-1 text-base text-slate-900 font-medium">
-                  {officeLocation.address}
+                <p className="mt-1 text-base text-slate-900 font-medium [overflow-wrap:anywhere]">
+                  {c.address}
                 </p>
-                <p className="mt-1 text-sm text-slate-500">
-                  {officeLocation.name}
+                <p className="mt-1 text-sm text-slate-500 [overflow-wrap:anywhere]">
+                  {c.officeName}
                 </p>
               </div>
             </div>
@@ -57,7 +91,7 @@ export default function ContactMapSection() {
               </div>
               <div>
                 <p className="text-sm font-semibold text-slate-600 uppercase tracking-[0.08em]">
-                  Phone
+                  {c.phoneLabel}
                 </p>
                 <a
                   href={`tel:${officeLocation.phone.replace(/\s/g, "")}`}
@@ -75,7 +109,7 @@ export default function ContactMapSection() {
               </div>
               <div>
                 <p className="text-sm font-semibold text-slate-600 uppercase tracking-[0.08em]">
-                  Email
+                  {c.emailLabel}
                 </p>
                 <a
                   href={`mailto:${officeLocation.email}`}
@@ -93,13 +127,13 @@ export default function ContactMapSection() {
               </div>
               <div>
                 <p className="text-sm font-semibold text-slate-600 uppercase tracking-[0.08em]">
-                  Business Hours
+                  {c.hoursLabel}
                 </p>
-                <p className="mt-1 text-base text-slate-900 font-medium">
-                  {officeLocation.hours}
+                <p className="mt-1 text-base text-slate-900 font-medium [overflow-wrap:anywhere]">
+                  {c.hours}
                 </p>
-                <p className="mt-1 text-sm text-slate-500">
-                  Saturday & Sunday: Closed
+                <p className="mt-1 text-sm text-slate-500 [overflow-wrap:anywhere]">
+                  {c.weekend}
                 </p>
               </div>
             </div>
@@ -126,7 +160,7 @@ export default function ContactMapSection() {
                   <MapPin className="h-8 w-8" />
                 </div>
                 <p className="mt-5 text-lg font-semibold text-slate-900">
-                  Loading map...
+                  {c.loading}
                 </p>
               </div>
             </div>

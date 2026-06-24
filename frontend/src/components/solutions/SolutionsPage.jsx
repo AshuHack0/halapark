@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { fetchPage } from "@/lib/cms";
+import { useLanguage, t } from "@/context/LanguageContext";
 import {
   ArrowRight,
   Check,
@@ -171,6 +172,7 @@ function SolutionsControlPanel({ reduced }) {
 
 function NewHero() {
   const reduced = useReducedMotion();
+  const { language } = useLanguage();
   const [hero, setHero] = useState({});
 
   useEffect(() => {
@@ -210,19 +212,19 @@ function NewHero() {
             transition={{ duration: 0.65, ease }}
           >
             <h1 className="max-w-[600px] text-[clamp(2.5rem,5vw,4.4rem)] font-semibold leading-[1.0] tracking-[-0.06em] text-[#050A13]">
-              {hero.title}
-              {hero.titleAccent ? (
+              {t(hero, "title", language)}
+              {t(hero, "titleAccent", language) ? (
                 <>
                   {" "}
                   <span className="bg-[linear-gradient(120deg,#0060CC_0%,#0088FF_45%,#38BDF8_100%)] bg-clip-text text-transparent">
-                    {hero.titleAccent}
+                    {t(hero, "titleAccent", language)}
                   </span>
                 </>
               ) : null}
             </h1>
 
             <p className="mt-6 max-w-[460px] text-[0.95rem] leading-[1.75] text-slate-500">
-              {hero.subtitle}
+              {t(hero, "subtitle", language)}
             </p>
 
 
@@ -231,7 +233,7 @@ function NewHero() {
                 href={hero.ctaLink || "/contact"}
                 className="group inline-flex items-center gap-2.5 rounded-full bg-[#0088FF] px-7 py-3.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,136,255,0.32)] transition hover:brightness-110"
               >
-                {hero.ctaLabel || ""}
+                {t(hero, "ctaLabel", language) || ""}
                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 transition-transform duration-200 group-hover:translate-x-0.5">
                   <ArrowRight className="h-3.5 w-3.5" aria-hidden />
                 </span>
@@ -317,6 +319,7 @@ function OldNewHero() {
 
 function GlobalExpansionSection() {
   const reduced = useReducedMotion();
+  const { language } = useLanguage();
   const [content, setContent] = useState({
     heading: "Parking Challenges",
     headingGradient: "Challenges",
@@ -348,12 +351,13 @@ function GlobalExpansionSection() {
     });
   }, []);
 
-  const gradient = content.headingGradient?.trim() || "";
+  const heading = t(content, "heading", language) || "";
+  const gradient = t(content, "headingGradient", language)?.trim() || "";
   const headBase =
-    gradient && content.heading.endsWith(gradient)
-      ? content.heading.slice(0, content.heading.length - gradient.length).trimEnd()
-      : content.heading;
-  const showGradient = gradient && content.heading.endsWith(gradient);
+    gradient && heading.endsWith(gradient)
+      ? heading.slice(0, heading.length - gradient.length).trimEnd()
+      : heading;
+  const showGradient = gradient && heading.endsWith(gradient);
 
   return (
     <section className="bg-white py-16 sm:py-20 lg:py-24">
@@ -377,10 +381,10 @@ function GlobalExpansionSection() {
               ) : null}
             </h2>
             <p className="mt-4 text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-[#050A13] [overflow-wrap:anywhere]">
-              {content.subtitle}
+              {t(content, "subtitle", language)}
             </p>
             <p className="mt-5 text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem] [overflow-wrap:anywhere]">
-              {content.description}
+              {t(content, "description", language)}
             </p>
 
             <ul className="mt-8 space-y-3">
@@ -395,7 +399,7 @@ function GlobalExpansionSection() {
             </ul>
 
             <Link href={content.ctaLink || "/app"} className="mt-8 inline-flex items-center gap-2 rounded-full bg-[#0088FF] px-7 py-3.5 text-[0.95rem] font-semibold text-white shadow-[0_8px_28px_rgba(0,136,255,0.35)] transition hover:-translate-y-0.5 hover:brightness-110">
-              {content.ctaLabel} <ArrowRight className="h-4 w-4" aria-hidden />
+              {t(content, "ctaLabel", language)} <ArrowRight className="h-4 w-4" aria-hidden />
             </Link>
           </motion.div>
 
@@ -437,6 +441,7 @@ function solutionCardHref(card) {
 }
 
 function SolutionCard({ card, i, reduced }) {
+  const { language } = useLanguage();
   return (
     <motion.article
       initial={reduced ? false : { opacity: 0, y: 20 }}
@@ -452,8 +457,8 @@ function SolutionCard({ card, i, reduced }) {
         </div>
         <div className="flex items-start justify-between gap-4 p-5">
           <div className="flex-1">
-            <h3 className="text-[1rem] font-semibold leading-tight tracking-[-0.02em] text-[#050A13] sm:text-[1.05rem]">{card.title}</h3>
-            <p className="mt-2 line-clamp-3 text-[0.82rem] leading-6 text-slate-500 sm:text-[0.88rem]">{card.description}</p>
+            <h3 className="text-[1rem] font-semibold leading-tight tracking-[-0.02em] text-[#050A13] sm:text-[1.05rem]">{t(card, "title", language)}</h3>
+            <p className="mt-2 line-clamp-3 text-[0.82rem] leading-6 text-slate-500 sm:text-[0.88rem]">{t(card, "description", language)}</p>
           </div>
           <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EEF6FF] text-[#0088FF] transition group-hover:bg-[#0088FF] group-hover:text-white">
             <ArrowRight className="h-4 w-4" aria-hidden />
@@ -554,6 +559,7 @@ function StatsSection() {
 // ─── Solution Integration ──────────────────────────────────────────────────────
 
 function IntegrationCard({ card, i, reduced }) {
+  const { language } = useLanguage();
   return (
     <motion.article
       initial={reduced ? false : { opacity: 0, y: 20 }}
@@ -566,9 +572,9 @@ function IntegrationCard({ card, i, reduced }) {
       <div className={`absolute inset-0 bg-gradient-to-b ${card.gradient}`} />
       <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
       <div className="absolute inset-0 flex flex-col justify-between p-4 sm:p-5">
-        <h3 className="text-[0.9rem] font-semibold leading-tight tracking-[-0.02em] text-white sm:text-[1rem]">{card.title}</h3>
+        <h3 className="text-[0.9rem] font-semibold leading-tight tracking-[-0.02em] text-white sm:text-[1rem]">{t(card, "title", language)}</h3>
         <div className="translate-y-4 opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
-          <p className="text-[0.75rem] leading-relaxed text-white/85">{card.description}</p>
+          <p className="text-[0.75rem] leading-relaxed text-white/85">{t(card, "description", language)}</p>
         </div>
       </div>
     </motion.article>
@@ -637,6 +643,7 @@ const integrationSystems = [
 
 function TrustedBySection() {
   const reduced = useReducedMotion();
+  const { language } = useLanguage();
   const [trust, setTrust] = useState({
     heading: "Built for Smart Cities",
     headingGradient: "Smart Cities",
@@ -656,12 +663,13 @@ function TrustedBySection() {
   }, []);
 
   // Render the heading with the gradient word highlighted if it appears at the end.
-  const gradient = trust.headingGradient?.trim() || "";
+  const heading = t(trust, "heading", language) || "";
+  const gradient = t(trust, "headingGradient", language)?.trim() || "";
   const headBase =
-    gradient && trust.heading.endsWith(gradient)
-      ? trust.heading.slice(0, trust.heading.length - gradient.length).trimEnd()
-      : trust.heading;
-  const showGradient = gradient && trust.heading.endsWith(gradient);
+    gradient && heading.endsWith(gradient)
+      ? heading.slice(0, heading.length - gradient.length).trimEnd()
+      : heading;
+  const showGradient = gradient && heading.endsWith(gradient);
 
   return (
     <>
@@ -680,7 +688,7 @@ function TrustedBySection() {
                 ) : null}
               </h2>
               <p className="mt-4 max-w-[520px] text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem] [overflow-wrap:anywhere]">
-                {trust.subtitle}
+                {t(trust, "subtitle", language)}
               </p>
               <ul className="mt-8 grid gap-3 sm:grid-cols-2">
                 {smartCityCapabilities.map((item) => (
@@ -919,6 +927,7 @@ const DEFAULT_DEPLOYMENT = {
 
 function FeatureHighlightsSection() {
   const reduced = useReducedMotion();
+  const { language } = useLanguage();
   const [features, setFeatures] = useState({});
   const [deployment, setDeployment] = useState({});
 
@@ -945,11 +954,11 @@ function FeatureHighlightsSection() {
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto mb-12 max-w-4xl text-center">
             <h2 className="text-[clamp(3rem,5.5vw,5rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-white">
-              {features.heading}{" "}
-              <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">{features.headingGradient}</span>
+              {t(features, "heading", language)}{" "}
+              <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">{t(features, "headingGradient", language)}</span>
             </h2>
             <p className="mt-4 text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-white/70">
-              {features.subtitle}
+              {t(features, "subtitle", language)}
             </p>
           </div>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
@@ -967,7 +976,7 @@ function FeatureHighlightsSection() {
                   <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 transition duration-300 group-hover:bg-[#0088FF] group-hover:shadow-[0_6px_20px_rgba(0,136,255,0.4)]">
                     <Icon className="h-6 w-6 text-white/70 transition duration-300 group-hover:text-white" strokeWidth={1.7} aria-hidden />
                   </div>
-                  <p className="text-[0.88rem] font-semibold leading-tight tracking-[-0.01em] text-white/85 sm:text-[0.94rem]">{item.label}</p>
+                  <p className="text-[0.88rem] font-semibold leading-tight tracking-[-0.01em] text-white/85 sm:text-[0.94rem]">{t(item, "label", language)}</p>
                 </motion.div>
               );
             })}
@@ -981,19 +990,19 @@ function FeatureHighlightsSection() {
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
             <motion.div initial={reduced ? false : { opacity: 0, x: -28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }}>
               <h2 className="text-[clamp(3rem,5.5vw,5rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
-                {deployment.heading}{" "}
-                <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">{deployment.headingGradient}</span>
+                {t(deployment, "heading", language)}{" "}
+                <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">{t(deployment, "headingGradient", language)}</span>
               </h2>
               <p className="mt-5 max-w-[520px] text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem]">
-                {deployment.subtitle}
+                {t(deployment, "subtitle", language)}
               </p>
               <div className="mt-10 space-y-5">
                 {steps.map((step, i) => (
                   <motion.div key={`${step.title}-${i}`} initial={reduced ? false : { opacity: 0, x: -16 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, ease, delay: i * 0.1 }} className="flex gap-5 rounded-2xl border border-slate-100 bg-[#F4F8FF] p-5">
                     <span className="text-[1.6rem] font-bold leading-none tracking-[-0.04em] text-[#0088FF]/30">{step.step || String(i + 1).padStart(2, "0")}</span>
                     <div>
-                      <h3 className="font-semibold text-[#050A13]">{step.title}</h3>
-                      <p className="mt-1 text-[0.88rem] leading-6 text-slate-600">{step.description}</p>
+                      <h3 className="font-semibold text-[#050A13]">{t(step, "title", language)}</h3>
+                      <p className="mt-1 text-[0.88rem] leading-6 text-slate-600">{t(step, "description", language)}</p>
                     </div>
                   </motion.div>
                 ))}
@@ -1012,8 +1021,8 @@ function FeatureHighlightsSection() {
                   </div>
                   <p className="text-[0.82rem] font-semibold uppercase tracking-[0.2em] text-white/50">HalaPark</p>
                   <p className="mt-2 text-[1.2rem] font-semibold leading-snug tracking-[-0.03em] text-white">
-                    {deployment.panelTitle}<br />
-                    <span className="text-[#5BC4FF]">{deployment.panelTitleAccent}</span>
+                    {t(deployment, "panelTitle", language)}<br />
+                    <span className="text-[#5BC4FF]">{t(deployment, "panelTitleAccent", language)}</span>
                   </p>
                 </div>
               </div>
@@ -1029,6 +1038,7 @@ function FeatureHighlightsSection() {
 
 function WhyHalaparkSection() {
   const reduced = useReducedMotion();
+  const { language } = useLanguage();
   // Rendered purely from CMS (sections.why) — no hardcoded fallbacks.
   const [why, setWhy] = useState(null);
 
@@ -1043,8 +1053,8 @@ function WhyHalaparkSection() {
 
   const points = Array.isArray(why.points) ? why.points : [];
 
-  const heading = why.heading || "";
-  const gradient = why.headingGradient?.trim() || "";
+  const heading = t(why, "heading", language) || "";
+  const gradient = t(why, "headingGradient", language)?.trim() || "";
   const headBase =
     gradient && heading.endsWith(gradient)
       ? heading.slice(0, heading.length - gradient.length).trimEnd()
@@ -1110,18 +1120,18 @@ function WhyHalaparkSection() {
             </div>
             <div className="relative z-10 flex h-[340px] items-end p-8 sm:h-[400px] sm:p-10">
               <div>
-                {why.badge ? (
+                {t(why, "badge", language) ? (
                   <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 backdrop-blur-sm">
                     <span className="h-2 w-2 rounded-full bg-[#5BC4FF] animate-pulse" />
-                    <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/80">{why.badge}</span>
+                    <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/80">{t(why, "badge", language)}</span>
                   </div>
                 ) : null}
                 <p className="text-[1.15rem] font-semibold leading-snug tracking-[-0.03em] text-white [overflow-wrap:anywhere]">
-                  {why.panelTitle}
-                  {why.panelTitleAccent ? (
+                  {t(why, "panelTitle", language)}
+                  {t(why, "panelTitleAccent", language) ? (
                     <>
                       <br />
-                      <span className="text-[#5BC4FF]">{why.panelTitleAccent}</span>
+                      <span className="text-[#5BC4FF]">{t(why, "panelTitleAccent", language)}</span>
                     </>
                   ) : null}
                 </p>
@@ -1148,6 +1158,7 @@ const DEFAULT_FINAL_CTA = {
 
 function NewFinalCTA() {
   const reduced = useReducedMotion();
+  const { language } = useLanguage();
   const [cta, setCta] = useState({});
 
   useEffect(() => {
@@ -1199,21 +1210,21 @@ function NewFinalCTA() {
 
           <motion.div initial={reduced ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.65, ease }} className="relative z-10 flex flex-col items-center px-6 py-16 text-center sm:px-10 sm:py-20 lg:py-24">
             <h2 className="max-w-[720px] text-[clamp(2.65rem,4.5vw,4.2rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-white">
-              {cta.heading}{" "}
+              {t(cta, "heading", language)}{" "}
               <span className="bg-gradient-to-r from-[#3AADFF] to-[#0088FF] bg-clip-text text-transparent">
-                {cta.headingGradient}
+                {t(cta, "headingGradient", language)}
               </span>
             </h2>
             <p className="mt-5 max-w-[560px] text-[0.88rem] leading-6 text-white/65 sm:text-[0.94rem]">
-              {cta.subtitle}
+              {t(cta, "subtitle", language)}
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               <Link href="/contact" className="inline-flex items-center gap-2 rounded-full bg-[#0088FF] px-8 py-3.5 text-sm font-semibold text-white shadow-[0_8px_28px_rgba(0,136,255,0.45)] transition hover:brightness-110">
-                {cta.ctaLabel || ""} <ArrowRight className="h-4 w-4" aria-hidden />
+                {t(cta, "ctaLabel", language) || ""} <ArrowRight className="h-4 w-4" aria-hidden />
               </Link>
               <Link href="/contact" className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-8 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20">
                 <CalendarCheck className="h-4 w-4" aria-hidden />
-                {cta.ctaSecondaryLabel || ""}
+                {t(cta, "ctaSecondaryLabel", language) || ""}
               </Link>
             </div>
           </motion.div>

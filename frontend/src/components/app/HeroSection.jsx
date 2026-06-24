@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { fetchPage } from "@/lib/cms";
+import { useLanguage, t } from "@/context/LanguageContext";
 import {
   ArrowRight,
   Car,
@@ -247,6 +248,7 @@ const DEFAULTS = {
 
 export default function HeroSection() {
   const prefersReducedMotion = useReducedMotion();
+  const { language } = useLanguage();
   const [content, setContent] = useState(DEFAULTS);
 
   useEffect(() => {
@@ -275,22 +277,22 @@ export default function HeroSection() {
         >
           {content.eyebrow ? (
             <p className="mb-3 text-sm font-semibold tracking-[0.16em] text-[#0088FF] [overflow-wrap:anywhere]">
-              {content.eyebrow}
+              {t(content, "eyebrow", language)}
             </p>
           ) : null}
 
           <h1 className="max-w-[580px] text-[clamp(2.7rem,6vw,4.9rem)] font-semibold leading-[0.98] tracking-tight text-[#050A13] [overflow-wrap:anywhere]">
-            {content.title}
+            {t(content, "title", language)}
           </h1>
 
           {content.subtitle ? (
             <p className="mt-4 max-w-[460px] text-lg font-medium leading-7 text-[#0088FF] [overflow-wrap:anywhere]">
-              {content.subtitle}
+              {t(content, "subtitle", language)}
             </p>
           ) : null}
 
           <p className="mt-5 max-w-[460px] text-base font-light leading-7 text-[#4F5B6F] sm:text-[17px] [overflow-wrap:anywhere]">
-            {content.description}
+            {t(content, "description", language)}
           </p>
 
           <Link href="/app">

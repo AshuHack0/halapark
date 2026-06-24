@@ -6,6 +6,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { fetchHomeSection } from "@/lib/cms";
+import { useLanguage, t } from "@/context/LanguageContext";
 
 // Map a CMS service (from the Services page) to the card shape this section uses.
 function toCard(svc) {
@@ -15,6 +16,7 @@ function toCard(svc) {
     summary: svc.summary || svc.fullDesc || svc.description || "",
     mediaType: svc.mediaType,
     mediaSrc: svc.mediaSrc,
+    ar: svc.ar,
   };
 }
 
@@ -27,12 +29,9 @@ const parkingIntegrations = [
   { name: "Management", bgcolor: "bg-[#923BE2]", img: "/Group44.svg" },
 ];
 
-const duplicatedParkingIntegrations = [
-  ...parkingIntegrations,
-  ...parkingIntegrations,
-];
-
-function IntegrationsMotionHeader({ active = true }) {
+function IntegrationsMotionHeader({ active = true, items, language }) {
+  const list = Array.isArray(items) && items.length > 0 ? items : parkingIntegrations;
+  const duped = [...list, ...list];
   return (
     <div className="absolute inset-0 overflow-hidden bg-[#d2dae2]">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_16%_8%,rgba(255,255,255,0.52)_0%,rgba(255,255,255,0)_58%)]" />
@@ -42,7 +41,7 @@ function IntegrationsMotionHeader({ active = true }) {
           <div
             className={`gld-scroll-right flex w-max items-center gap-2.5 sm:gap-3.5 ${!active ? "[animation-play-state:paused]" : ""}`}
           >
-            {duplicatedParkingIntegrations.map((integration, index) => (
+            {duped.map((integration, index) => (
               <div
                 key={`top-${integration.name}-${index}`}
                 className="flex shrink-0 items-center gap-1.5 rounded-[11px] border border-white/80 bg-white px-2.5 py-1.5 shadow-[0_3px_10px_rgba(6,6,22,0.05)] sm:gap-2 sm:rounded-[12px] sm:px-3 sm:py-2"
@@ -59,7 +58,7 @@ function IntegrationsMotionHeader({ active = true }) {
                   />
                 </div>
                 <span className="whitespace-nowrap text-[9px] font-medium text-black sm:text-sm">
-                  {integration.name}
+                  {t(integration, "name", language)}
                 </span>
               </div>
             ))}
@@ -70,7 +69,7 @@ function IntegrationsMotionHeader({ active = true }) {
           <div
             className={`gld-scroll-left flex w-max items-center gap-2.5 sm:gap-3.5 ${!active ? "[animation-play-state:paused]" : ""}`}
           >
-            {duplicatedParkingIntegrations.map((integration, index) => (
+            {duped.map((integration, index) => (
               <div
                 key={`bottom-${integration.name}-${index}`}
                 className="flex shrink-0 items-center gap-1.5 rounded-[11px] border border-white/80 bg-white px-2.5 py-1.5 shadow-[0_3px_10px_rgba(6,6,22,0.05)] sm:gap-2 sm:rounded-[12px] sm:px-3 sm:py-2"
@@ -87,7 +86,7 @@ function IntegrationsMotionHeader({ active = true }) {
                   />
                 </div>
                 <span className="whitespace-nowrap text-[9px] font-medium text-black sm:text-sm">
-                  {integration.name}
+                  {t(integration, "name", language)}
                 </span>
               </div>
             ))}
@@ -123,7 +122,7 @@ function IntegrationsMotionHeader({ active = true }) {
   );
 }
 
-function ServiceCard({ service, index, cardRef, isActive }) {
+function ServiceCard({ service, index, cardRef, isActive, language, integrations }) {
   const prefersReducedMotion = useReducedMotion();
 
   const highlights = Array.isArray(service.highlights)
@@ -174,7 +173,7 @@ function ServiceCard({ service, index, cardRef, isActive }) {
               className="h-full w-full object-cover"
             />
           ) : service.mediaType === "integrations" ? (
-            <IntegrationsMotionHeader active={!prefersReducedMotion} />
+            <IntegrationsMotionHeader active={!prefersReducedMotion} items={integrations} language={language} />
           ) : service.mediaSrc ? (
             <Image
               src={service.mediaSrc}
@@ -194,10 +193,10 @@ function ServiceCard({ service, index, cardRef, isActive }) {
                 Service 0{index + 1}
               </p>
               <h3 className="mt-2 text-[1.35rem] font-medium tracking-tight text-slate-950 sm:text-[1.6rem]">
-                {service.name}
+                {t(service, "name", language)}
               </h3>
               <p className="mt-3 text-sm leading-6 text-slate-600">
-                {service.summary}
+                {t(service, "summary", language)}
               </p>
             </div>
 
@@ -215,18 +214,27 @@ function ServiceCard({ service, index, cardRef, isActive }) {
 
 export default function GoodLookingServicesSection() {
   const prefersReducedMotion = useReducedMotion();
+  const { language } = useLanguage();
   const [activeServiceIndex, setActiveServiceIndex] = useState(0);
   const cardRefs = useRef([]);
 
   // Home Services cards are managed in the Home editor (goodLookingServices.cards).
   const [services, setServices] = useState([]);
   const [copy, setCopy] = useState({});
+  // CMS integration chips (names translatable); fall back to the bundled list.
+  const [integrations, setIntegrations] = useState(parkingIntegrations);
 
   useEffect(() => {
     fetchHomeSection("goodLookingServices").then((d) => {
       if (d && typeof d === "object") {
         if (Array.isArray(d.cards) && d.cards.length > 0) {
           setServices(d.cards.map(toCard));
+        }
+        if (Array.isArray(d.parkingIntegrations) && d.parkingIntegrations.length > 0) {
+          // Merge CMS over defaults by index to keep the bundled icon/colour.
+          setIntegrations(
+            d.parkingIntegrations.map((it, i) => ({ ...(parkingIntegrations[i] ?? {}), ...it })),
+          );
         }
         setCopy((prev) => ({
           ...prev,
@@ -326,7 +334,7 @@ export default function GoodLookingServicesSection() {
             id="services-section-title"
             className="mx-auto mt-4 max-w-[980px] text-[clamp(2.75rem,5vw,4.4rem)] font-medium leading-[1.02] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]"
           >
-            {copy.heading}
+            {t(copy, "heading", language)}
           </h2>
         </div>
 
@@ -362,10 +370,10 @@ export default function GoodLookingServicesSection() {
                 Service 0{activeServiceIndex + 1}
               </p> */}
               <h2 className="mt-3 text-[clamp(2rem,3.25vw,3rem)] font-semibold leading-[1.04] tracking-[-0.045em] text-[#050A13]">
-                {activeService.name}
+                {t(activeService, "name", language)}
               </h2>
               <p className="mt-3 max-w-[650px] text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem]">
-                {activeService.summary}
+                {t(activeService, "summary", language)}
               </p>
               {/* <div className="mt-5 flex flex-wrap gap-2.5">
                 {activeHighlights.map((highlight) => (
@@ -384,13 +392,13 @@ export default function GoodLookingServicesSection() {
                 href={copy.exploreCtaLink || "/services"}
                 className="inline-flex min-h-[3.05rem] items-center justify-center rounded-full bg-[#0088FF] px-7 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(0,136,255,0.14)] transition hover:bg-[#0088FF]"
               >
-                {copy.exploreCtaLabel || ""}
+                {t(copy, "exploreCtaLabel", language) || ""}
               </Link>
               <Link
                 href={copy.contactCtaLink || "/contact"}
                 className="inline-flex min-h-[3.05rem] items-center justify-center rounded-full border border-slate-300/70 bg-white/60 px-7 text-sm font-semibold text-slate-800 backdrop-blur transition hover:border-[#0088FF] hover:text-[#0088FF]"
               >
-                {copy.contactCtaLabel || ""}
+                {t(copy, "contactCtaLabel", language) || ""}
               </Link>
             </div>
           </motion.div>
@@ -404,6 +412,8 @@ export default function GoodLookingServicesSection() {
                 service={service}
                 index={index}
                 isActive={activeServiceIndex === index}
+                language={language}
+                integrations={integrations}
                 cardRef={(node) => {
                   cardRefs.current[index] = node;
                 }}

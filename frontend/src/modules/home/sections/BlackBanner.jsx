@@ -2,14 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { fetchHomeSection } from "@/lib/cms";
+import { useLanguage, t } from "@/context/LanguageContext";
 
 export default function BlackBanner() {
+  const { language } = useLanguage();
   const [featureCard, setFeatureCard] = useState({});
 
   useEffect(() => {
     fetchHomeSection("blackBanner").then((data) => {
       if (data && typeof data === "object") {
         setFeatureCard({
+          ar: data.ar,
           title: data.title || "",
           description: data.description || "",
           ctas: Array.isArray(data.ctas) ? data.ctas : [],
@@ -67,11 +70,11 @@ export default function BlackBanner() {
               <div className="relative z-10 grid flex-1 gap-10 sm:gap-12 lg:grid-cols-12 lg:items-center">
                 <div className="lg:col-span-8">
                   <h2 className="max-w-[16ch] text-[clamp(2rem,4.5vw,4rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-white [overflow-wrap:anywhere]">
-                    {featureCard.title}
+                    {t(featureCard, "title", language)}
                   </h2>
 
                   <p className="mt-5 max-w-[650px] text-justify text-[0.88rem] leading-6 tracking-[-0.02em] text-white/74 [overflow-wrap:anywhere] sm:text-[0.94rem]">
-                    {featureCard.description}
+                    {t(featureCard, "description", language)}
                   </p>
 
                   <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
@@ -85,7 +88,7 @@ export default function BlackBanner() {
                             : "border border-white/18 bg-white/6 text-white backdrop-blur-sm hover:bg-white/10"
                         }`}
                       >
-                        {cta.label}
+                        {t(cta, "label", language)}
                       </a>
                     ))}
                   </div>

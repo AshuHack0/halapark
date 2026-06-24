@@ -15,6 +15,7 @@ import {
   X,
 } from "lucide-react";
 import JobApplicationModal from "./JobApplicationModal";
+import { useLanguage, t } from "@/context/LanguageContext";
 
 const ease = [0.22, 1, 0.36, 1];
 
@@ -148,6 +149,7 @@ function CareersVisual({ heroImage, reduced }) {
 
 function CareersHero({ hero }) {
   const reduced = useReducedMotion();
+  const { language } = useLanguage();
 
   return (
     <section
@@ -173,11 +175,11 @@ function CareersHero({ hero }) {
             transition={{ duration: 0.65, ease }}
           >
             <h1 className="max-w-[600px] text-[clamp(2.4rem,4.8vw,4.2rem)] font-semibold leading-[1.02] tracking-[-0.055em] text-[#050A13]">
-              {hero?.title}
+              {t(hero, "title", language)}
             </h1>
 
             <p className="mt-5 max-w-[470px] text-[0.95rem] leading-[1.75] text-slate-500">
-              {hero?.description}
+              {t(hero, "description", language)}
             </p>
 
             <div className="mt-9 flex flex-wrap items-center gap-3">
@@ -216,7 +218,8 @@ function CareersHero({ hero }) {
 
 function BuildingSmarterMobility({ building }) {
   const reduced = useReducedMotion();
-  const titleLines = (building?.title ?? "").split("\n");
+  const { language } = useLanguage();
+  const titleLines = (t(building, "title", language) || "").split("\n");
 
   return (
     <section className="bg-[#F4F8FF] py-16 sm:py-20 lg:py-24">
@@ -236,9 +239,15 @@ function BuildingSmarterMobility({ building }) {
               ))}
             </h2>
             <div className="mt-8 space-y-5 text-[0.94rem] leading-7 text-slate-500 sm:text-base">
-              {(building?.paragraphs ?? []).map((paragraph) => (
-                <p key={paragraph.slice(0, 40)}>{paragraph}</p>
-              ))}
+              {(building?.paragraphs ?? []).map((paragraph, i) => {
+                const text =
+                  language === "ar" &&
+                  Array.isArray(building.ar?.paragraphs) &&
+                  building.ar.paragraphs[i]
+                    ? building.ar.paragraphs[i]
+                    : paragraph;
+                return <p key={paragraph.slice(0, 40)}>{text}</p>;
+              })}
             </div>
           </motion.div>
         </div>
@@ -249,6 +258,7 @@ function BuildingSmarterMobility({ building }) {
 
 function OpportunitiesSection({ opportunities }) {
   const reduced = useReducedMotion();
+  const { language } = useLanguage();
   const items = Array.isArray(opportunities) ? opportunities : [];
 
   if (items.length === 0) return null;
@@ -284,15 +294,15 @@ function OpportunitiesSection({ opportunities }) {
                   </div>
                   {item.badge ? (
                     <span className="rounded-full bg-[#EEF6FF] px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-wider text-[#0088FF]">
-                      {item.badge}
+                      {t(item, "badge", language)}
                     </span>
                   ) : null}
                 </div>
                 <h3 className="mt-5 text-[1.1rem] font-semibold tracking-[-0.02em] text-[#050A13]">
-                  {item.title}
+                  {t(item, "title", language)}
                 </h3>
                 <p className="mt-3 text-[0.9rem] leading-6 text-slate-500">
-                  {item.description}
+                  {t(item, "description", language)}
                 </p>
               </motion.article>
             );
@@ -305,12 +315,13 @@ function OpportunitiesSection({ opportunities }) {
 
 // Apply button — renders a form-trigger or a link depending on applyMode.
 function JobApplyButton({ post, onApply, className }) {
+  const { language } = useLanguage();
   const useForm = post.applyMode === "form";
   const applyHref = post.applyLink || "/contact";
   if (useForm) {
     return (
       <button type="button" onClick={() => onApply(post)} className={className}>
-        {post.applyLabel ?? ""}
+        {t(post, "applyLabel", language)}
         <ArrowRight className="h-4 w-4" aria-hidden />
       </button>
     );
@@ -318,7 +329,7 @@ function JobApplyButton({ post, onApply, className }) {
   const ApplyTag = applyHref.startsWith("/") ? Link : "a";
   return (
     <ApplyTag href={applyHref} className={className}>
-      {post.applyLabel ?? ""}
+      {t(post, "applyLabel", language)}
       <ArrowRight className="h-4 w-4" aria-hidden />
     </ApplyTag>
   );
@@ -326,6 +337,7 @@ function JobApplyButton({ post, onApply, className }) {
 
 // Job detail modal — structured layout with rich (HTML) content support.
 function JobDetailModal({ job, onClose, onApply }) {
+  const { language } = useLanguage();
   useEffect(() => {
     if (!job) return undefined;
     const prev = document.body.style.overflow;
@@ -367,22 +379,22 @@ function JobDetailModal({ job, onClose, onApply }) {
                 <X className="h-4 w-4" />
               </button>
               <h3 className="max-w-[90%] text-[1.3rem] font-semibold tracking-[-0.03em] text-[#050A13] sm:text-[1.6rem]">
-                {job.title}
+                {t(job, "title", language)}
               </h3>
               <div className="mt-3 flex flex-wrap items-center gap-2">
                 {job.department ? (
                   <span className="rounded-full bg-[#EEF6FF] px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-wider text-[#0088FF]">
-                    {job.department}
+                    {t(job, "department", language)}
                   </span>
                 ) : null}
                 {job.employmentType ? (
                   <span className="rounded-full border border-[#E7EAF0] bg-white px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-wider text-slate-600">
-                    {job.employmentType}
+                    {t(job, "employmentType", language)}
                   </span>
                 ) : null}
                 {job.location ? (
                   <span className="inline-flex items-center gap-1 text-[0.8rem] text-slate-500">
-                    <MapPin className="h-3.5 w-3.5" aria-hidden /> {job.location}
+                    <MapPin className="h-3.5 w-3.5" aria-hidden /> {t(job, "location", language)}
                   </span>
                 ) : null}
               </div>
@@ -393,10 +405,10 @@ function JobDetailModal({ job, onClose, onApply }) {
               {job.fullDescription ? (
                 <div
                   className="job-rich text-[0.92rem] leading-7 text-slate-600"
-                  dangerouslySetInnerHTML={{ __html: job.fullDescription }}
+                  dangerouslySetInnerHTML={{ __html: t(job, "fullDescription", language) }}
                 />
               ) : (
-                <p className="text-[0.92rem] leading-7 text-slate-600">{job.description}</p>
+                <p className="text-[0.92rem] leading-7 text-slate-600">{t(job, "description", language)}</p>
               )}
             </div>
 
@@ -428,6 +440,7 @@ function JobDetailModal({ job, onClose, onApply }) {
 
 function JobOpenings({ openPositions }) {
   const reduced = useReducedMotion();
+  const { language } = useLanguage();
   // Only show active jobs — closed ones are hidden from the website.
   const posts = (openPositions?.posts ?? []).filter((p) => p?.status !== "closed");
   const [applyJob, setApplyJob] = useState(null);
@@ -454,11 +467,11 @@ function JobOpenings({ openPositions }) {
             className="mx-auto mb-12 max-w-[780px] text-center"
           >
             <h2 className="text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-[1.08] tracking-[-0.05em] text-[#050A13]">
-              {openPositions?.title ?? ""}
+              {t(openPositions, "title", language)}
             </h2>
             {openPositions?.subtitle ? (
               <p className="mt-4 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500">
-                {openPositions.subtitle}
+                {t(openPositions, "subtitle", language)}
               </p>
             ) : null}
           </motion.div>
@@ -475,28 +488,28 @@ function JobOpenings({ openPositions }) {
                 onClick={() => setDetailJob(post)}
               >
                 <h3 className="text-[1.05rem] font-semibold tracking-[-0.02em] text-[#050A13] sm:text-lg">
-                  {post.title}
+                  {t(post, "title", language)}
                 </h3>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {post.department ? (
                     <span className="rounded-full bg-[#EEF6FF] px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-wider text-[#0088FF]">
-                      {post.department}
+                      {t(post, "department", language)}
                     </span>
                   ) : null}
                   {post.employmentType ? (
                     <span className="rounded-full border border-[#E7EAF0] bg-slate-50 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-wider text-slate-600">
-                      {post.employmentType}
+                      {t(post, "employmentType", language)}
                     </span>
                   ) : null}
                 </div>
                 {post.location ? (
                   <p className="mt-3 inline-flex items-center gap-1 text-sm text-slate-500">
-                    <MapPin className="h-3.5 w-3.5" aria-hidden /> {post.location}
+                    <MapPin className="h-3.5 w-3.5" aria-hidden /> {t(post, "location", language)}
                   </p>
                 ) : null}
                 {post.description ? (
                   <p className="mt-4 line-clamp-3 text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem]">
-                    {post.description}
+                    {t(post, "description", language)}
                   </p>
                 ) : null}
 
@@ -524,6 +537,7 @@ function JobOpenings({ openPositions }) {
 
 function WhyJoinUs({ whyJoin }) {
   const reduced = useReducedMotion();
+  const { language } = useLanguage();
   const reasons = whyJoin?.reasons ?? [];
 
   return (
@@ -537,17 +551,17 @@ function WhyJoinUs({ whyJoin }) {
             transition={{ duration: 0.65, ease }}
           >
             <h2 className="text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-[1.08] tracking-[-0.05em] text-[#050A13]">
-              {whyJoin?.title}
+              {t(whyJoin, "title", language)}
             </h2>
             <p className="mt-4 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-600">
-              {whyJoin?.subtitle}
+              {t(whyJoin, "subtitle", language)}
             </p>
             <div className="mt-8 rounded-[20px] border border-[#E7EAF0] bg-white p-6">
               <h3 className="text-lg font-semibold text-[#050A13]">
                 More Than Colleagues. One Team.
               </h3>
               <p className="mt-3 text-[0.93rem] leading-7 text-slate-500">
-                {whyJoin?.bodyParagraph}
+                {t(whyJoin, "bodyParagraph", language)}
               </p>
             </div>
           </motion.div>
@@ -559,21 +573,29 @@ function WhyJoinUs({ whyJoin }) {
             transition={{ duration: 0.65, ease, delay: 0.1 }}
             className="space-y-3"
           >
-            {reasons.map((reason, i) => (
-              <motion.li
-                key={`${reason}-${i}`}
-                initial={reduced ? false : { opacity: 0, x: 16 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.45, ease, delay: i * 0.05 }}
-                className="flex items-start gap-4 rounded-2xl border border-slate-100 bg-white px-5 py-4 shadow-sm"
-              >
-                <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#0088FF]">
-                  <Check className="h-3.5 w-3.5 text-white" strokeWidth={3} aria-hidden />
-                </span>
-                <span className="text-[0.94rem] font-medium text-[#050A13]">{reason}</span>
-              </motion.li>
-            ))}
+            {reasons.map((reason, i) => {
+              const reasonText =
+                language === "ar" &&
+                Array.isArray(whyJoin.ar?.reasons) &&
+                whyJoin.ar.reasons[i]
+                  ? whyJoin.ar.reasons[i]
+                  : reason;
+              return (
+                <motion.li
+                  key={`${reason}-${i}`}
+                  initial={reduced ? false : { opacity: 0, x: 16 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.45, ease, delay: i * 0.05 }}
+                  className="flex items-start gap-4 rounded-2xl border border-slate-100 bg-white px-5 py-4 shadow-sm"
+                >
+                  <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#0088FF]">
+                    <Check className="h-3.5 w-3.5 text-white" strokeWidth={3} aria-hidden />
+                  </span>
+                  <span className="text-[0.94rem] font-medium text-[#050A13]">{reasonText}</span>
+                </motion.li>
+              );
+            })}
           </motion.ul>
         </div>
       </div>
@@ -583,6 +605,7 @@ function WhyJoinUs({ whyJoin }) {
 
 function CareersCTA({ cta, heroImage, hasOpenPositions }) {
   const reduced = useReducedMotion();
+  const { language } = useLanguage();
   const primaryHref = cta?.primaryCtaLink || "/contact";
   const secondaryHref = cta?.secondaryCtaLink || "#open-positions";
   const SecondaryTag = secondaryHref.startsWith("#") ? "a" : Link;
@@ -613,27 +636,27 @@ function CareersCTA({ cta, heroImage, hasOpenPositions }) {
             className="relative z-10 flex flex-col items-center px-6 py-16 text-center sm:px-10 sm:py-20 lg:py-24"
           >
             <h2 className="max-w-[640px] text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-[1.08] tracking-[-0.05em] text-white">
-              {cta?.title}
+              {t(cta, "title", language)}
             </h2>
             <p className="mt-3 text-[clamp(1.1rem,1.8vw,1.35rem)] font-medium text-white/85">
-              {cta?.subtitle}
+              {t(cta, "subtitle", language)}
             </p>
             <p className="mt-5 max-w-[620px] text-[0.88rem] leading-6 text-white/70 sm:text-[0.94rem]">
-              {cta?.description}
+              {t(cta, "description", language)}
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               <Link
                 href={primaryHref}
                 className="inline-flex items-center gap-2 rounded-full bg-[#0088FF] px-10 py-3.5 text-sm font-semibold text-white shadow-[0_8px_28px_rgba(0,136,255,0.45)] transition hover:brightness-110"
               >
-                {cta?.primaryCtaText} <ArrowRight className="h-4 w-4" aria-hidden />
+                {t(cta, "primaryCtaText", language)} <ArrowRight className="h-4 w-4" aria-hidden />
               </Link>
               {hasOpenPositions ? (
                 <SecondaryTag
                   href={secondaryHref}
                   className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-10 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/18"
                 >
-                  {cta?.secondaryCtaText}
+                  {t(cta, "secondaryCtaText", language)}
                 </SecondaryTag>
               ) : null}
             </div>

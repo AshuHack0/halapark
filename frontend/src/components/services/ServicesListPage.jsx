@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { allServicesData, serviceNames } from "./allServicesData";
 import { fetchPage } from "@/lib/cms";
+import { useLanguage, t } from "@/context/LanguageContext";
 // import GoodLookingServiceHero from "./GoodLookingServiceHero"; // OLD dark hero (looked like home page) — replaced by the light HeroSection below
 
 /* ─── Springs & easing ─── */
@@ -33,6 +34,7 @@ const ease       = [0.22, 1, 0.36, 1];
 
 function ServiceModal({ service, onClose }) {
   const reduced = useReducedMotion();
+  const { language } = useLanguage();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -58,7 +60,7 @@ function ServiceModal({ service, onClose }) {
 
   if (!service || !mounted) return null;
 
-  const includedLabel = service.includedLabel || "";
+  const includedLabel = t(service, "includedLabel", language) || "";
   const subCategoriesLabel =
     service.subCategoriesLabel || "";
   const normalizedSubCategories = (service.subCategories || []).map((cat) =>
@@ -136,10 +138,10 @@ function ServiceModal({ service, onClose }) {
             className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-4 [-webkit-overflow-scrolling:touch] sm:px-8 sm:py-5"
           >
             <h2 className="text-[1.15rem] font-semibold leading-snug tracking-[-0.03em] text-[#050A13] sm:text-[1.85rem]">
-              {service.name}
+              {t(service, "name", language)}
             </h2>
             <p className="mt-2 text-[0.8rem] leading-6 text-slate-500 sm:mt-3 sm:text-[0.94rem] sm:leading-7">
-              {service.fullDesc}
+              {t(service, "fullDesc", language)}
             </p>
 
             {service.whatsIncluded?.length > 0 && (
@@ -561,6 +563,7 @@ const CAT_META = {
 
 function ServiceCard({ service, index, onClick, category }) {
   const reduced = useReducedMotion();
+  const { language } = useLanguage();
   const col = index % 4;
   const cat = CAT_META[category] || CAT_META.parking;
 
@@ -620,7 +623,7 @@ function ServiceCard({ service, index, onClick, category }) {
         <div className="px-4 pb-5 pt-3.5">
           <div className="flex items-start justify-between gap-2">
             <h3 className="text-[0.95rem] font-semibold leading-snug tracking-[-0.02em] text-[#050A13]">
-              {service.name}
+              {t(service, "name", language)}
             </h3>
             <span
               className="mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-slate-100 bg-slate-50 text-slate-400 transition-all duration-200 group-hover/card:border-transparent group-hover/card:text-white"
@@ -630,7 +633,7 @@ function ServiceCard({ service, index, onClick, category }) {
             </span>
           </div>
           <p className="mt-1.5 line-clamp-3 text-[0.775rem] leading-5 text-slate-500">
-            {service.fullDesc}
+            {t(service, "fullDesc", language)}
           </p>
 
           {/* Read more row */}
@@ -852,8 +855,9 @@ function SvcHeroVisual({ reduced }) {
 function HeroSection({ onGetQuote, hero }) {
   const sectionRef = useRef(null);
   const reduced    = useReducedMotion();
-  const heroTitle = hero?.title?.trim() || "";
-  const heroSubtitle = hero?.subtitle?.trim() || "";
+  const { language } = useLanguage();
+  const heroTitle = (t(hero, "title", language) || "").trim();
+  const heroSubtitle = (t(hero, "subtitle", language) || "").trim();
 
   /* Mouse spotlight */
   const mouseX = useMotionValue(0);
@@ -1302,6 +1306,7 @@ const PARTNER_STATS = [
 ];
 
 function PartnerCard({ partner }) {
+  const { language } = useLanguage();
   return (
     <div className="group/partner relative flex min-w-[210px] items-center gap-3.5 overflow-hidden rounded-2xl border border-slate-100 bg-white px-5 py-4 shadow-[0_2px_12px_rgba(6,6,22,0.05)] transition-all duration-300 hover:border-slate-200 hover:shadow-[0_6px_24px_rgba(6,6,22,0.09)] sm:min-w-[240px]">
       {/* Hover glow */}
@@ -1325,9 +1330,9 @@ function PartnerCard({ partner }) {
       {/* Text */}
       <div className="min-w-0">
         <p className="truncate text-[0.82rem] font-semibold text-[#050A13] transition-colors duration-200 group-hover/partner:text-[#0088FF]">
-          {partner.name}
+          {t(partner, "name", language)}
         </p>
-        <p className="mt-0.5 text-[10px] font-medium text-slate-400">{partner.industry}</p>
+        <p className="mt-0.5 text-[10px] font-medium text-slate-400">{t(partner, "industry", language)}</p>
       </div>
     </div>
   );
@@ -1335,6 +1340,7 @@ function PartnerCard({ partner }) {
 
 function PartnersSection({ partners }) {
   const reduced = useReducedMotion();
+  const { language } = useLanguage();
   // Use the CMS partner list when provided; otherwise the built-in defaults.
   // A single CMS list is split across the two marquee rows.
   const cmsList = Array.isArray(partners?.partners) ? partners.partners.filter((p) => p && (p.name || p.logo)) : [];
@@ -1347,10 +1353,10 @@ function PartnersSection({ partners }) {
   }
   const row1 = [...base1, ...base1];
   const row2 = [...base2, ...base2];
-  const heading = partners?.heading?.trim() || "";
-  const headingGradient = partners?.headingGradient?.trim() || "";
-  const subtitle = partners?.subtitle?.trim() || "";
-  const description = partners?.description?.trim() || "";
+  const heading = (t(partners, "heading", language) || "").trim();
+  const headingGradient = (t(partners, "headingGradient", language) || "").trim();
+  const subtitle = (t(partners, "subtitle", language) || "").trim();
+  const description = (t(partners, "description", language) || "").trim();
 
   return (
     <section className="relative overflow-hidden bg-white py-20 sm:py-24">
@@ -1461,11 +1467,20 @@ const TRUST = [
   { Icon: Lock,       label: "Controlled Access Zones"            },
 ];
 
+// Map the admin's icon-name string to its lucide component (fallback: Shield).
+const TRUST_ICONS = { Camera, Shield, BadgeCheck, CreditCard, Lock };
+
 function TrustSection({ trust }) {
   const reduced = useReducedMotion();
-  const heading = trust?.heading?.trim() || "";
-  const headingGradient = trust?.headingGradient?.trim() || "";
-  const subtitle = trust?.subtitle?.trim() || "";
+  const { language } = useLanguage();
+  const heading = (t(trust, "heading", language) || "").trim();
+  const headingGradient = (t(trust, "headingGradient", language) || "").trim();
+  const subtitle = (t(trust, "subtitle", language) || "").trim();
+  // Render the CMS trust items when present; otherwise the bundled defaults.
+  const trustItems =
+    Array.isArray(trust?.items) && trust.items.length > 0
+      ? trust.items.map((it) => ({ ...it, Icon: TRUST_ICONS[it.icon] || Shield }))
+      : TRUST;
 
   return (
     <section className="relative overflow-hidden bg-[#F4F8FF] py-16 sm:py-20 lg:py-24">
@@ -1504,9 +1519,11 @@ function TrustSection({ trust }) {
 
         {/* 5 cards — 2 col mobile, 3 col md, 5 col lg */}
         <div className="grid grid-cols-2 gap-4 sm:gap-5 md:grid-cols-3 lg:grid-cols-5">
-          {TRUST.map(({ Icon, label }, i) => (
+          {trustItems.map((item, i) => {
+            const { Icon } = item;
+            return (
             <motion.div
-              key={label}
+              key={item.label || i}
               initial={reduced ? false : { opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.15 }}
@@ -1525,9 +1542,10 @@ function TrustSection({ trust }) {
               </div>
 
               {/* Label */}
-              <p className="mt-4 text-[0.82rem] font-semibold leading-snug text-[#050A13]">{label}</p>
+              <p className="mt-4 text-[0.82rem] font-semibold leading-snug text-[#050A13]">{t(item, "label", language)}</p>
             </motion.div>
-          ))}
+            );
+          })}
         </div>
 
       </div>
@@ -1539,10 +1557,11 @@ function TrustSection({ trust }) {
 
 function LongTermCTA({ onGetQuote, cta }) {
   const reduced = useReducedMotion();
-  const heading = cta?.heading?.trim() || "";
-  const headingGradient = cta?.headingGradient?.trim() || "";
-  const subtitle = cta?.subtitle?.trim() || "";
-  const ctaLabel = cta?.ctaLabel?.trim() || "";
+  const { language } = useLanguage();
+  const heading = (t(cta, "heading", language) || "").trim();
+  const headingGradient = (t(cta, "headingGradient", language) || "").trim();
+  const subtitle = (t(cta, "subtitle", language) || "").trim();
+  const ctaLabel = (t(cta, "ctaLabel", language) || "").trim();
 
   return (
     <section className="bg-[#F4F8FF] py-16 sm:py-20 lg:py-24">

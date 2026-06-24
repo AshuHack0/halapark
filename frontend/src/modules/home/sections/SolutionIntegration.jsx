@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { fetchHomeSection } from "@/lib/cms";
+import { useLanguage, t } from "@/context/LanguageContext";
 
 import { Monitor, Radar, SmartphoneNfc, Workflow } from "lucide-react";
 import styles from "./SolutionIntegration.module.css";
@@ -262,19 +263,29 @@ function SolutionCard({ id, title, description }) {
         imageClassName={styles.cardIconImage}
       />
       <h3
-        className={`${styles.cardTitle} mt-3 text-[17px] font-medium leading-[1.14] tracking-[-0.04em] text-[#050A13] sm:text-[19px] lg:text-[20px]`}
+        className={`${styles.cardTitle} mt-3 text-[17px] font-medium leading-[1.14] tracking-[-0.04em] text-[#050A13] sm:text-[19px] lg:text-[20px] [overflow-wrap:anywhere]`}
       >
         {title}
       </h3>
-      <p className="mt-3 text-[13px] font-normal leading-[1.35] text-[#8B919C] sm:text-[14px] lg:text-[15px]">
+      <p className="mt-3 text-[13px] font-normal leading-[1.35] text-[#8B919C] sm:text-[14px] lg:text-[15px] [overflow-wrap:anywhere]">
         {description}
       </p>
     </article>
   );
 }
 
-function SolutionCardsCarousel() {
-  const loop = [...solutionCards, ...solutionCards];
+function SolutionCardsCarousel({ cards, language }) {
+  // Use CMS cards when present; keep the icon by matching id/index to defaults.
+  const source =
+    Array.isArray(cards) && cards.length > 0
+      ? cards.map((c, i) => ({
+          ...c,
+          id: c.id || solutionCards[i]?.id || "barrier",
+          title: t(c, "title", language),
+          description: t(c, "description", language),
+        }))
+      : solutionCards;
+  const loop = [...source, ...source];
 
   return (
     <div
@@ -314,6 +325,7 @@ function SolutionCardsCarousel() {
 }
 
 export default function SolutionIntegration() {
+  const { language } = useLanguage();
   const [si, setSi] = useState({});
 
   useEffect(() => {
@@ -339,19 +351,19 @@ export default function SolutionIntegration() {
             id="ai-powered-parking-service-title"
             className="mx-auto mt-4 max-w-[940px] text-[clamp(2.65rem,4.5vw,4rem)] font-semibold uppercase leading-[1.01] tracking-[-0.06em] text-[#050A13]"
           >
-            {si.heading}{" "}
+            {t(si, "heading", language)}{" "}
             <span className="bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">
-              {si.headingGradient}
+              {t(si, "headingGradient", language)}
             </span>
           </h2>
           <p className="mx-auto mt-3 max-w-[650px] text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem]">
-            {si.subtitle}
+            {t(si, "subtitle", language)}
           </p>
         </div>
 
         <IntegrationDiagram />
 
-        <SolutionCardsCarousel />
+        <SolutionCardsCarousel cards={si.solutionCards} language={language} />
       </div>
     </section>
   );

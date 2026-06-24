@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { fetchHomeHeroSlides } from "@/lib/cms";
+import { useLanguage, t } from "@/context/LanguageContext";
 
 const AUTO_SLIDE_DELAY = 4500;
 
@@ -84,6 +85,7 @@ function HeroBackgroundMedia({ slide, isActive, onVideoEnd }) {
 }
 
 export default function HeroSection() {
+  const { language } = useLanguage();
   // Start empty; once the CMS fetch resolves we use whatever it returns —
   // including an empty list (client deleted all slides → hero is hidden).
   const [slides, setSlides] = useState([]);
@@ -188,16 +190,16 @@ export default function HeroSection() {
           <div className="relative flex min-h-125 w-full flex-col justify-center px-8 py-14 sm:px-12 md:min-h-[620px] lg:px-20">
             <div className="relative z-10 w-full max-w-lg">
               <h1 className="text-4xl font-semibold leading-tight text-white [overflow-wrap:anywhere] sm:text-5xl md:text-6xl line-clamp-3">
-                {currentSlide?.tag}
+                {t(currentSlide, "tag", language)}
               </h1>
 
               <p className="mt-5 max-w-sm text-sm leading-relaxed text-white/90 [overflow-wrap:anywhere] line-clamp-4 sm:text-base">
-                {currentSlide?.title}
+                {t(currentSlide, "title", language)}
               </p>
 
               <Link href="/contact">
                 <button className="mt-7 bg-[#0088FF] px-10 rounded-full py-3 text-white font-medium text-sm sm:text-base">
-                  Get In Touch
+                  {language === "ar" ? "تواصل معنا" : "Get In Touch"}
                 </button>
               </Link>
 

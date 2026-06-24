@@ -13,6 +13,7 @@ import {
   Zap,
 } from "lucide-react";
 import { fetchHomeSection } from "@/lib/cms";
+import { useLanguage, t } from "@/context/LanguageContext";
 
 const DESKTOP_NAV_OFFSET = 70;
 const DESKTOP_STEP_SCROLL_VH = 62;
@@ -160,6 +161,7 @@ function FeatureVisual({ item, compact = false }) {
 }
 
 export default function WhyHalapark() {
+  const { language } = useLanguage();
   const [content, setContent] = useState({});
 
   useEffect(() => {
@@ -241,7 +243,7 @@ export default function WhyHalapark() {
   return (
     <section className="bg-white py-10 sm:py-12 lg:py-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <SectionIntro heading={content.heading || ""} subtitle={content.subtitle || ""} />
+        <SectionIntro heading={t(content, "heading", language)} subtitle={t(content, "subtitle", language)} />
       </div>
       <div className="mx-auto mt-10 max-w-7xl px-4 sm:px-6 lg:px-8 lg:mt-12">
         <div className="lg:hidden">
@@ -270,10 +272,10 @@ export default function WhyHalapark() {
 
                   <p className="mt-5 text-[0.88rem] leading-6 text-slate-700 sm:text-[0.94rem]">
                     <span className="block text-[1.12rem] font-semibold leading-7 text-slate-900">
-                      {item.title || item.copy}
+                      {t(item, "title", language) || t(item, "copy", language)}
                     </span>
                     <span className="mt-1 block text-[0.88rem] leading-6 text-slate-700 sm:text-[0.94rem]">
-                      {item.subtitle || item.copy}
+                      {t(item, "subtitle", language) || t(item, "copy", language)}
                     </span>
                   </p>
                   <Link
@@ -343,7 +345,7 @@ export default function WhyHalapark() {
                                     : "text-slate-500"
                               }`}
                             >
-                              {item.title || item.copy}
+                              {t(item, "title", language) || t(item, "copy", language)}
                             </h3>
                             <p
                               className={`mt-1 text-[0.88rem] leading-6 tracking-[-0.012em] ${
@@ -354,7 +356,7 @@ export default function WhyHalapark() {
                                     : "text-slate-400"
                               }`}
                             >
-                              {item.subtitle || item.copy}
+                              {t(item, "subtitle", language) || t(item, "copy", language)}
                             </p>
                             <Link
                               href="/contact"

@@ -5,6 +5,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, Check } from "lucide-react";
 import { useEffect, useState } from "react";
 import { fetchBusinessSection } from "@/lib/cms";
+import { useLanguage, t } from "@/context/LanguageContext";
 
 const ease = [0.22, 1, 0.36, 1];
 
@@ -34,6 +35,7 @@ const DEFAULT_SERVICE_PARTNER_PERKS = [
 
 export default function TransformParking() {
   const reduced = useReducedMotion();
+  const { language } = useLanguage();
   const [transformData, setTransformData] = useState({
     title: "Ready to Transform Your Parking Business?",
     titleAccent: "Parking Business?",
@@ -57,6 +59,16 @@ export default function TransformParking() {
     });
   }, []);
 
+  // Perks are arrays of plain strings; the Arabic variants live under `ar.*`.
+  const parkingPartnerPerks =
+    language === "ar" && Array.isArray(transformData.ar?.parkingPartnerPerks) && transformData.ar.parkingPartnerPerks.length
+      ? transformData.ar.parkingPartnerPerks
+      : transformData.parkingPartnerPerks;
+  const servicePartnerPerks =
+    language === "ar" && Array.isArray(transformData.ar?.servicePartnerPerks) && transformData.ar.servicePartnerPerks.length
+      ? transformData.ar.servicePartnerPerks
+      : transformData.servicePartnerPerks;
+
   return (
     <section className="bg-[#F4F8FF] py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -71,8 +83,8 @@ export default function TransformParking() {
         >
           <h2 className="text-[clamp(3rem,5.5vw,5rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]">
             {(() => {
-              const accent = transformData.titleAccent?.trim() || "";
-              const full = transformData.title || "";
+              const accent = (t(transformData, "titleAccent", language) || "").trim();
+              const full = t(transformData, "title", language) || "";
               const base = accent && full.endsWith(accent) ? full.slice(0, full.length - accent.length).trimEnd() : full;
               const showAccent = accent && full.endsWith(accent);
               return (
@@ -91,7 +103,7 @@ export default function TransformParking() {
             })()}
           </h2>
           <p className="mx-auto mt-5 max-w-[650px] text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem]">
-            {transformData.description}
+            {t(transformData, "description", language)}
           </p>
         </motion.div>
 
@@ -111,18 +123,18 @@ export default function TransformParking() {
               <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#0088FF]">Parking Partner</span>
             </div>
             <h3 className="mt-4 text-[clamp(1.6rem,2.5vw,2.2rem)] font-semibold leading-[1.1] tracking-[-0.04em] text-[#050A13]">
-              {transformData.parkingPartnerTitle}
+              {t(transformData, "parkingPartnerTitle", language)}
             </h3>
             <p className="mt-2 text-[0.94rem] font-medium text-[#050A13]">
-              {transformData.parkingPartnerSubtitle}
+              {t(transformData, "parkingPartnerSubtitle", language)}
             </p>
             <p className="mt-4 text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem]">
-              {transformData.parkingPartnerDescription}
+              {t(transformData, "parkingPartnerDescription", language)}
             </p>
 
             <p className="mt-8 text-[0.78rem] font-bold uppercase tracking-[0.16em] text-[#0088FF]">What You Get</p>
             <ul className="mt-4 grid gap-2 sm:grid-cols-2">
-              {transformData.parkingPartnerPerks.map((perk, i) => (
+              {parkingPartnerPerks.map((perk, i) => (
                 <motion.li
                   key={perk}
                   initial={reduced ? false : { opacity: 0, x: -12 }}
@@ -162,21 +174,21 @@ export default function TransformParking() {
               <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/80">Service Partner</span>
             </div>
             <h3 className="mt-4 text-[clamp(1.6rem,2.5vw,2.2rem)] font-semibold leading-[1.1] tracking-[-0.04em] text-white">
-              {transformData.servicePartnerTitle}
+              {t(transformData, "servicePartnerTitle", language)}
             </h3>
             <p className="mt-2 text-[0.94rem] font-medium text-white/80">
-              {transformData.servicePartnerSubtitle}
+              {t(transformData, "servicePartnerSubtitle", language)}
             </p>
             <p className="mt-4 text-[0.88rem] leading-6 text-white/55 sm:text-[0.94rem]">
-              {transformData.servicePartnerDescription1}
+              {t(transformData, "servicePartnerDescription1", language)}
             </p>
             <p className="mt-3 text-[0.88rem] leading-6 text-white/55 sm:text-[0.94rem]">
-              {transformData.servicePartnerDescription2}
+              {t(transformData, "servicePartnerDescription2", language)}
             </p>
 
             <p className="mt-8 text-[0.78rem] font-bold uppercase tracking-[0.16em] text-[#5BC4FF]">Partnership Opportunities</p>
             <ul className="mt-4 grid gap-2 sm:grid-cols-2">
-              {transformData.servicePartnerPerks.map((perk, i) => (
+              {servicePartnerPerks.map((perk, i) => (
                 <motion.li
                   key={perk}
                   initial={reduced ? false : { opacity: 0, x: 12 }}

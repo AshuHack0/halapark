@@ -3,11 +3,13 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { fetchBusinessSection } from "@/lib/cms";
+import { useLanguage, t } from "@/context/LanguageContext";
 
 const ease = [0.22, 1, 0.36, 1];
 
 export default function BuiltForEverySpace() {
   const reduced = useReducedMotion();
+  const { language } = useLanguage();
   const [data, setData] = useState({});
 
   useEffect(() => {
@@ -27,13 +29,13 @@ export default function BuiltForEverySpace() {
           className="mx-auto max-w-[980px] text-center"
         >
           <h2 className="text-[clamp(3rem,5.5vw,5rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
-            {(data.title || "").split(" ").slice(0, -2).join(" ")}{" "}
+            {(t(data, "title", language) || "").split(" ").slice(0, -2).join(" ")}{" "}
             <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">
-              {(data.title || "").split(" ").slice(-2).join(" ")}
+              {(t(data, "title", language) || "").split(" ").slice(-2).join(" ")}
             </span>
           </h2>
           <p className="mx-auto mt-5 max-w-[650px] text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem]">
-            {data.description || ""}
+            {t(data, "description", language) || ""}
           </p>
         </motion.div>
       </div>

@@ -2,14 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { fetchHomeSection } from "@/lib/cms";
+import { useLanguage, t } from "@/context/LanguageContext";
 
 export default function ClientsPartners() {
+  const { language } = useLanguage();
   const [cp, setCp] = useState({});
 
   useEffect(() => {
     fetchHomeSection("clientsPartners").then((d) => {
       if (d && typeof d === "object") {
         setCp({
+          ar: d.ar,
           heading: d.heading || "",
           headingEnd: d.headingEnd || "",
           logos: Array.isArray(d.logos) ? d.logos.filter((l) => l && l.image) : [],
@@ -56,7 +59,7 @@ export default function ClientsPartners() {
                   id="ai-powered-parking-service-title"
                   className="mx-auto mt-4 max-w-[940px] text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]"
                 >
-                 {cp.heading} <br/>  {cp.headingEnd}
+                 {t(cp, "heading", language)} <br/>  {t(cp, "headingEnd", language)}
 
                 </h2>
               </div>

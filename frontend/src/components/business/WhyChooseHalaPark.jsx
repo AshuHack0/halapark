@@ -4,11 +4,13 @@ import { motion, useReducedMotion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import { fetchBusinessSection } from "@/lib/cms";
+import { useLanguage, t } from "@/context/LanguageContext";
 
 const ease = [0.22, 1, 0.36, 1];
 
 export default function WhyChooseHalaPark() {
   const reduced = useReducedMotion();
+  const { language } = useLanguage();
   const scrollRef = useRef(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
@@ -101,7 +103,7 @@ export default function WhyChooseHalaPark() {
                     {/* Center Text Overlay */}
                     <div className="relative z-10 text-white text-center px-4">
                       <p className="text-sm font-medium opacity-90 mb-2">Smart Solutions</p>
-                      <p className="text-lg font-bold leading-tight">{item.title}</p>
+                      <p className="text-lg font-bold leading-tight">{t(item, "title", language)}</p>
                     </div>
                   </div>
 
@@ -109,10 +111,10 @@ export default function WhyChooseHalaPark() {
                   <div className="w-3/5 p-6 sm:p-8 flex flex-col justify-between">
                     <div>
                       <h3 className="text-xl font-semibold text-[#050A13] mb-3">
-                        {item.title}
+                        {t(item, "title", language)}
                       </h3>
                       <p className="text-sm leading-6 text-slate-600">
-                        {item.description}
+                        {t(item, "description", language)}
                       </p>
                     </div>
                   </div>

@@ -6,11 +6,13 @@ import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { fetchBusinessContent } from "@/lib/cms";
+import { useLanguage, t } from "@/context/LanguageContext";
 
 const ease = [0.22, 1, 0.36, 1];
 
 export default function BusinessSolutions() {
   const reduced = useReducedMotion();
+  const { language } = useLanguage();
   const [solutions, setSolutions] = useState([]);
   const [header, setHeader] = useState({});
 
@@ -40,23 +42,23 @@ export default function BusinessSolutions() {
               transition={{ duration: 0.65, ease }}
             >
               <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight tracking-[-0.06em] text-[#050A13] mb-6 [overflow-wrap:anywhere]">
-                {header.heading}
-                {header.headingAccent ? (
+                {t(header, "heading", language)}
+                {t(header, "headingAccent", language) ? (
                   <>
                     {" "}
                     <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">
-                      {header.headingAccent}
+                      {t(header, "headingAccent", language)}
                     </span>
                   </>
                 ) : null}
               </h2>
 
               <p className="text-base leading-7 text-slate-600 mb-4 [overflow-wrap:anywhere]">
-                {header.description}
+                {t(header, "description", language)}
               </p>
 
               <p className="text-sm leading-6 text-slate-500 mb-8 [overflow-wrap:anywhere]">
-                {header.description2}
+                {t(header, "description2", language)}
               </p>
 
               {/* CTA Button */}
@@ -117,10 +119,10 @@ export default function BusinessSolutions() {
                 {/* Content Container */}
                 <div className="p-5 sm:p-6">
                   <h3 className="text-sm sm:text-base font-bold leading-tight tracking-[-0.02em] text-[#050A13] group-hover:text-[#0088FF] transition">
-                    {card.title}
+                    {t(card, "title", language)}
                   </h3>
                   <p className="mt-3 text-xs sm:text-sm leading-5 text-slate-600">
-                    {card.description}
+                    {t(card, "description", language)}
                   </p>
 
                   {/* Bottom Accent Line */}

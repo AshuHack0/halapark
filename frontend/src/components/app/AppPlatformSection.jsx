@@ -5,6 +5,7 @@ import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { fetchPage } from "@/lib/cms";
+import { useLanguage, t } from "@/context/LanguageContext";
 
 const NAVY = "#050A13";
 const ACCENT = "#0088FF";
@@ -336,6 +337,7 @@ function WebsitePreview() {
 
 export default function AppPlatformSection() {
   const prefersReducedMotion = useReducedMotion();
+  const { language } = useLanguage();
   const [content, setContent] = useState(defaultContent);
 
   useEffect(() => {
@@ -354,6 +356,9 @@ export default function AppPlatformSection() {
         }
         if (Array.isArray(p.websiteFeatures) && p.websiteFeatures.length > 0) {
           next.websiteFeatures = p.websiteFeatures;
+        }
+        if (p.ar && typeof p.ar === "object") {
+          next.ar = p.ar;
         }
         return next;
       });
@@ -378,12 +383,12 @@ export default function AppPlatformSection() {
                 className="mt-7 whitespace-pre-line text-2xl font-semibold leading-snug sm:text-[26px] [overflow-wrap:anywhere]"
                 style={{ color: NAVY }}
               >
-                {content.title}
+                {t(content, "title", language)}
               </p>
 
               {content.description ? (
                 <p className="mt-3 text-[14px] leading-6 text-[#5C667A] [overflow-wrap:anywhere]">
-                  {content.description}
+                  {t(content, "description", language)}
                 </p>
               ) : null}
 
@@ -392,8 +397,8 @@ export default function AppPlatformSection() {
                   <FeatureRow
                     key={feature.title ?? i}
                     icon={appFeatureIcons[i] ?? defaultFeatureIcon}
-                    title={feature.title}
-                    description={feature.description}
+                    title={t(feature, "title", language)}
+                    description={t(feature, "description", language)}
                   />
                 ))}
               </ul>
@@ -469,7 +474,7 @@ export default function AppPlatformSection() {
                 className="mt-7 whitespace-pre-line text-2xl font-semibold leading-snug sm:text-[26px] [overflow-wrap:anywhere]"
                 style={{ color: NAVY }}
               >
-                {content.subtitle}
+                {t(content, "subtitle", language)}
               </p>
 
               <ul className="mt-7 space-y-5">
@@ -477,8 +482,8 @@ export default function AppPlatformSection() {
                   <FeatureRow
                     key={feature.title ?? i}
                     icon={websiteFeatureIcons[i] ?? defaultFeatureIcon}
-                    title={feature.title}
-                    description={feature.description}
+                    title={t(feature, "title", language)}
+                    description={t(feature, "description", language)}
                   />
                 ))}
               </ul>

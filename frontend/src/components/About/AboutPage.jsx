@@ -9,6 +9,7 @@ import {
   Cpu, Leaf, Building2, Car, Network, CalendarCheck,
   Target, Eye, Globe, Users, TrendingUp, Sparkles,
 } from "lucide-react";
+import { useLanguage, t } from "@/context/LanguageContext";
 
 const ease = [0.22, 1, 0.36, 1];
 
@@ -160,6 +161,7 @@ function AboutVisual({ heroImage, reduced }) {
 
 function AboutHero({ hero }) {
   const reduced = useReducedMotion();
+  const { language } = useLanguage();
 
   return (
     <section
@@ -185,17 +187,17 @@ function AboutHero({ hero }) {
             transition={{ duration: 0.65, ease }}
           >
             <h1 className="max-w-[600px] text-[clamp(2.4rem,4.8vw,4.2rem)] font-semibold leading-[1.02] tracking-[-0.055em] text-[#050A13]">
-              {hero?.title}
+              {t(hero, "title", language)}
             </h1>
 
-            {hero?.tagline ? (
+            {t(hero, "tagline", language) ? (
               <p className="mt-4 text-[1rem] font-semibold text-[#0088FF]">
-                {hero.tagline}
+                {t(hero, "tagline", language)}
               </p>
             ) : null}
 
             <p className="mt-5 max-w-[470px] text-[0.95rem] leading-[1.75] text-slate-500">
-              {hero?.description}
+              {t(hero, "description", language)}
             </p>
 
             <div className="mt-9 flex flex-wrap items-center gap-3">
@@ -203,17 +205,17 @@ function AboutHero({ hero }) {
                 href={hero?.primaryCtaLink || "/contact"}
                 className="group inline-flex items-center gap-2.5 rounded-full bg-[#0088FF] px-7 py-3.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,136,255,0.32)] transition hover:brightness-110"
               >
-                {hero?.primaryCtaText || ""}
+                {t(hero, "primaryCtaText", language) || ""}
                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 transition-transform duration-200 group-hover:translate-x-0.5">
                   <ArrowRight className="h-3.5 w-3.5" aria-hidden />
                 </span>
               </Link>
-              {hero?.secondaryCtaText ? (
+              {t(hero, "secondaryCtaText", language) ? (
                 <Link
                   href={hero?.secondaryCtaLink || "/contact"}
                   className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-7 py-3.5 text-sm font-semibold text-slate-700 shadow-[0_2px_12px_rgba(6,6,22,0.07)] transition hover:border-[#0088FF]/50 hover:text-[#0088FF]"
                 >
-                  {hero.secondaryCtaText}
+                  {t(hero, "secondaryCtaText", language)}
                 </Link>
               ) : null}
             </div>
@@ -291,21 +293,23 @@ function AboutIntro() {
 
 function OurMission({ mission }) {
   const reduced = useReducedMotion();
+  const { language } = useLanguage();
   return (
     <section className="bg-white py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
           <motion.div initial={reduced ? false : { opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.6, ease }}>
             <h2 className="mb-3 text-[clamp(2.4rem,4vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-[#050A13]">
-              {mission?.title}
+              {t(mission, "title", language)}
             </h2>
             <p className="mb-7 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500">
-              {mission?.subtitle}
+              {t(mission, "subtitle", language)}
             </p>
             <div className="space-y-5 text-[0.93rem] leading-7 text-slate-500">
-              {(mission?.paragraphs ?? []).map((paragraph) => (
-                <p key={paragraph.slice(0, 48)}>{paragraph}</p>
-              ))}
+              {(mission?.paragraphs ?? []).map((paragraph, i) => {
+                const para = language === "ar" && Array.isArray(mission.ar?.paragraphs) && mission.ar.paragraphs[i] ? mission.ar.paragraphs[i] : paragraph;
+                return <p key={paragraph.slice(0, 48)}>{para}</p>;
+              })}
             </div>
           </motion.div>
 
@@ -345,6 +349,7 @@ function OurMission({ mission }) {
 
 function OurVision({ vision }) {
   const reduced = useReducedMotion();
+  const { language } = useLanguage();
   const card = vision?.card ?? {};
   return (
     <section className="bg-[#F4F8FF] py-16 sm:py-20 lg:py-24">
@@ -352,15 +357,16 @@ function OurVision({ vision }) {
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
           <motion.div initial={reduced ? false : { opacity: 0, x: -28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }}>
             <h2 className="mb-3 text-[clamp(2.4rem,4vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-[#050A13]">
-              {vision?.title}
+              {t(vision, "title", language)}
             </h2>
             <p className="mb-6 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500">
-              {vision?.subtitle}
+              {t(vision, "subtitle", language)}
             </p>
             <div className="space-y-4 text-[0.93rem] leading-7 text-slate-500">
-              {(vision?.paragraphs ?? []).map((paragraph) => (
-                <p key={paragraph.slice(0, 48)}>{paragraph}</p>
-              ))}
+              {(vision?.paragraphs ?? []).map((paragraph, i) => {
+                const para = language === "ar" && Array.isArray(vision.ar?.paragraphs) && vision.ar.paragraphs[i] ? vision.ar.paragraphs[i] : paragraph;
+                return <p key={paragraph.slice(0, 48)}>{para}</p>;
+              })}
             </div>
           </motion.div>
 
@@ -376,21 +382,24 @@ function OurVision({ vision }) {
                 <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1">
                   <span className="h-1.5 w-1.5 rounded-full bg-[#5BC4FF]" />
                   <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/70">
-                    {card.badge}
+                    {t(card, "badge", language)}
                   </span>
                 </div>
                 <p className="text-[clamp(1.3rem,2vw,1.7rem)] font-semibold leading-[1.3] tracking-[-0.03em] text-white">
-                  {card.title}
+                  {t(card, "title", language)}
                 </p>
-                <p className="mt-4 text-[0.88rem] leading-6 text-white/55">{card.subtitle}</p>
+                <p className="mt-4 text-[0.88rem] leading-6 text-white/55">{t(card, "subtitle", language)}</p>
               </div>
               <div className="grid grid-cols-3 gap-3 border-t border-white/10 pt-6">
-                {(card.highlights ?? []).map((item) => (
-                  <div key={`${item.line1}-${item.line2}`} className="text-center">
-                    <p className="text-[0.78rem] font-semibold text-white">{item.line1}</p>
-                    <p className="text-[0.72rem] text-white/45">{item.line2}</p>
-                  </div>
-                ))}
+                {(card.highlights ?? []).map((item, i) => {
+                  const arItem = language === "ar" && Array.isArray(card.ar?.highlights) && card.ar.highlights[i] ? card.ar.highlights[i] : item;
+                  return (
+                    <div key={`${item.line1}-${item.line2}`} className="text-center">
+                      <p className="text-[0.78rem] font-semibold text-white">{arItem.line1}</p>
+                      <p className="text-[0.72rem] text-white/45">{arItem.line2}</p>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </motion.div>
@@ -404,21 +413,23 @@ function OurVision({ vision }) {
 
 function OurStory({ story }) {
   const reduced = useReducedMotion();
+  const { language } = useLanguage();
   return (
     <section className="bg-white py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid items-start gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-20">
           <motion.div initial={reduced ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }}>
             <h2 className="mb-3 text-[clamp(2.4rem,4vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-[#050A13]">
-              {story?.title}
+              {t(story, "title", language)}
             </h2>
             <p className="mb-6 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500">
-              {story?.subtitle}
+              {t(story, "subtitle", language)}
             </p>
             <div className="space-y-5 text-[0.93rem] leading-7 text-slate-500">
-              {(story?.paragraphs ?? []).map((paragraph) => (
-                <p key={paragraph.slice(0, 48)}>{paragraph}</p>
-              ))}
+              {(story?.paragraphs ?? []).map((paragraph, i) => {
+                const para = language === "ar" && Array.isArray(story.ar?.paragraphs) && story.ar.paragraphs[i] ? story.ar.paragraphs[i] : paragraph;
+                return <p key={paragraph.slice(0, 48)}>{para}</p>;
+              })}
             </div>
           </motion.div>
 
@@ -445,6 +456,7 @@ function OurStory({ story }) {
 
 function WhatWeDo({ whatWeDo }) {
   const reduced = useReducedMotion();
+  const { language } = useLanguage();
   const items = whatWeDo?.ecosystemItems ?? [];
   return (
     <section className="bg-[#F4F8FF] py-16 sm:py-20 lg:py-24">
@@ -452,12 +464,12 @@ function WhatWeDo({ whatWeDo }) {
         <div className="grid items-start gap-10 lg:grid-cols-[0.7fr_1.3fr] lg:gap-16">
           <motion.div initial={reduced ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }} className="lg:sticky lg:top-24">
             <h2 className="mb-3 text-[clamp(2.2rem,3.5vw,3rem)] font-semibold leading-[1.06] tracking-[-0.05em] text-[#050A13]">
-              {whatWeDo?.title}
+              {t(whatWeDo, "title", language)}
             </h2>
             <p className="mb-5 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500">
-              {whatWeDo?.subtitle}
+              {t(whatWeDo, "subtitle", language)}
             </p>
-            <p className="text-[0.93rem] leading-7 text-slate-500">{whatWeDo?.intro}</p>
+            <p className="text-[0.93rem] leading-7 text-slate-500">{t(whatWeDo, "intro", language)}</p>
             {whatWeDo?.image ? (
             <div className="relative mt-8 h-48 w-full overflow-hidden rounded-[18px]">
               <Image src={whatWeDo.image} alt="HalaPark smart parking" fill className="object-cover object-center" />
@@ -467,14 +479,17 @@ function WhatWeDo({ whatWeDo }) {
           </motion.div>
 
           <motion.div initial={reduced ? false : { opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.1 }} transition={{ duration: 0.55, ease }} className="grid gap-2.5 sm:grid-cols-2">
-            {items.map((item, i) => (
-              <motion.div key={item} initial={reduced ? false : { opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.35, ease, delay: i * 0.025 }} className="flex items-center gap-3 rounded-[12px] bg-white px-4 py-3.5 shadow-sm">
-                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#0088FF]">
-                  <Check className="h-3 w-3 text-white" strokeWidth={3} aria-hidden />
-                </span>
-                <span className="text-[0.85rem] font-medium text-[#050A13]">{item}</span>
-              </motion.div>
-            ))}
+            {items.map((item, i) => {
+              const label = language === "ar" && Array.isArray(whatWeDo.ar?.ecosystemItems) && whatWeDo.ar.ecosystemItems[i] ? whatWeDo.ar.ecosystemItems[i] : item;
+              return (
+                <motion.div key={item} initial={reduced ? false : { opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.35, ease, delay: i * 0.025 }} className="flex items-center gap-3 rounded-[12px] bg-white px-4 py-3.5 shadow-sm">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#0088FF]">
+                    <Check className="h-3 w-3 text-white" strokeWidth={3} aria-hidden />
+                  </span>
+                  <span className="text-[0.85rem] font-medium text-[#050A13]">{label}</span>
+                </motion.div>
+              );
+            })}
           </motion.div>
         </div>
       </div>
@@ -486,6 +501,7 @@ function WhatWeDo({ whatWeDo }) {
 
 function TechnologyInnovation({ technology }) {
   const reduced = useReducedMotion();
+  const { language } = useLanguage();
   return (
     <section className="bg-white py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -499,7 +515,7 @@ function TechnologyInnovation({ technology }) {
               <span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-3 py-1 backdrop-blur-sm">
                 <span className="h-1.5 w-1.5 rounded-full bg-[#5BC4FF]" />
                 <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/80">
-                  {technology?.imageBadge}
+                  {t(technology, "imageBadge", language)}
                 </span>
               </span>
             </div>
@@ -507,12 +523,12 @@ function TechnologyInnovation({ technology }) {
 
           <motion.div initial={reduced ? false : { opacity: 0, x: 24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease, delay: 0.1 }}>
             <h2 className="mb-3 text-[clamp(2.4rem,4vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-[#050A13]">
-              {technology?.title}
+              {t(technology, "title", language)}
             </h2>
             <p className="mb-5 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500">
-              {technology?.subtitle}
+              {t(technology, "subtitle", language)}
             </p>
-            <p className="text-[0.93rem] leading-7 text-slate-500">{technology?.body}</p>
+            <p className="text-[0.93rem] leading-7 text-slate-500">{t(technology, "body", language)}</p>
             {/* Extra feature cards — not in content doc
             <div className="mt-8 grid grid-cols-2 gap-3">
               {techPoints.map((p, i) => {
@@ -1152,6 +1168,7 @@ function PoweringFutureCities() {
 
 function FinalCTA({ cta }) {
   const reduced = useReducedMotion();
+  const { language } = useLanguage();
   return (
     <section className="bg-white py-4 sm:py-5 lg:py-6">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -1172,23 +1189,23 @@ function FinalCTA({ cta }) {
             className="relative z-10 mx-auto max-w-3xl px-8 py-14 text-center sm:px-12 sm:py-16 lg:px-16 lg:py-20"
           >
             <h2 className="text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-white">
-              {cta?.title}
+              {t(cta, "title", language)}
             </h2>
             <p className="mx-auto mt-5 max-w-2xl text-sm leading-7 text-white/75 sm:text-base">
-              {cta?.description}
+              {t(cta, "description", language)}
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               <Link
                 href={cta?.primaryCtaLink || "/contact"}
                 className="inline-flex items-center gap-2 rounded-full bg-[#0088FF] px-8 py-3.5 text-sm font-semibold text-white shadow-[0_8px_28px_rgba(0,136,255,0.45)] transition hover:brightness-110"
               >
-                {cta?.primaryCtaText} <ArrowRight className="h-4 w-4" aria-hidden />
+                {t(cta, "primaryCtaText", language)} <ArrowRight className="h-4 w-4" aria-hidden />
               </Link>
               <Link
                 href={cta?.secondaryCtaLink || "/contact"}
                 className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-8 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/15"
               >
-                {cta?.secondaryCtaText}
+                {t(cta, "secondaryCtaText", language)}
               </Link>
             </div>
           </motion.div>

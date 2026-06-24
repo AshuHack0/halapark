@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { fetchPage } from "@/lib/cms";
+import { useLanguage, t } from "@/context/LanguageContext";
 
 const DEFAULT_HERO = {
   title: "Got Questions? We've Got Answers.",
@@ -11,6 +12,7 @@ const DEFAULT_HERO = {
 };
 
 export default function FAQHeroSection() {
+  const { language } = useLanguage();
   const [hero, setHero] = useState({});
 
   useEffect(() => {
@@ -21,7 +23,7 @@ export default function FAQHeroSection() {
     });
   }, []);
 
-  const titleParts = (hero.title || "").split("?");
+  const titleParts = (t(hero, "title", language) || "").split("?");
   const firstPart = titleParts[0] ? titleParts[0] + "?" : "";
   const secondPart = titleParts[1]?.trim() || "";
 
@@ -48,7 +50,7 @@ export default function FAQHeroSection() {
                 </span>
               </h1>
               <p className="mt-4 max-w-md text-sm leading-relaxed text-white/75 sm:text-base">
-                {hero.description}
+                {t(hero, "description", language)}
               </p>
             </div>
           </div>

@@ -6,6 +6,7 @@ import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { fetchBusinessSection } from "@/lib/cms";
+import { useLanguage, t } from "@/context/LanguageContext";
 
 const ease = [0.22, 1, 0.36, 1];
 
@@ -31,7 +32,7 @@ const PARTNERS_ROW2 = [
   { name: "Damac Properties",   initials: "DP", color: "#0EA5E9", industry: "Development"     },
 ];
 
-function MarqueeRow({ partners, reverse = false }) {
+function MarqueeRow({ partners, reverse = false, language }) {
   const doubled = [...partners, ...partners];
   return (
     <div className="relative overflow-hidden">
@@ -51,8 +52,8 @@ function MarqueeRow({ partners, reverse = false }) {
               {p.initials}
             </span>
             <div className="min-w-0">
-              <p className="truncate text-[0.82rem] font-semibold text-[#050A13]">{p.name}</p>
-              <p className="text-[0.72rem] text-slate-400">{p.industry}</p>
+              <p className="truncate text-[0.82rem] font-semibold text-[#050A13]">{t(p, "name", language)}</p>
+              <p className="text-[0.72rem] text-slate-400">{t(p, "industry", language)}</p>
             </div>
           </div>
         ))}
@@ -63,6 +64,7 @@ function MarqueeRow({ partners, reverse = false }) {
 
 export default function PartnersShowcase() {
   const reduced = useReducedMotion();
+  const { language } = useLanguage();
   const [showcase, setShowcase] = useState({});
 
   useEffect(() => {
@@ -72,6 +74,10 @@ export default function PartnersShowcase() {
       }
     });
   }, []);
+
+  // The CTA block is a nested object; the admin stores its Arabic in the block's
+  // own `ar` (ctaSection.ar.{title,description}), so read it straight through.
+  const ctaSection = showcase.ctaSection || {};
 
   return (
     <section className="bg-white py-16 sm:py-20 lg:py-24">
@@ -116,17 +122,17 @@ export default function PartnersShowcase() {
             transition={{ duration: 0.65, ease, delay: 0.2 }}
           >
             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight tracking-[-0.06em] text-[#050A13] mb-4">
-              {showcase.heading}{" "}
+              {t(showcase, "heading", language)}{" "}
               <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">
-                {showcase.headingGradient}
+                {t(showcase, "headingGradient", language)}
               </span>
             </h2>
             <h3 className="text-3xl sm:text-4xl font-bold text-[#050A13] mb-6">
-              {showcase.subheading}
+              {t(showcase, "subheading", language)}
             </h3>
 
             <p className="text-base leading-7 text-slate-600 mb-8">
-              {showcase.description}
+              {t(showcase, "description", language)}
             </p>
 
             {/* Stats Grid */}
@@ -141,7 +147,7 @@ export default function PartnersShowcase() {
                   className="rounded-[20px] border border-[#E7EAF0] bg-gradient-to-br from-[#F8FAFC] to-white p-4 text-center"
                 >
                   <p className="text-2xl sm:text-3xl font-bold text-[#050A13]">{stat.value}</p>
-                  <p className="text-xs sm:text-sm text-slate-600 mt-2">{stat.label}</p>
+                  <p className="text-xs sm:text-sm text-slate-600 mt-2">{t(stat, "label", language)}</p>
                 </motion.div>
               ))}
             </div>
@@ -152,7 +158,7 @@ export default function PartnersShowcase() {
               whileTap={{ scale: 0.98 }}
               className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] text-white font-semibold rounded-full hover:shadow-lg hover:shadow-[#0088FF]/30 transition"
             >
-              {showcase.ctaLabel}
+              {t(showcase, "ctaLabel", language)}
               <ArrowRight className="h-4 w-4" />
             </motion.button>
           </motion.div>
@@ -184,8 +190,8 @@ export default function PartnersShowcase() {
           {/* Marquee rows */}
           {!reduced ? (
             <div className="space-y-4 overflow-hidden">
-              <MarqueeRow partners={showcase.partners?.row1?.length ? showcase.partners.row1 : PARTNERS_ROW1} />
-              <MarqueeRow partners={showcase.partners?.row2?.length ? showcase.partners.row2 : PARTNERS_ROW2} reverse />
+              <MarqueeRow partners={showcase.partners?.row1?.length ? showcase.partners.row1 : PARTNERS_ROW1} language={language} />
+              <MarqueeRow partners={showcase.partners?.row2?.length ? showcase.partners.row2 : PARTNERS_ROW2} reverse language={language} />
             </div>
           ) : (
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -218,10 +224,10 @@ export default function PartnersShowcase() {
           </div>
           <div className="relative z-10 flex flex-col items-center px-6 py-12 text-center sm:px-10 sm:py-14">
             <h3 className="max-w-[580px] text-[clamp(1.6rem,3vw,2.4rem)] font-semibold leading-[1.1] tracking-[-0.04em] text-white">
-              {showcase.ctaSection?.title}{" "}
+              {t(ctaSection, "title", language)}{" "}
             </h3>
             <p className="mx-auto mt-3 max-w-[500px] text-[0.88rem] leading-6 text-white/60 sm:text-[0.94rem]">
-              {showcase.ctaSection?.description}
+              {t(ctaSection, "description", language)}
             </p>
             <Link
               href="/contact"

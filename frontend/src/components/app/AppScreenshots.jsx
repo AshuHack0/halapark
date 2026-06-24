@@ -6,6 +6,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { CalendarCheck, Check, MapPin, Send, WalletCards } from "lucide-react";
 import { fetchPage } from "@/lib/cms";
 import { appScreenshots } from "./appContent";
+import { useLanguage, t } from "@/context/LanguageContext";
 
 const phoneFrameSrc = "/mobileframe.png";
 
@@ -124,6 +125,7 @@ function PhoneFrame({ screen, index, prefersReducedMotion }) {
 
 export default function AppScreenshots() {
   const prefersReducedMotion = useReducedMotion();
+  const { language } = useLanguage();
   // Merge CMS screenshot fields onto the hardcoded defaults (keep UI-only props
   // like id/step/label/phoneLayouts so layout + animations stay intact).
   const [screens, setScreens] = useState(appScreenshots);
@@ -170,21 +172,21 @@ export default function AppScreenshots() {
             <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[rgba(0,136,255,0.1)] text-[#0088FF]">
               <Check aria-hidden="true" className="h-2.5 w-2.5" strokeWidth={3} />
             </span>
-            {header.eyebrow}
+            {t(header, "eyebrow", language)}
           </p>
 
           <h2 className="mx-auto mt-4 max-w-[760px] text-[clamp(2.25rem,12vw,4.9rem)] font-semibold leading-[0.98] tracking-tight text-[#050A13] sm:leading-[0.95] [overflow-wrap:anywhere]">
-            {header.heading}
+            {t(header, "heading", language)}
             {header.headingAccent ? (
               <>
                 <br />
-                <span className="text-[#0088FF]">{header.headingAccent}</span>
+                <span className="text-[#0088FF]">{t(header, "headingAccent", language)}</span>
               </>
             ) : null}
           </h2>
 
           <p className="mx-auto mt-5 max-w-[520px] text-sm font-light leading-6 text-[#8A94A6] sm:text-[15px] [overflow-wrap:anywhere]">
-            {header.description}
+            {t(header, "description", language)}
           </p>
         </motion.div>
 

@@ -12,6 +12,7 @@ import {
   WalletCards,
 } from "lucide-react";
 import { fetchPage } from "@/lib/cms";
+import { useLanguage, t } from "@/context/LanguageContext";
 
 const quickFeatures = [
   { title: "Top Up", subtitle: "your wallet", icon: WalletCards },
@@ -74,6 +75,7 @@ function PhonePreview() {
 
 export default function AppCurrencySection() {
   const prefersReducedMotion = useReducedMotion();
+  const { language } = useLanguage();
   const [content, setContent] = useState(defaultContent);
 
   useEffect(() => {
@@ -86,6 +88,7 @@ export default function AppCurrencySection() {
         if (c.title) next.title = c.title;
         if (c.subtitle) next.subtitle = c.subtitle;
         if (c.description) next.description = c.description;
+        if (c.ar && typeof c.ar === "object") next.ar = c.ar;
         if (Array.isArray(c.cardFeatures) && c.cardFeatures.length > 0) {
           next.cardFeatures = c.cardFeatures.map((cmsCard, i) => ({
             ...(prev.cardFeatures[i] ?? {}),
@@ -134,15 +137,15 @@ export default function AppCurrencySection() {
             </div>
 
             <p className="mt-8 inline-flex w-fit rounded-full border border-[#D7E7FF] bg-white px-4 py-1.5 text-[12px] font-semibold uppercase tracking-[0.14em] text-[#0088FF] shadow-[0_8px_22px_rgba(15,23,42,0.04)] [overflow-wrap:anywhere]">
-              {content.subtitle}
+              {t(content, "subtitle", language)}
             </p>
 
             <h2 className="mt-5 max-w-[590px] text-[clamp(2.25rem,5.6vw,4.25rem)] font-semibold leading-[1.03] tracking-tight text-[#050A13] lg:leading-[0.99] [overflow-wrap:anywhere]">
-              {content.title}
+              {t(content, "title", language)}
             </h2>
 
             <p className="mt-5 max-w-[500px] text-base font-light leading-7 text-[#667085] sm:text-[17px] [overflow-wrap:anywhere]">
-              {content.description}
+              {t(content, "description", language)}
             </p>
 
             <button
@@ -176,9 +179,9 @@ export default function AppCurrencySection() {
                       <Icon aria-hidden="true" className="h-6 w-6" />
                     </span>
                     <p className="text-sm leading-5 text-[#344054] [overflow-wrap:anywhere]">
-                      <span className="font-semibold">{item.title}</span>
+                      <span className="font-semibold">{t(item, "title", language)}</span>
                       <br />
-                      <span className="text-[#667085]">{item.subtitle}</span>
+                      <span className="text-[#667085]">{t(item, "subtitle", language)}</span>
                     </p>
                   </div>
                 );

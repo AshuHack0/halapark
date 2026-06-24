@@ -13,6 +13,7 @@ import {
 import Image from "next/image";
 import { Building2, Layers, TrendingUp } from "lucide-react";
 import { fetchHomeSection } from "@/lib/cms";
+import { useLanguage, t } from "@/context/LanguageContext";
 
 // Map serializable icon names (stored in CMS) to lucide components.
 const whoWeAreIcons = { Layers, TrendingUp, Building2 };
@@ -65,6 +66,7 @@ export default function WhoWeAre() {
   const sectionRef = useRef(null);
   const prefersReducedMotion = useReducedMotion();
   const reduced = !!prefersReducedMotion;
+  const { language } = useLanguage();
   const [activeAudience, setActiveAudience] = useState("business");
   const [content, setContent] = useState({});
 
@@ -354,7 +356,7 @@ export default function WhoWeAre() {
 
             <MagicHeading
               key={activeAudience}
-              text={activeContent.heading}
+              text={t(activeContent, "heading", language)}
               reduced={reduced}
             />
 
@@ -362,7 +364,7 @@ export default function WhoWeAre() {
               className="mt-4 max-w-[650px] text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem]"
               {...fadeUp}
             >
-              {activeContent.body}
+              {t(activeContent, "body", language)}
             </motion.p>
 
             <motion.div
@@ -481,10 +483,10 @@ export default function WhoWeAre() {
                           </motion.div>
                           <div className="min-w-0">
                             <h3 className="text-base font-semibold text-[#050A13] sm:text-[17px]">
-                              {item.title}
+                              {t(item, "title", language)}
                             </h3>
                             <p className="mt-1.5 text-sm leading-relaxed text-slate-600 sm:text-[15px]">
-                              {item.description}
+                              {t(item, "description", language)}
             </p>
           </div>
                         </div>

@@ -27,6 +27,7 @@ import {
   TriangleAlert,
   WalletCards,
 } from "lucide-react";
+import { useLanguage, t } from "@/context/LanguageContext";
 
 const iconMap = {
   BadgePercent,
@@ -128,6 +129,7 @@ function collectVideos(item) {
 }
 
 export default function FAQCategorySection({ categories = [] }) {
+  const { language } = useLanguage();
   const [activeCategoryId, setActiveCategoryId] = useState(categories[0]?.id);
   const [searchQuery, setSearchQuery] = useState("");
   const makeKey = (catId, itemId) => `${catId}::${itemId}`;
@@ -232,7 +234,7 @@ export default function FAQCategorySection({ categories = [] }) {
                       >
                         <Icon className={`h-3.5 w-3.5 shrink-0 ${isActive ? "text-white" : "text-[#0088FF]"}`} strokeWidth={1.8} aria-hidden />
                         <span className={`flex-1 text-[0.82rem] font-medium leading-snug ${isActive ? "text-white" : "text-[#050A13]"}`}>
-                          {category.title}
+                          {t(category, "title", language)}
                         </span>
                         <span className={`text-[0.72rem] font-semibold tabular-nums ${isActive ? "text-white/70" : "text-slate-300"}`}>
                           {category.items.length}
@@ -257,7 +259,7 @@ export default function FAQCategorySection({ categories = [] }) {
                 );
               })()}
               <div>
-                <h3 className="text-[1.05rem] font-semibold tracking-[-0.02em] text-[#050A13]">{activeCategory?.title}</h3>
+                <h3 className="text-[1.05rem] font-semibold tracking-[-0.02em] text-[#050A13]">{t(activeCategory, "title", language)}</h3>
                 <p className="text-[0.78rem] text-slate-400">{activeCategory?.items.length} questions</p>
               </div>
             </div>
@@ -276,7 +278,7 @@ export default function FAQCategorySection({ categories = [] }) {
                       aria-controls={`${key}-content`}
                     >
                       <span className={`text-[0.94rem] font-medium leading-snug transition-colors ${isOpen ? "text-[#0088FF]" : "text-[#050A13]"}`}>
-                        {item.question}
+                        {t(item, "question", language)}
                       </span>
                       <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full border transition-all duration-300 ${
                         isOpen ? "border-[#0088FF] bg-[#0088FF] text-white" : "border-[#E7EAF0] bg-white text-slate-400"
@@ -294,7 +296,7 @@ export default function FAQCategorySection({ categories = [] }) {
                     >
                       <div className="px-4 pb-4 sm:px-6 sm:pb-5">
                         {item.answer && (
-                          <p className="text-[0.88rem] leading-6 text-slate-500">{item.answer}</p>
+                          <p className="text-[0.88rem] leading-6 text-slate-500">{t(item, "answer", language)}</p>
                         )}
                         {(() => {
                           const videos = collectVideos(item);

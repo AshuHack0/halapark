@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { CalendarCheck2, CarFront, CircleParking, Search } from "lucide-react";
 import { fetchHomeSection } from "@/lib/cms";
+import { useLanguage, t } from "@/context/LanguageContext";
 
 const steps = [
   {
@@ -29,6 +30,7 @@ const steps = [
 ];
 
 export default function HowItWorksDemoSection() {
+  const { language } = useLanguage();
   const [content, setContent] = useState({});
   const [stepItems, setStepItems] = useState([]);
 
@@ -58,13 +60,13 @@ export default function HowItWorksDemoSection() {
               id="how-it-works-title"
               className="mx-auto mt-4 max-w-[940px] text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]"
             >
-              {content.heading}{" "}
+              {t(content, "heading", language)}{" "}
               <span className="bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">
-                {content.headingGradient}
+                {t(content, "headingGradient", language)}
               </span>{" "}
             </h2>
             <p className="mx-auto mt-3 max-w-[650px] text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem]">
-              {content.subtitle}
+              {t(content, "subtitle", language)}
             </p>
           </div>
 
@@ -111,10 +113,10 @@ export default function HowItWorksDemoSection() {
                         </div>
                         <div className="min-w-0">
                           <h3 className="text-[1.08rem] font-bold leading-tight text-[#182238] sm:text-[1.18rem]">
-                            {step.title}
+                            {t(step, "title", language)}
                           </h3>
                           <p className="mt-1 max-w-[260px] text-[0.84rem] font-medium leading-snug text-[#6C7587] sm:text-[0.92rem]">
-                            {step.description}
+                            {t(step, "description", language)}
                           </p>
                         </div>
                       </article>
@@ -132,7 +134,7 @@ export default function HowItWorksDemoSection() {
                     aria-hidden="true"
                     className="h-5 w-5 stroke-[2.6]"
                   />
-                  {content.ctaLabel || ""}
+                  {t(content, "ctaLabel", language) || ""}
                 </Link>
                 {/* <span className="text-sm font-medium text-slate-500">
                   Takes less than a minute

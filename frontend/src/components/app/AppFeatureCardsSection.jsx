@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { fetchPage } from "@/lib/cms";
+import { useLanguage, t } from "@/context/LanguageContext";
 
 const features = [
   {
@@ -160,6 +161,7 @@ function FeaturePreview({ type }) {
 
 export default function AppFeatureCardsSection() {
   const prefersReducedMotion = useReducedMotion();
+  const { language } = useLanguage();
   // Merge CMS text fields onto the hardcoded cards (keep UI-only props like icon/preview visual).
   const [cards, setCards] = useState(features);
   const [header, setHeader] = useState({
@@ -197,16 +199,16 @@ export default function AppFeatureCardsSection() {
           className="mx-auto max-w-4xl text-center"
         >
           <h2 className="text-[clamp(2rem,4vw,3.5rem)] font-semibold leading-tight tracking-tight text-[#050A13] [overflow-wrap:anywhere]">
-            {header.heading}
+            {t(header, "heading", language)}
             {header.headingAccent ? (
               <>
                 {" "}
-                <span className="text-[#0088FF]">{header.headingAccent}</span>
+                <span className="text-[#0088FF]">{t(header, "headingAccent", language)}</span>
               </>
             ) : null}
           </h2>
           <p className="mt-3 text-base font-medium text-[#667085] [overflow-wrap:anywhere]">
-            {header.description}
+            {t(header, "description", language)}
           </p>
         </motion.div>
 
@@ -229,14 +231,14 @@ export default function AppFeatureCardsSection() {
                   </span>
                   <div>
                     <h3 className="whitespace-pre-line text-[1.6rem] font-semibold leading-[1.05] tracking-tight text-[#050A13] [overflow-wrap:anywhere]">
-                      {item.title}
+                      {t(item, "title", language)}
                     </h3>
                     <span className="mt-4 block h-0.5 w-8 rounded-full bg-[#0088FF]" />
                   </div>
                 </div>
 
                 <p className="mt-6 min-h-[4.5rem] text-[15px] font-medium leading-6 text-[#4F5B6F] [overflow-wrap:anywhere]">
-                  {item.description}
+                  {t(item, "description", language)}
                 </p>
 
                 <FeaturePreview type={item.preview} />

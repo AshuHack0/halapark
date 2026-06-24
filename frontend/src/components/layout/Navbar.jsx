@@ -6,6 +6,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { servicesData } from "@/modules/home/servicesData";
 import { fetchPage } from "@/lib/cms";
+import { useLanguage } from "@/context/LanguageContext";
 import SearchModal from "@/components/layout/SearchModal";
 
 const HamburgerIcon = () => (
@@ -99,7 +100,6 @@ const navLinks = [
   { href: "/careers", key: "careers" },
 ];
 
-const LANGUAGE_STORAGE_KEY = "halapark-language";
 const SUPPORTED_LANGUAGES = ["en", "ar"];
 const UI_TEXT = {
   en: {
@@ -141,22 +141,6 @@ const SERVICE_LABELS_AR = {
   "valet-on-demand": "خدمة صفّ السيارات عند الطلب",
   "barrier-free-parking": "مواقف بدون حواجز",
   "parking-management": "إدارة المواقف",
-};
-
-const getInitialLanguage = () => {
-  if (typeof window === "undefined") {
-    return "en";
-  }
-
-  const storedLanguage = window.localStorage.getItem(LANGUAGE_STORAGE_KEY);
-  return SUPPORTED_LANGUAGES.includes(storedLanguage) ? storedLanguage : "en";
-};
-
-const setTranslateCookie = (language) => {
-  const targetLanguage = language === "ar" ? "ar" : "en";
-  const cookieValue = targetLanguage === "en" ? "/en/en" : `/en/${targetLanguage}`;
-  document.cookie = `googtrans=${cookieValue}; path=/`;
-  document.cookie = `googtrans=${cookieValue}; path=/; domain=${window.location.hostname}`;
 };
 
 export default function Navbar() {
@@ -203,9 +187,8 @@ export default function Navbar() {
       setSolutionGroups(grouped);
     });
   }, []);
-  const [language, setLanguage] = useState(getInitialLanguage);
+  const { language, setLanguage, isArabic } = useLanguage();
   const [hash, setHash] = useState("");
-  const isArabic = language === "ar";
   const copy = UI_TEXT[language];
   const servicesMenuRef = useRef(null);
   const servicesCloseTimerRef = useRef(null);
@@ -227,13 +210,6 @@ export default function Navbar() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
-  useEffect(() => {
-    document.documentElement.lang = language;
-    document.documentElement.dir = isArabic ? "rtl" : "ltr";
-    window.localStorage.setItem(LANGUAGE_STORAGE_KEY, language);
-  }, [isArabic, language]);
-
 
   useEffect(() => {
     if (typeof window === "undefined") return undefined;
@@ -309,19 +285,8 @@ export default function Navbar() {
     if (nextLanguage === language || !SUPPORTED_LANGUAGES.includes(nextLanguage)) {
       return;
     }
-
-    window.localStorage.setItem(LANGUAGE_STORAGE_KEY, nextLanguage);
-    setTranslateCookie(nextLanguage);
-
-    if (nextLanguage === "ar") {
-      window.location.href = window.location.href;
-      return;
-    }
-
+    // Shared context updates language + dir + storage; sections re-render via t().
     setLanguage(nextLanguage);
-    window.dispatchEvent(
-      new CustomEvent("halapark-language-change", { detail: nextLanguage }),
-    );
   };
 
   const resolveLinkHref = (href) => (href.startsWith("#") ? `/${href}` : href);

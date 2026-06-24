@@ -6,11 +6,13 @@ import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { fetchBusinessContent } from "@/lib/cms";
+import { useLanguage, t } from "@/context/LanguageContext";
 
 const ease = [0.22, 1, 0.36, 1];
 
 export default function BusinessCTA() {
   const reduced = useReducedMotion();
+  const { language } = useLanguage();
   const [cta, setCta] = useState({
     heading: "Start a Smart Parking Business with",
     headingAccent: "No Upfront Investment",
@@ -67,25 +69,25 @@ export default function BusinessCTA() {
           >
             <div className="max-w-[580px]">
               <h2 className="text-[1.35rem] font-semibold leading-snug tracking-[-0.03em] text-white sm:text-[1.6rem] [overflow-wrap:anywhere]">
-                {cta.heading}
-                {cta.headingAccent ? (
+                {t(cta, "heading", language)}
+                {t(cta, "headingAccent", language) ? (
                   <>
                     {" "}
                     <span className="bg-gradient-to-r from-[#3AADFF] to-[#0088FF] bg-clip-text text-transparent">
-                      {cta.headingAccent}
+                      {t(cta, "headingAccent", language)}
                     </span>
                   </>
                 ) : null}
               </h2>
               <p className="mt-1.5 text-[0.82rem] leading-5 text-white/60 sm:text-[0.88rem] [overflow-wrap:anywhere]">
-                {cta.description}
+                {t(cta, "description", language)}
               </p>
             </div>
             <Link
               href={cta.ctaLink}
               className="shrink-0 inline-flex items-center gap-2 rounded-full bg-[#0088FF] px-6 py-2.5 text-sm font-semibold text-white shadow-[0_4px_20px_rgba(0,136,255,0.4)] transition hover:brightness-110"
             >
-              {cta.ctaLabel} <ArrowRight className="h-4 w-4" aria-hidden />
+              {t(cta, "ctaLabel", language)} <ArrowRight className="h-4 w-4" aria-hidden />
             </Link>
           </motion.div>
         </div>

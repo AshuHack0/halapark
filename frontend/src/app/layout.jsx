@@ -2,8 +2,8 @@ import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import FloatingActions from "@/components/layout/FloatingActions";
-import AutoTranslateBridge from "@/components/layout/AutoTranslateBridge";
 import { AppProvider } from "@/context/AppContext";
+import { LanguageProvider } from "@/context/LanguageContext";
 import SmoothScroll from "@/components/SmoothScroll";
 
 export const metadata = {
@@ -21,11 +21,12 @@ export default function RootLayout({ children }) {
       >
         <SmoothScroll>
           <AppProvider>
-            <AutoTranslateBridge />
-            <Navbar />
-            <main className="grow">{children}</main>
-            <Footer />
-            <FloatingActions />
+            <LanguageProvider>
+              <Navbar />
+              <main className="grow">{children}</main>
+              <Footer />
+              <FloatingActions />
+            </LanguageProvider>
           </AppProvider>
         </SmoothScroll>
       </body>

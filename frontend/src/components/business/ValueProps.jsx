@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { fetchBusinessContent } from "@/lib/cms";
+import { useLanguage, t } from "@/context/LanguageContext";
 
 const valuePropImages = [
   "/hf_20260327_074228_600dfc1a-c1a5-43ad-99e3-3e4d48603f22-removebg-preview.png",
@@ -18,6 +19,7 @@ const CARD_STYLES = [
 ];
 
 export default function BusinessValueProps() {
+  const { language } = useLanguage();
   const [content, setContent] = useState({});
 
   useEffect(() => {
@@ -27,6 +29,7 @@ export default function BusinessValueProps() {
 
       setContent((prev) => {
         const next = { ...prev };
+        if (vp.ar && typeof vp.ar === "object") next.ar = vp.ar;
         if (typeof vp.eyebrow === "string" && vp.eyebrow.trim() !== "") {
           next.eyebrow = vp.eyebrow;
         }
@@ -77,7 +80,7 @@ export default function BusinessValueProps() {
                 <path d="M5 12h14" />
               </svg>
             </span>
-            <span>{content.eyebrow}</span>
+            <span>{t(content, "eyebrow", language)}</span>
             <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/90 text-[#0088FF]">
               <svg
                 viewBox="0 0 24 24"
@@ -95,10 +98,10 @@ export default function BusinessValueProps() {
             </span>
           </button>
           <h2 className="text-3xl max-sm:text-2xl font-bold text-slate-900 [overflow-wrap:anywhere]">
-            {content.heading}
+            {t(content, "heading", language)}
           </h2>
           <p className="mt-4 text-lg max-sm:text-base leading-relaxed text-[#5E6578] [overflow-wrap:anywhere]">
-            {content.description}
+            {t(content, "description", language)}
           </p>
         </motion.div>
 
@@ -170,7 +173,7 @@ export default function BusinessValueProps() {
                         item.theme === "dark" ? "text-white" : "text-slate-900",
                       ].join(" ")}
                     >
-                      {item.title}
+                      {t(item, "title", language)}
                     </h3>
                     <p
                       className={[
@@ -180,7 +183,7 @@ export default function BusinessValueProps() {
                           : "text-slate-700/80",
                       ].join(" ")}
                     >
-                      {item.description}
+                      {t(item, "description", language)}
                     </p>
                   </div>
 

@@ -1,19 +1,48 @@
+"use client";
+
 import { ArrowUpRight } from "lucide-react";
+
+import { useLanguage } from "@/context/LanguageContext";
 
 import { contactDetails } from "./contactData";
 
+// Fixed UI copy (not CMS-driven) — translated inline.
+const COPY = {
+  en: {
+    eyebrow: "Contact Info",
+    heading:
+      "Reach the HalaPark team through the channel that works best for you.",
+    intro:
+      "Need product guidance, technical support, or a business conversation? Start with any of the details below and we will route your enquiry to the right team.",
+  },
+  ar: {
+    eyebrow: "معلومات التواصل",
+    heading: "تواصل مع فريق هالا بارك عبر القناة التي تناسبك.",
+    intro:
+      "هل تحتاج إلى إرشادات حول المنتج أو دعم فني أو محادثة تجارية؟ ابدأ بأي من التفاصيل أدناه وسنوجه استفسارك إلى الفريق المناسب.",
+  },
+};
+
 function ContactDetailItem({ detail }) {
+  const { language } = useLanguage();
+  const isAr = language === "ar";
   const Icon = detail.icon;
+  const title = isAr ? detail.titleAr || detail.title : detail.title;
+  const displayValue = isAr ? detail.valueAr || detail.value : detail.value;
+  const description = isAr
+    ? detail.descriptionAr || detail.description
+    : detail.description;
+
   const value = detail.href ? (
     <a
       href={detail.href}
       className="inline-flex items-center gap-2 text-base font-semibold text-slate-900 transition hover:text-[#0088FF]"
     >
-      {detail.value}
+      {displayValue}
       <ArrowUpRight className="h-4 w-4" />
     </a>
   ) : (
-    <p className="text-base font-semibold text-slate-900">{detail.value}</p>
+    <p className="text-base font-semibold text-slate-900">{displayValue}</p>
   );
 
   return (
@@ -25,12 +54,12 @@ function ContactDetailItem({ detail }) {
 
         <div className="min-w-0">
           <p className="text-sm font-medium uppercase tracking-[0.22em] text-slate-500">
-            {detail.title}
+            {title}
           </p>
           <div className="mt-2 break-words">{value}</div>
-          {detail.description ? (
+          {description ? (
             <p className="mt-2 text-sm leading-6 text-slate-600">
-              {detail.description}
+              {description}
             </p>
           ) : null}
         </div>
@@ -40,19 +69,19 @@ function ContactDetailItem({ detail }) {
 }
 
 export default function ContactInfoPanel() {
+  const { language } = useLanguage();
+  const c = COPY[language] || COPY.en;
   return (
     <aside className="rounded-[32px] border border-slate-200 bg-[linear-gradient(180deg,#FFFFFF_0%,rgba(0,136,255,0.06)_100%)] p-6 shadow-[0_24px_80px_rgba(15,23,42,0.08)] sm:p-8">
       <div className="max-w-md">
         <span className="inline-flex rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.26em] text-slate-600">
-          Contact Info
+          {c.eyebrow}
         </span>
-        <h2 className="mt-5 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">
-          Reach the HalaPark team through the channel that works best for you.
+        <h2 className="mt-5 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl [overflow-wrap:anywhere]">
+          {c.heading}
         </h2>
-        <p className="mt-4 text-base leading-7 text-slate-600">
-          Need product guidance, technical support, or a business conversation?
-          Start with any of the details below and we will route your enquiry to
-          the right team.
+        <p className="mt-4 text-base leading-7 text-slate-600 [overflow-wrap:anywhere]">
+          {c.intro}
         </p>
       </div>
 

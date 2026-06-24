@@ -6,6 +6,7 @@ import Image from "next/image";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { ArrowRight, TrendingUp, Check, Gauge } from "lucide-react";
 import { fetchBusinessSection } from "@/lib/cms";
+import { useLanguage, t } from "@/context/LanguageContext";
 
 const ease = [0.22, 1, 0.36, 1];
 
@@ -191,6 +192,7 @@ function BusinessGrowthPanel({ reduced }) {
 
 export default function BusinessHero() {
   const reduced = useReducedMotion();
+  const { language } = useLanguage();
   const [hero, setHero] = useState({});
 
   useEffect(() => {
@@ -232,11 +234,11 @@ export default function BusinessHero() {
             transition={{ duration: 0.65, ease }}
           >
             <h1 className="max-w-[600px] text-[clamp(2.4rem,4.8vw,4.2rem)] font-semibold leading-[1.02] tracking-[-0.055em] text-[#050A13]">
-              {hero.title}
+              {t(hero, "title", language)}
             </h1>
 
             <p className="mt-6 max-w-[470px] text-[0.95rem] leading-[1.75] text-slate-500">
-              {hero.description}
+              {t(hero, "description", language)}
             </p>
 
             <ul className="mt-7 space-y-2.5">

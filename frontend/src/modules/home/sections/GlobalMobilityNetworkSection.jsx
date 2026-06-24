@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { fetchHomeSection } from "@/lib/cms";
+import { useLanguage, t } from "@/context/LanguageContext";
 
 const partnerLogos = [
   "Parkin Dubai",
@@ -190,6 +191,7 @@ function CapabilityIcon({ type }) {
 }
 
 export default function GlobalMobilityNetworkSection() {
+  const { language } = useLanguage();
   const nodesById = mapNodes.reduce((acc, node) => {
     acc[node.id] = node;
     return acc;
@@ -198,10 +200,12 @@ export default function GlobalMobilityNetworkSection() {
   // Merge CMS text onto the hardcoded capability/stat lists (keep icons by index).
   const [caps, setCaps] = useState(capabilities);
   const [stats, setStats] = useState(impactStats);
+  const [content, setContent] = useState({});
 
   useEffect(() => {
     fetchHomeSection("globalMobility").then((d) => {
       if (!d || typeof d !== "object") return;
+      setContent(d);
       if (Array.isArray(d.capabilities) && d.capabilities.length) {
         setCaps(capabilities.map((base, i) => ({ ...base, ...(d.capabilities[i] ?? {}) })));
       }
@@ -218,15 +222,31 @@ export default function GlobalMobilityNetworkSection() {
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="relative overflow-hidden rounded-[24px] border border-[#D8E7F8] bg-white shadow-[0_20px_56px_rgba(15,23,42,0.08)]">
           <div className="relative z-10 text-center">
-            <h2 className="mx-auto pt-5 text-[clamp(2.65rem,4.5vw,4rem)] font-semibold uppercase leading-[1.01] tracking-[-0.06em] text-[#050A13] sm:pt-6">
-              Global Parking{" "}
-              <span className="bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">
-                Locations
-              </span>
+            <h2 className="mx-auto pt-5 text-[clamp(2.65rem,4.5vw,4rem)] font-semibold uppercase leading-[1.01] tracking-[-0.06em] text-[#050A13] sm:pt-6 [overflow-wrap:anywhere]">
+              {t(content, "heading", language) ? (
+                <>
+                  {t(content, "heading", language)}
+                  {t(content, "headingGradient", language) ? (
+                    <>
+                      {" "}
+                      <span className="bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">
+                        {t(content, "headingGradient", language)}
+                      </span>
+                    </>
+                  ) : null}
+                </>
+              ) : (
+                <>
+                  Global Parking{" "}
+                  <span className="bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">
+                    Locations
+                  </span>
+                </>
+              )}
             </h2>
-            <p className="mx-auto mt-3 max-w-[650px] px-4 text-[0.88rem] leading-6 text-slate-800 sm:text-[0.94rem] text-bold">
-              Shaping the future of smart parking from the UAE to the world
-              through connected, intelligent parking experiences.
+            <p className="mx-auto mt-3 max-w-[650px] px-4 text-[0.88rem] leading-6 text-slate-800 sm:text-[0.94rem] text-bold [overflow-wrap:anywhere]">
+              {t(content, "subtitle", language) ||
+                "Shaping the future of smart parking from the UAE to the world through connected, intelligent parking experiences."}
             </p>
             <p className="mx-auto mt-2 max-w-[650px] px-4 text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem]">
               Building a connected ecosystem for seamless, cashless, and
@@ -320,11 +340,11 @@ export default function GlobalMobilityNetworkSection() {
                       <div className="flex items-center gap-2.5">
                         <CapabilityIcon type={item.icon} />
                         <p className="text-[1.03rem] font-semibold text-[#050A13]">
-                          {item.title}
+                          {t(item, "title", language)}
                         </p>
                       </div>
                       <p className="mt-1 max-w-[290px] text-[0.92rem] leading-relaxed text-slate-600">
-                        {item.description}
+                        {t(item, "description", language)}
                       </p>
                     </li>
                   ))}
@@ -344,10 +364,10 @@ export default function GlobalMobilityNetworkSection() {
                   <MetricIcon type={item.icon} />
                 </div>
                 <p className="text-[1.55rem] font-semibold leading-none tracking-[-0.02em] text-[#071221]">
-                  {item.value}
+                  {t(item, "value", language)}
                 </p>
                 <p className="mt-1.5 text-[0.76rem] font-medium uppercase tracking-[0.06em] text-slate-500">
-                  {item.label}
+                  {t(item, "label", language)}
                 </p>
               </div>
             ))}

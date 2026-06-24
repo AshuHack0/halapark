@@ -11,6 +11,7 @@ import {
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { fetchBusinessContent } from "@/lib/cms";
+import { useLanguage, t } from "@/context/LanguageContext";
 
 const SEGMENT_ICONS = [
   Building2,
@@ -22,6 +23,7 @@ const SEGMENT_ICONS = [
 ];
 
 export default function BusinessWhoItsFor() {
+  const { language } = useLanguage();
   const [content, setContent] = useState({});
 
   useEffect(() => {
@@ -32,6 +34,7 @@ export default function BusinessWhoItsFor() {
       setContent((prev) => {
         const next = { ...prev };
 
+        if (w.ar && typeof w.ar === "object") next.ar = w.ar;
         if (typeof w.heading === "string" && w.heading.trim() !== "") {
           next.heading = w.heading;
         }
@@ -66,12 +69,12 @@ export default function BusinessWhoItsFor() {
             Who It&apos;s For
           </p>
           <h2 className="text-4xl font-bold leading-tight text-slate-900 max-sm:text-3xl [overflow-wrap:anywhere]">
-            {content.heading}
+            {t(content, "heading", language)}
           </h2>
           <p className="mt-5 text-lg leading-relaxed text-[#5E6578] max-sm:text-base [overflow-wrap:anywhere]">
             {segments.map((segment, index) => (
               <span key={segment.title}>
-                {segment.title}
+                {t(segment, "title", language)}
                 {index < segments.length - 1 && (
                   <span className="px-3 text-[#0088FF]">|</span>
                 )}
@@ -99,7 +102,7 @@ export default function BusinessWhoItsFor() {
 
                 <div className="mt-12 flex items-end justify-between gap-4">
                   <h3 className="max-w-[14rem] text-xl font-semibold leading-snug text-slate-900 [overflow-wrap:anywhere]">
-                    {segment.title}
+                    {t(segment, "title", language)}
                   </h3>
                   <span className="text-sm font-semibold text-slate-300">
                     0{index + 1}
@@ -118,7 +121,7 @@ export default function BusinessWhoItsFor() {
           >
             <div className="flex h-full flex-col justify-between gap-8">
               <p className="max-w-2xl text-lg leading-8 text-[#2A3347] max-sm:text-base [overflow-wrap:anywhere]">
-                {content.description}
+                {t(content, "description", language)}
               </p>
 
               <div className="flex flex-wrap gap-3">
@@ -127,7 +130,7 @@ export default function BusinessWhoItsFor() {
                     key={`${segment.title}-pill`}
                     className="rounded-full border border-[rgba(0,136,255,0.12)] bg-white px-4 py-2 text-sm font-medium text-[#2A3347]"
                   >
-                    {segment.title}
+                    {t(segment, "title", language)}
                   </span>
                 ))}
               </div>
@@ -152,7 +155,7 @@ export default function BusinessWhoItsFor() {
 
                 <div className="mt-12 flex items-end justify-between gap-4">
                   <h3 className="max-w-[14rem] text-xl font-semibold leading-snug text-slate-900 [overflow-wrap:anywhere]">
-                    {segment.title}
+                    {t(segment, "title", language)}
                   </h3>
                   <span className="text-sm font-semibold text-slate-300">
                     0{index + 5}
