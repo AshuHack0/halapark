@@ -153,41 +153,64 @@ export default function Navbar() {
   // Which solutions group is expanded in the dropdown (desktop hover, mobile tap).
   const [activeGroup, setActiveGroup] = useState(null);
   const [mobileActiveGroup, setMobileActiveGroup] = useState(null);
-  // Solutions dropdown built from the CMS (cards + group order). Empty when the
-  // admin has no solutions — deleting them all empties the dropdown.
-  const [solutionGroups, setSolutionGroups] = useState([]);
+  // Raw Solutions CMS data (cards + group order + Arabic group names). The
+  // labelled/grouped structure is derived at render time so it follows the
+  // active language. Empty when the admin has no solutions.
+  const [solutionsData, setSolutionsData] = useState(null);
 
   useEffect(() => {
     fetchPage("solutions").then((page) => {
-      const sol = page?.sections?.solutions;
-      const cards = Array.isArray(sol?.cards) ? sol.cards.filter((c) => c && c.slug) : [];
-      if (cards.length === 0) {
-        setSolutionGroups([]);
-        return;
-      }
-      const order = Array.isArray(sol?.groups) ? [...sol.groups] : [];
-      cards.forEach((c) => {
-        if (c.group && !order.includes(c.group)) order.push(c.group);
-      });
-      const grouped = order
-        .map((g) => ({
-          group: g,
-          links: cards
-            .filter((c) => (c.group || "") === g)
-            .map((c) => ({ href: `/solutions/${c.slug}`, label: c.name || c.title || c.slug })),
-        }))
-        .filter((g) => g.links.length > 0);
-      const ungrouped = cards.filter((c) => !c.group);
-      if (ungrouped.length > 0) {
-        grouped.push({
-          group: "Solutions",
-          links: ungrouped.map((c) => ({ href: `/solutions/${c.slug}`, label: c.name || c.title || c.slug })),
-        });
-      }
-      setSolutionGroups(grouped);
+      setSolutionsData(page?.sections?.solutions ?? null);
     });
   }, []);
   const { language, setLanguage, isArabic } = useLanguage();
+
+  // Build the dropdown groups in the active language. Card label → Arabic
+  // `ar.name`/`ar.title` in AR (blank when missing). Group name → the parallel
+  // `solutions.ar.groups` entry by index, falling back to the English name.
+  const solutionGroups = (() => {
+    const sol = solutionsData;
+    const cards = Array.isArray(sol?.cards) ? sol.cards.filter((c) => c && c.slug) : [];
+    if (cards.length === 0) return [];
+
+    const enGroups = Array.isArray(sol?.groups) ? [...sol.groups] : [];
+    const arGroups = Array.isArray(sol?.ar?.groups) ? sol.ar.groups : [];
+    const order = [...enGroups];
+    cards.forEach((c) => {
+      if (c.group && !order.includes(c.group)) order.push(c.group);
+    });
+
+    // Translate a group name: in AR, use the parallel ar.groups entry (by the
+    // group's index in the English list); fall back to the English name.
+    const groupLabel = (g) => {
+      if (language !== "ar") return g;
+      const i = enGroups.indexOf(g);
+      return (i >= 0 && arGroups[i]) || g;
+    };
+    // Card label: Arabic name in AR (ar.name → ar.title), else English.
+    const cardLabel = (c) =>
+      language === "ar"
+        ? (c.ar?.name || c.ar?.title || c.name || c.title || c.slug)
+        : (c.name || c.title || c.slug);
+
+    const grouped = order
+      .map((g) => ({
+        group: groupLabel(g),
+        links: cards
+          .filter((c) => (c.group || "") === g)
+          .map((c) => ({ href: `/solutions/${c.slug}`, label: cardLabel(c) })),
+      }))
+      .filter((g) => g.links.length > 0);
+
+    const ungrouped = cards.filter((c) => !c.group);
+    if (ungrouped.length > 0) {
+      grouped.push({
+        group: language === "ar" ? "الحلول" : "Solutions",
+        links: ungrouped.map((c) => ({ href: `/solutions/${c.slug}`, label: cardLabel(c) })),
+      });
+    }
+    return grouped;
+  })();
   const [hash, setHash] = useState("");
   const copy = UI_TEXT[language];
   const servicesMenuRef = useRef(null);
