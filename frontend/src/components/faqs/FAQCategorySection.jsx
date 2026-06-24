@@ -29,6 +29,21 @@ import {
 } from "lucide-react";
 import { useLanguage, t } from "@/context/LanguageContext";
 
+// Fixed FAQ-page chrome — inline EN/AR (the questions themselves come from CMS).
+const FAQ_UI = {
+  headingMain: { en: "What would you like to", ar: "ماذا تريد أن" },
+  headingAccent: { en: "know?", ar: "تعرف؟" },
+  subtitle: {
+    en: "Browse by category to find quick answers, or search below.",
+    ar: "تصفّح حسب الفئة للعثور على إجابات سريعة، أو ابحث في الأسفل.",
+  },
+  searchPlaceholder: { en: "Search FAQs...", ar: "...ابحث في الأسئلة الشائعة" },
+  searchAria: { en: "Search FAQs", ar: "ابحث في الأسئلة الشائعة" },
+  categories: { en: "Categories", ar: "الفئات" },
+  questions: { en: "questions", ar: "سؤال" },
+  noMatch: { en: "No FAQs match your search. Try a different query.", ar: "لا توجد أسئلة تطابق بحثك. جرّب كلمة أخرى." },
+};
+
 const iconMap = {
   BadgePercent,
   BellRing,
@@ -130,6 +145,7 @@ function collectVideos(item) {
 
 export default function FAQCategorySection({ categories = [] }) {
   const { language } = useLanguage();
+  const fq = (key) => FAQ_UI[key]?.[language] ?? FAQ_UI[key]?.en ?? "";
   const [activeCategoryId, setActiveCategoryId] = useState(categories[0]?.id);
   const [searchQuery, setSearchQuery] = useState("");
   const makeKey = (catId, itemId) => `${catId}::${itemId}`;
@@ -169,25 +185,26 @@ export default function FAQCategorySection({ categories = [] }) {
 
         {/* Section heading */}
         <div className="mx-auto mb-12 max-w-[780px] text-center">
-          <h2 className="text-[clamp(2.4rem,4.5vw,3.8rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
-            What would you like to{" "}
+          <h2 className="text-[clamp(2.4rem,4.5vw,3.8rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
+            {fq("headingMain")}{" "}
             <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">
-              know?
+              {fq("headingAccent")}
             </span>
           </h2>
-          <p className="mx-auto mt-4 max-w-[560px] text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem]">
-            Browse by category to find quick answers, or search below.
+          <p className="mx-auto mt-4 max-w-[560px] text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
+            {fq("subtitle")}
           </p>
 
           {/* Search input */}
           <div className="mt-8">
             <input
               type="text"
-              placeholder="Search FAQs..."
+              placeholder={fq("searchPlaceholder")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              dir={language === "ar" ? "rtl" : "ltr"}
               className="mx-auto block w-full max-w-md rounded-full border border-[#E7EAF0] bg-white px-5 py-3 text-sm placeholder-slate-400 outline-none transition focus:border-[#0088FF] focus:ring-2 focus:ring-[#0088FF]/20"
-              aria-label="Search FAQs"
+              aria-label={fq("searchAria")}
             />
           </div>
         </div>
@@ -199,8 +216,8 @@ export default function FAQCategorySection({ categories = [] }) {
                 No FAQs configured yet. Add <code className="text-xs">sections.faqCategories</code> from admin panel for the FAQs page.
               </p>
             ) : (
-              <p className="text-sm text-slate-500">
-                No FAQs match your search. Try a different query.
+              <p className="text-sm text-slate-500" dir={language === "ar" ? "rtl" : "ltr"}>
+                {fq("noMatch")}
               </p>
             )}
           </div>
@@ -216,7 +233,7 @@ export default function FAQCategorySection({ categories = [] }) {
           {/* LEFT: sticky category list */}
           <div className="lg:sticky lg:top-24">
             <div className="rounded-[20px] border border-[#E7EAF0] bg-white p-3 shadow-[0_4px_24px_rgba(6,6,22,0.05)]">
-              <p className="mb-2 px-3 pt-1 text-[0.7rem] font-bold uppercase tracking-[0.18em] text-slate-400">Categories</p>
+              <p className="mb-2 px-3 pt-1 text-[0.7rem] font-bold uppercase tracking-[0.18em] text-slate-400" dir={language === "ar" ? "rtl" : "ltr"}>{fq("categories")}</p>
               <ul className="space-y-0.5">
                 {filteredCategories.map((category) => {
                   const Icon = iconMap[category.icon] ?? Building2;
@@ -260,7 +277,7 @@ export default function FAQCategorySection({ categories = [] }) {
               })()}
               <div>
                 <h3 className="text-[1.05rem] font-semibold tracking-[-0.02em] text-[#050A13]">{t(activeCategory, "title", language)}</h3>
-                <p className="text-[0.78rem] text-slate-400">{activeCategory?.items.length} questions</p>
+                <p className="text-[0.78rem] text-slate-400" dir={language === "ar" ? "rtl" : "ltr"}>{activeCategory?.items.length} {fq("questions")}</p>
               </div>
             </div>
 
