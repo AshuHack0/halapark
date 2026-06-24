@@ -19,12 +19,16 @@ export default function HalaParkAdvantage() {
   const reduced = useReducedMotion();
   const { language } = useLanguage();
   const [advantages, setAdvantages] = useState([]);
+  const [header, setHeader] = useState({});
 
   useEffect(() => {
     fetchBusinessSection("advantage").then((section) => {
       if (section && Array.isArray(section)) {
         setAdvantages(section);
       }
+    });
+    fetchBusinessSection("advantageHeader").then((s) => {
+      if (s && typeof s === "object") setHeader(s);
     });
   }, []);
 
@@ -39,10 +43,10 @@ export default function HalaParkAdvantage() {
           transition={{ duration: 0.65, ease }}
           className="mx-auto mb-12 max-w-[980px] text-center"
         >
-          <h2 className="text-[clamp(3rem,5.5vw,5rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
-            The HalaPark{" "}
+          <h2 className="text-[clamp(3rem,5.5vw,5rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
+            {t(header, "heading", language) || (language === "ar" ? "" : "The HalaPark")}{" "}
             <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">
-              Advantage
+              {t(header, "headingGradient", language) || (language === "ar" ? "" : "Advantage")}
             </span>
           </h2>
         </motion.div>

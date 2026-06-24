@@ -179,11 +179,17 @@ export default function PartnersShowcase() {
             transition={{ duration: 0.5, ease, delay: 0.4 }}
             className="mb-12"
           >
-            <h3 className="text-2xl sm:text-3xl font-bold text-[#050A13] text-center mb-2">
-              Trusted by Industry Leaders
+            <h3
+              dir={language === "ar" ? "rtl" : "ltr"}
+              className="text-2xl sm:text-3xl font-bold text-[#050A13] text-center mb-2 [overflow-wrap:anywhere]"
+            >
+              {t(showcase, "carouselHeading", language) || (language === "ar" ? "" : "Trusted by Industry Leaders")}
             </h3>
-            <p className="text-center text-slate-600">
-              Work with some of the most recognized brands and organizations
+            <p
+              dir={language === "ar" ? "rtl" : "ltr"}
+              className="text-center text-slate-600 [overflow-wrap:anywhere]"
+            >
+              {t(showcase, "carouselSubheading", language) || (language === "ar" ? "" : "Work with some of the most recognized brands and organizations")}
             </p>
           </motion.div>
 
@@ -233,7 +239,10 @@ export default function PartnersShowcase() {
               href="/contact"
               className="mt-7 inline-flex items-center gap-2 rounded-full bg-[#0088FF] px-8 py-3.5 text-sm font-semibold text-white shadow-[0_8px_28px_rgba(0,136,255,0.45)] transition hover:brightness-110"
             >
-              Get in Touch <ArrowRight className="h-4 w-4" aria-hidden />
+              <span dir={language === "ar" ? "rtl" : "ltr"} className="[overflow-wrap:anywhere]">
+                {t(showcase, "ctaSectionLabel", language) || (language === "ar" ? "" : "Get in Touch")}
+              </span>{" "}
+              <ArrowRight className="h-4 w-4" aria-hidden />
             </Link>
           </div>
         </motion.div>

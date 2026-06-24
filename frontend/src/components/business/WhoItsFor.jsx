@@ -35,6 +35,9 @@ export default function BusinessWhoItsFor() {
         const next = { ...prev };
 
         if (w.ar && typeof w.ar === "object") next.ar = w.ar;
+        if (typeof w.eyebrow === "string" && w.eyebrow.trim() !== "") {
+          next.eyebrow = w.eyebrow;
+        }
         if (typeof w.heading === "string" && w.heading.trim() !== "") {
           next.heading = w.heading;
         }
@@ -65,8 +68,8 @@ export default function BusinessWhoItsFor() {
           transition={{ duration: 0.5 }}
           className="mb-12 max-w-4xl"
         >
-          <p className="mb-4 text-sm font-semibold uppercase tracking-[0.24em] text-slate-400">
-            Who It&apos;s For
+          <p className="mb-4 text-sm font-semibold uppercase tracking-[0.24em] text-slate-400 [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
+            {t(content, "eyebrow", language) || (language === "ar" ? "" : "Who It's For")}
           </p>
           <h2 className="text-4xl font-bold leading-tight text-slate-900 max-sm:text-3xl [overflow-wrap:anywhere]">
             {t(content, "heading", language)}

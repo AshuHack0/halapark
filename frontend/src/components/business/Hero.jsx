@@ -203,11 +203,13 @@ export default function BusinessHero() {
     });
   }, []);
 
-  const features = [
-    "Maximize parking revenue",
-    "Automate day-to-day operations",
-    "Seamless smart mobility experience",
-  ];
+  // Checklist items from CMS (parallel ar.features in Arabic; blank when missing).
+  const features =
+    language === "ar"
+      ? (Array.isArray(hero.ar?.features) ? hero.ar.features : [])
+      : (Array.isArray(hero.features) && hero.features.length
+          ? hero.features
+          : ["Maximize parking revenue", "Automate day-to-day operations", "Seamless smart mobility experience"]);
 
   return (
     <section
@@ -263,7 +265,7 @@ export default function BusinessHero() {
                 href="/contact"
                 className="group inline-flex items-center gap-2.5 rounded-full bg-[#0088FF] px-7 py-3.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,136,255,0.32)] transition hover:brightness-110"
               >
-                Get Proposal
+                {t(hero, "ctaPrimary", language) || (language === "ar" ? "" : "Get Proposal")}
                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 transition-transform duration-200 group-hover:translate-x-0.5">
                   <ArrowRight className="h-3.5 w-3.5" aria-hidden />
                 </span>
@@ -272,7 +274,7 @@ export default function BusinessHero() {
                 href="/contact"
                 className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-7 py-3.5 text-sm font-semibold text-slate-700 shadow-[0_2px_12px_rgba(6,6,22,0.07)] transition hover:border-[#0088FF]/50 hover:text-[#0088FF]"
               >
-                Book a Free Consultation
+                {t(hero, "ctaSecondary", language) || (language === "ar" ? "" : "Book a Free Consultation")}
               </Link>
             </div>
           </motion.div>
@@ -361,13 +363,13 @@ export function BusinessHeroOld() {
                   href="/contact"
                   className="inline-block rounded-full bg-[#0088FF] px-8 py-3 text-sm font-medium text-white sm:text-base"
                 >
-                  Get Proposal
+                  {t(hero, "ctaPrimary", language) || (language === "ar" ? "" : "Get Proposal")}
                 </Link>
                 <Link
                   href="/contact"
                   className="inline-block rounded-full border border-white/40 bg-white/10 px-8 py-3 text-sm font-medium text-white backdrop-blur-sm sm:text-base"
                 >
-                  Book a Free Consultation
+                  {t(hero, "ctaSecondary", language) || (language === "ar" ? "" : "Book a Free Consultation")}
                 </Link>
               </div>
             </div>

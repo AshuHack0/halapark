@@ -23,6 +23,7 @@ export default function BusinessHowToGetStarted() {
         if (typeof h.eyebrow === "string" && h.eyebrow !== "") next.eyebrow = h.eyebrow;
         if (typeof h.heading === "string" && h.heading !== "") next.heading = h.heading;
         if (typeof h.description === "string" && h.description !== "") next.description = h.description;
+        if (typeof h.ctaLabel === "string" && h.ctaLabel !== "") next.ctaLabel = h.ctaLabel;
         if (Array.isArray(h.steps) && h.steps.length > 0) {
           next.steps = h.steps.map((step, i) => ({
             icon: STEP_ICONS[i] || PhoneCall,
@@ -64,9 +65,10 @@ export default function BusinessHowToGetStarted() {
               <motion.button
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
-                className="mt-8 rounded-full bg-[#0088FF] px-7 py-3 text-base font-medium text-white transition-colors hover:brightness-95"
+                className="mt-8 rounded-full bg-[#0088FF] px-7 py-3 text-base font-medium text-white transition-colors hover:brightness-95 [overflow-wrap:anywhere]"
+                dir={language === "ar" ? "rtl" : "ltr"}
               >
-                Book a Consultation
+                {t(content, "ctaLabel", language) || (language === "ar" ? "" : "Book a Consultation")}
               </motion.button>
             </Link>
           </div>

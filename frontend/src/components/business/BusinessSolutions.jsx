@@ -6,7 +6,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { fetchBusinessContent } from "@/lib/cms";
-import { useLanguage, t } from "@/context/LanguageContext";
+import { useLanguage, t, ui } from "@/context/LanguageContext";
 
 const ease = [0.22, 1, 0.36, 1];
 
@@ -67,7 +67,9 @@ export default function BusinessSolutions() {
                   whileHover={{ x: 4 }}
                   className="inline-flex items-center gap-2 px-6 py-3 bg-[#0088FF] text-white font-semibold rounded-full hover:bg-[#0066CC] transition"
                 >
-                  Explore All Solutions
+                  <span dir={language === "ar" ? "rtl" : "ltr"} className="[overflow-wrap:anywhere]">
+                    {t(header, "ctaLabel", language) || (language === "ar" ? "" : "Explore All Solutions")}
+                  </span>
                   <ArrowRight className="h-4 w-4" />
                 </motion.button>
               </Link>
@@ -110,7 +112,7 @@ export default function BusinessSolutions() {
                       transition={{ duration: 0.3 }}
                       className="text-white text-xs font-semibold flex items-center gap-2"
                     >
-                      Learn More
+                      {ui("learnMore", language)}
                       <ArrowRight className="h-3 w-3" />
                     </motion.div>
                   </motion.div>

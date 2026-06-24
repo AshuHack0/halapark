@@ -13,12 +13,18 @@ export default function WhoWeWorkWith() {
   const reduced = useReducedMotion();
   const { language } = useLanguage();
   const [partners, setPartners] = useState([]);
+  const [header, setHeader] = useState({});
   const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
     fetchBusinessSection("whoWeWork").then((section) => {
       if (Array.isArray(section) && section.length > 0) {
         setPartners(section);
+      }
+    });
+    fetchBusinessSection("whoWeWorkHeader").then((section) => {
+      if (section) {
+        setHeader(section);
       }
     });
   }, []);
@@ -102,13 +108,21 @@ export default function WhoWeWorkWith() {
           transition={{ duration: 0.65, ease }}
           className="mb-16 text-center"
         >
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight tracking-[-0.06em] text-[#050A13] mb-4">
-            Who We{" "}
+          <h2
+            dir={language === "ar" ? "rtl" : "ltr"}
+            className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight tracking-[-0.06em] text-[#050A13] mb-4 [overflow-wrap:anywhere]"
+          >
+            {t(header, "heading", language) || (language === "ar" ? "" : "Who We")}{" "}
             <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">
-              Work With
+              {t(header, "headingGradient", language) || (language === "ar" ? "" : "Work With")}
             </span>
           </h2>
-          <p className="text-base text-slate-600 mt-4">Trusted by leading organizations across industries</p>
+          <p
+            dir={language === "ar" ? "rtl" : "ltr"}
+            className="text-base text-slate-600 mt-4 [overflow-wrap:anywhere]"
+          >
+            {t(header, "subtitle", language) || (language === "ar" ? "" : "Trusted by leading organizations across industries")}
+          </p>
         </motion.div>
 
         {/* Tabs Navigation with Enhanced Styling */}
@@ -195,8 +209,11 @@ export default function WhoWeWorkWith() {
           >
             {/* Title */}
             <motion.div variants={itemVariants} className="mb-6">
-              <span className="inline-block px-3 py-1 bg-[#0088FF]/10 text-[#0088FF] text-xs font-semibold rounded-full mb-2">
-                Category
+              <span
+                dir={language === "ar" ? "rtl" : "ltr"}
+                className="inline-block px-3 py-1 bg-[#0088FF]/10 text-[#0088FF] text-xs font-semibold rounded-full mb-2 [overflow-wrap:anywhere]"
+              >
+                {t(header, "categoryLabel", language) || (language === "ar" ? "" : "Category")}
               </span>
               <h3 className="text-3xl sm:text-4xl font-bold text-[#050A13]">
                 {t(activePartner, "title", language)}
@@ -213,9 +230,12 @@ export default function WhoWeWorkWith() {
 
             {/* Benefits List */}
             <motion.div variants={itemVariants} className="mb-8">
-              <h4 className="text-sm font-semibold text-[#050A13] mb-4 flex items-center gap-2">
+              <h4
+                dir={language === "ar" ? "rtl" : "ltr"}
+                className="text-sm font-semibold text-[#050A13] mb-4 flex items-center gap-2 [overflow-wrap:anywhere]"
+              >
                 <Sparkles className="h-4 w-4 text-[#0088FF]" />
-                Key Benefits
+                {t(header, "benefitsLabel", language) || (language === "ar" ? "" : "Key Benefits")}
               </h4>
               <motion.ul
                 className="space-y-3"
@@ -243,7 +263,9 @@ export default function WhoWeWorkWith() {
               whileTap={{ scale: 0.98 }}
               className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] text-white font-semibold rounded-full hover:shadow-lg hover:shadow-[#0088FF]/30 transition"
             >
-              Learn More
+              <span dir={language === "ar" ? "rtl" : "ltr"} className="[overflow-wrap:anywhere]">
+                {t(header, "ctaLabel", language) || (language === "ar" ? "" : "Learn More")}
+              </span>
               <motion.div
                 whileHover={{ x: 4 }}
                 transition={{ duration: 0.3 }}

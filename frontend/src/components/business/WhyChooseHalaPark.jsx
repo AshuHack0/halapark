@@ -15,12 +15,16 @@ export default function WhyChooseHalaPark() {
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
   const [reasons, setReasons] = useState([]);
+  const [header, setHeader] = useState({});
 
   useEffect(() => {
     fetchBusinessSection("whyChoose").then((section) => {
       if (Array.isArray(section) && section.length > 0) {
         setReasons(section);
       }
+    });
+    fetchBusinessSection("whyChooseHeader").then((section) => {
+      if (section && typeof section === "object") setHeader(section);
     });
   }, []);
 
@@ -64,11 +68,16 @@ export default function WhyChooseHalaPark() {
           transition={{ duration: 0.65, ease }}
           className="mb-12"
         >
-          <h2 className="text-4xl sm:text-5xl font-bold tracking-[-0.06em] text-[#050A13]">
-            Why Choose{" "}
-            <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">
-              HalaPark
-            </span>
+          <h2 className="text-4xl sm:text-5xl font-bold tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
+            {t(header, "heading", language) || (language === "ar" ? "" : "Why Choose")}
+            {t(header, "headingGradient", language) || (language === "ar" ? "" : "HalaPark") ? (
+              <>
+                {" "}
+                <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">
+                  {t(header, "headingGradient", language) || (language === "ar" ? "" : "HalaPark")}
+                </span>
+              </>
+            ) : null}
           </h2>
         </motion.div>
 
@@ -102,7 +111,7 @@ export default function WhyChooseHalaPark() {
 
                     {/* Center Text Overlay */}
                     <div className="relative z-10 text-white text-center px-4">
-                      <p className="text-sm font-medium opacity-90 mb-2">Smart Solutions</p>
+                      <p className="text-sm font-medium opacity-90 mb-2" dir={language === "ar" ? "rtl" : "ltr"}>{t(header, "cardEyebrow", language) || (language === "ar" ? "" : "Smart Solutions")}</p>
                       <p className="text-lg font-bold leading-tight">{t(item, "title", language)}</p>
                     </div>
                   </div>
