@@ -1112,10 +1112,10 @@ const SLUG_CATEGORY = {
 };
 
 const FILTERS = [
-  { id: "all",     label: "All Services",   emoji: "✦" },
-  { id: "parking", label: "Parking",        emoji: "🅿" },
-  { id: "valet",   label: "Valet & Access", emoji: "🚗" },
-  { id: "care",    label: "Vehicle Care",   emoji: "🔧" },
+  { id: "all",     label: "All Services",   labelAr: "كل الخدمات",     emoji: "✦" },
+  { id: "parking", label: "Parking",        labelAr: "ركن السيارات",   emoji: "🅿" },
+  { id: "valet",   label: "Valet & Access", labelAr: "صف السيارات والدخول", emoji: "🚗" },
+  { id: "care",    label: "Vehicle Care",   labelAr: "العناية بالمركبة", emoji: "🔧" },
 ];
 
 function ServicesGrid({ onServiceClick, cmsServices, gridHeader }) {
@@ -1201,8 +1201,12 @@ function ServicesGrid({ onServiceClick, cmsServices, gridHeader }) {
               {filtered.length}
               <span className="text-[#0088FF]">+</span>
             </motion.p>
-            <p className="mt-1 text-sm text-slate-400">
-              {activeFilter === "all" ? "Services available" : `${FILTERS.find(f=>f.id===activeFilter)?.label} services`}
+            <p className="mt-1 text-sm text-slate-400" dir={language === "ar" ? "rtl" : "ltr"}>
+              {activeFilter === "all"
+                ? (language === "ar" ? "خدمة متاحة" : "Services available")
+                : language === "ar"
+                  ? `خدمات ${FILTERS.find(f=>f.id===activeFilter)?.labelAr}`
+                  : `${FILTERS.find(f=>f.id===activeFilter)?.label} services`}
             </p>
           </div>
         </motion.div>
@@ -1239,7 +1243,7 @@ function ServicesGrid({ onServiceClick, cmsServices, gridHeader }) {
                     transition={{ type:"spring", stiffness:380, damping:28 }}
                   />
                 )}
-                <span>{f.label}</span>
+                <span>{language === "ar" ? f.labelAr : f.label}</span>
                 <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold leading-none ${
                   isActive ? "bg-white/20 text-white" : "bg-slate-100 text-slate-500"
                 }`}>
@@ -1268,7 +1272,9 @@ function ServicesGrid({ onServiceClick, cmsServices, gridHeader }) {
         {/* ── Empty state (shouldn't happen but safety) ── */}
         {filtered.length === 0 && (
           <div className="flex flex-col items-center py-20 text-center">
-            <p className="text-slate-400">No services in this category.</p>
+            <p className="text-slate-400" dir={language === "ar" ? "rtl" : "ltr"}>
+              {language === "ar" ? "لا توجد خدمات في هذه الفئة." : "No services in this category."}
+            </p>
           </div>
         )}
 

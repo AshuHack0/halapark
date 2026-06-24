@@ -174,14 +174,14 @@ export default function Navbar() {
           group: g,
           links: cards
             .filter((c) => (c.group || "") === g)
-            .map((c) => ({ href: `/solutions/${c.slug}`, label: c.name || c.slug })),
+            .map((c) => ({ href: `/solutions/${c.slug}`, label: c.name || c.title || c.slug })),
         }))
         .filter((g) => g.links.length > 0);
       const ungrouped = cards.filter((c) => !c.group);
       if (ungrouped.length > 0) {
         grouped.push({
           group: "Solutions",
-          links: ungrouped.map((c) => ({ href: `/solutions/${c.slug}`, label: c.name || c.slug })),
+          links: ungrouped.map((c) => ({ href: `/solutions/${c.slug}`, label: c.name || c.title || c.slug })),
         });
       }
       setSolutionGroups(grouped);
