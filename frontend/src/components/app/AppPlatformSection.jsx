@@ -5,7 +5,7 @@ import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { fetchPage } from "@/lib/cms";
-import { useLanguage, t } from "@/context/LanguageContext";
+import { useLanguage, t, ui } from "@/context/LanguageContext";
 
 const NAVY = "#050A13";
 const ACCENT = "#0088FF";
@@ -377,7 +377,7 @@ export default function AppPlatformSection() {
         >
           <div className="grid items-center gap-8 md:grid-cols-[1.05fr_0.95fr] z-[99]">
             <div>
-              <SectionHeading brand="Halapark" suffix="Online App" />
+              <SectionHeading brand="Halapark" suffix={t(content, "appSuffix", language)} />
 
               <p
                 className="mt-7 whitespace-pre-line text-2xl font-semibold leading-snug sm:text-[26px] [overflow-wrap:anywhere]"
@@ -419,7 +419,7 @@ export default function AppPlatformSection() {
                     strokeLinejoin="round"
                   />
                 </svg>
-                Download Now
+                {ui("downloadNow", language)}
               </Link>
             </div>
 
@@ -468,7 +468,7 @@ export default function AppPlatformSection() {
         >
           <div className="grid items-center gap-8 md:grid-cols-[1fr_1.05fr]">
             <div>
-              <SectionHeading brand="Halapark" suffix="Online Website" />
+              <SectionHeading brand="Halapark" suffix={t(content, "webSuffix", language)} />
 
               <p
                 className="mt-7 whitespace-pre-line text-2xl font-semibold leading-snug sm:text-[26px] [overflow-wrap:anywhere]"
@@ -495,7 +495,7 @@ export default function AppPlatformSection() {
                 className="mt-9 inline-flex items-center gap-3 rounded-full border-2 px-6 py-2.5 text-sm font-semibold transition hover:bg-[#E8EFFF]"
                 style={{ borderColor: ACCENT, color: NAVY }}
               >
-                Visit Website
+                {ui("visitWebsite", language)}
                 <span
                   className="flex h-7 w-7 items-center justify-center rounded-full"
                   style={{ backgroundColor: ACCENT }}

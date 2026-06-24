@@ -83,6 +83,8 @@ const UI_LABELS = {
   getAQuote: { en: "Get a Quote", ar: "احصل على عرض سعر" },
   learnMore: { en: "Learn More", ar: "اعرف المزيد" },
   viewAppFeatures: { en: "View App Features", ar: "عرض ميزات التطبيق" },
+  downloadNow: { en: "Download Now", ar: "حمّل الآن" },
+  visitWebsite: { en: "Visit Website", ar: "زيارة الموقع" },
 };
 
 /** Translate a fixed UI label by key:  ui("getInTouch", language). */
