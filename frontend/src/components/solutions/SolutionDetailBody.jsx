@@ -44,10 +44,9 @@ export default function SolutionDetailBody({ detail, advantages, heroImage }) {
   const ctaLabel = t(detail, "ctaLabel", language) || "Talk to Our Team";
 
   // Pick the AR string for a list item by index when a parallel ar array exists.
+  // Strict Arabic: in AR mode show the Arabic list item only (blank when absent).
   const pick = (arArr, fallback, i) =>
-    language === "ar" && Array.isArray(arArr) && arArr[i] != null && String(arArr[i]).trim() !== ""
-      ? arArr[i]
-      : fallback;
+    language === "ar" ? (Array.isArray(arArr) ? arArr[i] ?? "" : "") : fallback;
 
   return (
     <main className="bg-white">

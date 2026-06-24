@@ -66,8 +66,8 @@ export default function WhoWeWorkWith() {
 
   const activePartner = partners[activeIndex] || {};
   const activeBenefits =
-    language === "ar" && Array.isArray(activePartner.ar?.benefits) && activePartner.ar.benefits.length
-      ? activePartner.ar.benefits
+    language === "ar"
+      ? (Array.isArray(activePartner.ar?.benefits) ? activePartner.ar.benefits : [])
       : activePartner.benefits || [];
 
   const containerVariants = {

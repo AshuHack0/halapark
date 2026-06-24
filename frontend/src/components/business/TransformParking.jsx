@@ -60,13 +60,14 @@ export default function TransformParking() {
   }, []);
 
   // Perks are arrays of plain strings; the Arabic variants live under `ar.*`.
+  // Arabic mode is strict — show the Arabic list only (empty when not provided).
   const parkingPartnerPerks =
-    language === "ar" && Array.isArray(transformData.ar?.parkingPartnerPerks) && transformData.ar.parkingPartnerPerks.length
-      ? transformData.ar.parkingPartnerPerks
+    language === "ar"
+      ? (Array.isArray(transformData.ar?.parkingPartnerPerks) ? transformData.ar.parkingPartnerPerks : [])
       : transformData.parkingPartnerPerks;
   const servicePartnerPerks =
-    language === "ar" && Array.isArray(transformData.ar?.servicePartnerPerks) && transformData.ar.servicePartnerPerks.length
-      ? transformData.ar.servicePartnerPerks
+    language === "ar"
+      ? (Array.isArray(transformData.ar?.servicePartnerPerks) ? transformData.ar.servicePartnerPerks : [])
       : transformData.servicePartnerPerks;
 
   return (

@@ -307,7 +307,7 @@ function OurMission({ mission }) {
             </p>
             <div className="space-y-5 text-[0.93rem] leading-7 text-slate-500">
               {(mission?.paragraphs ?? []).map((paragraph, i) => {
-                const para = language === "ar" && Array.isArray(mission.ar?.paragraphs) && mission.ar.paragraphs[i] ? mission.ar.paragraphs[i] : paragraph;
+                const para = language === "ar" ? (mission.ar?.paragraphs?.[i] ?? "") : paragraph;
                 return <p key={paragraph.slice(0, 48)}>{para}</p>;
               })}
             </div>
@@ -364,7 +364,7 @@ function OurVision({ vision }) {
             </p>
             <div className="space-y-4 text-[0.93rem] leading-7 text-slate-500">
               {(vision?.paragraphs ?? []).map((paragraph, i) => {
-                const para = language === "ar" && Array.isArray(vision.ar?.paragraphs) && vision.ar.paragraphs[i] ? vision.ar.paragraphs[i] : paragraph;
+                const para = language === "ar" ? (vision.ar?.paragraphs?.[i] ?? "") : paragraph;
                 return <p key={paragraph.slice(0, 48)}>{para}</p>;
               })}
             </div>
@@ -392,7 +392,7 @@ function OurVision({ vision }) {
               </div>
               <div className="grid grid-cols-3 gap-3 border-t border-white/10 pt-6">
                 {(card.highlights ?? []).map((item, i) => {
-                  const arItem = language === "ar" && Array.isArray(card.ar?.highlights) && card.ar.highlights[i] ? card.ar.highlights[i] : item;
+                  const arItem = language === "ar" ? (card.ar?.highlights?.[i] ?? "") : item;
                   return (
                     <div key={`${item.line1}-${item.line2}`} className="text-center">
                       <p className="text-[0.78rem] font-semibold text-white">{arItem.line1}</p>
@@ -427,7 +427,7 @@ function OurStory({ story }) {
             </p>
             <div className="space-y-5 text-[0.93rem] leading-7 text-slate-500">
               {(story?.paragraphs ?? []).map((paragraph, i) => {
-                const para = language === "ar" && Array.isArray(story.ar?.paragraphs) && story.ar.paragraphs[i] ? story.ar.paragraphs[i] : paragraph;
+                const para = language === "ar" ? (story.ar?.paragraphs?.[i] ?? "") : paragraph;
                 return <p key={paragraph.slice(0, 48)}>{para}</p>;
               })}
             </div>
@@ -480,7 +480,7 @@ function WhatWeDo({ whatWeDo }) {
 
           <motion.div initial={reduced ? false : { opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.1 }} transition={{ duration: 0.55, ease }} className="grid gap-2.5 sm:grid-cols-2">
             {items.map((item, i) => {
-              const label = language === "ar" && Array.isArray(whatWeDo.ar?.ecosystemItems) && whatWeDo.ar.ecosystemItems[i] ? whatWeDo.ar.ecosystemItems[i] : item;
+              const label = language === "ar" ? (whatWeDo.ar?.ecosystemItems?.[i] ?? "") : item;
               return (
                 <motion.div key={item} initial={reduced ? false : { opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.35, ease, delay: i * 0.025 }} className="flex items-center gap-3 rounded-[12px] bg-white px-4 py-3.5 shadow-sm">
                   <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#0088FF]">

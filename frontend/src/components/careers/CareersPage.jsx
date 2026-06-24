@@ -241,10 +241,8 @@ function BuildingSmarterMobility({ building }) {
             <div className="mt-8 space-y-5 text-[0.94rem] leading-7 text-slate-500 sm:text-base">
               {(building?.paragraphs ?? []).map((paragraph, i) => {
                 const text =
-                  language === "ar" &&
-                  Array.isArray(building.ar?.paragraphs) &&
-                  building.ar.paragraphs[i]
-                    ? building.ar.paragraphs[i]
+                  language === "ar"
+                    ? building.ar?.paragraphs?.[i] ?? ""
                     : paragraph;
                 return <p key={paragraph.slice(0, 40)}>{text}</p>;
               })}
@@ -575,10 +573,8 @@ function WhyJoinUs({ whyJoin }) {
           >
             {reasons.map((reason, i) => {
               const reasonText =
-                language === "ar" &&
-                Array.isArray(whyJoin.ar?.reasons) &&
-                whyJoin.ar.reasons[i]
-                  ? whyJoin.ar.reasons[i]
+                language === "ar"
+                  ? whyJoin.ar?.reasons?.[i] ?? ""
                   : reason;
               return (
                 <motion.li
