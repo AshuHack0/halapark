@@ -909,7 +909,19 @@ function HeroSection({ onGetQuote, hero }) {
     },
   };
 
-  const SERVICE_CHIPS = ["Self-Parking", "Valet Service", "EV Charging", "Car Storage", "Airport Parking", `+${allServicesData.length - 5} More`];
+  // Hero service chips: prefer CMS (`hero.chips` / `hero.ar.chips`), else fall back
+  // to the static list. The last pill is the "+N more" counter (also CMS-editable).
+  const baseChips =
+    language === "ar"
+      ? (Array.isArray(hero?.ar?.chips) ? hero.ar.chips : [])
+      : (Array.isArray(hero?.chips) && hero.chips.length
+          ? hero.chips
+          : ["Self-Parking", "Valet Service", "EV Charging", "Car Storage", "Airport Parking"]);
+  const moreChip =
+    language === "ar"
+      ? (hero?.ar?.chipsMore ?? "")
+      : (hero?.chipsMore ?? `+${allServicesData.length - 5} More`);
+  const SERVICE_CHIPS = moreChip ? [...baseChips, moreChip] : baseChips;
 
   return (
     <section
