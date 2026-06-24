@@ -64,14 +64,15 @@ export function useLanguage() {
  * Pick the right-language value for a CMS section that stores Arabic in an `ar`
  * sibling object (Shape A):  hero = { title, subtitle, ar: { title, subtitle } }
  *
- *   t(section, "title", language)  →  ar value when language==="ar" and present,
- *                                     otherwise the English value (fallback).
+ * Arabic mode is STRICT — no English fallback. When the site is in Arabic and a
+ * field has no Arabic value, this returns "" (blank), so the page shows pure
+ * Arabic only. English mode returns the English value as usual.
  */
 export function t(section, key, language) {
   if (!section || typeof section !== "object") return "";
   if (language === "ar") {
-    const arVal = section.ar?.[key];
-    if (arVal != null && String(arVal).trim() !== "") return arVal;
+    // Arabic only — blank when the Arabic value is missing/empty.
+    return section.ar?.[key] ?? "";
   }
   return section[key] ?? "";
 }
