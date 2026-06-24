@@ -79,7 +79,10 @@ export default function SolutionDetailBody({ detail, heroImage, relatedList = []
     .map((slug) => {
       const match = relatedList.find((d) => d.slug === slug);
       if (!match) return null;
-      const label = t(match, "title", language) || match.title || match.slug;
+      // Strict Arabic: in AR use the Arabic title only (blank if missing), never
+      // the English fallback. In EN use the English title.
+      const label = isAr ? (match.ar?.title || "") : (match.title || match.slug);
+      if (!label) return null;
       return { slug, label };
     })
     .filter(Boolean);
