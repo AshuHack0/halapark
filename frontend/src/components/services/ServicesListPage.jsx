@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 import { allServicesData, serviceNames } from "./allServicesData";
 import { fetchPage } from "@/lib/cms";
-import { useLanguage, t } from "@/context/LanguageContext";
+import { useLanguage, t, ui } from "@/context/LanguageContext";
 // import GoodLookingServiceHero from "./GoodLookingServiceHero"; // OLD dark hero (looked like home page) — replaced by the light HeroSection below
 
 /* ─── Springs & easing ─── */
@@ -1019,7 +1019,7 @@ function HeroSection({ onGetQuote, hero }) {
                 <Link href="/contact"
                   className="group/btn inline-flex items-center gap-2.5 rounded-full bg-[#0088FF] px-6 py-3.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,136,255,0.32),0_2px_8px_rgba(0,136,255,0.18)] transition hover:brightness-110"
                 >
-                  Get In Touch
+                  {ui("getInTouch", language)}
                   <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 transition-transform duration-200 group-hover/btn:translate-x-0.5">
                     <ArrowRight className="h-3.5 w-3.5" />
                   </span>
@@ -1032,7 +1032,7 @@ function HeroSection({ onGetQuote, hero }) {
                 transition={springSoft}
                 className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-6 py-3.5 text-sm font-semibold text-slate-700 shadow-[0_2px_12px_rgba(6,6,22,0.07)] transition hover:border-[#0088FF]/50 hover:text-[#0088FF]"
               >
-                Get a Quote
+                {ui("getAQuote", language)}
               </motion.button>
             </motion.div>
 
@@ -1106,7 +1106,8 @@ const FILTERS = [
   { id: "care",    label: "Vehicle Care",   emoji: "🔧" },
 ];
 
-function ServicesGrid({ onServiceClick, cmsServices }) {
+function ServicesGrid({ onServiceClick, cmsServices, gridHeader }) {
+  const { language } = useLanguage();
   const [activeFilter, setActiveFilter] = useState("all");
   const reduced  = useReducedMotion();
   const sectionRef = useRef(null);
@@ -1158,17 +1159,22 @@ function ServicesGrid({ onServiceClick, cmsServices }) {
         >
           {/* Left */}
           <div>
-            <h2 className="text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
-              Explore Our{" "}
-              <span className="bg-[linear-gradient(120deg,#0060CC_0%,#0088FF_50%,#38BDF8_100%)] bg-clip-text text-transparent">
-                Services
-              </span>
+            <h2 className="text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]">
+              {t(gridHeader, "heading", language)}
+              {t(gridHeader, "headingGradient", language) ? (
+                <>
+                  {" "}
+                  <span className="bg-[linear-gradient(120deg,#0060CC_0%,#0088FF_50%,#38BDF8_100%)] bg-clip-text text-transparent">
+                    {t(gridHeader, "headingGradient", language)}
+                  </span>
+                </>
+              ) : null}
             </h2>
-            <p className="mt-3 max-w-[480px] text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-[#050A13]">
-              Everything you need, one platform.
+            <p className="mt-3 max-w-[480px] text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-[#050A13] [overflow-wrap:anywhere]">
+              {t(gridHeader, "subtitle", language)}
             </p>
-            <p className="mt-3 max-w-[480px] text-[0.88rem] leading-6 text-slate-500">
-              From self-parking to valet, EV charging to car storage. Tap any card to explore full details and what's included.
+            <p className="mt-3 max-w-[480px] text-[0.88rem] leading-6 text-slate-500 [overflow-wrap:anywhere]">
+              {t(gridHeader, "description", language)}
             </p>
           </div>
 
@@ -1634,7 +1640,7 @@ export default function ServicesListPage() {
         {/* OLD hero (dark, mirrored the home page — client disliked it):
         <GoodLookingServiceHero onGetQuote={() => setQuoteOpen(true)} /> */}
         <HeroSection    onGetQuote={() => setQuoteOpen(true)} hero={cms?.hero} />
-        <ServicesGrid   onServiceClick={setSelectedService} cmsServices={cms?.services} />
+        <ServicesGrid   onServiceClick={setSelectedService} cmsServices={cms?.services} gridHeader={cms?.servicesGridHeader} />
         <PartnersSection partners={cms?.partnersSection} />
         <TrustSection trust={cms?.trustSection} />
         <LongTermCTA    onGetQuote={() => setQuoteOpen(true)} cta={cms?.ctaSection} />

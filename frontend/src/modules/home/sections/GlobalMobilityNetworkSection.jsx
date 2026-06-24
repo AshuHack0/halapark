@@ -215,6 +215,9 @@ export default function GlobalMobilityNetworkSection() {
     });
   }, []);
 
+  const heading = t(content, "heading", language);
+  const headingGradient = t(content, "headingGradient", language);
+
   return (
     <section className="relative overflow-hidden bg-[linear-gradient(180deg,#F6FAFF_0%,#FFFFFF_68%)] py-8 sm:py-10 md:py-12">
       <div className="pointer-events-none absolute -left-24 top-12 h-72 w-72 rounded-full bg-[#0088FF]/12 blur-3xl" />
@@ -222,35 +225,22 @@ export default function GlobalMobilityNetworkSection() {
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="relative overflow-hidden rounded-[24px] border border-[#D8E7F8] bg-white shadow-[0_20px_56px_rgba(15,23,42,0.08)]">
           <div className="relative z-10 text-center">
-            <h2 className="mx-auto pt-5 text-[clamp(2.65rem,4.5vw,4rem)] font-semibold uppercase leading-[1.01] tracking-[-0.06em] text-[#050A13] sm:pt-6 [overflow-wrap:anywhere]">
-              {t(content, "heading", language) ? (
+            <h2 className="mx-auto pt-5 text-[clamp(2.65rem,4.5vw,4rem)] font-semibold uppercase leading-[1.01] tracking-[-0.06em] text-[#050A13] sm:pt-6 [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
+              {heading}
+              {headingGradient ? (
                 <>
-                  {t(content, "heading", language)}
-                  {t(content, "headingGradient", language) ? (
-                    <>
-                      {" "}
-                      <span className="bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">
-                        {t(content, "headingGradient", language)}
-                      </span>
-                    </>
-                  ) : null}
-                </>
-              ) : (
-                <>
-                  Global Parking{" "}
+                  {" "}
                   <span className="bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">
-                    Locations
+                    {headingGradient}
                   </span>
                 </>
-              )}
+              ) : null}
             </h2>
-            <p className="mx-auto mt-3 max-w-[650px] px-4 text-[0.88rem] leading-6 text-slate-800 sm:text-[0.94rem] text-bold [overflow-wrap:anywhere]">
-              {t(content, "subtitle", language) ||
-                "Shaping the future of smart parking from the UAE to the world through connected, intelligent parking experiences."}
+            <p className="mx-auto mt-3 max-w-[650px] px-4 text-[0.88rem] leading-6 text-slate-800 sm:text-[0.94rem] text-bold [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
+              {t(content, "subtitle", language)}
             </p>
-            <p className="mx-auto mt-2 max-w-[650px] px-4 text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem]">
-              Building a connected ecosystem for seamless, cashless, and
-              barrier-free parking experiences across cities and borders.
+            <p className="mx-auto mt-2 max-w-[650px] px-4 text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
+              {t(content, "description", language)}
             </p>
           </div>
 
@@ -323,15 +313,17 @@ export default function GlobalMobilityNetworkSection() {
                 </div>
               </div>
               <div className="absolute left-0 top-[10%] z-20 w-full max-w-[360px] px-4 sm:max-w-[390px] sm:px-6">
-                <h3 className="text-[1.45rem] font-semibold uppercase leading-[1.18] tracking-[0.02em] text-[#071221] sm:text-[1.85rem]">
-                  United by Mobility.
-                  <br />
-                  Connected Globally.
+                <h3 className="text-[1.45rem] font-semibold uppercase leading-[1.18] tracking-[0.02em] text-[#071221] sm:text-[1.85rem] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
+                  {t(content, "panelTitle", language)}
+                  {t(content, "panelTitleAccent", language) ? (
+                    <>
+                      <br />
+                      {t(content, "panelTitleAccent", language)}
+                    </>
+                  ) : null}
                 </h3>
-                <p className="mt-2 max-w-[300px] text-sm leading-relaxed text-slate-600">
-                  HalaPark integrates with leading mobility platforms and
-                  payment networks to deliver a unified and seamless parking
-                  experience.
+                <p className="mt-2 max-w-[300px] text-sm leading-relaxed text-slate-600 [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
+                  {t(content, "panelBody", language)}
                 </p>
 
                 <ul className="mt-3 space-y-2.5">

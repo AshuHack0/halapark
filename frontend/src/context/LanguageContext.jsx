@@ -76,3 +76,18 @@ export function t(section, key, language) {
   }
   return section[key] ?? "";
 }
+
+// Fixed UI labels (not CMS-driven) shared across pages — buttons, generic chrome.
+const UI_LABELS = {
+  getInTouch: { en: "Get In Touch", ar: "تواصل معنا" },
+  getAQuote: { en: "Get a Quote", ar: "احصل على عرض سعر" },
+  learnMore: { en: "Learn More", ar: "اعرف المزيد" },
+  viewAppFeatures: { en: "View App Features", ar: "عرض ميزات التطبيق" },
+};
+
+/** Translate a fixed UI label by key:  ui("getInTouch", language). */
+export function ui(key, language) {
+  const entry = UI_LABELS[key];
+  if (!entry) return "";
+  return language === "ar" ? entry.ar : entry.en;
+}

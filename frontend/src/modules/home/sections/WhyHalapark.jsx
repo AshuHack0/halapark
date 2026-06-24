@@ -13,7 +13,7 @@ import {
   Zap,
 } from "lucide-react";
 import { fetchHomeSection } from "@/lib/cms";
-import { useLanguage, t } from "@/context/LanguageContext";
+import { useLanguage, t, ui } from "@/context/LanguageContext";
 
 const DESKTOP_NAV_OFFSET = 70;
 const DESKTOP_STEP_SCROLL_VH = 62;
@@ -282,7 +282,7 @@ export default function WhyHalapark() {
                     href="/contact"
                     className="mt-4 inline-flex items-center text-sm font-semibold text-slate-400 transition-colors hover:text-[#0088FF]"
                   >
-                    Learn More
+                    {ui("learnMore", language)}
                   </Link>
                 </article>
               );
@@ -366,7 +366,7 @@ export default function WhyHalapark() {
                                   : "pointer-events-none -translate-y-1 opacity-0"
                               }`}
                             >
-                              Learn More
+                              {ui("learnMore", language)}
                             </Link>
                           </div>
                         </motion.div>
