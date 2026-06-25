@@ -22,7 +22,7 @@ import { useLanguage, t } from "@/context/LanguageContext";
  * slugs into clickable links. `heroImage` is the per-solution image from the CMS
  * card (source of truth), falling back to the detail's own image.
  */
-export default function SolutionDetailBody({ detail, heroImage, relatedList = [] }) {
+export default function SolutionDetailBody({ detail, heroImage, relatedList = [], relatedCards = [] }) {
   const { language } = useLanguage();
   const isAr = language === "ar";
   const dir = isAr ? "rtl" : "ltr";
@@ -74,7 +74,8 @@ export default function SolutionDetailBody({ detail, heroImage, relatedList = []
   const howBody = paras("howItWorksBody");
 
   const relatedHeading = tx("relatedHeading") || (isAr ? "" : "Other Related Services");
-  // Resolve related slugs → { slug, label } using the live details list.
+  // Resolve related slugs → { slug, label, image } using the live details list
+  // (label) and the cards list (canonical image, like the hero).
   const related = (Array.isArray(detail.relatedServices) ? detail.relatedServices : [])
     .map((slug) => {
       const match = relatedList.find((d) => d.slug === slug);
@@ -83,7 +84,13 @@ export default function SolutionDetailBody({ detail, heroImage, relatedList = []
       // the English fallback. In EN use the English title.
       const label = isAr ? (match.ar?.title || "") : (match.title || match.slug);
       if (!label) return null;
-      return { slug, label };
+      // Image priority: card image (CMS source of truth) → detail image. No
+      // fallback — if there's no real image, the card renders without an image.
+      const card = relatedCards.find((c) => c.slug === slug);
+      const cardImg = card?.image && card.image !== "/image.png" ? card.image : null;
+      const detailImg = match.image && match.image !== "/image.png" ? match.image : null;
+      const image = cardImg || detailImg || null;
+      return { slug, label, image };
     })
     .filter(Boolean);
 
@@ -299,15 +306,31 @@ export default function SolutionDetailBody({ detail, heroImage, relatedList = []
             <h2 className="mb-8 text-[clamp(1.5rem,2.6vw,2.2rem)] font-semibold tracking-[-0.04em] text-[#050A13] [overflow-wrap:anywhere]">
               {relatedHeading}
             </h2>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {related.map((r) => (
                 <Link
                   key={r.slug}
                   href={`/solutions/${r.slug}`}
-                  className="group flex items-center justify-between gap-3 rounded-[18px] border border-[rgba(0,136,255,0.14)] bg-[#F8FBFF] px-5 py-4 transition hover:border-[#0088FF]/40 hover:bg-white hover:shadow-[0_10px_28px_rgba(0,136,255,0.1)]"
+                  className="group overflow-hidden rounded-[22px] border border-[rgba(0,136,255,0.14)] bg-white shadow-[0_4px_24px_rgba(6,6,22,0.05)] transition hover:-translate-y-1 hover:border-[#0088FF]/40 hover:shadow-[0_18px_44px_rgba(0,136,255,0.14)]"
                 >
-                  <span className="text-[0.95rem] font-semibold text-[#050A13] [overflow-wrap:anywhere]">{r.label}</span>
-                  <ChevronRight className="h-4 w-4 shrink-0 text-[#0088FF] transition-transform group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5" aria-hidden />
+                  {/* Image cell — only when the solution has a real image */}
+                  {r.image ? (
+                    <div className="relative aspect-[16/10] w-full overflow-hidden bg-[#EAF3FF]">
+                      <Image
+                        src={r.image}
+                        alt={r.label}
+                        fill
+                        className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                        sizes="(min-width: 1024px) 360px, (min-width: 640px) 50vw, 90vw"
+                      />
+                      <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
+                    </div>
+                  ) : null}
+                  {/* Title + arrow */}
+                  <div className="flex items-center justify-between gap-3 px-5 py-4">
+                    <span className="text-[0.95rem] font-semibold text-[#050A13] [overflow-wrap:anywhere]">{r.label}</span>
+                    <ChevronRight className="h-4 w-4 shrink-0 text-[#0088FF] transition-transform group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5" aria-hidden />
+                  </div>
                 </Link>
               ))}
             </div>
