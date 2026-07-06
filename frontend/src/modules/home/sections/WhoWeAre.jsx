@@ -78,7 +78,13 @@ export default function WhoWeAre() {
 
   const headingText = content.eyebrowHeading;
   const audienceContent = content.audiences ?? {};
-  const highlights = content.highlights ?? [];
+  // Only items with real text count as content — a cleared item ({icon,
+  // title:"", description:""}) must not render an empty card shell.
+  const highlights = (content.highlights ?? []).filter(
+    (h) =>
+      h &&
+      (((h.title ?? "").trim()) || ((h.description ?? "").trim())),
+  );
   const activeContent =
     audienceContent[activeAudience] ?? audienceContent.business ?? {};
 
@@ -167,12 +173,15 @@ export default function WhoWeAre() {
         },
       };
 
-  // Hide the section entirely when the admin hasn't entered any content:
-  // no audience heading (EN) and no highlight items.
-  const hasAudienceHeading = Object.values(audienceContent).some(
-    (a) => a && typeof a === "object" && a.heading,
+  // Hide the section entirely when the admin has cleared all content:
+  // no audience heading/body (EN, non-blank) and no highlight items with text.
+  const hasAudienceContent = Object.values(audienceContent).some(
+    (a) =>
+      a &&
+      typeof a === "object" &&
+      (((a.heading ?? "").trim()) || ((a.body ?? "").trim())),
   );
-  if (!hasAudienceHeading && highlights.length === 0) return null;
+  if (!hasAudienceContent && highlights.length === 0) return null;
 
   return (
     <section
@@ -412,6 +421,7 @@ export default function WhoWeAre() {
             </motion.div>
           </motion.div>
 
+          {highlights.length > 0 ? (
           <motion.div
             className="relative lg:col-span-6 lg:pt-1"
             style={{ y: colRightY }}
@@ -504,6 +514,7 @@ export default function WhoWeAre() {
               })}
             </ul>
           </motion.div>
+          ) : null}
         </div>
       </div>
     </section>
