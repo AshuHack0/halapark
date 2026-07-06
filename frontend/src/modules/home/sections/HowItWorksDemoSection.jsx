@@ -38,16 +38,32 @@ export default function HowItWorksDemoSection() {
     fetchHomeSection("howItWorks").then((d) => {
       if (!d || typeof d !== "object") return;
       setContent({ ...d });
-      if (Array.isArray(d.steps) && d.steps.length) {
-        // Merge CMS step text onto hardcoded steps (keep icons).
-        setStepItems(steps.map((base, i) => ({ ...base, ...(d.steps[i] ?? {}) })));
-      }
+      // Steps come strictly from the CMS (text); the hardcoded base only
+      // supplies UI-only props (icons) by index. Cleared steps (no text) are
+      // dropped so no empty card shells/icons render.
+      setStepItems(
+        (Array.isArray(d.steps) ? d.steps : [])
+          .map((c, i) => ({
+            ...(steps[i] ?? {}),
+            id: steps[i]?.id ?? i + 1,
+            title: c?.title ?? "",
+            description: c?.description ?? "",
+            ar: c?.ar,
+          }))
+          .filter(
+            (s) => ((s.title ?? "").trim()) || ((s.description ?? "").trim()),
+          ),
+      );
     });
   }, []);
 
-  // Hide the section entirely when the admin hasn't entered any content:
-  // no heading (EN) and no CMS steps.
-  if (!content.heading && stepItems.length === 0) return null;
+  // Hide the section entirely when the admin has cleared all content: no
+  // heading/subtitle (EN, non-blank), no steps with text, and no video.
+  const hasHeading =
+    ((content.heading ?? "").trim()) ||
+    ((content.headingGradient ?? "").trim()) ||
+    ((content.subtitle ?? "").trim());
+  if (!hasHeading && stepItems.length === 0 && !content.videoUrl) return null;
 
   return (
     <section
@@ -76,6 +92,7 @@ export default function HowItWorksDemoSection() {
 
           <div className="mt-8 grid gap-8 lg:grid-cols-[1.04fr_0.96fr] lg:items-start">
             <div className="mx-auto w-full max-w-[620px] lg:mx-0">
+              {stepItems.length > 0 ? (
               <div className="relative pl-[72px] sm:pl-[116px]">
                 <span
                   aria-hidden="true"
@@ -128,59 +145,64 @@ export default function HowItWorksDemoSection() {
                   })}
                 </div>
               </div>
+              ) : null}
 
-              <div className="mt-4 flex flex-wrap items-center gap-3 pl-[88px] sm:pl-[116px]">
-                <Link
-                  href={content.ctaHref || "/app"}
-                  className="inline-flex min-h-11 items-center justify-center gap-3 rounded-[10px] bg-[#168EFF] px-7 py-3 text-[0.98rem] font-bold text-white shadow-[0_10px_24px_rgba(0,136,255,0.34)] transition hover:-translate-y-0.5 hover:brightness-95"
-                >
-                  <CarFront
-                    aria-hidden="true"
-                    className="h-5 w-5 stroke-[2.6]"
+              {t(content, "ctaLabel", language) ? (
+                <div className="mt-4 flex flex-wrap items-center gap-3 pl-[88px] sm:pl-[116px]">
+                  <Link
+                    href={content.ctaHref || "/app"}
+                    className="inline-flex min-h-11 items-center justify-center gap-3 rounded-[10px] bg-[#168EFF] px-7 py-3 text-[0.98rem] font-bold text-white shadow-[0_10px_24px_rgba(0,136,255,0.34)] transition hover:-translate-y-0.5 hover:brightness-95"
+                  >
+                    <CarFront
+                      aria-hidden="true"
+                      className="h-5 w-5 stroke-[2.6]"
+                    />
+                    {t(content, "ctaLabel", language)}
+                  </Link>
+                </div>
+              ) : null}
+            </div>
+
+            {content.videoUrl ? (
+              <div className="relative">
+                <div className="absolute inset-0 rounded-[24px] bg-[#0088FF]/15 blur-2xl" />
+                <div className="relative overflow-hidden rounded-[24px] border border-[#D6E8FF] bg-[#08142A] p-2 shadow-[0_24px_46px_rgba(15,23,42,0.25)]">
+                  <video
+                    className="h-full w-full rounded-[18px] object-cover"
+                    src={content.videoUrl}
+                    key={content.videoUrl}
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    controls
                   />
-                  {t(content, "ctaLabel", language) || ""}
-                </Link>
-                {/* <span className="text-sm font-medium text-slate-500">
-                  Takes less than a minute
-                </span> */}
+                </div>
               </div>
-            </div>
-
-            <div className="relative">
-              <div className="absolute inset-0 rounded-[24px] bg-[#0088FF]/15 blur-2xl" />
-              <div className="relative overflow-hidden rounded-[24px] border border-[#D6E8FF] bg-[#08142A] p-2 shadow-[0_24px_46px_rgba(15,23,42,0.25)]">
-                <video
-                  className="h-full w-full rounded-[18px] object-cover"
-                  src={content.videoUrl || "/HalaPark.mp4"}
-                  key={content.videoUrl || "/HalaPark.mp4"}
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  controls
-                />
-              </div>
-            </div>
+            ) : null}
           </div>
         </div>
       </div>
       <style jsx>{`
         @keyframes how-it-works-drop {
           0% {
-            transform: translateY(0);
+            top: 36px;
             opacity: 0.2;
           }
           20% {
             opacity: 1;
           }
           100% {
-            transform: translateY(220px);
+            /* Travel the full track: segment bottom lands at the grey line's
+               end (48px from the container bottom; segment is 56px tall).
+               Using top + calc keeps it correct for any number of steps. */
+            top: calc(100% - 104px);
             opacity: 0.15;
           }
         }
 
         .how-it-works-progress {
-          animation: how-it-works-drop 2.8s linear infinite;
+          animation: how-it-works-drop 3.4s linear infinite;
         }
       `}</style>
     </section>
