@@ -59,11 +59,14 @@ function HeroBackgroundMedia({ slide, isActive, onVideoEnd }) {
     return undefined;
   }, [isActive, slide.video]);
 
-  // Each slide shows ONE background: a video if provided, otherwise an image
-  // (card image takes priority over the plain image field).
+  // Each slide is EITHER an image or a video (chosen in admin). Fall back to a
+  // sensible guess for older slides that have no mediaType.
+  const mediaType = slide.mediaType === "video" || slide.mediaType === "image"
+    ? slide.mediaType
+    : (slide.video ? "video" : "image");
   const imageSrc = slide.cardImg || slide.image || "";
 
-  if (slide.video) {
+  if (mediaType === "video" && slide.video) {
     return (
       <video
         ref={videoRef}
@@ -203,11 +206,20 @@ export default function HeroSection() {
                 {t(currentSlide, "title", language)}
               </p>
 
-              <Link href="/contact">
-                <button className="mt-7 bg-[#0088FF] px-10 rounded-full py-3 text-white font-medium text-sm sm:text-base">
-                  {language === "ar" ? "تواصل معنا" : "Get In Touch"}
-                </button>
-              </Link>
+              {(() => {
+                // Per-slide CTA (label + link) from the CMS; hidden if no label.
+                const ctaLabel =
+                  t(currentSlide, "ctaLabel", language) ||
+                  (language === "ar" ? "تواصل معنا" : "Get In Touch");
+                const ctaLink = currentSlide?.ctaLink || "/contact";
+                return ctaLabel ? (
+                  <Link href={ctaLink}>
+                    <button className="mt-7 bg-[#0088FF] px-10 rounded-full py-3 text-white font-medium text-sm sm:text-base">
+                      {ctaLabel}
+                    </button>
+                  </Link>
+                ) : null;
+              })()}
 
               <div className="mt-8 flex items-center gap-2">
                 {visibleSlides.map((slide, index) => (
