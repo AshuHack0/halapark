@@ -1,11 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Send } from "lucide-react";
 
-import { useLanguage } from "@/context/LanguageContext";
-
-import { contactSubjects, contactSubjectsAr } from "./contactData";
+import { useLanguage, t } from "@/context/LanguageContext";
 
 // Fixed UI copy (not CMS-driven) — translated inline.
 const COPY = {
@@ -58,7 +56,7 @@ const initialFormData = {
   email: "",
   phone: "",
   company: "",
-  subject: contactSubjects[0],
+  subject: "",
   message: "",
 };
 
@@ -90,7 +88,7 @@ function FormField({
   );
 }
 
-export default function ContactFormPanel() {
+export default function ContactFormPanel({ form }) {
   const { language } = useLanguage();
   const c = COPY[language] || COPY.en;
   const isAr = language === "ar";
@@ -98,6 +96,31 @@ export default function ContactFormPanel() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submitting, setSubmitting]  = useState(false);
   const [formError, setFormError]    = useState("");
+
+  // CMS-only content — hidden when deleted from the database.
+  const eyebrow = t(form, "eyebrow", language);
+  const heading = t(form, "heading", language);
+  const note = t(form, "note", language);
+
+  // Subjects come from the CMS only; the AR list is parallel by index.
+  const { subjects, subjectsAr } = useMemo(() => {
+    const cmsSubjects = Array.isArray(form?.subjects)
+      ? form.subjects.filter((s) => typeof s === "string" && s.trim())
+      : [];
+    return {
+      subjects: cmsSubjects,
+      subjectsAr: Array.isArray(form?.ar?.subjects) ? form.ar.subjects : [],
+    };
+  }, [form]);
+
+  // Keep the selected subject valid if the CMS list arrives after mount.
+  useEffect(() => {
+    setFormData((current) =>
+      subjects.includes(current.subject)
+        ? current
+        : { ...current, subject: subjects[0] || "" },
+    );
+  }, [subjects]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -122,7 +145,7 @@ export default function ContactFormPanel() {
         return;
       }
       setIsSubmitted(true);
-      setFormData(initialFormData);
+      setFormData({ ...initialFormData, subject: subjects[0] || "" });
     } catch {
       setFormError(c.networkError);
     } finally {
@@ -132,20 +155,28 @@ export default function ContactFormPanel() {
 
   return (
     <div className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-[0_24px_80px_rgba(15,23,42,0.08)] sm:p-8">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <span className="inline-flex rounded-full border border-[rgba(0,136,255,0.14)] bg-[rgba(0,136,255,0.06)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.26em] text-[#0088FF]">
-            {c.eyebrow}
-          </span>
-          <h2 className="mt-5 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl [overflow-wrap:anywhere]">
-            {c.heading}
-          </h2>
-        </div>
+      {eyebrow || heading || note ? (
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            {eyebrow ? (
+              <span className="inline-flex rounded-full border border-[rgba(0,136,255,0.14)] bg-[rgba(0,136,255,0.06)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.26em] text-[#0088FF] [overflow-wrap:anywhere]">
+                {eyebrow}
+              </span>
+            ) : null}
+            {heading ? (
+              <h2 className="mt-5 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl [overflow-wrap:anywhere]">
+                {heading}
+              </h2>
+            ) : null}
+          </div>
 
-        <p className="max-w-xs text-sm leading-6 text-slate-500 [overflow-wrap:anywhere]">
-          {c.note}
-        </p>
-      </div>
+          {note ? (
+            <p className="max-w-xs text-sm leading-6 text-slate-500 [overflow-wrap:anywhere]">
+              {note}
+            </p>
+          ) : null}
+        </div>
+      ) : null}
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-5">
         <div className="grid gap-5 md:grid-cols-2">
@@ -184,24 +215,26 @@ export default function ContactFormPanel() {
           />
         </div>
 
-        <label className="block">
-          <span className="mb-2 block text-sm font-medium text-slate-700">
-            {c.subject}
-          </span>
-          <select
-            id="subject"
-            name="subject"
-            value={formData.subject}
-            onChange={handleChange}
-            className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3.5 text-base text-slate-900 outline-none transition focus:border-[#0088FF] focus:ring-4 focus:ring-[#0088FF]/10"
-          >
-            {contactSubjects.map((subject, index) => (
-              <option key={subject} value={subject}>
-                {isAr ? contactSubjectsAr[index] || subject : subject}
-              </option>
-            ))}
-          </select>
-        </label>
+        {subjects.length > 0 ? (
+          <label className="block">
+            <span className="mb-2 block text-sm font-medium text-slate-700">
+              {c.subject}
+            </span>
+            <select
+              id="subject"
+              name="subject"
+              value={formData.subject}
+              onChange={handleChange}
+              className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3.5 text-base text-slate-900 outline-none transition focus:border-[#0088FF] focus:ring-4 focus:ring-[#0088FF]/10"
+            >
+              {subjects.map((subject, index) => (
+                <option key={subject} value={subject}>
+                  {isAr ? subjectsAr[index] || subject : subject}
+                </option>
+              ))}
+            </select>
+          </label>
+        ) : null}
 
         <label className="block">
           <span className="mb-2 block text-sm font-medium text-slate-700">

@@ -1,57 +1,36 @@
 "use client";
 
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
-import { useState } from "react";
 
-import { useLanguage } from "@/context/LanguageContext";
+import { useLanguage, t } from "@/context/LanguageContext";
 
-// Fixed UI copy (not CMS-driven) — translated inline.
-const COPY = {
-  en: {
-    eyebrow: "Map",
-    heading: "Office location",
-    addressLabel: "Address",
-    phoneLabel: "Phone",
-    emailLabel: "Email",
-    hoursLabel: "Business Hours",
-    officeName: "HalaPark Office",
-    address: "Dubai, United Arab Emirates",
-    hours: "Monday - Friday: 9:00 AM - 6:00 PM",
-    weekend: "Saturday & Sunday: Closed",
-    loading: "Loading map...",
-  },
-  ar: {
-    eyebrow: "الخريطة",
-    heading: "موقع المكتب",
-    addressLabel: "العنوان",
-    phoneLabel: "الهاتف",
-    emailLabel: "البريد الإلكتروني",
-    hoursLabel: "ساعات العمل",
-    officeName: "مكتب هالا بارك",
-    address: "دبي، الإمارات العربية المتحدة",
-    hours: "الاثنين - الجمعة: 9:00 صباحًا - 6:00 مساءً",
-    weekend: "السبت والأحد: مغلق",
-    loading: "جارٍ تحميل الخريطة...",
-  },
+// Fixed UI chrome only (field labels) — the content itself is CMS-only.
+const LABELS = {
+  en: { eyebrow: "Map", addressLabel: "Address", phoneLabel: "Phone", emailLabel: "Email", hoursLabel: "Business Hours" },
+  ar: { eyebrow: "الخريطة", addressLabel: "العنوان", phoneLabel: "الهاتف", emailLabel: "البريد الإلكتروني", hoursLabel: "ساعات العمل" },
 };
 
-export default function ContactMapSection() {
+export default function ContactMapSection({ map }) {
   const { language } = useLanguage();
-  const c = COPY[language] || COPY.en;
-  const [mapLoaded, setMapLoaded] = useState(true);
+  const c = LABELS[language] || LABELS.en;
 
-  const officeLocation = {
-    name: "HalaPark Office",
-    address: "Dubai, United Arab Emirates",
-    phone: "+971 4 3782022",
-    email: "info@halapark.com",
-    hours: "Monday - Friday: 9:00 AM - 6:00 PM",
-    latitude: 25.2048,
-    longitude: 55.2708,
-  };
+  // CMS-only content: anything deleted from the database is not rendered.
+  const heading = t(map, "heading", language);
+  const officeName = t(map, "officeName", language);
+  const address = t(map, "address", language);
+  const hours = t(map, "hours", language);
+  const weekend = t(map, "weekend", language);
+  const phone = map?.phone || "";
+  const email = map?.email || "";
 
-  // Google Maps embed URL with the office location
-  const mapEmbedUrl = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3611.0816849547654!2d${officeLocation.longitude}!3d${officeLocation.latitude}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f43348c88e54b%3A0x1234567890abcdef!2s${encodeURIComponent(officeLocation.address)}!5e0!3m2!1sen!2sae!4v1234567890`;
+  // Whole section hides when the CMS has no content for it.
+  if (!heading && !address && !officeName && !phone && !email && !hours) {
+    return null;
+  }
+
+  // Google Maps embed pinned to the office coordinates (functional embed).
+  const officeLocation = { latitude: 25.2048, longitude: 55.2708 };
+  const mapEmbedUrl = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3611.0816849547654!2d${officeLocation.longitude}!3d${officeLocation.latitude}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f43348c88e54b%3A0x1234567890abcdef!2s${encodeURIComponent(map?.address || "Dubai")}!5e0!3m2!1sen!2sae!4v1234567890`;
 
   return (
     <section className="mt-8 overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.08)]">
@@ -61,110 +40,111 @@ export default function ContactMapSection() {
           <span className="inline-flex rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.26em] text-slate-600">
             {c.eyebrow}
           </span>
-          <h2 className="mt-5 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl [overflow-wrap:anywhere]">
-            {c.heading}
-          </h2>
+          {heading ? (
+            <h2 className="mt-5 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl [overflow-wrap:anywhere]">
+              {heading}
+            </h2>
+          ) : null}
 
           <div className="mt-8 space-y-6">
-            {/* Address */}
-            <div className="flex gap-4">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[rgba(0,136,255,0.1)]">
-                <MapPin className="h-5 w-5 text-[#0088FF]" />
+            {address || officeName ? (
+              <div className="flex gap-4">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[rgba(0,136,255,0.1)]">
+                  <MapPin className="h-5 w-5 text-[#0088FF]" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-slate-600 uppercase tracking-[0.08em]">
+                    {c.addressLabel}
+                  </p>
+                  {address ? (
+                    <p className="mt-1 text-base text-slate-900 font-medium [overflow-wrap:anywhere]">
+                      {address}
+                    </p>
+                  ) : null}
+                  {officeName ? (
+                    <p className="mt-1 text-sm text-slate-500 [overflow-wrap:anywhere]">
+                      {officeName}
+                    </p>
+                  ) : null}
+                </div>
               </div>
-              <div>
-                <p className="text-sm font-semibold text-slate-600 uppercase tracking-[0.08em]">
-                  {c.addressLabel}
-                </p>
-                <p className="mt-1 text-base text-slate-900 font-medium [overflow-wrap:anywhere]">
-                  {c.address}
-                </p>
-                <p className="mt-1 text-sm text-slate-500 [overflow-wrap:anywhere]">
-                  {c.officeName}
-                </p>
-              </div>
-            </div>
+            ) : null}
 
-            {/* Phone */}
-            <div className="flex gap-4">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[rgba(0,136,255,0.1)]">
-                <Phone className="h-5 w-5 text-[#0088FF]" />
+            {phone ? (
+              <div className="flex gap-4">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[rgba(0,136,255,0.1)]">
+                  <Phone className="h-5 w-5 text-[#0088FF]" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-slate-600 uppercase tracking-[0.08em]">
+                    {c.phoneLabel}
+                  </p>
+                  <a
+                    href={`tel:${phone.replace(/\s/g, "")}`}
+                    className="mt-1 text-base text-[#0088FF] font-medium hover:underline"
+                  >
+                    {phone}
+                  </a>
+                </div>
               </div>
-              <div>
-                <p className="text-sm font-semibold text-slate-600 uppercase tracking-[0.08em]">
-                  {c.phoneLabel}
-                </p>
-                <a
-                  href={`tel:${officeLocation.phone.replace(/\s/g, "")}`}
-                  className="mt-1 text-base text-[#0088FF] font-medium hover:underline"
-                >
-                  {officeLocation.phone}
-                </a>
-              </div>
-            </div>
+            ) : null}
 
-            {/* Email */}
-            <div className="flex gap-4">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[rgba(0,136,255,0.1)]">
-                <Mail className="h-5 w-5 text-[#0088FF]" />
+            {email ? (
+              <div className="flex gap-4">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[rgba(0,136,255,0.1)]">
+                  <Mail className="h-5 w-5 text-[#0088FF]" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-slate-600 uppercase tracking-[0.08em]">
+                    {c.emailLabel}
+                  </p>
+                  <a
+                    href={`mailto:${email}`}
+                    className="mt-1 text-base text-[#0088FF] font-medium hover:underline"
+                  >
+                    {email}
+                  </a>
+                </div>
               </div>
-              <div>
-                <p className="text-sm font-semibold text-slate-600 uppercase tracking-[0.08em]">
-                  {c.emailLabel}
-                </p>
-                <a
-                  href={`mailto:${officeLocation.email}`}
-                  className="mt-1 text-base text-[#0088FF] font-medium hover:underline"
-                >
-                  {officeLocation.email}
-                </a>
-              </div>
-            </div>
+            ) : null}
 
-            {/* Hours */}
-            <div className="flex gap-4">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[rgba(0,136,255,0.1)]">
-                <Clock className="h-5 w-5 text-[#0088FF]" />
+            {hours || weekend ? (
+              <div className="flex gap-4">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[rgba(0,136,255,0.1)]">
+                  <Clock className="h-5 w-5 text-[#0088FF]" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-slate-600 uppercase tracking-[0.08em]">
+                    {c.hoursLabel}
+                  </p>
+                  {hours ? (
+                    <p className="mt-1 text-base text-slate-900 font-medium [overflow-wrap:anywhere]">
+                      {hours}
+                    </p>
+                  ) : null}
+                  {weekend ? (
+                    <p className="mt-1 text-sm text-slate-500 [overflow-wrap:anywhere]">
+                      {weekend}
+                    </p>
+                  ) : null}
+                </div>
               </div>
-              <div>
-                <p className="text-sm font-semibold text-slate-600 uppercase tracking-[0.08em]">
-                  {c.hoursLabel}
-                </p>
-                <p className="mt-1 text-base text-slate-900 font-medium [overflow-wrap:anywhere]">
-                  {c.hours}
-                </p>
-                <p className="mt-1 text-sm text-slate-500 [overflow-wrap:anywhere]">
-                  {c.weekend}
-                </p>
-              </div>
-            </div>
+            ) : null}
           </div>
         </div>
 
         {/* Right Panel: Google Map */}
         <div className="relative min-h-[400px] overflow-hidden bg-white">
-          {mapLoaded ? (
-            <iframe
-              width="100%"
-              height="100%"
-              style={{ border: 0, minHeight: "400px" }}
-              loading="lazy"
-              allowFullScreen=""
-              referrerPolicy="no-referrer-when-downgrade"
-              src={mapEmbedUrl}
-              title="HalaPark Office Location"
-            />
-          ) : (
-            <div className="flex min-h-[400px] items-center justify-center bg-[radial-gradient(circle_at_top,rgba(0,136,255,0.12)_0%,rgba(0,136,255,0.05)_38%,#FFFFFF_100%)] p-6">
-              <div className="flex w-full max-w-md flex-col items-center rounded-[28px] border border-dashed border-slate-300 bg-white/85 px-6 py-10 text-center">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[rgba(0,136,255,0.08)] text-[#0088FF]">
-                  <MapPin className="h-8 w-8" />
-                </div>
-                <p className="mt-5 text-lg font-semibold text-slate-900">
-                  {c.loading}
-                </p>
-              </div>
-            </div>
-          )}
+          <iframe
+            width="100%"
+            height="100%"
+            style={{ border: 0, minHeight: "400px" }}
+            loading="lazy"
+            allowFullScreen=""
+            referrerPolicy="no-referrer-when-downgrade"
+            src={mapEmbedUrl}
+            title="HalaPark Office Location"
+          />
         </div>
       </div>
     </section>
