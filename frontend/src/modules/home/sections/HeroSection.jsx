@@ -59,12 +59,16 @@ function HeroBackgroundMedia({ slide, isActive, onVideoEnd }) {
     return undefined;
   }, [isActive, slide.video]);
 
+  // Each slide shows ONE background: a video if provided, otherwise an image
+  // (card image takes priority over the plain image field).
+  const imageSrc = slide.cardImg || slide.image || "";
+
   if (slide.video) {
     return (
       <video
         ref={videoRef}
         src={slide.video}
-        poster={slide.image || undefined}
+        poster={imageSrc || undefined}
         muted
         autoPlay
         playsInline
@@ -75,9 +79,11 @@ function HeroBackgroundMedia({ slide, isActive, onVideoEnd }) {
     );
   }
 
+  if (!imageSrc) return null;
+
   return (
     <img
-      src={slide.image}
+      src={imageSrc}
       alt={slide.title}
       className="h-full w-full object-cover"
     />

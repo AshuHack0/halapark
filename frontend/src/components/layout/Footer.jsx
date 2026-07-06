@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { ShieldCheck } from "lucide-react";
 import {
   SiFacebook,
@@ -9,6 +10,7 @@ import {
 } from "react-icons/si";
 import { SlSocialLinkedin } from "react-icons/sl";
 import { useLanguage } from "@/context/LanguageContext";
+import { fetchPage } from "@/lib/cms";
 
 // Fixed footer chrome (nav + legal). Inline EN/AR — same approach as the navbar.
 const FOOTER_TEXT = {
@@ -30,6 +32,14 @@ const FOOTER_TEXT = {
 
 export default function Footer() {
   const { language } = useLanguage();
+  // Site logo from global Settings (falls back to the bundled asset).
+  const [logo, setLogo] = useState({ image: "/logo-blue-11.svg", alt: "HalaPark" });
+  useEffect(() => {
+    fetchPage("settings").then((page) => {
+      const l = page?.sections?.logo;
+      if (l?.image) setLogo({ image: l.image, alt: l.alt || "HalaPark" });
+    });
+  }, []);
   const tr = (key) => FOOTER_TEXT[key]?.[language] ?? FOOTER_TEXT[key]?.en ?? "";
 
   const appDownloadUrl = "https://halapark.com/app";
@@ -118,8 +128,8 @@ export default function Footer() {
             <div>
               <Link href="/" className="inline-flex items-center gap-1">
                 <img
-                  src="/logo-blue-11.svg"
-                  alt="HalaPark"
+                  src={logo.image}
+                  alt={logo.alt}
                   className="h-10 w-auto"
                 />
               </Link>

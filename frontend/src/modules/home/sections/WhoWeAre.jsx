@@ -167,6 +167,13 @@ export default function WhoWeAre() {
         },
       };
 
+  // Hide the section entirely when the admin hasn't entered any content:
+  // no audience heading (EN) and no highlight items.
+  const hasAudienceHeading = Object.values(audienceContent).some(
+    (a) => a && typeof a === "object" && a.heading,
+  );
+  if (!hasAudienceHeading && highlights.length === 0) return null;
+
   return (
     <section
       ref={sectionRef}

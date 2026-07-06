@@ -317,6 +317,10 @@ export default function GoodLookingServicesSection() {
     ? activeService.highlights.slice(0, 3)
     : [];
 
+  // Hide the section entirely when the admin hasn't entered any content:
+  // no heading (EN) and no service cards.
+  if (!copy.heading && featuredServices.length === 0) return null;
+
   return (
     <section
       id="services"

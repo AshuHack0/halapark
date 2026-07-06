@@ -147,6 +147,10 @@ export default function TechnologySection() {
     },
   ];
 
+  // Hide the section entirely when the admin hasn't entered any heading content
+  // (the marquee imagery is decorative; the heading/subtitle are the CMS content).
+  if (!tech.heading && !tech.subtitle) return null;
+
   return (
     <section className="py-8 sm:py-12 md:py-16 lg:py-16 pb-0 md:pb-0 lg:pb-0 md:pt-20 lg:pt-24 bg-[#EFF1F3] font-sans overflow-hidden relative">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative">

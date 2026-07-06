@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { servicesData } from "@/modules/home/servicesData";
@@ -157,10 +156,16 @@ export default function Navbar() {
   // labelled/grouped structure is derived at render time so it follows the
   // active language. Empty when the admin has no solutions.
   const [solutionsData, setSolutionsData] = useState(null);
+  // Site logo from global Settings (falls back to the bundled asset).
+  const [logo, setLogo] = useState({ image: "/logo-blue-11.svg", alt: "HalaPark" });
 
   useEffect(() => {
     fetchPage("solutions").then((page) => {
       setSolutionsData(page?.sections?.solutions ?? null);
+    });
+    fetchPage("settings").then((page) => {
+      const l = page?.sections?.logo;
+      if (l?.image) setLogo({ image: l.image, alt: l.alt || "HalaPark" });
     });
   }, []);
   const { language, setLanguage, isArabic } = useLanguage();
@@ -335,13 +340,11 @@ export default function Navbar() {
           <div className="flex items-center justify-between h-16 lg:h-[78px]">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-1 flex-shrink-0">
-              <Image
-                src="/logo-blue-11.svg"
-                alt="HalaPark"
-                width={190}
-                height={58}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={logo.image}
+                alt={logo.alt}
                 className="sm:h-12 h-7 w-auto"
-                priority
               />
             </Link>
 

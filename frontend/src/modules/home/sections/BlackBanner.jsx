@@ -21,6 +21,15 @@ export default function BlackBanner() {
     });
   }, []);
 
+  // Hide the section entirely when the admin hasn't entered any content:
+  // no title (EN), no description (EN) and no CTAs.
+  if (
+    !featureCard.title &&
+    !featureCard.description &&
+    (featureCard.ctas || []).length === 0
+  )
+    return null;
+
   return (
     <section className="bg-white pb-4 pt-0 font-sans sm:pb-5 lg:pb-6">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

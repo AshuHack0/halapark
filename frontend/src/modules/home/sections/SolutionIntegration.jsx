@@ -334,6 +334,11 @@ export default function SolutionIntegration() {
     });
   }, []);
 
+  // Hide the section entirely when the admin hasn't entered any content:
+  // no heading (EN) and no CMS solution cards.
+  const hasCmsCards = Array.isArray(si.solutionCards) && si.solutionCards.length > 0;
+  if (!si.heading && !hasCmsCards) return null;
+
   return (
     <section className="bg-white py-12 sm:py-14 lg:py-16">
       <div className="mx-auto w-full max-w-[min(100%,1400px)] px-4 sm:px-6 lg:px-8">

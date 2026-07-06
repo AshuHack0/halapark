@@ -28,6 +28,16 @@ export default function ClientsPartners() {
   const hasLogos = (cp.logos || []).length > 0;
   const placeholderItems = [...(cp.logoPlaceholders || []), ...(cp.logoPlaceholders || [])];
 
+  // Hide the section entirely when the admin hasn't entered any content:
+  // no heading (EN), no headingEnd (EN), and no logos or placeholders.
+  if (
+    !cp.heading &&
+    !cp.headingEnd &&
+    !hasLogos &&
+    (cp.logoPlaceholders || []).length === 0
+  )
+    return null;
+
   return (
     <section className="py-10 sm:py-12 md:py-14 bg-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

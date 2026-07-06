@@ -218,6 +218,10 @@ export default function GlobalMobilityNetworkSection() {
   const heading = t(content, "heading", language);
   const headingGradient = t(content, "headingGradient", language);
 
+  // Hide the section entirely when the admin hasn't entered any heading content
+  // (capabilities/stats/map are decorative defaults; the heading is the CMS content).
+  if (!content.heading && !content.headingGradient) return null;
+
   return (
     <section className="relative overflow-hidden bg-[linear-gradient(180deg,#F6FAFF_0%,#FFFFFF_68%)] py-8 sm:py-10 md:py-12">
       <div className="pointer-events-none absolute -left-24 top-12 h-72 w-72 rounded-full bg-[#0088FF]/12 blur-3xl" />

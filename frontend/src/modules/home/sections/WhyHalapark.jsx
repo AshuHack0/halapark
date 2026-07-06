@@ -240,6 +240,10 @@ export default function WhyHalapark() {
     };
   }, [visibleWhyItems.length]);
 
+  // Hide the section entirely when the admin hasn't entered any content:
+  // no heading (EN) and no feature items.
+  if (!content.heading && visibleWhyItems.length === 0) return null;
+
   return (
     <section className="bg-white py-10 sm:py-12 lg:py-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

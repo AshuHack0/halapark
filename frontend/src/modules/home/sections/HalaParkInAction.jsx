@@ -141,6 +141,10 @@ export default function HalaParkInAction({ cmsKey = "halaParkInAction", pageSlug
 
   const storeLinks = copy.storeLinks || [];
 
+  // Hide the section entirely when the admin hasn't entered any content:
+  // no title (EN), no subtitle (EN), and no store links.
+  if (!copy.title && !copy.subtitle && storeLinks.length === 0) return null;
+
   return (
     <motion.section
       initial={prefersReducedMotion ? false : "hidden"}

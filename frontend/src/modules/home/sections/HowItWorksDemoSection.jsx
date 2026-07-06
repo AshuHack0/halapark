@@ -45,6 +45,10 @@ export default function HowItWorksDemoSection() {
     });
   }, []);
 
+  // Hide the section entirely when the admin hasn't entered any content:
+  // no heading (EN) and no CMS steps.
+  if (!content.heading && stepItems.length === 0) return null;
+
   return (
     <section
       aria-labelledby="how-it-works-title"
