@@ -377,7 +377,7 @@ export default function WhoWeAre() {
             />
 
             <motion.p
-              className="mt-4 max-w-[650px] text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem]"
+              className="mt-4 max-w-[650px] text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem] [overflow-wrap:anywhere]"
               {...fadeUp}
             >
               {t(activeContent, "body", language)}

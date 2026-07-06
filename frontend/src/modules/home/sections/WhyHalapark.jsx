@@ -170,7 +170,17 @@ export default function WhyHalapark() {
     });
   }, []);
 
-  const visibleWhyItems = (content.items ?? []).slice(0, 5);
+  // Only items with real text count — a cleared item must not leave an empty
+  // image frame + "Learn More" link on the site.
+  const visibleWhyItems = (content.items ?? [])
+    .filter(
+      (it) =>
+        it &&
+        (((it.title ?? "").trim()) ||
+          ((it.subtitle ?? "").trim()) ||
+          ((it.copy ?? "").trim())),
+    )
+    .slice(0, 5);
   const trackRef = useRef(null);
   const lineFillRef = useRef(null);
   const frameRef = useRef(null);
@@ -236,13 +246,20 @@ export default function WhyHalapark() {
 
       if (frameRef.current !== null) {
         window.cancelAnimationFrame(frameRef.current);
+        // Reset the guard — leaving the cancelled frame id here permanently
+        // short-circuits requestUpdate() when the effect re-runs (e.g. after
+        // returning to the page and the CMS fetch resolving from cache),
+        // freezing the scroll animation.
+        frameRef.current = null;
       }
     };
   }, [visibleWhyItems.length]);
 
-  // Hide the section entirely when the admin hasn't entered any content:
-  // no heading (EN) and no feature items.
-  if (!content.heading && visibleWhyItems.length === 0) return null;
+  // Hide the section entirely when the admin has cleared all content:
+  // no heading (EN, non-blank) and no feature items with text.
+  if (!(content.heading ?? "").trim() && visibleWhyItems.length === 0) {
+    return null;
+  }
 
   return (
     <section className="bg-white py-10 sm:py-12 lg:py-16">
@@ -296,7 +313,7 @@ export default function WhyHalapark() {
 
         <div
           ref={trackRef}
-          className="relative hidden lg:block"
+          className={`relative hidden ${visibleWhyItems.length > 0 ? "lg:block" : ""}`}
           style={{ height: `${visibleWhyItems.length * DESKTOP_STEP_SCROLL_VH}svh` }}
         >
           <div className="sticky top-[70px] flex h-[calc(100svh-70px)] items-center">
