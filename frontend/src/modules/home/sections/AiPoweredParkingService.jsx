@@ -205,32 +205,48 @@ export default function AiPoweredParkingService() {
   const [activeCard, setActiveCard] = useState(null);
   const [isDesktop, setIsDesktop] = useState(false);
   const prefersReducedMotion = useReducedMotion();
-  // Merge CMS text fields onto the hardcoded cards (keep UI-only props like image).
-  const [cards, setCards] = useState(serviceAudienceCards);
-  const [copy, setCopy] = useState({
-    heading: "AI-POWERED PARKING",
-    headingGradient: "SERVICE",
-    description:
-      "Smarter Parking Operations with AI Intelligence. AI-powered automation enhances the parking experience for both users and operators with faster access, smoother operations, and reliable management.",
-  });
+  // CMS-only content: the DB is the source of truth. Text deleted in the admin
+  // is not rendered — no hardcoded defaults resurface. UI-only props (layout,
+  // image positioning) still come from the base cards by index.
+  const [cards, setCards] = useState([]);
+  const [copy, setCopy] = useState({});
+  const [resolved, setResolved] = useState(false);
 
   useEffect(() => {
-    fetchHomeSection("aiPoweredParking").then((d) => {
-      if (!d || typeof d !== "object") return;
-      const cmsCards = d.cards;
-      if (Array.isArray(cmsCards) && cmsCards.length) {
-        setCards(serviceAudienceCards.map((base, i) => ({ ...base, ...(cmsCards[i] ?? {}) })));
-      }
-      setCopy((prev) => ({
-        ...prev,
-        ar: d.ar,
-        ...Object.fromEntries(
-          ["heading", "headingGradient", "description"]
-            .filter((k) => d[k] != null && d[k] !== "")
-            .map((k) => [k, d[k]]),
-        ),
-      }));
-    });
+    fetchHomeSection("aiPoweredParking")
+      .then((d) => {
+        if (!d || typeof d !== "object") return;
+        const cmsCards = Array.isArray(d.cards) ? d.cards : [];
+        setCards(
+          cmsCards
+            .map((c, i) => {
+              const base = serviceAudienceCards[i] ?? {};
+              return {
+                // UI-only props (link, image positioning, colors) from the base.
+                ...base,
+                // Text strictly from the CMS — cleared text stays cleared.
+                title: c?.title ?? "",
+                ctaLabel: c?.ctaLabel ?? "",
+                audienceTag: c?.audienceTag ?? "",
+                description: c?.description ?? "",
+                imageSrc: c?.imageSrc || base.imageSrc,
+                ar: c?.ar,
+              };
+            })
+            // A cleared card (no title and no description) must not render an
+            // empty card shell with icon/image.
+            .filter(
+              (c) => ((c.title ?? "").trim()) || ((c.description ?? "").trim()),
+            ),
+        );
+        setCopy({
+          heading: d.heading ?? "",
+          headingGradient: d.headingGradient ?? "",
+          description: d.description ?? "",
+          ar: d.ar,
+        });
+      })
+      .finally(() => setResolved(true));
   }, []);
 
   useEffect(() => {
@@ -247,6 +263,18 @@ export default function AiPoweredParkingService() {
       mediaQuery.removeEventListener("change", syncDesktopState);
     };
   }, []);
+
+  // Hide the section entirely when the admin has cleared all content — no
+  // heading/description (EN, non-blank) and no cards with text. Render nothing
+  // until the CMS resolves so the defaults never flash.
+  if (!resolved) return null;
+  if (
+    !((copy.heading ?? "").trim()) &&
+    !((copy.description ?? "").trim()) &&
+    cards.length === 0
+  ) {
+    return null;
+  }
 
   return (
     <section
