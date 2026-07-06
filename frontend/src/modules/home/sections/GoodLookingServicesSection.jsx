@@ -20,109 +20,7 @@ function toCard(svc) {
   };
 }
 
-const parkingIntegrations = [
-  { name: "Technical Support", bgcolor: "bg-[#EC4899]", img: "/Group11.svg" },
-  { name: "Operations", bgcolor: "bg-[#4A44FE]", img: "/Group66.png" },
-  { name: "Installation", bgcolor: "bg-[#EC4899]", img: "/Group22.svg" },
-  { name: "Equipment Supply", bgcolor: "bg-[#0088FF]", img: "/Group55.png" },
-  { name: "Advisory Services", bgcolor: "bg-[#FA4162]", img: "/Group33.svg" },
-  { name: "Management", bgcolor: "bg-[#923BE2]", img: "/Group44.svg" },
-];
-
-function IntegrationsMotionHeader({ active = true, items, language }) {
-  const list = Array.isArray(items) && items.length > 0 ? items : parkingIntegrations;
-  const duped = [...list, ...list];
-  return (
-    <div className="absolute inset-0 overflow-hidden bg-[#d2dae2]">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_16%_8%,rgba(255,255,255,0.52)_0%,rgba(255,255,255,0)_58%)]" />
-
-      <div className="relative z-10 flex h-full flex-col justify-center gap-3 px-2.5 sm:gap-4 sm:px-4 lg:px-5">
-        <div className="w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_14%,black_86%,transparent)] [-webkit-mask-image:linear-gradient(to_right,transparent,black_14%,black_86%,transparent)]">
-          <div
-            className={`gld-scroll-right flex w-max items-center gap-2.5 sm:gap-3.5 ${!active ? "[animation-play-state:paused]" : ""}`}
-          >
-            {duped.map((integration, index) => (
-              <div
-                key={`top-${integration.name}-${index}`}
-                className="flex shrink-0 items-center gap-1.5 rounded-[11px] border border-white/80 bg-white px-2.5 py-1.5 shadow-[0_3px_10px_rgba(6,6,22,0.05)] sm:gap-2 sm:rounded-[12px] sm:px-3 sm:py-2"
-              >
-                <div
-                  className={`flex h-4 w-4 items-center justify-center rounded-[6px] sm:h-6 sm:w-6 ${integration.bgcolor}`}
-                >
-                  <Image
-                    src={integration.img}
-                    alt={integration.name}
-                    width={14}
-                    height={14}
-                    className="h-2 w-2 object-contain sm:h-3.5 sm:w-3.5"
-                  />
-                </div>
-                <span className="whitespace-nowrap text-[9px] font-medium text-black sm:text-sm">
-                  {t(integration, "name", language)}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_14%,black_86%,transparent)] [-webkit-mask-image:linear-gradient(to_right,transparent,black_14%,black_86%,transparent)]">
-          <div
-            className={`gld-scroll-left flex w-max items-center gap-2.5 sm:gap-3.5 ${!active ? "[animation-play-state:paused]" : ""}`}
-          >
-            {duped.map((integration, index) => (
-              <div
-                key={`bottom-${integration.name}-${index}`}
-                className="flex shrink-0 items-center gap-1.5 rounded-[11px] border border-white/80 bg-white px-2.5 py-1.5 shadow-[0_3px_10px_rgba(6,6,22,0.05)] sm:gap-2 sm:rounded-[12px] sm:px-3 sm:py-2"
-              >
-                <div
-                  className={`flex h-4 w-4 items-center justify-center rounded-[6px] sm:h-6 sm:w-6 ${integration.bgcolor}`}
-                >
-                  <Image
-                    src={integration.img}
-                    alt={integration.name}
-                    width={14}
-                    height={14}
-                    className="h-2 w-2 object-contain sm:h-3.5 sm:w-3.5"
-                  />
-                </div>
-                <span className="whitespace-nowrap text-[9px] font-medium text-black sm:text-sm">
-                  {t(integration, "name", language)}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <style jsx>{`
-        @keyframes gldScrollLeft {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(-50%);
-          }
-        }
-        @keyframes gldScrollRight {
-          0% {
-            transform: translateX(-50%);
-          }
-          100% {
-            transform: translateX(0);
-          }
-        }
-        .gld-scroll-left {
-          animation: gldScrollLeft 30s linear infinite;
-        }
-        .gld-scroll-right {
-          animation: gldScrollRight 30s linear infinite;
-        }
-      `}</style>
-    </div>
-  );
-}
-
-function ServiceCard({ service, index, cardRef, isActive, language, integrations }) {
+function ServiceCard({ service, index, cardRef, isActive, language }) {
   const prefersReducedMotion = useReducedMotion();
 
   const highlights = Array.isArray(service.highlights)
@@ -172,8 +70,6 @@ function ServiceCard({ service, index, cardRef, isActive, language, integrations
               preload="metadata"
               className="h-full w-full object-cover"
             />
-          ) : service.mediaType === "integrations" ? (
-            <IntegrationsMotionHeader active={!prefersReducedMotion} items={integrations} language={language} />
           ) : service.mediaSrc ? (
             <Image
               src={service.mediaSrc}
@@ -221,21 +117,19 @@ export default function GoodLookingServicesSection() {
   // Home Services cards are managed in the Home editor (goodLookingServices.cards).
   const [services, setServices] = useState([]);
   const [copy, setCopy] = useState({});
-  // CMS integration chips (names translatable); fall back to the bundled list.
-  const [integrations, setIntegrations] = useState(parkingIntegrations);
 
   useEffect(() => {
     fetchHomeSection("goodLookingServices").then((d) => {
       if (d && typeof d === "object") {
-        if (Array.isArray(d.cards) && d.cards.length > 0) {
-          setServices(d.cards.map(toCard));
-        }
-        if (Array.isArray(d.parkingIntegrations) && d.parkingIntegrations.length > 0) {
-          // Merge CMS over defaults by index to keep the bundled icon/colour.
-          setIntegrations(
-            d.parkingIntegrations.map((it, i) => ({ ...(parkingIntegrations[i] ?? {}), ...it })),
-          );
-        }
+        // Only cards with real text count — a cleared card must not render an
+        // empty card shell.
+        setServices(
+          (Array.isArray(d.cards) ? d.cards : [])
+            .map(toCard)
+            .filter(
+              (c) => ((c.name ?? "").trim()) || ((c.summary ?? "").trim()),
+            ),
+        );
         setCopy((prev) => ({
           ...prev,
           ...Object.fromEntries(
@@ -319,7 +213,15 @@ export default function GoodLookingServicesSection() {
 
   // Hide the section entirely when the admin hasn't entered any content:
   // no heading (EN) and no service cards.
-  if (!copy.heading && featuredServices.length === 0) return null;
+  // Hide the section entirely when the admin has cleared all content: no
+  // heading, no cards with text, and no CTA labels.
+  if (
+    !((copy.heading ?? "").trim()) &&
+    featuredServices.length === 0 &&
+    !((copy.exploreCtaLabel ?? "").trim()) &&
+    !((copy.contactCtaLabel ?? "").trim())
+  )
+    return null;
 
   return (
     <section
@@ -391,20 +293,26 @@ export default function GoodLookingServicesSection() {
               </div> */}
             </motion.div>
 
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link
-                href={copy.exploreCtaLink || "/services"}
-                className="inline-flex min-h-[3.05rem] items-center justify-center rounded-full bg-[#0088FF] px-7 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(0,136,255,0.14)] transition hover:bg-[#0088FF]"
-              >
-                {t(copy, "exploreCtaLabel", language) || ""}
-              </Link>
-              <Link
-                href={copy.contactCtaLink || "/contact"}
-                className="inline-flex min-h-[3.05rem] items-center justify-center rounded-full border border-slate-300/70 bg-white/60 px-7 text-sm font-semibold text-slate-800 backdrop-blur transition hover:border-[#0088FF] hover:text-[#0088FF]"
-              >
-                {t(copy, "contactCtaLabel", language) || ""}
-              </Link>
-            </div>
+            {t(copy, "exploreCtaLabel", language) || t(copy, "contactCtaLabel", language) ? (
+              <div className="mt-8 flex flex-wrap gap-3">
+                {t(copy, "exploreCtaLabel", language) ? (
+                  <Link
+                    href={copy.exploreCtaLink || "/services"}
+                    className="inline-flex min-h-[3.05rem] items-center justify-center rounded-full bg-[#0088FF] px-7 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(0,136,255,0.14)] transition hover:bg-[#0088FF]"
+                  >
+                    {t(copy, "exploreCtaLabel", language)}
+                  </Link>
+                ) : null}
+                {t(copy, "contactCtaLabel", language) ? (
+                  <Link
+                    href={copy.contactCtaLink || "/contact"}
+                    className="inline-flex min-h-[3.05rem] items-center justify-center rounded-full border border-slate-300/70 bg-white/60 px-7 text-sm font-semibold text-slate-800 backdrop-blur transition hover:border-[#0088FF] hover:text-[#0088FF]"
+                  >
+                    {t(copy, "contactCtaLabel", language)}
+                  </Link>
+                ) : null}
+              </div>
+            ) : null}
           </motion.div>
 
           <motion.div
@@ -417,7 +325,6 @@ export default function GoodLookingServicesSection() {
                 index={index}
                 isActive={activeServiceIndex === index}
                 language={language}
-                integrations={integrations}
                 cardRef={(node) => {
                   cardRefs.current[index] = node;
                 }}
