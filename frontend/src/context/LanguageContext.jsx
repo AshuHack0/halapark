@@ -88,6 +88,9 @@ const UI_LABELS = {
   findMyParking: { en: "Find My Parking", ar: "ابحث عن موقفي" },
   step: { en: "Step", ar: "خطوة" },
   viewOpenPositions: { en: "View Open Positions", ar: "عرض الوظائف المتاحة" },
+  chatOnWhatsApp: { en: "Chat on WhatsApp", ar: "تحدث عبر واتساب" },
+  pay: { en: "Pay", ar: "ادفع" },
+  downloadApp: { en: "Download App", ar: "حمّل التطبيق" },
 };
 
 /** Translate a fixed UI label by key:  ui("getInTouch", language). */

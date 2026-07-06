@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useLanguage, ui } from "@/context/LanguageContext";
 
 const APP_STORE_URL = "https://apps.apple.com/us/app/halapark-all-about-parking/id1590800416";
 const PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=com.app.halapark&pli=1";
@@ -74,7 +75,7 @@ function FloatingIconButton({
 }) {
   return (
     <div className={`group relative ${animationClass}`}>
-      <span className="pointer-events-none absolute right-[calc(100%+0.65rem)] top-1/2 -translate-y-1/2 whitespace-nowrap rounded-full bg-[#0B1220] px-3 py-1.5 text-xs font-semibold tracking-[0.02em] text-white opacity-0 shadow-[0_12px_28px_rgba(2,6,23,0.3)] transition-all duration-200 group-hover:opacity-100 group-hover:-translate-x-0.5 group-focus-within:opacity-100">
+      <span dir="auto" className="pointer-events-none absolute right-[calc(100%+0.65rem)] top-1/2 -translate-y-1/2 whitespace-nowrap rounded-full bg-[#0B1220] px-3 py-1.5 text-xs font-semibold tracking-[0.02em] text-white opacity-0 shadow-[0_12px_28px_rgba(2,6,23,0.3)] transition-all duration-200 group-hover:opacity-100 group-hover:-translate-x-0.5 group-focus-within:opacity-100">
         {label}
       </span>
       {prominent ? (
@@ -97,12 +98,13 @@ function FloatingIconButton({
 }
 
 export default function FloatingActions() {
+  const { language } = useLanguage();
   return (
     <div className="fixed bottom-5 right-4 z-[60] sm:bottom-6 sm:right-6">
       <div className="flex flex-col items-end gap-2.5">
       <FloatingIconButton
         href="https://wa.me/97143782022"
-        label="Chat on WhatsApp"
+        label={ui("chatOnWhatsApp", language)}
         external
         animationClass="motion-safe:animate-[floatButton_5s_ease-in-out_infinite]"
         className="border-[#25D366]/40 bg-[#25D366] text-white shadow-[0_10px_28px_rgba(37,211,102,0.40)] hover:bg-[#20BB5A] hover:shadow-[0_14px_36px_rgba(37,211,102,0.52)]"
@@ -111,7 +113,7 @@ export default function FloatingActions() {
       </FloatingIconButton>
       <FloatingIconButton
         href="/pay"
-        label="Pay"
+        label={ui("pay", language)}
         animationClass="motion-safe:animate-[floatButton_4.4s_ease-in-out_infinite]"
         className="border-[#D9E3F0] bg-white text-slate-900 shadow-[0_10px_22px_rgba(15,23,42,0.12)] hover:border-[#BDD8FB] hover:text-[#0078E0] hover:shadow-[0_14px_28px_rgba(0,136,255,0.18)]"
       >
@@ -119,7 +121,7 @@ export default function FloatingActions() {
       </FloatingIconButton>
       <FloatingIconButton
         href={APP_STORE_URL}
-        label="Download App"
+        label={ui("downloadApp", language)}
         prominent
         external
         onClick={(e) => {
