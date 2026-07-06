@@ -16,17 +16,21 @@ export default function BlackBanner() {
           title: data.title || "",
           description: data.description || "",
           image: data.image || "",
-          ctas: Array.isArray(data.ctas) ? data.ctas : [],
+          // Only CTAs with a real label count — cleared CTA shells must not
+          // render ghost buttons or keep the section alive.
+          ctas: (Array.isArray(data.ctas) ? data.ctas : []).filter(
+            (c) => c && ((c.label ?? "").trim()),
+          ),
         });
       }
     });
   }, []);
 
-  // Hide the section entirely when the admin hasn't entered any content:
-  // no title (EN), no description (EN) and no CTAs.
+  // Hide the section entirely when the admin has cleared all TEXT content —
+  // an image alone does not keep the box alive.
   if (
-    !featureCard.title &&
-    !featureCard.description &&
+    !((featureCard.title ?? "").trim()) &&
+    !((featureCard.description ?? "").trim()) &&
     (featureCard.ctas || []).length === 0
   )
     return null;
