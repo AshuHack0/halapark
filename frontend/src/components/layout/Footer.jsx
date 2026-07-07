@@ -174,7 +174,7 @@ export default function Footer() {
                   {quickLinksHeading}
                 </h4>
               ) : null}
-              <ul className="mt-3 grid grid-cols-2 gap-x-7 gap-y-2.5 text-left md:gap-x-10" dir={language === "ar" ? "rtl" : "ltr"}>
+              <ul className="mt-3 grid grid-cols-2 gap-x-7 gap-y-2.5 text-left rtl:text-right md:gap-x-10" dir={language === "ar" ? "rtl" : "ltr"}>
                 {quickLinks.map((link) => (
                   <li key={link.href + link.label}>
                     <Link
@@ -190,14 +190,14 @@ export default function Footer() {
           ) : null}
 
           {appHeading || appText || appDownloadUrl ? (
-            <div className="w-full md:max-w-[22.5rem] md:justify-self-end md:text-right">
+            <div className="w-full md:max-w-[22.5rem] md:justify-self-end md:text-right rtl:md:text-left">
               {appHeading ? (
-                <h4 className="text-sm font-semibold uppercase tracking-[0.1em] text-[#050A13] md:text-right" dir={language === "ar" ? "rtl" : "ltr"}>
+                <h4 className="text-sm font-semibold uppercase tracking-[0.1em] text-[#050A13] md:text-right rtl:md:text-left" dir={language === "ar" ? "rtl" : "ltr"}>
                   {appHeading}
                 </h4>
               ) : null}
               {appText ? (
-                <p className="mt-3 max-w-sm text-sm leading-6 text-[#667085] md:ml-auto md:text-right [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
+                <p className="mt-3 max-w-sm text-sm leading-6 text-[#667085] md:ml-auto md:text-right rtl:md:ml-0 rtl:md:mr-auto rtl:md:text-left [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
                   {appText}
                 </p>
               ) : null}
@@ -255,9 +255,9 @@ export default function Footer() {
         </div>
 
         <div className="mt-6 flex flex-col gap-3 pt-4 text-sm font-medium text-[#667085] sm:text-base md:flex-row md:items-center md:justify-between">
-          <p className="text-left" dir={language === "ar" ? "rtl" : "ltr"}>© {new Date().getFullYear()} HalaPark.{rights ? ` ${rights}` : ""}</p>
+          <p className="text-left rtl:text-right" dir={language === "ar" ? "rtl" : "ltr"}>© {new Date().getFullYear()} HalaPark.{rights ? ` ${rights}` : ""}</p>
           {dataSafe || uaeProud ? (
-            <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-left text-[#050A13] md:justify-end md:text-right" dir={language === "ar" ? "rtl" : "ltr"}>
+            <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-left rtl:text-right text-[#050A13] md:justify-end md:text-right rtl:md:text-left" dir={language === "ar" ? "rtl" : "ltr"}>
               {dataSafe ? (
                 <span className="inline-flex items-center gap-1.5">
                   <ShieldCheck className="h-4 w-4 text-[#0088FF]" aria-hidden="true" />
