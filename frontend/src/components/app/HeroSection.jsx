@@ -17,25 +17,10 @@ import {
   Users,
 } from "lucide-react";
 
-const stats = [
-  {
-    value: "4.8",
-    suffix: "/5",
-    label: "(1,200+ reviews)",
-    icon: Star,
-    extra: "stars",
-  },
-  {
-    value: "700K+",
-    label: "Parking sessions",
-    icon: Car,
-  },
-  {
-    value: "10K+",
-    label: "Happy users",
-    icon: Users,
-  },
-];
+// Named-icon maps: the CMS stores an icon *name* (string); we resolve it to a
+// lucide component here. Anything unknown/blank falls back to no icon.
+const STAT_ICONS = { Star, Car, Users };
+const CARD_ICONS = { ParkingCircle, Clock, Check, MapPin, Car, Star, Users };
 
 function CityBackdrop() {
   const towers = [
@@ -63,35 +48,61 @@ function CityBackdrop() {
   );
 }
 
-function StatStrip() {
+function StatStrip({ stats, language }) {
+  // Keep only stats that have both a value and a label (hide-when-empty).
+  const visible = (Array.isArray(stats) ? stats : []).filter((s) => {
+    const value = (s?.value ?? "").toString().trim();
+    const label = (t(s, "label", language) || "").trim();
+    return value || label;
+  });
+
+  if (visible.length === 0) return null;
+
   return (
-    <div className="mt-7 w-full max-w-[620px] rounded-[24px] bg-white/92 px-4 py-3.5 shadow-[0_14px_38px_rgba(15,23,42,0.08)] backdrop-blur sm:px-5 lg:absolute lg:bottom-8 lg:left-8 lg:z-[99] lg:mt-0">
-      <div className="grid gap-4 sm:grid-cols-3 sm:divide-x sm:divide-[#E4EAF2]">
-        {stats.map((item) => {
-          const Icon = item.icon;
+    <div className="mt-7 w-full max-w-[620px] rounded-[24px] bg-white/92 px-4 py-3.5 shadow-[0_14px_38px_rgba(15,23,42,0.08)] backdrop-blur sm:px-5 lg:absolute lg:bottom-8 lg:left-8 lg:z-[99] lg:mt-0 rtl:lg:left-auto rtl:lg:right-8">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:divide-x sm:divide-[#E4EAF2] rtl:sm:divide-x-reverse">
+        {visible.map((item, index) => {
+          const Icon = STAT_ICONS[item.icon];
+          const isStars = item.showStars === true;
+          const value = (item.value ?? "").toString();
+          const suffix = (item.suffix ?? "").toString();
+          const label = t(item, "label", language);
 
           return (
-            <div key={item.label} className="flex items-center gap-3 sm:px-3 first:sm:pl-0 last:sm:pr-0">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#EAF3FF] text-[#0088FF]">
-                <Icon aria-hidden="true" className="h-5 w-5" fill={item.extra === "stars" ? "currentColor" : "none"} />
-              </span>
+            <div
+              key={`${value}-${label}-${index}`}
+              className="flex items-center gap-3 sm:px-3 first:sm:pl-0 last:sm:pr-0"
+            >
+              {Icon ? (
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#EAF3FF] text-[#0088FF]">
+                  <Icon
+                    aria-hidden="true"
+                    className="h-5 w-5"
+                    fill={isStars ? "currentColor" : "none"}
+                  />
+                </span>
+              ) : null}
               <div className="min-w-0">
-                <p className="text-xl font-semibold leading-none text-[#050A13]">
-                  {item.value}
-                  {item.suffix ? (
-                    <span className="ml-1 text-sm font-medium text-[#667085]">
-                      {item.suffix}
-                    </span>
-                  ) : null}
-                </p>
-                {item.extra === "stars" ? (
+                {value ? (
+                  <p className="text-xl font-semibold leading-none text-[#050A13] [overflow-wrap:anywhere]">
+                    {value}
+                    {suffix ? (
+                      <span className="ml-1 text-sm font-medium text-[#667085]">
+                        {suffix}
+                      </span>
+                    ) : null}
+                  </p>
+                ) : null}
+                {isStars ? (
                   <p className="mt-1 text-[11px] font-semibold tracking-[0.12em] text-[#0088FF]">
                     *****
                   </p>
                 ) : null}
-                <p className="mt-1 text-xs font-medium text-[#667085]">
-                  {item.label}
-                </p>
+                {label ? (
+                  <p className="mt-1 text-xs font-medium text-[#667085] [overflow-wrap:anywhere]">
+                    {label}
+                  </p>
+                ) : null}
               </div>
             </div>
           );
@@ -101,7 +112,11 @@ function StatStrip() {
   );
 }
 
-function HeroPhone() {
+function HeroPhone({ phoneImage }) {
+  const src = (phoneImage || "").trim();
+  // No screenshot configured → no phone block (no hardcoded fallback).
+  if (!src) return null;
+
   return (
     <motion.div
       animate={{ y: [0, -10, 0] }}
@@ -116,7 +131,7 @@ function HeroPhone() {
       <div className="relative isolate aspect-[1439/2920] drop-shadow-[0_30px_58px_rgba(5,10,19,0.28)]">
         <div className="absolute left-[4.2%] right-[4.2%] top-[1%] bottom-[1.2%] z-20 translate-y-[1px] overflow-hidden rounded-[1.6rem] bg-white lg:rounded-[3.2rem]">
           <Image
-            src="/Park.png"
+            src={src}
             alt="HalaPark booking screen"
             fill
             sizes="(min-width: 1280px) 365px, (min-width: 1024px) 340px, (min-width: 640px) 290px, 235px"
@@ -139,87 +154,113 @@ function HeroPhone() {
   );
 }
 
-function FloatingCards({ prefersReducedMotion }) {
+// The three design slots around the phone. Cards map onto these by index and we
+// hard-cap at three so a 4th+ card can never overflow / break the layout.
+// `rtl:` mirrors keep the cards off the (now right-aligned) Arabic text column.
+const CARD_SLOTS = [
+  {
+    className:
+      "absolute left-[4%] top-8 z-30 hidden lg:block lg:left-[7%] lg:top-14 rtl:lg:left-auto rtl:lg:right-[7%]",
+    initial: { opacity: 0, y: -14, rotate: -8 },
+    animate: { opacity: 1, y: 0, rotate: -8 },
+    delay: 0.25,
+  },
+  {
+    className:
+      "absolute right-[2%] top-[30%] z-30 hidden lg:block rtl:right-auto rtl:left-[2%]",
+    initial: { opacity: 0, x: 18, rotate: 4 },
+    animate: { opacity: 1, x: 0, rotate: 4 },
+    delay: 0.35,
+  },
+  {
+    className:
+      "absolute bottom-[19%] right-[7%] z-30 hidden lg:block rtl:right-auto rtl:left-[7%]",
+    initial: { opacity: 0, x: 22, rotate: 8 },
+    animate: { opacity: 1, x: 0, rotate: 8 },
+    delay: 0.45,
+  },
+];
+
+// One generic card that adapts to whatever fields are present, so any card
+// configuration renders without variant-specific breakage.
+function FloatingCard({ card, language }) {
+  const title = t(card, "title", language);
+  const subtitle = t(card, "subtitle", language);
+  const Icon = CARD_ICONS[card.icon];
+  const timer = (card.timer ?? "").toString().trim();
+  const amount = (card.amount ?? "").toString().trim();
+  const buttonLabel = t(card, "buttonLabel", language);
+
+  return (
+    <div className="w-[168px] rounded-2xl bg-white p-3 shadow-[0_14px_34px_rgba(15,23,42,0.13)]">
+      <div className="flex items-center gap-2.5">
+        {Icon ? (
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#0088FF] text-white">
+            <Icon aria-hidden="true" className="h-5 w-5" />
+          </span>
+        ) : null}
+        <p className="text-[11px] font-semibold text-[#050A13] [overflow-wrap:anywhere]">
+          {title}
+        </p>
+      </div>
+
+      {timer ? (
+        <div className="mt-3 flex items-center justify-center gap-2 text-[#050A13]">
+          <Clock aria-hidden="true" className="h-4 w-4 text-[#0088FF]" />
+          <p className="text-xl font-semibold tracking-tight [overflow-wrap:anywhere]">
+            {timer}
+          </p>
+        </div>
+      ) : null}
+
+      {amount ? (
+        <p className="mt-2 text-lg font-semibold text-[#050A13] [overflow-wrap:anywhere]">
+          {amount}
+        </p>
+      ) : null}
+
+      {subtitle ? (
+        <p className="mt-2 text-[11px] font-medium text-[#667085] [overflow-wrap:anywhere]">
+          {subtitle}
+        </p>
+      ) : null}
+
+      {buttonLabel ? (
+        <button
+          type="button"
+          className="mt-3 w-full rounded-lg border border-[#CFE3FF] bg-white py-2 text-[11px] font-semibold text-[#0088FF] [overflow-wrap:anywhere]"
+        >
+          {buttonLabel}
+        </button>
+      ) : null}
+    </div>
+  );
+}
+
+function FloatingCards({ cards, language, prefersReducedMotion }) {
+  // Cap at the 3 design slots; cards without a title are hidden.
+  const visible = (Array.isArray(cards) ? cards : [])
+    .filter((c) => (t(c, "title", language) || "").trim())
+    .slice(0, CARD_SLOTS.length);
+
+  if (visible.length === 0) return null;
+
   return (
     <>
-      <motion.div
-        initial={prefersReducedMotion ? false : { opacity: 0, y: -14, rotate: -8 }}
-        animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0, rotate: -8 }}
-        transition={{ duration: 0.55, ease: "easeOut", delay: 0.25 }}
-        className="absolute left-[4%] top-8 z-30 hidden lg:block lg:left-[7%] lg:top-14"
-      >
-        <div className="flex items-center gap-2.5 rounded-2xl bg-white px-3 py-2.5 shadow-[0_14px_32px_rgba(15,23,42,0.12)]">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#0088FF] text-white">
-            <ParkingCircle aria-hidden="true" className="h-5 w-5" />
-          </span>
-          <div>
-            <p className="text-[11px] font-semibold text-[#050A13]">
-              Booking Confirmed
-            </p>
-            <p className="text-[10px] font-medium text-[#667085]">
-              Your parking is reserved
-            </p>
-          </div>
-          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#16B364] text-white">
-            <Check aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={3} />
-          </span>
-        </div>
-        <svg className="ml-14 mt-1.5" width="76" height="42" viewBox="0 0 76 42" fill="none" aria-hidden>
-          <path d="M2 2C20 32 52 48 74 18" stroke="#0088FF" strokeWidth="1.4" strokeDasharray="5 5" strokeLinecap="round" />
-        </svg>
-      </motion.div>
-
-      <motion.div
-        initial={prefersReducedMotion ? false : { opacity: 0, x: 18, rotate: 4 }}
-        animate={prefersReducedMotion ? undefined : { opacity: 1, x: 0, rotate: 4 }}
-        transition={{ duration: 0.55, ease: "easeOut", delay: 0.35 }}
-        className="absolute right-[2%] top-[30%] z-30 hidden lg:block"
-      >
-        <div className="w-[148px] rounded-2xl bg-white p-2.5 shadow-[0_14px_34px_rgba(15,23,42,0.13)]">
-          <p className="rounded-lg bg-[#0088FF] px-3 py-1.5 text-center text-[11px] font-semibold text-white">
-            Active Session
-          </p>
-          <div className="mt-3 flex items-center justify-center gap-2 text-[#050A13]">
-            <Clock aria-hidden="true" className="h-4 w-4 text-[#0088FF]" />
-            <p className="text-xl font-semibold tracking-tight">01:59:42</p>
-          </div>
-          <p className="mt-2 text-center text-[11px] font-medium text-[#667085]">
-            Dubai Mall Parking
-          </p>
-          <p className="text-center text-[11px] font-medium text-[#667085]">
-            Zone 385C
-          </p>
-          <button
-            type="button"
-            className="mt-3 w-full rounded-lg border border-[#CFE3FF] bg-white py-2 text-[11px] font-semibold text-[#0088FF]"
+      {visible.map((card, index) => {
+        const slot = CARD_SLOTS[index];
+        return (
+          <motion.div
+            key={`${t(card, "title", language)}-${index}`}
+            initial={prefersReducedMotion ? false : slot.initial}
+            animate={prefersReducedMotion ? undefined : slot.animate}
+            transition={{ duration: 0.55, ease: "easeOut", delay: slot.delay }}
+            className={slot.className}
           >
-            Extend Time
-          </button>
-        </div>
-      </motion.div>
-
-      <motion.div
-        initial={prefersReducedMotion ? false : { opacity: 0, x: 22, rotate: 8 }}
-        animate={prefersReducedMotion ? undefined : { opacity: 1, x: 0, rotate: 8 }}
-        transition={{ duration: 0.55, ease: "easeOut", delay: 0.45 }}
-        className="absolute bottom-[19%] right-[7%] z-30 hidden lg:block"
-      >
-        <div className="w-[160px] rounded-2xl bg-white p-3 shadow-[0_14px_34px_rgba(15,23,42,0.13)]">
-          <div className="flex items-center justify-between">
-            <p className="text-[11px] font-semibold text-[#050A13]">
-              Payment Successful
-            </p>
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#16B364] text-white">
-              <Check aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={3} />
-            </span>
-          </div>
-          <p className="mt-2 text-lg font-semibold text-[#050A13]">AED 10.00</p>
-          <p className="mt-1 text-[10px] font-medium text-[#667085]">
-            Transaction ID
-          </p>
-          <p className="text-[10px] font-semibold text-[#050A13]">H4892328442S</p>
-        </div>
-      </motion.div>
+            <FloatingCard card={card} language={language} />
+          </motion.div>
+        );
+      })}
 
       <motion.div
         animate={prefersReducedMotion ? undefined : { y: [0, -8, 0] }}
@@ -230,39 +271,69 @@ function FloatingCards({ prefersReducedMotion }) {
         }}
         className="absolute bottom-[14%] left-[58%] z-30 hidden text-[#0088FF] lg:block"
       >
-        <MapPin aria-hidden="true" className="h-12 w-12 drop-shadow-[0_12px_18px_rgba(0,136,255,0.24)]" fill="currentColor" />
+        <MapPin
+          aria-hidden="true"
+          className="h-12 w-12 drop-shadow-[0_12px_18px_rgba(0,136,255,0.24)]"
+          fill="currentColor"
+        />
         <span className="absolute bottom-[-3px] left-1/2 h-2.5 w-10 -translate-x-1/2 rounded-full bg-[#0088FF]/25 blur-md" />
       </motion.div>
     </>
   );
 }
 
-const DEFAULTS = {
-  eyebrow: "",
-  title: "Find Parking in Seconds Across UAE",
-  subtitle: "",
-  description:
-    "Find nearby parking, reserve instantly, and pay cashless, all in one seamless app experience.",
-  image: "/j3.png",
-};
-
 export default function HeroSection() {
   const prefersReducedMotion = useReducedMotion();
   const { language } = useLanguage();
-  const [content, setContent] = useState(DEFAULTS);
+  // CMS-only: the DB is the single source of truth. Start empty and render
+  // strictly from what the fetch returns — no hardcoded content fallbacks.
+  const [content, setContent] = useState({});
+  const [resolved, setResolved] = useState(false);
 
   useEffect(() => {
-    fetchPage("app").then((data) => {
-      const h = data?.sections?.hero;
-      if (!h || typeof h !== "object") return;
-      setContent((prev) => ({
-        ...prev,
-        ...Object.fromEntries(
-          Object.entries(h).filter(([, v]) => v !== "" && v != null),
-        ),
-      }));
-    });
+    let active = true;
+    fetchPage("app")
+      .then((data) => {
+        const h = data?.sections?.hero;
+        if (active && h && typeof h === "object") {
+          setContent(h);
+        }
+      })
+      .finally(() => {
+        if (active) setResolved(true);
+      });
+    return () => {
+      active = false;
+    };
   }, []);
+
+  if (!resolved) return null;
+
+  const image = (content.image || "").trim();
+  const phoneImage = (content.phoneImage || "").trim();
+  const stats = Array.isArray(content.stats) ? content.stats : [];
+  const cards = Array.isArray(content.cards) ? content.cards : [];
+
+  const eyebrow = t(content, "eyebrow", language);
+  const title = t(content, "title", language);
+  const subtitle = t(content, "subtitle", language);
+  const description = t(content, "description", language);
+  const ctaLabel = t(content, "ctaLabel", language);
+  const ctaHref = content.ctaHref || "/app";
+
+  // Hide the whole hero when everything has been cleared from admin. Text is
+  // checked in English (the seeded source) so the section doesn't vanish just
+  // because a page is viewed in Arabic without Arabic overrides.
+  const hasText =
+    (content.title || "").trim() ||
+    (content.description || "").trim() ||
+    (content.subtitle || "").trim() ||
+    (content.eyebrow || "").trim();
+  const hasContent =
+    hasText || image || phoneImage || stats.length > 0 || cards.length > 0;
+  if (!hasContent) return null;
+
+  const dir = language === "ar" ? "rtl" : "ltr";
 
   return (
     <section className="relative overflow-x-hidden bg-[linear-gradient(118deg,#FFFFFF_0%,#F8FBFF_42%,#EAF3FF_100%)] lg:overflow-visible">
@@ -270,45 +341,59 @@ export default function HeroSection() {
 
       <div className="relative mx-auto grid min-h-screen max-w-7xl items-center gap-8 px-4 pb-8 pt-10 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8 lg:pb-28 lg:pt-12">
         <motion.div
+          dir={dir}
           initial={prefersReducedMotion ? false : { opacity: 0, x: -24 }}
           animate={prefersReducedMotion ? undefined : { opacity: 1, x: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="relative z-20"
         >
-          {content.eyebrow ? (
+          {eyebrow ? (
             <p className="mb-3 text-sm font-semibold tracking-[0.16em] text-[#0088FF] [overflow-wrap:anywhere]">
-              {t(content, "eyebrow", language)}
+              {eyebrow}
             </p>
           ) : null}
 
-          <h1 className="max-w-[580px] text-[clamp(2.7rem,6vw,4.9rem)] font-semibold leading-[0.98] tracking-tight text-[#050A13] [overflow-wrap:anywhere]">
-            {t(content, "title", language)}
-          </h1>
+          {title ? (
+            <h1 className="max-w-[580px] text-[clamp(2.7rem,6vw,4.9rem)] font-semibold leading-[0.98] tracking-tight text-[#050A13] [overflow-wrap:anywhere]">
+              {title}
+            </h1>
+          ) : null}
 
-          {content.subtitle ? (
+          {subtitle ? (
             <p className="mt-4 max-w-[460px] text-lg font-medium leading-7 text-[#0088FF] [overflow-wrap:anywhere]">
-              {t(content, "subtitle", language)}
+              {subtitle}
             </p>
           ) : null}
 
-          <p className="mt-5 max-w-[460px] text-base font-light leading-7 text-[#4F5B6F] sm:text-[17px] [overflow-wrap:anywhere]">
-            {t(content, "description", language)}
-          </p>
+          {description ? (
+            <p className="mt-5 max-w-[460px] text-base font-light leading-7 text-[#4F5B6F] sm:text-[17px] [overflow-wrap:anywhere]">
+              {description}
+            </p>
+          ) : null}
 
-          <Link href="/app">
-            <button
-              type="button"
-              className="mt-7 inline-flex w-full max-w-[295px] items-center justify-between rounded-2xl bg-[#005BFF] px-4 py-3.5 text-base font-semibold text-white shadow-[0_16px_34px_rgba(0,91,255,0.28)] transition hover:brightness-95 sm:px-5"
-            >
-              <span className="flex items-center gap-3">
-                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#005BFF]">
-                  <MapPin aria-hidden="true" className="h-6 w-6" fill="currentColor" />
+          {ctaLabel ? (
+            <Link href={ctaHref}>
+              <button
+                type="button"
+                className="mt-7 inline-flex w-full max-w-[295px] items-center justify-between rounded-2xl bg-[#005BFF] px-4 py-3.5 text-base font-semibold text-white shadow-[0_16px_34px_rgba(0,91,255,0.28)] transition hover:brightness-95 sm:px-5"
+              >
+                <span className="flex items-center gap-3">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#005BFF]">
+                    <MapPin
+                      aria-hidden="true"
+                      className="h-6 w-6"
+                      fill="currentColor"
+                    />
+                  </span>
+                  <span className="[overflow-wrap:anywhere]">{ctaLabel}</span>
                 </span>
-                Explore Parking
-              </span>
-              <ArrowRight aria-hidden="true" className="h-5 w-5" />
-            </button>
-          </Link>
+                <ArrowRight
+                  aria-hidden="true"
+                  className="h-5 w-5 rtl:rotate-180"
+                />
+              </button>
+            </Link>
+          ) : null}
         </motion.div>
 
         <motion.div
@@ -317,37 +402,42 @@ export default function HeroSection() {
           transition={{ duration: 0.7, ease: "easeOut", delay: 0.08 }}
           className="relative z-10 flex min-h-[430px] items-center justify-center lg:min-h-[570px]"
         >
-          <motion.div
-            aria-hidden="true"
-            animate={
-              prefersReducedMotion ? undefined : { scale: [1, 1.025, 1] }
-            }
-            transition={{
-              duration: 10,
-              repeat: Number.POSITIVE_INFINITY,
-              ease: "easeInOut",
-            }}
-            className="pointer-events-none absolute bottom-[-20%] left-[-10%] right-[-10%] top-[-12%] z-0 opacity-75 sm:bottom-[-36%] sm:left-[-24%] sm:right-[-18%] sm:top-[-18%] lg:bottom-[-42%] lg:left-[-20%] lg:right-[-18%] lg:top-[-22%]"
-          >
-            <div className="absolute inset-x-[9%] bottom-[18%] z-0 h-[24%] rounded-full bg-[#0F172A]/20 blur-[42px] sm:inset-x-[12%] sm:bottom-[16%] lg:bottom-[14%] lg:blur-[56px]" />
-            <Image
-              src={content.image || DEFAULTS.image}
-              alt=""
-              fill
-              sizes="(min-width: 1024px) 1240px, 155vw"
-              className="relative z-10 object-cover object-center drop-shadow-[0_34px_48px_rgba(15,23,42,0.22)]"
-              priority
-            />
-            <div className="absolute bottom-0 left-0 top-0 z-20 w-[34%] bg-[linear-gradient(90deg,#F8FBFF_0%,rgba(248,251,255,0.88)_32%,rgba(248,251,255,0.38)_68%,rgba(248,251,255,0)_100%)] blur-[0.2px] sm:w-[30%] lg:w-[28%]" />
-            <div className="absolute bottom-[12%] left-[6%] top-[12%] z-20 w-[18%] rounded-full bg-[#0F172A]/10 blur-[34px] sm:left-[5%] lg:left-[4%]" />
-          </motion.div>
+          {image ? (
+            <motion.div
+              aria-hidden="true"
+              animate={
+                prefersReducedMotion ? undefined : { scale: [1, 1.025, 1] }
+              }
+              transition={{
+                duration: 10,
+                repeat: Number.POSITIVE_INFINITY,
+                ease: "easeInOut",
+              }}
+              className="pointer-events-none absolute bottom-[-20%] left-[-10%] right-[-10%] top-[-12%] z-0 opacity-75 sm:bottom-[-36%] sm:left-[-24%] sm:right-[-18%] sm:top-[-18%] lg:bottom-[-42%] lg:left-[-20%] lg:right-[-18%] lg:top-[-22%]"
+            >
+              <div className="absolute inset-x-[9%] bottom-[18%] z-0 h-[24%] rounded-full bg-[#0F172A]/20 blur-[42px] sm:inset-x-[12%] sm:bottom-[16%] lg:bottom-[14%] lg:blur-[56px]" />
+              <Image
+                src={image}
+                alt=""
+                fill
+                sizes="(min-width: 1024px) 1240px, 155vw"
+                className="relative z-10 object-cover object-center drop-shadow-[0_34px_48px_rgba(15,23,42,0.22)]"
+                priority
+              />
+              <div className="absolute bottom-0 left-0 top-0 z-20 w-[34%] bg-[linear-gradient(90deg,#F8FBFF_0%,rgba(248,251,255,0.88)_32%,rgba(248,251,255,0.38)_68%,rgba(248,251,255,0)_100%)] blur-[0.2px] sm:w-[30%] lg:w-[28%]" />
+              <div className="absolute bottom-[12%] left-[6%] top-[12%] z-20 w-[18%] rounded-full bg-[#0F172A]/10 blur-[34px] sm:left-[5%] lg:left-[4%]" />
+            </motion.div>
+          ) : null}
 
-          <FloatingCards prefersReducedMotion={prefersReducedMotion} />
-          <HeroPhone />
-
+          <FloatingCards
+            cards={cards}
+            language={language}
+            prefersReducedMotion={prefersReducedMotion}
+          />
+          <HeroPhone phoneImage={phoneImage} />
         </motion.div>
 
-        <StatStrip />
+        <StatStrip stats={stats} language={language} />
       </div>
     </section>
   );
