@@ -2,84 +2,12 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { serviceFlows } from "./appContent";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { fetchPage } from "@/lib/cms";
 import { useLanguage, t, ui } from "@/context/LanguageContext";
 
 const AUTO_STEP_INTERVAL_MS = 2400;
 const LAST_STEP_TICK_HOLD_MS = 260;
-
-const serviceShowcase = {
-  public: {
-    screen: "/Park.png",
-    stepScreens: {
-      Search: "/Map.png",
-      Book: "/Park.png",
-      Pay: "/Payment.png",
-    },
-    cta: "Start parking now",
-    cardKicker: "Live inventory",
-    cardTitle: "City Access Pass",
-    cardCaption: "Fast entry",
-    cardNote: "Live bays, smooth checkout, and reliable turnover.",
-    cardGradient:
-      "linear-gradient(135deg, #fbf5ea 0%, #f1e4d2 48%, #dcc4b0 100%)",
-    cardFooter: "#8D7A77",
-    halo: "bg-[#F6EEE2]",
-  },
-  private: {
-    screen: "/Booking.png",
-    stepScreens: {
-      List: "/Booking.png",
-      Manage: "/Home (1).png",
-      Earn: "/recipt.png",
-    },
-    cta: "List your private bay",
-    cardKicker: "Owner control",
-    cardTitle: "Revenue Access Card",
-    cardCaption: "Private rental",
-    cardNote: "Availability, pricing, and payouts managed in one place.",
-    cardGradient:
-      "linear-gradient(135deg, #f6f1ec 0%, #e8ddd5 52%, #d1c0b4 100%)",
-    cardFooter: "#7B6B67",
-    halo: "bg-[#EEE6DF]",
-  },
-  valet: {
-    screen: "/Find.png",
-    stepScreens: {
-      Request: "/Find.png",
-      Track: "/Map.png",
-      Retrieve: "/Done.png",
-    },
-    cta: "Request valet service",
-    cardKicker: "Premium handoff",
-    cardTitle: "Priority Drop-Off",
-    cardCaption: "Valet flow",
-    cardNote: "Collection, status tracking, and retrieval without friction.",
-    cardGradient:
-      "linear-gradient(135deg, #f7efe7 0%, #eddccc 48%, #d4bea8 100%)",
-    cardFooter: "#8A7167",
-    halo: "bg-[#F4E8DD]",
-  },
-  ev: {
-    screen: "/Payment.png",
-    stepScreens: {
-      Locate: "/Map.png",
-      Charge: "/Find.png",
-      Pay: "/Payment.png",
-    },
-    cta: "Find EV-ready bays",
-    cardKicker: "Charge ready",
-    cardTitle: "Energy Lane Pass",
-    cardCaption: "EV charging",
-    cardNote: "Charging sessions and payments stay in one clean mobile flow.",
-    cardGradient:
-      "linear-gradient(135deg, #f8f3ea 0%, #ece2d7 50%, #d6c6b5 100%)",
-    cardFooter: "#7D6F69",
-    halo: "bg-[#F2EBE1]",
-  },
-};
 
 const phoneFrameSrc = "/mobileframe.png";
 
@@ -89,27 +17,29 @@ function PhonePreview({ screen, label }) {
       <div className="absolute inset-x-[18%] bottom-3 h-12 rounded-full bg-[#0F172A]/14 blur-[28px]" />
 
       <div className="relative isolate aspect-[1439/2920] drop-shadow-[0_28px_60px_-28px_rgba(15,23,42,0.45)]">
-        <div className="absolute left-[4.4%] right-[4.4%] top-[1.2%] bottom-[1.45%] z-10 translate-y-[1px] overflow-hidden rounded-[1.3rem] bg-white sm:rounded-[2.2rem] lg:rounded-[2.7rem]">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={screen}
-              initial={{ opacity: 0, y: 14, scale: 0.985 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -12, scale: 0.985 }}
-              transition={{ duration: 0.45, ease: "easeOut" }}
-              className="absolute top-0 -bottom-[2.5%] left-0 right-0"
-            >
-              <Image
-                src={screen}
-                alt={`${label} screen preview`}
-                fill
-                sizes="(min-width: 1024px) 320px, (min-width: 640px) 228px, 156px"
-                className="object-cover object-center"
-                priority
-              />
-            </motion.div>
-          </AnimatePresence>
-        </div>
+        {screen ? (
+          <div className="absolute left-[4.4%] right-[4.4%] top-[1.2%] bottom-[1.45%] z-10 translate-y-[1px] overflow-hidden rounded-[1.3rem] bg-white sm:rounded-[2.2rem] lg:rounded-[2.7rem]">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={screen}
+                initial={{ opacity: 0, y: 14, scale: 0.985 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -12, scale: 0.985 }}
+                transition={{ duration: 0.45, ease: "easeOut" }}
+                className="absolute top-0 -bottom-[2.5%] left-0 right-0"
+              >
+                <Image
+                  src={screen}
+                  alt={`${label} screen preview`}
+                  fill
+                  sizes="(min-width: 1024px) 320px, (min-width: 640px) 228px, 156px"
+                  className="object-cover object-center"
+                  priority
+                />
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        ) : null}
 
         <div className="pointer-events-none absolute inset-0 z-0">
           <Image
@@ -176,77 +106,116 @@ function StepStatusIcon({ state, stepNumber }) {
 }
 
 export default function AppServiceTabs() {
-  // Merge CMS text fields onto the hardcoded tabs (keep UI-only key used for showcase data).
+  // Tabs come STRICTLY from CMS content.tabs — no merge with hardcoded defaults.
   const { language } = useLanguage();
-  const [tabs, setTabs] = useState(serviceFlows);
-  const [activeTab, setActiveTab] = useState(serviceFlows[0].key);
-  const [activeStep, setActiveStep] = useState(serviceFlows[0].steps[0]);
+  const prefersReducedMotion = useReducedMotion();
+  const dir = language === "ar" ? "rtl" : "ltr";
+  const [tabs, setTabs] = useState([]);
+  const [activeTab, setActiveTab] = useState("");
+  const [activeStep, setActiveStep] = useState("");
   const [showLastStepTick, setShowLastStepTick] = useState(false);
   const [content, setContent] = useState({});
+  const [resolved, setResolved] = useState(false);
 
   useEffect(() => {
-    fetchPage("app").then((data) => {
-      const section = data?.sections?.serviceTabs;
-      if (section && typeof section === "object") setContent(section);
-      const cmsTabs = section?.tabs;
-      if (Array.isArray(cmsTabs) && cmsTabs.length) {
-        const merged = cmsTabs.map((cmsTab, i) => ({
-          ...(serviceFlows[i] ?? {}),
-          ...cmsTab,
-        }));
-        setTabs(merged);
-      }
-    });
+    fetchPage("app")
+      .then((data) => {
+        const section = data?.sections?.serviceTabs;
+        if (section && typeof section === "object") setContent(section);
+        const cmsTabs = section?.tabs;
+        // Keep only CMS tabs that carry a real label (either language) and steps.
+        const validTabs = Array.isArray(cmsTabs)
+          ? cmsTabs.filter(
+              (tab) =>
+                tab &&
+                typeof tab === "object" &&
+                ((typeof tab.label === "string" && tab.label.trim()) ||
+                  (typeof tab.ar?.label === "string" && tab.ar.label.trim())) &&
+                Array.isArray(tab.steps) &&
+                tab.steps.length > 0,
+            )
+          : [];
+        setTabs(validTabs);
+        if (validTabs.length) {
+          setActiveTab(validTabs[0].key);
+          setActiveStep(validTabs[0].steps[0]);
+        }
+      })
+      .finally(() => setResolved(true));
   }, []);
 
+  const hasTabs = tabs.length > 0;
+
   // Derive a valid active tab/step so CMS tab changes never leave a stale selection.
-  const activeService =
-    tabs.find((service) => service.key === activeTab) || tabs[0];
-  const safeActiveStep = activeService.steps.includes(activeStep)
+  const activeService = hasTabs
+    ? tabs.find((service) => service.key === activeTab) || tabs[0]
+    : null;
+  const activeSteps = activeService?.steps ?? [];
+  const safeActiveStep = activeSteps.includes(activeStep)
     ? activeStep
-    : activeService.steps[0];
-  const activeShowcase =
-    serviceShowcase[activeService.key] || serviceShowcase.public;
-  const activeScreen =
-    activeShowcase.stepScreens?.[safeActiveStep] || activeShowcase.screen;
-  const activeStepIndex = Math.max(
-    activeService.steps.indexOf(safeActiveStep),
-    0,
-  );
+    : activeSteps[0];
+  const activeScreen = activeService
+    ? activeService.stepScreens?.[safeActiveStep] || activeService.screen || ""
+    : "";
+  const activeStepIndex = Math.max(activeSteps.indexOf(safeActiveStep), 0);
   const displayStepIndex = showLastStepTick
-    ? activeService.steps.length
+    ? activeSteps.length
     : activeStepIndex;
 
   useEffect(() => {
-    const timer = window.setTimeout(() => {
-      const currentTabIndex = tabs.findIndex(
-        (service) => service.key === activeTab,
-      );
-      const safeTabIndex = currentTabIndex >= 0 ? currentTabIndex : 0;
-      const currentService = tabs[safeTabIndex];
-      const currentStepIndex = currentService.steps.indexOf(activeStep);
-      const safeStepIndex = currentStepIndex >= 0 ? currentStepIndex : 0;
-      const isLastStep = safeStepIndex >= currentService.steps.length - 1;
+    if (!hasTabs) return undefined;
+    const timer = window.setTimeout(
+      () => {
+        const currentTabIndex = tabs.findIndex(
+          (service) => service.key === activeTab,
+        );
+        const safeTabIndex = currentTabIndex >= 0 ? currentTabIndex : 0;
+        const currentService = tabs[safeTabIndex];
+        const currentStepIndex = currentService.steps.indexOf(activeStep);
+        const safeStepIndex = currentStepIndex >= 0 ? currentStepIndex : 0;
+        const isLastStep = safeStepIndex >= currentService.steps.length - 1;
 
-      if (isLastStep) {
-        if (!showLastStepTick) {
-          setShowLastStepTick(true);
+        if (isLastStep) {
+          if (!showLastStepTick) {
+            setShowLastStepTick(true);
+            return;
+          }
+          const nextTab = tabs[(safeTabIndex + 1) % tabs.length];
+          setShowLastStepTick(false);
+          setActiveTab(nextTab.key);
+          setActiveStep(nextTab.steps[0]);
           return;
         }
-        const nextTab = tabs[(safeTabIndex + 1) % tabs.length];
-        setShowLastStepTick(false);
-        setActiveTab(nextTab.key);
-        setActiveStep(nextTab.steps[0]);
-        return;
-      }
 
-      const nextStepIndex = safeStepIndex + 1;
-      setShowLastStepTick(false);
-      setActiveStep(currentService.steps[nextStepIndex]);
-    }, showLastStepTick ? LAST_STEP_TICK_HOLD_MS : AUTO_STEP_INTERVAL_MS);
+        const nextStepIndex = safeStepIndex + 1;
+        setShowLastStepTick(false);
+        setActiveStep(currentService.steps[nextStepIndex]);
+      },
+      showLastStepTick ? LAST_STEP_TICK_HOLD_MS : AUTO_STEP_INTERVAL_MS,
+    );
 
     return () => window.clearTimeout(timer);
-  }, [activeTab, activeStep, showLastStepTick, tabs]);
+  }, [activeTab, activeStep, showLastStepTick, tabs, hasTabs]);
+
+  // Render nothing until the fetch settles; hide the whole section if no valid CMS tabs.
+  if (!resolved || !hasTabs) return null;
+
+  const featureChips = (
+    language === "ar" ? content.ar?.featureChips : content.featureChips
+  );
+  const chips = Array.isArray(featureChips)
+    ? featureChips.filter((c) => typeof c === "string" && c.trim())
+    : [];
+  const ctaLabel = t(content, "ctaLabel", language);
+
+  const titleMotion = prefersReducedMotion
+    ? {}
+    : {
+        initial: { opacity: 0, y: 20, filter: "blur(8px)" },
+        whileInView: { opacity: 1, y: 0, filter: "blur(0px)" },
+        viewport: { once: false, amount: 0.4 },
+        transition: { duration: 0.5, ease: "easeOut" },
+      };
 
   return (
     <section className="w-full bg-white px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
@@ -274,12 +243,21 @@ export default function AppServiceTabs() {
                     setActiveTab(service.key);
                     setActiveStep(service.steps[0]);
                   }}
-                  className={`relative px-6 pb-6 pt-1 text-[15px] flex items-center text-center justify-center font-medium transition-colors duration-300 md:text-[17px] ${
+                  className={`relative px-6 pb-6 pt-1 text-[15px] flex items-center gap-2 text-center justify-center font-medium transition-colors duration-300 md:text-[17px] ${
                     isActive
                       ? "text-[#1F2940]"
                       : "text-[#D2D6DD] hover:text-[#7C8596]"
                   }`}
                 >
+                  {service.iconImage ? (
+                    <Image
+                      src={service.iconImage}
+                      alt=""
+                      width={22}
+                      height={22}
+                      className="h-[22px] w-[22px] shrink-0 object-contain"
+                    />
+                  ) : null}
                   <span className="whitespace-nowrap [overflow-wrap:anywhere]">{t(service, "label", language)}</span>
                   <span
                     className={`absolute bottom-[-1px] left-0 h-0.5 bg-[#0088FF]/70 transition-all duration-300 ${
@@ -293,56 +271,75 @@ export default function AppServiceTabs() {
         </div>
 
         <div className="flex flex-col items-center gap-10 text-center md:flex-row md:items-center md:justify-between md:text-left">
-          <div className="w-full max-w-[360px] md:flex-1 md:max-w-[500px] md:pt-6 lg:max-w-[560px] lg:pt-10">
-            <h3 className="text-[30px] font-medium tracking-[-0.04em] text-black sm:text-[34px] lg:text-[42px] lg:leading-[0.98] [overflow-wrap:anywhere]">
+          <div
+            dir={dir}
+            className="w-full max-w-[360px] md:flex-1 md:max-w-[500px] md:pt-6 lg:max-w-[560px] lg:pt-10"
+          >
+            <motion.h3
+              key={activeService.key}
+              {...titleMotion}
+              className="text-[30px] font-medium tracking-[-0.04em] text-black sm:text-[34px] lg:text-[42px] lg:leading-[0.98] [overflow-wrap:anywhere]"
+            >
               {t(activeService, "label", language)}
-            </h3>
+            </motion.h3>
 
-            <p className="mt-5 text-[16px] leading-[1.7] text-[#667085] sm:text-[17px] [overflow-wrap:anywhere]">
-              {t(activeService, "description", language)}
-            </p>
+            {t(activeService, "description", language) ? (
+              <motion.p
+                key={`desc-${activeService.key}`}
+                {...titleMotion}
+                className="mt-5 whitespace-pre-line text-[16px] leading-[1.7] text-[#667085] sm:text-[17px] [overflow-wrap:anywhere]"
+              >
+                {t(activeService, "description", language)}
+              </motion.p>
+            ) : null}
 
-            <p className="mt-3 text-[15px] leading-[1.7] text-[#7A8599] sm:text-[16px] [overflow-wrap:anywhere]">
-              {t(activeService, "builtFor", language)}
-            </p>
+            {t(activeService, "builtFor", language) ? (
+              <p className="mt-3 text-[15px] leading-[1.7] text-[#7A8599] sm:text-[16px] [overflow-wrap:anywhere]">
+                {t(activeService, "builtFor", language)}
+              </p>
+            ) : null}
 
 
             <div className="mt-5 flex flex-wrap items-center gap-3">
               {t(activeService, "cardKicker", language) ? (
-                <span className="inline-flex items-center rounded-full border border-[#D7E7FF] bg-[#F3F8FF] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#0F4B86]">
+                <span className="inline-flex items-center rounded-full border border-[#D7E7FF] bg-[#F3F8FF] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#0F4B86] [overflow-wrap:anywhere]">
                   {t(activeService, "cardKicker", language)}
                 </span>
               ) : null}
               {t(activeService, "cta", language) ? (
                 <button
                   type="button"
-                  className="inline-flex items-center rounded-full border border-[#CFE3FF] bg-white px-3 py-1 text-xs font-semibold text-[#0F62C7] transition-colors duration-200 hover:bg-[#F5F9FF]"
+                  className="inline-flex items-center rounded-full border border-[#CFE3FF] bg-white px-3 py-1 text-xs font-semibold text-[#0F62C7] transition-colors duration-200 hover:bg-[#F5F9FF] [overflow-wrap:anywhere]"
                 >
                   {t(activeService, "cta", language)}
                 </button>
               ) : null}
             </div>
 
-            <div className="mt-4 flex flex-wrap gap-2">
-              {(language === "ar"
-                ? (Array.isArray(content.ar?.featureChips) ? content.ar.featureChips : [])
-                : (Array.isArray(content.featureChips) ? content.featureChips : ["Real-time updates", "Seamless checkout", "Mobile-first flow"])
-              ).map((chip) => (
-                <span key={chip} className="inline-flex items-center rounded-full border border-[#E4E7EC] bg-white px-3 py-1 text-xs font-medium text-[#475467]">
-                  {chip}
-                </span>
-              ))}
-            </div>
+            {chips.length ? (
+              <div className="mt-4 flex flex-wrap gap-2">
+                {chips.map((chip) => (
+                  <span
+                    key={chip}
+                    className="inline-flex items-center rounded-full border border-[#E4E7EC] bg-white px-3 py-1 text-xs font-medium text-[#475467] [overflow-wrap:anywhere]"
+                  >
+                    {chip}
+                  </span>
+                ))}
+              </div>
+            ) : null}
 
-            <button
-              type="button"
-              className="mt-6 inline-flex items-center gap-3 rounded-xl bg-[#1F6BFF] px-5 py-3 text-sm font-semibold text-white shadow-[0_14px_28px_rgba(31,107,255,0.28)] transition-colors duration-200 hover:bg-[#0F62C7]"
-            >
-              {t(content, "ctaLabel", language) || ui("findMyParking", language)}
-              <span aria-hidden className="text-base leading-none">
-                →
-              </span>
-            </button>
+            {ctaLabel ? (
+              <button
+                type="button"
+                className="mt-6 inline-flex items-center gap-3 rounded-xl bg-[#1F6BFF] px-5 py-3 text-sm font-semibold text-white shadow-[0_14px_28px_rgba(31,107,255,0.28)] transition-colors duration-200 hover:bg-[#0F62C7] [overflow-wrap:anywhere]"
+              >
+                {ctaLabel}
+                <span aria-hidden className="text-base leading-none rtl:rotate-180">
+                  →
+                </span>
+              </button>
+            ) : null}
             <div className="mt-8 rounded-[36px] border border-[#E5E7EB] bg-[linear-gradient(180deg,#FFFFFF_0%,#F8FAFC_100%)] p-4  sm:p-5">
               <div className="flex gap-3">
                 {activeService.steps.map((step, index) => {
@@ -410,7 +407,7 @@ export default function AppServiceTabs() {
           <div className="mt-4 flex h-full w-full justify-center md:mt-8 md:w-[44%] md:flex-none md:justify-end lg:mt-10">
             <PhonePreview
               screen={activeScreen}
-              label={`${activeService.label} ${safeActiveStep}`}
+              label={`${t(activeService, "label", language)} ${safeActiveStep}`}
             />
           </div>
         </div>
