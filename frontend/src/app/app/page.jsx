@@ -1,6 +1,6 @@
 import AppHero from "@/components/app/Hero";
 import HalaParkInAction from "@/modules/home/sections/HalaParkInAction";
-// import AppDownloadCTA from "@/components/app/AppDownloadCTA";
+import AppCtaFooter from "@/components/app/AppCtaFooter";
 import AppFeatureHighlights from "@/components/app/AppFeatureHighlights";
 import AppFeatureCardsSection from "@/components/app/AppFeatureCardsSection";
 import AppAiPromoSection from "@/components/app/AppAiPromoSection";
@@ -37,6 +37,7 @@ export default function AppPage() {
       {/* <AppFeatureHighlights /> */}
       {/* <AboutFeatures data={featureHighlights} /> */}
       <HalaParkInAction pageSlug="app" cmsKey="halapark" />
+      <AppCtaFooter />
     </div>
   );
 }

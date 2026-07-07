@@ -1,42 +1,16 @@
 "use client";
 
+import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
-import {
-  BarChart3,
-  Check,
-  CreditCard,
-  Landmark,
-  MapPin,
-  WalletCards,
-  Zap,
-} from "lucide-react";
+import { BarChart3, Check, MapPin, WalletCards, Zap } from "lucide-react";
 import { useEffect, useState } from "react";
 import { fetchPage } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
 
-const features = [
-  {
-    title: "Real-Time\nParking Rates",
-    description:
-      "Always get the most accurate rates when booking across supported parking zones.",
-    icon: BarChart3,
-    preview: "rates",
-  },
-  {
-    title: "Low Booking\nFees",
-    description:
-      "Transparent pricing with no hidden charges - what you see is what you pay.",
-    icon: WalletCards,
-    preview: "summary",
-  },
-  {
-    title: "Seamless\nCity Transactions",
-    description:
-      "Reserve, extend, and pay effortlessly for your parking sessions in one smooth flow.",
-    icon: Zap,
-    preview: "payment",
-  },
-];
+// Built-in icon + preview are UI chrome only, kept by index. All copy (title,
+// description) comes strictly from the CMS — no hardcoded content fallbacks.
+const cardIcons = [BarChart3, WalletCards, Zap];
+const cardPreviews = ["rates", "summary", "payment"];
 
 function RatesPreview() {
   return (
@@ -162,90 +136,136 @@ function FeaturePreview({ type }) {
 export default function AppFeatureCardsSection() {
   const prefersReducedMotion = useReducedMotion();
   const { language } = useLanguage();
-  // Merge CMS text fields onto the hardcoded cards (keep UI-only props like icon/preview visual).
-  const [cards, setCards] = useState(features);
-  const [header, setHeader] = useState({
-    heading: "Parking Made",
-    headingAccent: "Simple, Smart & Reliable",
-    description: "Powerful features designed to save you time, money, and effort.",
-  });
+  const dir = language === "ar" ? "rtl" : "ltr";
+  // Cards + header are strictly CMS-driven (DB is the source of truth).
+  const [cards, setCards] = useState([]);
+  const [header, setHeader] = useState(null);
 
   useEffect(() => {
     fetchPage("app").then((data) => {
       const cmsCards = data?.sections?.featureCards;
-      if (Array.isArray(cmsCards) && cmsCards.length) {
-        setCards(
-          cmsCards.map((cms, i) => ({ ...(features[i] ?? {}), ...cms })),
-        );
-      }
+      if (Array.isArray(cmsCards)) setCards(cmsCards);
       const h = data?.sections?.featureCardsHeader;
-      if (h && typeof h === "object") {
-        setHeader((prev) => ({
-          ...prev,
-          ...Object.fromEntries(Object.entries(h).filter(([, v]) => v !== "" && v != null)),
-        }));
-      }
+      if (h && typeof h === "object") setHeader(h);
     });
   }, []);
 
+  const heading = t(header, "heading", language);
+  const headingAccent = t(header, "headingAccent", language);
+  const description = t(header, "description", language);
+
+  // Cards strictly from CMS (text via t()); built-in icon/preview are chrome by
+  // index. Keep only cards that carry title or description content.
+  const displayCards = (Array.isArray(cards) ? cards : [])
+    .map((cms, i) => ({
+      title: t(cms, "title", language),
+      description: t(cms, "description", language),
+      iconImage: cms?.iconImage || "",
+      image: cms?.image || "",
+      icon: cardIcons[i] ?? BarChart3,
+      preview: cms?.preview || cardPreviews[i] || "",
+    }))
+    .filter((c) => c.title || c.description);
+
+  // Hide the whole section when there is nothing to show.
+  const resolved = heading || headingAccent || displayCards.length > 0;
+  if (!resolved) return null;
+
   return (
-    <section className="bg-white px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+    <section
+      dir={dir}
+      className="bg-white px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20"
+    >
       <div className="mx-auto max-w-7xl">
-        <motion.div
-          initial={prefersReducedMotion ? false : { opacity: 0, y: 18 }}
-          whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.35 }}
-          transition={{ duration: 0.45, ease: "easeOut" }}
-          className="mx-auto max-w-4xl text-center"
-        >
-          <h2 className="text-[clamp(2rem,4vw,3.5rem)] font-semibold leading-tight tracking-tight text-[#050A13] [overflow-wrap:anywhere]">
-            {t(header, "heading", language)}
-            {header.headingAccent ? (
-              <>
-                {" "}
-                <span className="text-[#0088FF]">{t(header, "headingAccent", language)}</span>
-              </>
-            ) : null}
-          </h2>
-          <p className="mt-3 text-base font-medium text-[#667085] [overflow-wrap:anywhere]">
-            {t(header, "description", language)}
-          </p>
-        </motion.div>
-
-        <div className="mt-8 grid gap-6 lg:grid-cols-3">
-          {cards.map((item, index) => {
-            const Icon = item.icon ?? BarChart3;
-
-            return (
-              <motion.article
-                key={`${item.title ?? "card"}-${index}`}
-                initial={prefersReducedMotion ? false : { opacity: 0, y: 22 }}
-                whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.22 }}
-                transition={{ duration: 0.45, ease: "easeOut", delay: 0.06 * index }}
-                className="rounded-[24px] border border-[#E4EAF2] bg-white p-6 shadow-[0_18px_46px_rgba(15,23,42,0.06)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_22px_54px_rgba(15,23,42,0.1)]"
-              >
-                <div className="flex items-start gap-4">
-                  <span className="inline-flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-[#EAF3FF] text-[#0088FF]">
-                    <Icon aria-hidden="true" className="h-8 w-8" strokeWidth={2.4} />
+        {(heading || headingAccent || description) && (
+          <motion.div
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 18 }}
+            whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.35 }}
+            transition={{ duration: 0.45, ease: "easeOut" }}
+            className="mx-auto max-w-4xl text-center"
+          >
+            {(heading || headingAccent) && (
+              <h2 className="text-[clamp(2rem,4vw,3.5rem)] font-semibold leading-tight tracking-tight text-[#050A13] [overflow-wrap:anywhere]">
+                {heading}
+                {heading && headingAccent ? <br /> : null}
+                {headingAccent ? (
+                  <span className="bg-gradient-to-r from-[#0088FF] to-[#00C2FF] bg-clip-text text-transparent rtl:bg-gradient-to-l">
+                    {headingAccent}
                   </span>
-                  <div>
-                    <h3 className="whitespace-pre-line text-[1.6rem] font-semibold leading-[1.05] tracking-tight text-[#050A13] [overflow-wrap:anywhere]">
-                      {t(item, "title", language)}
-                    </h3>
-                    <span className="mt-4 block h-0.5 w-8 rounded-full bg-[#0088FF]" />
+                ) : null}
+              </h2>
+            )}
+            {description ? (
+              <p className="mt-3 text-base font-medium text-[#667085] [overflow-wrap:anywhere]">
+                {description}
+              </p>
+            ) : null}
+          </motion.div>
+        )}
+
+        {displayCards.length > 0 && (
+          <div className="mt-8 grid gap-6 lg:grid-cols-3">
+            {displayCards.map((item, index) => {
+              const Icon = item.icon ?? BarChart3;
+
+              return (
+                <motion.article
+                  key={`${item.title || "card"}-${index}`}
+                  initial={prefersReducedMotion ? false : { opacity: 0, y: 22 }}
+                  whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.22 }}
+                  transition={{ duration: 0.45, ease: "easeOut", delay: 0.06 * index }}
+                  className="rounded-[24px] border border-[#E4EAF2] bg-white p-6 shadow-[0_18px_46px_rgba(15,23,42,0.06)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_22px_54px_rgba(15,23,42,0.1)]"
+                >
+                  <div className="flex items-start gap-4">
+                    <span className="inline-flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#EAF3FF] text-[#0088FF]">
+                      {item.iconImage ? (
+                        <Image
+                          src={item.iconImage}
+                          alt=""
+                          width={40}
+                          height={40}
+                          className="h-9 w-9 object-contain"
+                        />
+                      ) : (
+                        <Icon aria-hidden="true" className="h-8 w-8" strokeWidth={2.4} />
+                      )}
+                    </span>
+                    <div>
+                      {item.title ? (
+                        <h3 className="whitespace-pre-line text-[1.6rem] font-semibold leading-[1.05] tracking-tight text-[#050A13] [overflow-wrap:anywhere]">
+                          {item.title}
+                        </h3>
+                      ) : null}
+                      <span className="mt-4 block h-0.5 w-8 rounded-full bg-[#0088FF]" />
+                    </div>
                   </div>
-                </div>
 
-                <p className="mt-6 min-h-[4.5rem] text-[15px] font-medium leading-6 text-[#4F5B6F] [overflow-wrap:anywhere]">
-                  {t(item, "description", language)}
-                </p>
+                  {item.description ? (
+                    <p className="mt-6 min-h-[4.5rem] whitespace-pre-line text-[15px] font-medium leading-6 text-[#4F5B6F] [overflow-wrap:anywhere]">
+                      {item.description}
+                    </p>
+                  ) : null}
 
-                <FeaturePreview type={item.preview} />
-              </motion.article>
-            );
-          })}
-        </div>
+                  {item.image ? (
+                    <div className="relative h-[150px] overflow-hidden rounded-2xl">
+                      <Image
+                        src={item.image}
+                        alt=""
+                        fill
+                        sizes="(min-width: 1024px) 360px, 100vw"
+                        className="object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <FeaturePreview type={item.preview} />
+                  )}
+                </motion.article>
+              );
+            })}
+          </div>
+        )}
       </div>
     </section>
   );
