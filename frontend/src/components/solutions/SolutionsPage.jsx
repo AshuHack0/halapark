@@ -207,11 +207,12 @@ function NewHero() {
 
           {/* LEFT — text */}
           <motion.div
+            dir={language === "ar" ? "rtl" : "ltr"}
             initial={reduced ? false : { opacity: 0, x: -28 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.65, ease }}
           >
-            <h1 className="max-w-[600px] text-[clamp(2.5rem,5vw,4.4rem)] font-semibold leading-[1.0] tracking-[-0.06em] text-[#050A13]">
+            <h1 className="max-w-[600px] text-[clamp(2.5rem,5vw,4.4rem)] font-semibold leading-[1.0] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]">
               {t(hero, "title", language)}
               {t(hero, "titleAccent", language) ? (
                 <>
@@ -223,38 +224,69 @@ function NewHero() {
               ) : null}
             </h1>
 
-            <p className="mt-6 max-w-[460px] text-[0.95rem] leading-[1.75] text-slate-500">
-              {t(hero, "subtitle", language)}
-            </p>
+            {t(hero, "subtitle", language) ? (
+              <p className="mt-6 max-w-[460px] text-[0.95rem] leading-[1.75] text-slate-500 [overflow-wrap:anywhere]">
+                {t(hero, "subtitle", language)}
+              </p>
+            ) : null}
 
 
             <div className="mt-9 flex flex-wrap items-center gap-3">
-              <Link
-                href={hero.ctaLink || "/contact"}
-                className="group inline-flex items-center gap-2.5 rounded-full bg-[#0088FF] px-7 py-3.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,136,255,0.32)] transition hover:brightness-110"
-              >
-                {t(hero, "ctaLabel", language) || ""}
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 transition-transform duration-200 group-hover:translate-x-0.5">
-                  <ArrowRight className="h-3.5 w-3.5" aria-hidden />
-                </span>
-              </Link>
-              <a
-                href="#solutions-grid"
+              {t(hero, "ctaLabel", language) ? (
+                <Link
+                  href={hero.ctaLink || "/contact"}
+                  className="group inline-flex items-center gap-2.5 rounded-full bg-[#0088FF] px-7 py-3.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,136,255,0.32)] transition hover:brightness-110"
+                >
+                  {t(hero, "ctaLabel", language)}
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 transition-transform duration-200 group-hover:translate-x-0.5 rtl:rotate-180">
+                    <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+                  </span>
+                </Link>
+              ) : null}
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document
+                    .getElementById("solutions-grid")
+                    ?.scrollIntoView({ behavior: "smooth", block: "start" });
+                }}
                 className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-7 py-3.5 text-sm font-semibold text-slate-700 shadow-[0_2px_12px_rgba(6,6,22,0.07)] transition hover:border-[#0088FF]/50 hover:text-[#0088FF]"
               >
                 Explore Our Parking Solutions
-              </a>
+              </button>
             </div>
           </motion.div>
 
-          {/* RIGHT — control panel mock */}
+          {/* RIGHT — CMS media (video/image) or decorative control-panel mock */}
           <motion.div
             initial={reduced ? false : { opacity: 0, x: 32 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.75, ease, delay: 0.1 }}
             className="relative mt-16 flex min-h-[420px] items-center justify-center lg:mt-0 lg:min-h-[560px]"
           >
-            <SolutionsControlPanel reduced={reduced} />
+            {hero.mediaType === "video" && hero.videoUrl ? (
+              <video
+                src={hero.videoUrl}
+                autoPlay={!reduced}
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                className="h-full max-h-[560px] min-h-[420px] w-full rounded-[24px] object-cover shadow-[0_24px_60px_rgba(15,23,42,0.18)]"
+              />
+            ) : hero.image ? (
+              <Image
+                src={hero.image}
+                alt={t(hero, "title", language) || ""}
+                width={720}
+                height={560}
+                sizes="(min-width: 1024px) 45vw, 100vw"
+                className="h-full max-h-[560px] min-h-[420px] w-full rounded-[24px] object-cover shadow-[0_24px_60px_rgba(15,23,42,0.18)]"
+              />
+            ) : (
+              <SolutionsControlPanel reduced={reduced} />
+            )}
           </motion.div>
         </div>
       </div>
@@ -320,44 +352,39 @@ function OldNewHero() {
 function GlobalExpansionSection() {
   const reduced = useReducedMotion();
   const { language } = useLanguage();
-  const [content, setContent] = useState({
-    heading: "Parking Challenges",
-    headingGradient: "Challenges",
-    subtitle: "Solving Parking Inefficiencies Through Smart Mobility",
-    description: "Traditional parking systems are manual, fragmented, and lack real-time visibility, causing congestion, operational inefficiencies, and poor user experience. HalaPark transforms parking into a connected ecosystem powered by automation, AI, and real-time control.",
-    items: [
-      "Limited real-time parking visibility",
-      "Manual vehicle entry and exit processes",
-      "Inefficient space utilization",
-      "Friction at access and payment points",
-    ],
-    ctaLabel: "View App Features",
-    ctaLink: "/app",
-  });
+  const [content, setContent] = useState({});
+  const [resolved, setResolved] = useState(false);
 
   useEffect(() => {
     fetchPage("solutions").then((data) => {
       const c = data?.sections?.challenges;
-      if (c && typeof c === "object") {
-        setContent((prev) => ({
-          ...prev,
-          ...Object.fromEntries(
-            Object.entries(c).filter(
-              ([k, v]) => v != null && (k === "items" ? Array.isArray(v) && v.length > 0 : v !== ""),
-            ),
-          ),
-        }));
-      }
+      if (c && typeof c === "object") setContent(c);
+      setResolved(true);
     });
   }, []);
 
-  const heading = t(content, "heading", language) || "";
+  const heading = t(content, "heading", language);
   const gradient = t(content, "headingGradient", language)?.trim() || "";
-  const headBase =
-    gradient && heading.endsWith(gradient)
-      ? heading.slice(0, heading.length - gradient.length).trimEnd()
-      : heading;
-  const showGradient = gradient && heading.endsWith(gradient);
+  const subtitle = t(content, "subtitle", language);
+  const description = t(content, "description", language);
+  const ctaLabel = t(content, "ctaLabel", language);
+  const items = Array.isArray(content.items)
+    ? content.items.filter((it) => typeof it === "string" && it.trim() !== "")
+    : [];
+  const image = content.image || "";
+
+  // Whole section hides when there's nothing to show.
+  if (
+    resolved &&
+    !heading &&
+    !gradient &&
+    !subtitle &&
+    !description &&
+    items.length === 0 &&
+    !image
+  ) {
+    return null;
+  }
 
   return (
     <section className="bg-white py-16 sm:py-20 lg:py-24">
@@ -366,60 +393,73 @@ function GlobalExpansionSection() {
 
           {/* LEFT: text */}
           <motion.div
+            dir={language === "ar" ? "rtl" : "ltr"}
             initial={reduced ? false : { opacity: 0, x: -28 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.65, ease }}
           >
-            <h2 className="text-[clamp(3rem,5.5vw,5rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]">
-              {headBase}
-              {showGradient ? (
-                <>
-                  {" "}
-                  <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">{gradient}</span>
-                </>
-              ) : null}
-            </h2>
-            <p className="mt-4 text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-[#050A13] [overflow-wrap:anywhere]">
-              {t(content, "subtitle", language)}
-            </p>
-            <p className="mt-5 text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem] [overflow-wrap:anywhere]">
-              {t(content, "description", language)}
-            </p>
+            {heading || gradient ? (
+              <h2 className="text-[clamp(3rem,5.5vw,5rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]">
+                {heading}
+                {gradient ? (
+                  <>
+                    {heading ? " " : null}
+                    <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">{gradient}</span>
+                  </>
+                ) : null}
+              </h2>
+            ) : null}
+            {subtitle ? (
+              <p className="mt-4 text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-[#050A13] [overflow-wrap:anywhere]">
+                {subtitle}
+              </p>
+            ) : null}
+            {description ? (
+              <p className="mt-5 whitespace-pre-line text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem] [overflow-wrap:anywhere]">
+                {description}
+              </p>
+            ) : null}
 
-            <ul className="mt-8 space-y-3">
-              {content.items.map((item) => (
-                <li key={item} className="flex items-center gap-3 rounded-xl border border-[rgba(0,136,255,0.12)] bg-[#F4F8FF] px-4 py-3.5 text-[0.88rem] font-medium text-slate-700 sm:text-[0.94rem]">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#0088FF]">
-                    <Check className="h-3 w-3 text-white" strokeWidth={3} aria-hidden />
-                  </span>
-                  {item}
-                </li>
-              ))}
-            </ul>
+            {items.length > 0 ? (
+              <ul className="mt-8 space-y-3">
+                {items.map((item) => (
+                  <li key={item} className="flex items-center gap-3 rounded-xl border border-[rgba(0,136,255,0.12)] bg-[#F4F8FF] px-4 py-3.5 text-[0.88rem] font-medium text-slate-700 sm:text-[0.94rem] [overflow-wrap:anywhere]">
+                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#0088FF]">
+                      <Check className="h-3 w-3 text-white" strokeWidth={3} aria-hidden />
+                    </span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            ) : null}
 
-            <Link href={content.ctaLink || "/app"} className="mt-8 inline-flex items-center gap-2 rounded-full bg-[#0088FF] px-7 py-3.5 text-[0.95rem] font-semibold text-white shadow-[0_8px_28px_rgba(0,136,255,0.35)] transition hover:-translate-y-0.5 hover:brightness-110">
-              {t(content, "ctaLabel", language)} <ArrowRight className="h-4 w-4" aria-hidden />
-            </Link>
+            {ctaLabel ? (
+              <Link href={content.ctaLink || "/app"} className="mt-8 inline-flex items-center gap-2 rounded-full bg-[#0088FF] px-7 py-3.5 text-[0.95rem] font-semibold text-white shadow-[0_8px_28px_rgba(0,136,255,0.35)] transition hover:-translate-y-0.5 hover:brightness-110">
+                {ctaLabel} <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
+              </Link>
+            ) : null}
           </motion.div>
 
-          {/* RIGHT: collage image */}
-          <motion.div
-            initial={reduced ? false : { opacity: 0, x: 28 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.65, ease, delay: 0.1 }}
-            className="relative w-full overflow-hidden rounded-[24px]"
-          >
-            <Image
-              src="/collageallsolutionsection .jpeg"
-              alt="HalaPark parking solutions collage"
-              width={920}
-              height={700}
-              className="h-auto w-full object-cover"
-              sizes="(min-width: 1024px) 50vw, 100vw"
-            />
-          </motion.div>
+          {/* RIGHT: collage image (CMS-driven — hidden when blank) */}
+          {image ? (
+            <motion.div
+              initial={reduced ? false : { opacity: 0, x: 28 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.65, ease, delay: 0.1 }}
+              className="relative w-full overflow-hidden rounded-[24px]"
+            >
+              <Image
+                src={image}
+                alt={heading || "HalaPark parking solutions"}
+                width={920}
+                height={700}
+                className="h-auto w-full object-cover"
+                sizes="(min-width: 1024px) 50vw, 100vw"
+              />
+            </motion.div>
+          ) : null}
 
         </div>
       </div>
@@ -471,20 +511,25 @@ function SolutionCard({ card, i, reduced }) {
 
 function StatsSection() {
   const reduced = useReducedMotion();
+  const { language } = useLanguage();
+  const [sol, setSol] = useState({});
   const [solutionItems, setSolutionItems] = useState([]);
   const [groupOrder, setGroupOrder] = useState([]);
 
   useEffect(() => {
     fetchPage("solutions").then((data) => {
-      const sol = data?.sections?.solutions;
-      if (sol?.cards && Array.isArray(sol.cards)) {
-        setSolutionItems(sol.cards);
-      }
-      if (Array.isArray(sol?.groups) && sol.groups.length > 0) {
-        setGroupOrder(sol.groups);
+      const s = data?.sections?.solutions;
+      if (s && typeof s === "object") {
+        setSol(s);
+        if (Array.isArray(s.cards)) setSolutionItems(s.cards);
+        if (Array.isArray(s.groups) && s.groups.length > 0) setGroupOrder(s.groups);
       }
     });
   }, []);
+
+  const heading = t(sol, "heading", language);
+  const gradient = t(sol, "headingGradient", language)?.trim() || "";
+  const subtitle = t(sol, "subtitle", language);
 
   // Group the cards. Cards without a group fall into "Other Solutions".
   const hasGroups = solutionItems.some((c) => c.group);
@@ -506,20 +551,38 @@ function StatsSection() {
   return (
     <section className="bg-[#F4F8FF] py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto mb-12 max-w-2xl text-center">
-          <h2 className="text-[clamp(3rem,5.5vw,5rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
-            Our{" "}
-            <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">Solutions</span>
-          </h2>
-          <p className="mt-4 text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-[#050A13]">
-            Intelligent parking systems built for efficiency, control, and scale
-          </p>
-          <a href="#solutions-grid" className="mt-6 inline-flex items-center gap-2 rounded-full border border-[#0088FF] px-6 py-2.5 text-[0.9rem] font-semibold text-[#0088FF] transition hover:bg-[#0088FF] hover:text-white">
+        <div dir={language === "ar" ? "rtl" : "ltr"} className="mx-auto mb-12 max-w-2xl text-center">
+          {heading || gradient ? (
+            <h2 className="text-[clamp(3rem,5.5vw,5rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]">
+              {heading}
+              {gradient ? (
+                <>
+                  {heading ? " " : null}
+                  <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">{gradient}</span>
+                </>
+              ) : null}
+            </h2>
+          ) : null}
+          {subtitle ? (
+            <p className="mt-4 text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-[#050A13] [overflow-wrap:anywhere]">
+              {subtitle}
+            </p>
+          ) : null}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              document
+                .getElementById("solutions-grid")
+                ?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }}
+            className="mt-6 inline-flex items-center gap-2 rounded-full border border-[#0088FF] px-6 py-2.5 text-[0.9rem] font-semibold text-[#0088FF] transition hover:bg-[#0088FF] hover:text-white"
+          >
             Explore Our Solutions ↓
-          </a>
+          </button>
         </div>
 
-        <div id="solutions-grid">
+        <div id="solutions-grid" className="scroll-mt-24" style={{ scrollMarginTop: "90px" }}>
           {hasGroups ? (
             <div className="space-y-14">
               {grouped.map((g) => (
