@@ -352,6 +352,7 @@ export default function AppPlatformSection() {
   }, []);
 
   if (!resolved) return null;
+  if (content?.enabled === false) return null;
 
   const dir = language === "ar" ? "rtl" : "ltr";
 

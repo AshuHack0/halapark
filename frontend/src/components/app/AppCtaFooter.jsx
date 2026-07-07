@@ -19,6 +19,7 @@ export default function AppCtaFooter() {
   }, []);
 
   if (!resolved) return null;
+  if (data?.enabled === false) return null;
 
   const heading = t(data, "heading", language);
   const description = t(data, "description", language);

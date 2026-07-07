@@ -170,6 +170,7 @@ export default function AppFeatureCardsSection() {
   // Hide the whole section when there is nothing to show.
   const resolved = heading || headingAccent || displayCards.length > 0;
   if (!resolved) return null;
+  if (header?.enabled === false) return null;
 
   return (
     <section

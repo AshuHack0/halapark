@@ -142,6 +142,7 @@ export default function HalaParkInAction({ cmsKey = "halaParkInAction", pageSlug
         // Admin saves the heading as `heading` (EN + ar.heading); the render reads
         // `title`, so remap the `ar` sub-object's heading→title to match.
         ar: { ...d.ar, title: d.ar?.heading ?? d.ar?.title, subtitle: d.ar?.subtitle },
+        enabled: d.enabled,
         title: d.heading || d.title || "",
         subtitle: d.subtitle || "",
         // Only store links with real text count — a cleared item must not
@@ -161,6 +162,9 @@ export default function HalaParkInAction({ cmsKey = "halaParkInAction", pageSlug
   }, [cmsKey, pageSlug]);
 
   const storeLinks = copy.storeLinks || [];
+
+  // Admin can hide the section via the "Show this section" toggle.
+  if (copy.enabled === false) return null;
 
   // Hide the section entirely when the admin has cleared all content:
   // no title/subtitle (EN, non-blank) and no store links with text.

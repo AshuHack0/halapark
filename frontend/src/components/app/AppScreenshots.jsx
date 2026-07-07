@@ -183,6 +183,7 @@ export default function AppScreenshots() {
     displaySteps.length > 0 ||
     displayScreens.length > 0;
   if (!resolved) return null;
+  if (header?.enabled === false) return null;
 
   return (
     <section

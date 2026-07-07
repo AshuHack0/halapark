@@ -308,6 +308,8 @@ export default function HeroSection() {
   }, []);
 
   if (!resolved) return null;
+  // Admin can hide the section via the "Show this section" toggle.
+  if (content?.enabled === false) return null;
 
   const image = (content.image || "").trim();
   const phoneImage = (content.phoneImage || "").trim();

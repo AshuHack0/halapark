@@ -198,6 +198,7 @@ export default function AppServiceTabs() {
   }, [activeTab, activeStep, showLastStepTick, tabs, hasTabs]);
 
   // Render nothing until the fetch settles; hide the whole section if no valid CMS tabs.
+  if (content?.enabled === false) return null;
   if (!resolved || !hasTabs) return null;
 
   const featureChips = (
