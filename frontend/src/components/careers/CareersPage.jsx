@@ -15,22 +15,24 @@ import {
   X,
 } from "lucide-react";
 import JobApplicationModal from "./JobApplicationModal";
-import { useLanguage, t, ui } from "@/context/LanguageContext";
+import { useLanguage, t } from "@/context/LanguageContext";
 
 const ease = [0.22, 1, 0.36, 1];
 
-// Fixed Careers chrome (overlay chips, buttons, headings) — inline EN/AR.
+// Fixed Careers chrome (inline EN/AR) — only labels that are NOT CMS-driven.
 const CAREERS_TEXT = {
-  ourTeam: { en: "Our Team", ar: "فريقنا" },
-  hiring: { en: "We're Hiring", ar: "نحن نوظّف" },
-  joinTeam: { en: "Join the team", ar: "انضم إلى الفريق" },
-  culture: { en: "Culture", ar: "ثقافتنا" },
-  innovateDaily: { en: "Innovate Daily", ar: "نبتكر يوميًا" },
-  growBuild: { en: "grow & build", ar: "ننمو ونبني" },
-  opportunities: { en: "Opportunities with HalaPark", ar: "الفرص الوظيفية في هالا بارك" },
   oneTeam: { en: "More Than Colleagues. One Team.", ar: "أكثر من زملاء. فريق واحد." },
+  viewDetails: { en: "View details", ar: "عرض التفاصيل" },
 };
 const ct = (key, language) => CAREERS_TEXT[key]?.[language] ?? CAREERS_TEXT[key]?.en ?? "";
+
+// True when a CMS value is a non-blank string — hide-when-empty helper.
+const hasText = (v) => typeof v === "string" && v.trim().length > 0;
+
+// Job posts are DATA (facts), not marketing copy: in Arabic they fall back to
+// English when no Arabic translation exists, so listings still work in AR.
+const jt = (post, key, language) =>
+  language === "ar" ? post?.ar?.[key] || post?.[key] || "" : post?.[key] ?? "";
 
 const opportunityIcons = {
   Briefcase,
@@ -41,32 +43,20 @@ const opportunityIcons = {
 // Careers layout: an asymmetric photo mosaic (one tall tile + two stacked tiles),
 // each cross-fading independently — a gallery feel, distinct from About/Business.
 
-const CAREERS_TILE_A = [
-  "/Smart & Seamless Experience.jpeg",
-  "/AI-Driven Parking Intelligence.jpeg",
-];
-const CAREERS_TILE_B = [
-  "/Smart Public Parking.jpeg",
-  "/Maximize Parking Value dekhna ye.jpeg",
-];
-const CAREERS_TILE_C = [
-  "/Maximize Parking Value dekhna ye.jpeg",
-  "/Smart & Seamless Experience.jpeg",
-];
-
 function MosaicTile({ slides, idx, reduced, sizes }) {
+  const src = slides[idx % slides.length];
   return (
     <div className="absolute inset-0 overflow-hidden">
       <AnimatePresence mode="popLayout">
         <motion.div
-          key={idx}
+          key={`${src}-${idx}`}
           initial={reduced ? false : { opacity: 0, scale: 1.1 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={reduced ? undefined : { opacity: 0 }}
           transition={{ duration: 0.8, ease }}
           className="absolute inset-0"
         >
-          <Image src={slides[idx]} alt="HalaPark team" fill sizes={sizes} className="object-cover object-center" />
+          <Image src={src} alt="HalaPark team" fill sizes={sizes} className="object-cover object-center" />
         </motion.div>
       </AnimatePresence>
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#050A13]/35 to-transparent" />
@@ -74,25 +64,48 @@ function MosaicTile({ slides, idx, reduced, sizes }) {
   );
 }
 
-function CareersVisual({ heroImage, reduced }) {
+function CareersVisual({ hero, reduced }) {
   const { language } = useLanguage();
-  const tileA = [heroImage || CAREERS_TILE_A[0], ...CAREERS_TILE_A.slice(1)];
+
+  // CMS-driven mosaic: distribute hero.images across the three tiles
+  // round-robin (A: 0,3,6…  B: 1,4,7…  C: 2,5,8…). A tile that would end up
+  // empty gets the full list instead so every tile always has ≥1 image.
+  const images = (Array.isArray(hero?.images) ? hero.images : []).filter(hasText);
+  const pickTile = (offset) => {
+    const tile = images.filter((_, i) => i % 3 === offset);
+    return tile.length > 0 ? tile : images;
+  };
+  const tileA = pickTile(0);
+  const tileB = pickTile(1);
+  const tileC = pickTile(2);
+
   const [a, setA] = useState(0);
   const [b, setB] = useState(0);
   const [c, setC] = useState(0);
 
   useEffect(() => {
-    if (reduced) return undefined;
+    if (reduced || tileA.length === 0) return undefined;
     const ta = setInterval(() => setA((p) => (p + 1) % tileA.length), 3800);
-    const tb = setInterval(() => setB((p) => (p + 1) % CAREERS_TILE_B.length), 3100);
-    const tc = setInterval(() => setC((p) => (p + 1) % CAREERS_TILE_C.length), 2600);
+    const tb = setInterval(() => setB((p) => (p + 1) % tileB.length), 3100);
+    const tc = setInterval(() => setC((p) => (p + 1) % tileC.length), 2600);
     return () => {
       clearInterval(ta);
       clearInterval(tb);
       clearInterval(tc);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reduced]);
+  }, [reduced, tileA.length, tileB.length, tileC.length]);
+
+  // Floating chips — from CMS (hero.badges), strict Arabic.
+  const badges = hero?.badges;
+  const teamTag = t(badges, "teamTag", language);
+  const hiringTitle = t(badges, "hiringTitle", language);
+  const hiringSub = t(badges, "hiringSub", language);
+  const cultureTag = t(badges, "cultureTag", language);
+  const cultureTitle = t(badges, "cultureTitle", language);
+  const cultureSub = t(badges, "cultureSub", language);
+
+  // No CMS images → hide the whole visual mosaic block.
+  if (images.length === 0) return null;
 
   return (
     <div className="relative flex items-center justify-center">
@@ -109,54 +122,69 @@ function CareersVisual({ heroImage, reduced }) {
         {/* Tall tile (col 1, both rows) */}
         <div className="relative row-span-2 overflow-hidden rounded-[24px] border border-white/80 shadow-[0_30px_70px_rgba(15,23,42,0.2)]">
           <MosaicTile slides={tileA} idx={a} reduced={reduced} sizes="(min-width: 1024px) 210px, 150px" />
-          <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2 py-1 text-[8.5px] font-bold uppercase tracking-[0.14em] text-white backdrop-blur-sm">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#5BE49B] animate-pulse" /> {ct("ourTeam", language)}
-          </span>
+          {hasText(teamTag) ? (
+            <span
+              className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2 py-1 text-[8.5px] font-bold uppercase tracking-[0.14em] text-white backdrop-blur-sm [overflow-wrap:anywhere] rtl:left-auto rtl:right-3"
+              dir={language === "ar" ? "rtl" : "ltr"}
+            >
+              <span className="h-1.5 w-1.5 rounded-full bg-[#5BE49B] animate-pulse" /> {teamTag}
+            </span>
+          ) : null}
         </div>
         {/* Top-right tile */}
         <div className="relative overflow-hidden rounded-[24px] border border-white/80 shadow-[0_30px_70px_rgba(15,23,42,0.2)]">
-          <MosaicTile slides={CAREERS_TILE_B} idx={b} reduced={reduced} sizes="(min-width: 1024px) 210px, 150px" />
+          <MosaicTile slides={tileB} idx={b} reduced={reduced} sizes="(min-width: 1024px) 210px, 150px" />
         </div>
         {/* Bottom-right tile */}
         <div className="relative overflow-hidden rounded-[24px] border border-white/80 shadow-[0_30px_70px_rgba(15,23,42,0.2)]">
-          <MosaicTile slides={CAREERS_TILE_C} idx={c} reduced={reduced} sizes="(min-width: 1024px) 210px, 150px" />
+          <MosaicTile slides={tileC} idx={c} reduced={reduced} sizes="(min-width: 1024px) 210px, 150px" />
         </div>
       </motion.div>
 
-      {/* Floating chip — we're hiring (top-left) */}
-      <motion.div
-        initial={reduced ? false : { opacity: 0, y: -14, rotate: -5 }}
-        animate={reduced ? undefined : { opacity: 1, y: 0, rotate: -5 }}
-        transition={{ duration: 0.6, ease, delay: 0.5 }}
-        className="absolute left-[-6%] top-[-4%] z-40 hidden sm:block lg:left-[-14%]"
-      >
-        <div className="flex items-center gap-2.5 rounded-2xl border border-white/80 bg-white px-3 py-2.5 shadow-[0_16px_40px_rgba(15,23,42,0.15)]">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#0088FF] to-[#2563EB] text-white shadow-[0_4px_10px_rgba(0,136,255,0.35)]">
-            <Briefcase className="h-4.5 w-4.5" aria-hidden />
-          </span>
-          <div>
-            <p className="text-[11px] font-semibold text-[#050A13]" dir={language === "ar" ? "rtl" : "ltr"}>{ct("hiring", language)}</p>
-            <p className="text-[10px] text-[#667085]" dir={language === "ar" ? "rtl" : "ltr"}>{ct("joinTeam", language)}</p>
+      {/* Floating chip — we're hiring (top-left, mirrored to top-right in RTL) */}
+      {hasText(hiringTitle) ? (
+        <motion.div
+          initial={reduced ? false : { opacity: 0, y: -14, rotate: -5 }}
+          animate={reduced ? undefined : { opacity: 1, y: 0, rotate: -5 }}
+          transition={{ duration: 0.6, ease, delay: 0.5 }}
+          className="absolute left-[-6%] top-[-4%] z-40 hidden sm:block lg:left-[-14%] rtl:left-auto rtl:right-[-6%] rtl:lg:left-auto rtl:lg:right-[-14%]"
+        >
+          <div className="flex items-center gap-2.5 rounded-2xl border border-white/80 bg-white px-3 py-2.5 shadow-[0_16px_40px_rgba(15,23,42,0.15)]">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#0088FF] to-[#2563EB] text-white shadow-[0_4px_10px_rgba(0,136,255,0.35)]">
+              <Briefcase className="h-4.5 w-4.5" aria-hidden />
+            </span>
+            <div>
+              <p className="text-[11px] font-semibold text-[#050A13] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>{hiringTitle}</p>
+              {hasText(hiringSub) ? (
+                <p className="text-[10px] text-[#667085] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>{hiringSub}</p>
+              ) : null}
+            </div>
           </div>
-        </div>
-      </motion.div>
+        </motion.div>
+      ) : null}
 
-      {/* Floating chip — culture (bottom-right) */}
-      <motion.div
-        initial={reduced ? false : { opacity: 0, x: 16, rotate: 5 }}
-        animate={reduced ? undefined : { opacity: 1, x: 0, rotate: 5 }}
-        transition={{ duration: 0.6, ease, delay: 0.6 }}
-        className="absolute bottom-[-4%] right-[-6%] z-40 hidden sm:block lg:right-[-12%]"
-      >
-        <div className="w-[150px] rounded-2xl border border-white/80 bg-white p-3 shadow-[0_16px_40px_rgba(15,23,42,0.15)]">
-          <div className="flex items-center gap-1.5">
-            <Sparkles className="h-3.5 w-3.5 text-[#0088FF]" aria-hidden />
-            <p className="text-[11px] font-semibold text-[#050A13]" dir={language === "ar" ? "rtl" : "ltr"}>{ct("culture", language)}</p>
+      {/* Floating chip — culture (bottom-right, mirrored to bottom-left in RTL) */}
+      {hasText(cultureTitle) ? (
+        <motion.div
+          initial={reduced ? false : { opacity: 0, x: 16, rotate: 5 }}
+          animate={reduced ? undefined : { opacity: 1, x: 0, rotate: 5 }}
+          transition={{ duration: 0.6, ease, delay: 0.6 }}
+          className="absolute bottom-[-4%] right-[-6%] z-40 hidden sm:block lg:right-[-12%] rtl:right-auto rtl:left-[-6%] rtl:lg:right-auto rtl:lg:left-[-12%]"
+        >
+          <div className="w-[150px] rounded-2xl border border-white/80 bg-white p-3 shadow-[0_16px_40px_rgba(15,23,42,0.15)]">
+            {hasText(cultureTag) ? (
+              <div className="flex items-center gap-1.5">
+                <Sparkles className="h-3.5 w-3.5 text-[#0088FF]" aria-hidden />
+                <p className="text-[11px] font-semibold text-[#050A13] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>{cultureTag}</p>
+              </div>
+            ) : null}
+            <p className="mt-1.5 text-[0.92rem] font-bold leading-tight tracking-[-0.02em] text-[#050A13] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>{cultureTitle}</p>
+            {hasText(cultureSub) ? (
+              <p className="text-[9px] text-slate-400 [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>{cultureSub}</p>
+            ) : null}
           </div>
-          <p className="mt-1.5 text-[0.92rem] font-bold leading-tight tracking-[-0.02em] text-[#050A13]" dir={language === "ar" ? "rtl" : "ltr"}>{ct("innovateDaily", language)}</p>
-          <p className="text-[9px] text-slate-400" dir={language === "ar" ? "rtl" : "ltr"}>{ct("growBuild", language)}</p>
-        </div>
-      </motion.div>
+        </motion.div>
+      ) : null}
     </div>
   );
 }
@@ -164,6 +192,11 @@ function CareersVisual({ heroImage, reduced }) {
 function CareersHero({ hero }) {
   const reduced = useReducedMotion();
   const { language } = useLanguage();
+
+  const title = t(hero, "title", language);
+  const description = t(hero, "description", language);
+  const primaryCta = t(hero, "primaryCta", language);
+  const secondaryCta = t(hero, "secondaryCta", language);
 
   return (
     <section
@@ -187,32 +220,43 @@ function CareersHero({ hero }) {
             initial={reduced ? false : { opacity: 0, x: -28 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.65, ease }}
+            dir={language === "ar" ? "rtl" : "ltr"}
           >
-            <h1 className="max-w-[600px] text-[clamp(2.4rem,4.8vw,4.2rem)] font-semibold leading-[1.02] tracking-[-0.055em] text-[#050A13]">
-              {t(hero, "title", language)}
-            </h1>
+            {hasText(title) ? (
+              <h1 className="max-w-[600px] text-[clamp(2.4rem,4.8vw,4.2rem)] font-semibold leading-[1.02] tracking-[-0.055em] text-[#050A13] [overflow-wrap:anywhere]">
+                {title}
+              </h1>
+            ) : null}
 
-            <p className="mt-5 max-w-[470px] text-[0.95rem] leading-[1.75] text-slate-500">
-              {t(hero, "description", language)}
-            </p>
+            {hasText(description) ? (
+              <p className="mt-5 max-w-[470px] text-[0.95rem] leading-[1.75] text-slate-500 [overflow-wrap:anywhere]">
+                {description}
+              </p>
+            ) : null}
 
-            <div className="mt-9 flex flex-wrap items-center gap-3">
-              <Link
-                href="#open-positions"
-                className="group inline-flex items-center gap-2.5 rounded-full bg-[#0088FF] px-7 py-3.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,136,255,0.32)] transition hover:brightness-110"
-              >
-                {ui("viewOpenPositions", language)}
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 transition-transform duration-200 group-hover:translate-x-0.5">
-                  <ArrowRight className="h-3.5 w-3.5" aria-hidden />
-                </span>
-              </Link>
-              <Link
-                href="/contact"
-                className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-7 py-3.5 text-sm font-semibold text-slate-700 shadow-[0_2px_12px_rgba(6,6,22,0.07)] transition hover:border-[#0088FF]/50 hover:text-[#0088FF]"
-              >
-                {ui("getInTouch", language)}
-              </Link>
-            </div>
+            {hasText(primaryCta) || hasText(secondaryCta) ? (
+              <div className="mt-9 flex flex-wrap items-center gap-3">
+                {hasText(primaryCta) ? (
+                  <Link
+                    href="#open-positions"
+                    className="group inline-flex items-center gap-2.5 rounded-full bg-[#0088FF] px-7 py-3.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,136,255,0.32)] transition hover:brightness-110"
+                  >
+                    {primaryCta}
+                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 transition-transform duration-200 group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5">
+                      <ArrowRight className="h-3.5 w-3.5 rtl:rotate-180" aria-hidden />
+                    </span>
+                  </Link>
+                ) : null}
+                {hasText(secondaryCta) ? (
+                  <Link
+                    href="/contact"
+                    className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-7 py-3.5 text-sm font-semibold text-slate-700 shadow-[0_2px_12px_rgba(6,6,22,0.07)] transition hover:border-[#0088FF]/50 hover:text-[#0088FF]"
+                  >
+                    {secondaryCta}
+                  </Link>
+                ) : null}
+              </div>
+            ) : null}
           </motion.div>
 
           {/* RIGHT — imagery collage */}
@@ -222,7 +266,7 @@ function CareersHero({ hero }) {
             transition={{ duration: 0.75, ease, delay: 0.1 }}
             className="relative mt-16 flex min-h-[420px] items-center justify-center lg:mt-0 lg:min-h-[560px]"
           >
-            <CareersVisual heroImage={hero?.image} reduced={reduced} />
+            <CareersVisual hero={hero} reduced={reduced} />
           </motion.div>
         </div>
       </div>
@@ -233,34 +277,43 @@ function CareersHero({ hero }) {
 function BuildingSmarterMobility({ building }) {
   const reduced = useReducedMotion();
   const { language } = useLanguage();
-  const titleLines = (t(building, "title", language) || "").split("\n");
+  const title = t(building, "title", language);
+  const titleLines = title.split("\n");
+  const paragraphs = (building?.paragraphs ?? [])
+    .map((paragraph, i) =>
+      language === "ar" ? building?.ar?.paragraphs?.[i] ?? "" : paragraph ?? "",
+    )
+    .filter(hasText);
+
+  // Section hides when its content is fully cleared.
+  if (!hasText(title) && paragraphs.length === 0) return null;
 
   return (
     <section className="bg-[#F4F8FF] py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-[860px] text-center">
+        <div className="mx-auto max-w-[860px] text-center" dir={language === "ar" ? "rtl" : "ltr"}>
           <motion.div
             initial={reduced ? false : { opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.65, ease }}
           >
-            <h2 className="text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-[1.08] tracking-[-0.05em] text-[#050A13]">
-              {titleLines.map((line, i) => (
-                <span key={`${line}-${i}`}>
-                  {i > 0 ? <br /> : null}
-                  {line}
-                </span>
-              ))}
-            </h2>
-            <div className="mt-8 space-y-5 text-[0.94rem] leading-7 text-slate-500 sm:text-base">
-              {(building?.paragraphs ?? []).map((paragraph, i) => {
-                const text =
-                  language === "ar"
-                    ? building.ar?.paragraphs?.[i] ?? ""
-                    : paragraph;
-                return <p key={paragraph.slice(0, 40)}>{text}</p>;
-              })}
-            </div>
+            {hasText(title) ? (
+              <h2 className="text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-[1.08] tracking-[-0.05em] text-[#050A13] [overflow-wrap:anywhere]">
+                {titleLines.map((line, i) => (
+                  <span key={`${line}-${i}`}>
+                    {i > 0 ? <br /> : null}
+                    {line}
+                  </span>
+                ))}
+              </h2>
+            ) : null}
+            {paragraphs.length > 0 ? (
+              <div className="mt-8 space-y-5 text-[0.94rem] leading-7 text-slate-500 sm:text-base">
+                {paragraphs.map((text, i) => (
+                  <p key={`${text.slice(0, 40)}-${i}`} className="[overflow-wrap:anywhere]">{text}</p>
+                ))}
+              </div>
+            ) : null}
           </motion.div>
         </div>
       </div>
@@ -268,58 +321,82 @@ function BuildingSmarterMobility({ building }) {
   );
 }
 
-function OpportunitiesSection({ opportunities }) {
+function OpportunitiesSection({ opportunities, header }) {
   const reduced = useReducedMotion();
   const { language } = useLanguage();
-  const items = Array.isArray(opportunities) ? opportunities : [];
+  const heading = t(header, "heading", language);
+  // Only items with real text in the current language render.
+  const items = (Array.isArray(opportunities) ? opportunities : []).filter(
+    (item) =>
+      hasText(t(item, "title", language)) ||
+      hasText(t(item, "description", language)) ||
+      hasText(t(item, "badge", language)),
+  );
 
-  if (items.length === 0) return null;
+  if (!hasText(heading) && items.length === 0) return null;
 
   return (
     <section className="bg-white py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={reduced ? false : { opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.65, ease }}
-          className="mx-auto mb-12 max-w-[780px] text-center"
-        >
-          <h2 className="text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-[1.08] tracking-[-0.05em] text-[#050A13] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
-            {ct("opportunities", language)}
-          </h2>
-        </motion.div>
+        {hasText(heading) ? (
+          <motion.div
+            initial={reduced ? false : { opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.65, ease }}
+            className="mx-auto mb-12 max-w-[780px] text-center"
+          >
+            <h2 className="text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-[1.08] tracking-[-0.05em] text-[#050A13] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
+              {heading}
+            </h2>
+          </motion.div>
+        ) : null}
 
-        <div className="grid gap-6 md:grid-cols-3">
-          {items.map((item, i) => {
-            const Icon = opportunityIcons[item.icon] ?? Sparkles;
-            return (
-              <motion.article
-                key={`${item.title}-${i}`}
-                initial={reduced ? false : { opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, ease, delay: i * 0.08 }}
-                className="flex h-full flex-col rounded-[22px] border border-[#E7EAF0] bg-white p-7 shadow-[0_4px_24px_rgba(6,6,22,0.06)] transition hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(6,6,22,0.10)]"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-[14px] bg-[#EEF6FF]">
-                    <Icon className="h-6 w-6 text-[#0088FF]" strokeWidth={1.8} aria-hidden />
+        {items.length > 0 ? (
+          <div className="grid gap-6 md:grid-cols-3">
+            {items.map((item, i) => {
+              const Icon = opportunityIcons[item.icon] ?? Sparkles;
+              const itemTitle = t(item, "title", language);
+              const itemDescription = t(item, "description", language);
+              const itemBadge = t(item, "badge", language);
+              return (
+                <motion.article
+                  key={`${item.title}-${i}`}
+                  initial={reduced ? false : { opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, ease, delay: i * 0.08 }}
+                  className="flex h-full flex-col rounded-[22px] border border-[#E7EAF0] bg-white p-7 shadow-[0_4px_24px_rgba(6,6,22,0.06)] transition hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(6,6,22,0.10)]"
+                  dir={language === "ar" ? "rtl" : "ltr"}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-[14px] bg-[#EEF6FF]">
+                      {hasText(item.iconImage) ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={item.iconImage} alt="" className="h-6 w-6 object-contain" />
+                      ) : (
+                        <Icon className="h-6 w-6 text-[#0088FF]" strokeWidth={1.8} aria-hidden />
+                      )}
+                    </div>
+                    {hasText(itemBadge) ? (
+                      <span className="rounded-full bg-[#EEF6FF] px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-wider text-[#0088FF] [overflow-wrap:anywhere]">
+                        {itemBadge}
+                      </span>
+                    ) : null}
                   </div>
-                  {item.badge ? (
-                    <span className="rounded-full bg-[#EEF6FF] px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-wider text-[#0088FF]">
-                      {t(item, "badge", language)}
-                    </span>
+                  {hasText(itemTitle) ? (
+                    <h3 className="mt-5 text-[1.1rem] font-semibold tracking-[-0.02em] text-[#050A13] [overflow-wrap:anywhere]">
+                      {itemTitle}
+                    </h3>
                   ) : null}
-                </div>
-                <h3 className="mt-5 text-[1.1rem] font-semibold tracking-[-0.02em] text-[#050A13]">
-                  {t(item, "title", language)}
-                </h3>
-                <p className="mt-3 text-[0.9rem] leading-6 text-slate-500">
-                  {t(item, "description", language)}
-                </p>
-              </motion.article>
-            );
-          })}
-        </div>
+                  {hasText(itemDescription) ? (
+                    <p className="mt-3 text-[0.9rem] leading-6 text-slate-500 [overflow-wrap:anywhere]">
+                      {itemDescription}
+                    </p>
+                  ) : null}
+                </motion.article>
+              );
+            })}
+          </div>
+        ) : null}
       </div>
     </section>
   );
@@ -330,24 +407,26 @@ function JobApplyButton({ post, onApply, className }) {
   const { language } = useLanguage();
   const useForm = post.applyMode === "form";
   const applyHref = post.applyLink || "/contact";
+  const label = jt(post, "applyLabel", language);
   if (useForm) {
     return (
       <button type="button" onClick={() => onApply(post)} className={className}>
-        {t(post, "applyLabel", language)}
-        <ArrowRight className="h-4 w-4" aria-hidden />
+        {label}
+        <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
       </button>
     );
   }
   const ApplyTag = applyHref.startsWith("/") ? Link : "a";
   return (
     <ApplyTag href={applyHref} className={className}>
-      {t(post, "applyLabel", language)}
-      <ArrowRight className="h-4 w-4" aria-hidden />
+      {label}
+      <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
     </ApplyTag>
   );
 }
 
-// Job detail modal — structured layout with rich (HTML) content support.
+// Job detail modal — structured layout with plain-text content (admin line
+// breaks preserved via whitespace-pre-line).
 function JobDetailModal({ job, onClose, onApply }) {
   const { language } = useLanguage();
   useEffect(() => {
@@ -361,6 +440,9 @@ function JobDetailModal({ job, onClose, onApply }) {
       document.removeEventListener("keydown", onKey);
     };
   }, [job, onClose]);
+
+  const fullDescription = jt(job, "fullDescription", language);
+  const description = jt(job, "description", language);
 
   return (
     <AnimatePresence>
@@ -379,6 +461,7 @@ function JobDetailModal({ job, onClose, onApply }) {
             transition={{ duration: 0.3, ease }}
             onClick={(e) => e.stopPropagation()}
             className="flex max-h-[92vh] w-full max-w-2xl flex-col overflow-hidden rounded-t-[26px] bg-white shadow-2xl sm:rounded-[26px]"
+            dir={language === "ar" ? "rtl" : "ltr"}
           >
             {/* Header */}
             <div className="relative shrink-0 border-b border-slate-100 bg-[#F6FAFF] px-6 py-5 sm:px-8">
@@ -386,42 +469,41 @@ function JobDetailModal({ job, onClose, onApply }) {
                 type="button"
                 onClick={onClose}
                 aria-label="Close"
-                className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-white text-slate-500 shadow-sm transition hover:text-slate-800"
+                className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-white text-slate-500 shadow-sm transition hover:text-slate-800 rtl:right-auto rtl:left-4"
               >
                 <X className="h-4 w-4" />
               </button>
-              <h3 className="max-w-[90%] text-[1.3rem] font-semibold tracking-[-0.03em] text-[#050A13] sm:text-[1.6rem]">
-                {t(job, "title", language)}
+              <h3 className="max-w-[90%] text-[1.3rem] font-semibold tracking-[-0.03em] text-[#050A13] [overflow-wrap:anywhere] sm:text-[1.6rem]">
+                {jt(job, "title", language)}
               </h3>
               <div className="mt-3 flex flex-wrap items-center gap-2">
-                {job.department ? (
-                  <span className="rounded-full bg-[#EEF6FF] px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-wider text-[#0088FF]">
-                    {t(job, "department", language)}
+                {hasText(jt(job, "department", language)) ? (
+                  <span className="rounded-full bg-[#EEF6FF] px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-wider text-[#0088FF] [overflow-wrap:anywhere]">
+                    {jt(job, "department", language)}
                   </span>
                 ) : null}
-                {job.employmentType ? (
-                  <span className="rounded-full border border-[#E7EAF0] bg-white px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-wider text-slate-600">
-                    {t(job, "employmentType", language)}
+                {hasText(jt(job, "employmentType", language)) ? (
+                  <span className="rounded-full border border-[#E7EAF0] bg-white px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-wider text-slate-600 [overflow-wrap:anywhere]">
+                    {jt(job, "employmentType", language)}
                   </span>
                 ) : null}
-                {job.location ? (
-                  <span className="inline-flex items-center gap-1 text-[0.8rem] text-slate-500">
-                    <MapPin className="h-3.5 w-3.5" aria-hidden /> {t(job, "location", language)}
+                {hasText(jt(job, "location", language)) ? (
+                  <span className="inline-flex items-center gap-1 text-[0.8rem] text-slate-500 [overflow-wrap:anywhere]">
+                    <MapPin className="h-3.5 w-3.5" aria-hidden /> {jt(job, "location", language)}
                   </span>
                 ) : null}
               </div>
             </div>
 
-            {/* Body — HTML content if present, else the short description */}
+            {/* Body — plain text; admin line breaks preserved */}
             <div className="min-h-0 flex-1 overflow-y-auto px-6 py-6 sm:px-8" data-lenis-prevent>
-              {job.fullDescription ? (
-                <div
-                  className="job-rich text-[0.92rem] leading-7 text-slate-600"
-                  dangerouslySetInnerHTML={{ __html: t(job, "fullDescription", language) }}
-                />
-              ) : (
-                <p className="text-[0.92rem] leading-7 text-slate-600">{t(job, "description", language)}</p>
-              )}
+              {hasText(fullDescription) ? (
+                <p className="whitespace-pre-line text-[0.92rem] leading-7 text-slate-600 [overflow-wrap:anywhere]">
+                  {fullDescription}
+                </p>
+              ) : hasText(description) ? (
+                <p className="text-[0.92rem] leading-7 text-slate-600 [overflow-wrap:anywhere]">{description}</p>
+              ) : null}
             </div>
 
             {/* Footer — apply */}
@@ -435,17 +517,6 @@ function JobDetailModal({ job, onClose, onApply }) {
           </motion.div>
         </motion.div>
       ) : null}
-
-      <style>{`
-        .job-rich h2, .job-rich h3 { font-weight: 600; color: #050A13; letter-spacing: -0.02em; margin-top: 1.25rem; margin-bottom: 0.5rem; font-size: 1.05rem; }
-        .job-rich h2:first-child, .job-rich h3:first-child { margin-top: 0; }
-        .job-rich p { margin-bottom: 0.75rem; }
-        .job-rich ul { list-style: disc; padding-left: 1.25rem; margin-bottom: 0.75rem; }
-        .job-rich ol { list-style: decimal; padding-left: 1.25rem; margin-bottom: 0.75rem; }
-        .job-rich li { margin-bottom: 0.35rem; }
-        .job-rich a { color: #0088FF; text-decoration: underline; }
-        .job-rich strong { color: #050A13; font-weight: 600; }
-      `}</style>
     </AnimatePresence>
   );
 }
@@ -458,7 +529,10 @@ function JobOpenings({ openPositions }) {
   const [applyJob, setApplyJob] = useState(null);
   const [detailJob, setDetailJob] = useState(null);
 
-  if (posts.length === 0) return null;
+  const title = t(openPositions, "title", language);
+  const subtitle = t(openPositions, "subtitle", language);
+
+  if (!hasText(title) && posts.length === 0) return null;
 
   return (
     <>
@@ -471,76 +545,84 @@ function JobOpenings({ openPositions }) {
 
       <section id="open-positions" className="bg-white py-16 sm:py-20 lg:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={reduced ? false : { opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.65, ease }}
-            className="mx-auto mb-12 max-w-[780px] text-center"
-          >
-            <h2 className="text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-[1.08] tracking-[-0.05em] text-[#050A13]">
-              {t(openPositions, "title", language)}
-            </h2>
-            {openPositions?.subtitle ? (
-              <p className="mt-4 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500">
-                {t(openPositions, "subtitle", language)}
-              </p>
-            ) : null}
-          </motion.div>
+          {hasText(title) || hasText(subtitle) ? (
+            <motion.div
+              initial={reduced ? false : { opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.65, ease }}
+              className="mx-auto mb-12 max-w-[780px] text-center"
+              dir={language === "ar" ? "rtl" : "ltr"}
+            >
+              {hasText(title) ? (
+                <h2 className="text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-[1.08] tracking-[-0.05em] text-[#050A13] [overflow-wrap:anywhere]">
+                  {title}
+                </h2>
+              ) : null}
+              {hasText(subtitle) ? (
+                <p className="mt-4 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500 [overflow-wrap:anywhere]">
+                  {subtitle}
+                </p>
+              ) : null}
+            </motion.div>
+          ) : null}
 
-          <div className="mx-auto grid max-w-5xl gap-5 sm:grid-cols-2">
-            {posts.map((post, i) => (
-              <motion.article
-                key={`${post.title}-${i}`}
-                initial={reduced ? false : { opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.1 }}
-                transition={{ duration: 0.45, ease, delay: (i % 2) * 0.05 }}
-                className="group flex cursor-pointer flex-col rounded-[22px] border border-[#E7EAF0] bg-white p-6 shadow-[0_4px_24px_rgba(6,6,22,0.06)] transition hover:-translate-y-1 hover:border-[#0088FF]/40 hover:shadow-[0_16px_40px_rgba(0,136,255,0.12)] sm:p-7"
-                onClick={() => setDetailJob(post)}
-              >
-                <h3 className="text-[1.05rem] font-semibold tracking-[-0.02em] text-[#050A13] sm:text-lg">
-                  {t(post, "title", language)}
-                </h3>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {post.department ? (
-                    <span className="rounded-full bg-[#EEF6FF] px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-wider text-[#0088FF]">
-                      {t(post, "department", language)}
-                    </span>
+          {posts.length > 0 ? (
+            <div className="mx-auto grid max-w-5xl gap-5 sm:grid-cols-2">
+              {posts.map((post, i) => (
+                <motion.article
+                  key={`${post.title}-${i}`}
+                  initial={reduced ? false : { opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.1 }}
+                  transition={{ duration: 0.45, ease, delay: (i % 2) * 0.05 }}
+                  className="group flex cursor-pointer flex-col rounded-[22px] border border-[#E7EAF0] bg-white p-6 shadow-[0_4px_24px_rgba(6,6,22,0.06)] transition hover:-translate-y-1 hover:border-[#0088FF]/40 hover:shadow-[0_16px_40px_rgba(0,136,255,0.12)] sm:p-7"
+                  dir={language === "ar" ? "rtl" : "ltr"}
+                  onClick={() => setDetailJob(post)}
+                >
+                  <h3 className="text-[1.05rem] font-semibold tracking-[-0.02em] text-[#050A13] [overflow-wrap:anywhere] sm:text-lg">
+                    {jt(post, "title", language)}
+                  </h3>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {hasText(jt(post, "department", language)) ? (
+                      <span className="rounded-full bg-[#EEF6FF] px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-wider text-[#0088FF] [overflow-wrap:anywhere]">
+                        {jt(post, "department", language)}
+                      </span>
+                    ) : null}
+                    {hasText(jt(post, "employmentType", language)) ? (
+                      <span className="rounded-full border border-[#E7EAF0] bg-slate-50 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-wider text-slate-600 [overflow-wrap:anywhere]">
+                        {jt(post, "employmentType", language)}
+                      </span>
+                    ) : null}
+                  </div>
+                  {hasText(jt(post, "location", language)) ? (
+                    <p className="mt-3 inline-flex items-center gap-1 text-sm text-slate-500 [overflow-wrap:anywhere]">
+                      <MapPin className="h-3.5 w-3.5" aria-hidden /> {jt(post, "location", language)}
+                    </p>
                   ) : null}
-                  {post.employmentType ? (
-                    <span className="rounded-full border border-[#E7EAF0] bg-slate-50 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-wider text-slate-600">
-                      {t(post, "employmentType", language)}
-                    </span>
+                  {hasText(jt(post, "description", language)) ? (
+                    <p className="mt-4 line-clamp-3 text-[0.88rem] leading-6 text-slate-500 [overflow-wrap:anywhere] sm:text-[0.94rem]">
+                      {jt(post, "description", language)}
+                    </p>
                   ) : null}
-                </div>
-                {post.location ? (
-                  <p className="mt-3 inline-flex items-center gap-1 text-sm text-slate-500">
-                    <MapPin className="h-3.5 w-3.5" aria-hidden /> {t(post, "location", language)}
-                  </p>
-                ) : null}
-                {post.description ? (
-                  <p className="mt-4 line-clamp-3 text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem]">
-                    {t(post, "description", language)}
-                  </p>
-                ) : null}
 
-                <div className="mt-5 flex items-center justify-between gap-3 border-t border-slate-100 pt-4">
-                  <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#0088FF]">
-                    View details
-                    <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden />
-                  </span>
-                  <span onClick={(e) => e.stopPropagation()} className="shrink-0">
-                    <JobApplyButton
-                      post={post}
-                      onApply={setApplyJob}
-                      className="inline-flex shrink-0 items-center gap-2 rounded-full border border-[#0088FF]/30 bg-[#EEF6FF] px-4 py-2 text-xs font-semibold text-[#0088FF] transition hover:bg-[#0088FF] hover:text-white"
-                    />
-                  </span>
-                </div>
-              </motion.article>
-            ))}
-          </div>
+                  <div className="mt-5 flex items-center justify-between gap-3 border-t border-slate-100 pt-4">
+                    <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#0088FF]">
+                      {ct("viewDetails", language)}
+                      <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5" aria-hidden />
+                    </span>
+                    <span onClick={(e) => e.stopPropagation()} className="shrink-0">
+                      <JobApplyButton
+                        post={post}
+                        onApply={setApplyJob}
+                        className="inline-flex shrink-0 items-center gap-2 rounded-full border border-[#0088FF]/30 bg-[#EEF6FF] px-4 py-2 text-xs font-semibold text-[#0088FF] transition hover:bg-[#0088FF] hover:text-white"
+                      />
+                    </span>
+                  </div>
+                </motion.article>
+              ))}
+            </div>
+          ) : null}
         </div>
       </section>
     </>
@@ -550,7 +632,20 @@ function JobOpenings({ openPositions }) {
 function WhyJoinUs({ whyJoin }) {
   const reduced = useReducedMotion();
   const { language } = useLanguage();
-  const reasons = whyJoin?.reasons ?? [];
+  const title = t(whyJoin, "title", language);
+  const subtitle = t(whyJoin, "subtitle", language);
+  const bodyParagraph = t(whyJoin, "bodyParagraph", language);
+  // Only reasons with text in the current language render — untranslated or
+  // cleared entries never show as empty checkmark rows.
+  const reasons = (whyJoin?.reasons ?? [])
+    .map((reason, i) =>
+      language === "ar" ? whyJoin?.ar?.reasons?.[i] ?? "" : reason ?? "",
+    )
+    .filter(hasText);
+
+  if (!hasText(title) && !hasText(subtitle) && !hasText(bodyParagraph) && reasons.length === 0) {
+    return null;
+  }
 
   return (
     <section className="bg-[#F4F8FF] py-16 sm:py-20 lg:py-24">
@@ -561,38 +656,42 @@ function WhyJoinUs({ whyJoin }) {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.65, ease }}
+            dir={language === "ar" ? "rtl" : "ltr"}
           >
-            <h2 className="text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-[1.08] tracking-[-0.05em] text-[#050A13]">
-              {t(whyJoin, "title", language)}
-            </h2>
-            <p className="mt-4 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-600">
-              {t(whyJoin, "subtitle", language)}
-            </p>
-            <div className="mt-8 rounded-[20px] border border-[#E7EAF0] bg-white p-6">
-              <h3 className="text-lg font-semibold text-[#050A13] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
-                {ct("oneTeam", language)}
-              </h3>
-              <p className="mt-3 text-[0.93rem] leading-7 text-slate-500">
-                {t(whyJoin, "bodyParagraph", language)}
+            {hasText(title) ? (
+              <h2 className="text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-[1.08] tracking-[-0.05em] text-[#050A13] [overflow-wrap:anywhere]">
+                {title}
+              </h2>
+            ) : null}
+            {hasText(subtitle) ? (
+              <p className="mt-4 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-600 [overflow-wrap:anywhere]">
+                {subtitle}
               </p>
-            </div>
+            ) : null}
+            {hasText(bodyParagraph) ? (
+              <div className="mt-8 rounded-[20px] border border-[#E7EAF0] bg-white p-6">
+                <h3 className="text-lg font-semibold text-[#050A13] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
+                  {ct("oneTeam", language)}
+                </h3>
+                <p className="mt-3 text-[0.93rem] leading-7 text-slate-500 [overflow-wrap:anywhere]">
+                  {bodyParagraph}
+                </p>
+              </div>
+            ) : null}
           </motion.div>
 
-          <motion.ul
-            initial={reduced ? false : { opacity: 0, x: 28 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.65, ease, delay: 0.1 }}
-            className="space-y-3"
-          >
-            {reasons.map((reason, i) => {
-              const reasonText =
-                language === "ar"
-                  ? whyJoin.ar?.reasons?.[i] ?? ""
-                  : reason;
-              return (
+          {reasons.length > 0 ? (
+            <motion.ul
+              initial={reduced ? false : { opacity: 0, x: 28 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.65, ease, delay: 0.1 }}
+              className="space-y-3"
+              dir={language === "ar" ? "rtl" : "ltr"}
+            >
+              {reasons.map((reasonText, i) => (
                 <motion.li
-                  key={`${reason}-${i}`}
+                  key={`${reasonText}-${i}`}
                   initial={reduced ? false : { opacity: 0, x: 16 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
@@ -602,11 +701,11 @@ function WhyJoinUs({ whyJoin }) {
                   <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#0088FF]">
                     <Check className="h-3.5 w-3.5 text-white" strokeWidth={3} aria-hidden />
                   </span>
-                  <span className="text-[0.94rem] font-medium text-[#050A13]">{reasonText}</span>
+                  <span className="text-[0.94rem] font-medium text-[#050A13] [overflow-wrap:anywhere]">{reasonText}</span>
                 </motion.li>
-              );
-            })}
-          </motion.ul>
+              ))}
+            </motion.ul>
+          ) : null}
         </div>
       </div>
     </section>
@@ -619,6 +718,23 @@ function CareersCTA({ cta, heroImage, hasOpenPositions }) {
   const primaryHref = cta?.primaryCtaLink || "/contact";
   const secondaryHref = cta?.secondaryCtaLink || "#open-positions";
   const SecondaryTag = secondaryHref.startsWith("#") ? "a" : Link;
+
+  const title = t(cta, "title", language);
+  const subtitle = t(cta, "subtitle", language);
+  const description = t(cta, "description", language);
+  const primaryCtaText = t(cta, "primaryCtaText", language);
+  const secondaryCtaText = t(cta, "secondaryCtaText", language);
+  const showSecondary = hasOpenPositions && hasText(secondaryCtaText);
+
+  if (
+    !hasText(title) &&
+    !hasText(subtitle) &&
+    !hasText(description) &&
+    !hasText(primaryCtaText) &&
+    !showSecondary
+  ) {
+    return null;
+  }
 
   return (
     <section className="bg-white py-4 sm:py-5 lg:py-6">
@@ -644,32 +760,43 @@ function CareersCTA({ cta, heroImage, hasOpenPositions }) {
             viewport={{ once: true }}
             transition={{ duration: 0.65, ease }}
             className="relative z-10 flex flex-col items-center px-6 py-16 text-center sm:px-10 sm:py-20 lg:py-24"
+            dir={language === "ar" ? "rtl" : "ltr"}
           >
-            <h2 className="max-w-[640px] text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-[1.08] tracking-[-0.05em] text-white">
-              {t(cta, "title", language)}
-            </h2>
-            <p className="mt-3 text-[clamp(1.1rem,1.8vw,1.35rem)] font-medium text-white/85">
-              {t(cta, "subtitle", language)}
-            </p>
-            <p className="mt-5 max-w-[620px] text-[0.88rem] leading-6 text-white/70 sm:text-[0.94rem]">
-              {t(cta, "description", language)}
-            </p>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <Link
-                href={primaryHref}
-                className="inline-flex items-center gap-2 rounded-full bg-[#0088FF] px-10 py-3.5 text-sm font-semibold text-white shadow-[0_8px_28px_rgba(0,136,255,0.45)] transition hover:brightness-110"
-              >
-                {t(cta, "primaryCtaText", language)} <ArrowRight className="h-4 w-4" aria-hidden />
-              </Link>
-              {hasOpenPositions ? (
-                <SecondaryTag
-                  href={secondaryHref}
-                  className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-10 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/18"
-                >
-                  {t(cta, "secondaryCtaText", language)}
-                </SecondaryTag>
-              ) : null}
-            </div>
+            {hasText(title) ? (
+              <h2 className="max-w-[640px] text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-[1.08] tracking-[-0.05em] text-white [overflow-wrap:anywhere]">
+                {title}
+              </h2>
+            ) : null}
+            {hasText(subtitle) ? (
+              <p className="mt-3 text-[clamp(1.1rem,1.8vw,1.35rem)] font-medium text-white/85 [overflow-wrap:anywhere]">
+                {subtitle}
+              </p>
+            ) : null}
+            {hasText(description) ? (
+              <p className="mt-5 max-w-[620px] text-[0.88rem] leading-6 text-white/70 [overflow-wrap:anywhere] sm:text-[0.94rem]">
+                {description}
+              </p>
+            ) : null}
+            {hasText(primaryCtaText) || showSecondary ? (
+              <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+                {hasText(primaryCtaText) ? (
+                  <Link
+                    href={primaryHref}
+                    className="inline-flex items-center gap-2 rounded-full bg-[#0088FF] px-10 py-3.5 text-sm font-semibold text-white shadow-[0_8px_28px_rgba(0,136,255,0.45)] transition hover:brightness-110"
+                  >
+                    {primaryCtaText} <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
+                  </Link>
+                ) : null}
+                {showSecondary ? (
+                  <SecondaryTag
+                    href={secondaryHref}
+                    className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-10 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/18"
+                  >
+                    {secondaryCtaText}
+                  </SecondaryTag>
+                ) : null}
+              </div>
+            ) : null}
           </motion.div>
         </div>
       </div>
@@ -693,11 +820,14 @@ export default function CareersPage({ content }) {
       <CareersHero hero={content.hero} />
       <BuildingSmarterMobility building={content.building} />
       <JobOpenings openPositions={content.openPositions} />
-      <OpportunitiesSection opportunities={content.opportunities} />
+      <OpportunitiesSection
+        opportunities={content.opportunities}
+        header={content.opportunitiesHeader}
+      />
       <WhyJoinUs whyJoin={content.whyJoin} />
       <CareersCTA
         cta={content.cta}
-        heroImage={content.hero?.image}
+        heroImage={content.hero?.image || (content.hero?.images ?? [])[0]}
         hasOpenPositions={(content.openPositions?.posts ?? []).filter((p) => p?.status !== "closed").length > 0}
       />
     </main>

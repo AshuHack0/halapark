@@ -3,15 +3,65 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import ReCAPTCHA from "react-google-recaptcha";
-import { Check, X } from "lucide-react";
+import { Check, Loader2, Paperclip, X } from "lucide-react";
 import { RECAPTCHA_SITE_KEY } from "@/config/recaptcha.site";
+import { useLanguage } from "@/context/LanguageContext";
 
 const ease = [0.22, 1, 0.36, 1];
 
 const inputClass =
   "w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#0088FF] focus:bg-white focus:ring-2 focus:ring-[rgba(0,136,255,0.12)] sm:rounded-xl sm:px-4 sm:py-2.5";
 
+// Resume upload — bilingual labels (inline EN/AR, matching the page's label pattern).
+const RESUME_TEXT = {
+  label: { en: "Resume / CV", ar: "السيرة الذاتية" },
+  choose: { en: "Upload your resume", ar: "ارفع سيرتك الذاتية" },
+  hint: { en: "PDF, DOC or DOCX — max 5MB", ar: "PDF أو DOC أو DOCX — بحد أقصى 5 ميجابايت" },
+  uploading: { en: "Uploading", ar: "جارٍ الرفع" },
+  remove: { en: "Remove", ar: "إزالة" },
+  errorType: { en: "Please upload a PDF, DOC, or DOCX file.", ar: "يرجى رفع ملف بصيغة PDF أو DOC أو DOCX." },
+  errorSize: { en: "File is too large (max 5MB).", ar: "حجم الملف كبير جدًا (بحد أقصى 5 ميجابايت)." },
+  errorUpload: { en: "Resume upload failed. Please try again.", ar: "فشل رفع السيرة الذاتية. يرجى المحاولة مرة أخرى." },
+};
+
+const RESUME_MAX_BYTES = 5 * 1024 * 1024;
+const RESUME_EXTENSIONS = [".pdf", ".doc", ".docx"];
+
+// POST the file to Cloudinary with a signed payload; reports upload progress.
+function uploadResumeToCloudinary(file, sig, onProgress) {
+  return new Promise((resolve, reject) => {
+    const fd = new FormData();
+    fd.append("file", file);
+    fd.append("api_key", sig.apiKey);
+    fd.append("timestamp", sig.timestamp);
+    fd.append("signature", sig.signature);
+    fd.append("folder", sig.folder);
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", `https://api.cloudinary.com/v1_1/${sig.cloudName}/auto/upload`);
+    xhr.upload.onprogress = (e) => {
+      if (e.lengthComputable) onProgress(Math.round((e.loaded / e.total) * 100));
+    };
+    xhr.onload = () => {
+      try {
+        const data = JSON.parse(xhr.responseText);
+        if (xhr.status >= 200 && xhr.status < 300 && data.secure_url) {
+          resolve(data.secure_url);
+        } else {
+          reject(new Error("Cloudinary upload failed"));
+        }
+      } catch {
+        reject(new Error("Cloudinary upload failed"));
+      }
+    };
+    xhr.onerror = () => reject(new Error("Cloudinary upload failed"));
+    xhr.send(fd);
+  });
+}
+
 export default function JobApplicationModal({ isOpen, onClose, job }) {
+  const { language } = useLanguage();
+  const rt = (key) => RESUME_TEXT[key]?.[language === "ar" ? "ar" : "en"] ?? "";
   const [form, setForm] = useState({
     fullName: "",
     email: "",
@@ -23,7 +73,10 @@ export default function JobApplicationModal({ isOpen, onClose, job }) {
   const [done, setDone] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState("");
+  // Resume upload state: idle | uploading | done | error
+  const [resume, setResume] = useState({ status: "idle", name: "", url: "", progress: 0, error: "" });
   const recaptchaRef = useRef(null);
+  const resumeInputRef = useRef(null);
 
   useLayoutEffect(() => {
     if (!isOpen) return;
@@ -48,6 +101,7 @@ export default function JobApplicationModal({ isOpen, onClose, job }) {
     setDone(false);
     setFormError("");
     setSubmitting(false);
+    setResume({ status: "idle", name: "", url: "", progress: 0, error: "" });
     recaptchaRef.current?.reset();
     onClose();
   }
@@ -57,9 +111,53 @@ export default function JobApplicationModal({ isOpen, onClose, job }) {
     setForm((prev) => ({ ...prev, [name]: value }));
   }
 
+  function removeResume() {
+    setResume({ status: "idle", name: "", url: "", progress: 0, error: "" });
+    if (resumeInputRef.current) resumeInputRef.current.value = "";
+  }
+
+  async function handleResumeChange(e) {
+    const file = e.target.files?.[0];
+    // Allow re-selecting the same file after a remove/error.
+    e.target.value = "";
+    if (!file) return;
+
+    const lowerName = file.name.toLowerCase();
+    if (!RESUME_EXTENSIONS.some((ext) => lowerName.endsWith(ext))) {
+      setResume({ status: "error", name: "", url: "", progress: 0, error: rt("errorType") });
+      return;
+    }
+    if (file.size > RESUME_MAX_BYTES) {
+      setResume({ status: "error", name: "", url: "", progress: 0, error: rt("errorSize") });
+      return;
+    }
+
+    setResume({ status: "uploading", name: file.name, url: "", progress: 0, error: "" });
+    try {
+      const sigRes = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/job-applications/resume-signature`,
+      );
+      const sig = await sigRes.json().catch(() => ({}));
+      if (!sigRes.ok || !sig?.signature || !sig?.cloudName) {
+        throw new Error("Failed to get upload signature");
+      }
+      const secureUrl = await uploadResumeToCloudinary(file, sig, (progress) => {
+        setResume((prev) =>
+          prev.status === "uploading" ? { ...prev, progress } : prev,
+        );
+      });
+      setResume({ status: "done", name: file.name, url: secureUrl, progress: 100, error: "" });
+    } catch {
+      setResume({ status: "error", name: "", url: "", progress: 0, error: rt("errorUpload") });
+    }
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     setFormError("");
+
+    // Wait for the resume upload to finish before submitting.
+    if (resume.status === "uploading") return;
 
     if (!job?.title) {
       setFormError("Job details are missing. Please refresh and try again.");
@@ -87,6 +185,7 @@ export default function JobApplicationModal({ isOpen, onClose, job }) {
           recaptchaToken,
           jobTitle: job.title,
           department: job.department ?? "",
+          resumeUrl: resume.url || "",
         }),
       });
       const data = await res.json().catch(() => ({}));
@@ -249,6 +348,66 @@ export default function JobApplicationModal({ isOpen, onClose, job }) {
                     />
                   </div>
 
+                  <div dir={language === "ar" ? "rtl" : "ltr"}>
+                    <label className="mb-1 block text-[11px] font-medium text-slate-700 sm:mb-1.5 sm:text-xs">
+                      {rt("label")}
+                    </label>
+                    <input
+                      ref={resumeInputRef}
+                      type="file"
+                      accept=".pdf,.doc,.docx"
+                      onChange={handleResumeChange}
+                      className="hidden"
+                    />
+                    {resume.status === "uploading" ? (
+                      <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 sm:rounded-xl sm:px-4">
+                        <div className="flex items-center gap-2 text-xs text-slate-600">
+                          <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin text-[#0088FF]" aria-hidden />
+                          <span className="truncate [overflow-wrap:anywhere]">
+                            {rt("uploading")} — {resume.name} ({resume.progress}%)
+                          </span>
+                        </div>
+                        <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-slate-200">
+                          <div
+                            className="h-full rounded-full bg-[#0088FF] transition-[width] duration-200"
+                            style={{ width: `${resume.progress}%` }}
+                          />
+                        </div>
+                      </div>
+                    ) : resume.status === "done" ? (
+                      <div className="flex items-center justify-between gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 sm:rounded-xl sm:px-4">
+                        <span className="flex min-w-0 items-center gap-2 text-xs text-slate-700">
+                          <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[rgba(0,136,255,0.12)]">
+                            <Check className="h-3 w-3 text-[#0088FF]" strokeWidth={3} aria-hidden />
+                          </span>
+                          <span className="truncate [overflow-wrap:anywhere]">{resume.name}</span>
+                        </span>
+                        <button
+                          type="button"
+                          onClick={removeResume}
+                          className="shrink-0 text-xs font-medium text-slate-400 transition hover:text-red-500"
+                        >
+                          {rt("remove")}
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => resumeInputRef.current?.click()}
+                        className="flex w-full items-center gap-2 rounded-lg border border-dashed border-slate-300 bg-slate-50 px-3 py-2.5 text-xs text-slate-500 transition hover:border-[#0088FF]/60 hover:text-[#0088FF] sm:rounded-xl sm:px-4"
+                      >
+                        <Paperclip className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                        <span>{rt("choose")}</span>
+                        <span className="ms-auto text-[10px] text-slate-400">{rt("hint")}</span>
+                      </button>
+                    )}
+                    {resume.status === "error" && resume.error ? (
+                      <p className="mt-1.5 text-xs text-red-600" role="alert">
+                        {resume.error}
+                      </p>
+                    ) : null}
+                  </div>
+
                   <div>
                     <label className="mb-1 block text-[11px] font-medium text-slate-700 sm:mb-1.5 sm:text-xs">
                       Cover message
@@ -285,7 +444,7 @@ export default function JobApplicationModal({ isOpen, onClose, job }) {
 
                   <button
                     type="submit"
-                    disabled={submitting}
+                    disabled={submitting || resume.status === "uploading"}
                     className="w-full rounded-full bg-[#0088FF] py-3 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(0,136,255,0.22)] transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-60 sm:py-3.5"
                   >
                     {submitting ? "Submitting…" : "Submit Application"}

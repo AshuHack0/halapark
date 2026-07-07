@@ -61,6 +61,7 @@ export async function POST(request) {
         location: body.location,
         message: body.message,
         linkedIn: body.linkedIn,
+        resumeUrl: body.resumeUrl,
         source: "careers",
       }),
     });
