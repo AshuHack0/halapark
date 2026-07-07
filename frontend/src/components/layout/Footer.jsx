@@ -9,84 +9,63 @@ import {
   SiTiktok,
 } from "react-icons/si";
 import { SlSocialLinkedin } from "react-icons/sl";
-import { useLanguage } from "@/context/LanguageContext";
+import { t, useLanguage } from "@/context/LanguageContext";
 import { fetchPage } from "@/lib/cms";
 
-// Fixed footer chrome (nav + legal). Inline EN/AR — same approach as the navbar.
-const FOOTER_TEXT = {
-  tagline: {
-    en: "Smart parking solutions across the UAE, making parking simple and efficient.",
-    ar: "حلول ركن ذكية في جميع أنحاء الإمارات، تجعل ركن السيارات بسيطًا وفعّالًا.",
-  },
-  quickLinksHeading: { en: "Quick Links", ar: "روابط سريعة" },
-  getTheApp: { en: "Get The App", ar: "حمّل التطبيق" },
-  scanQr: {
-    en: "Scan the QR code to download the HalaPark app.",
-    ar: "امسح رمز الاستجابة السريعة لتحميل تطبيق هالا بارك.",
-  },
-  getItOn: { en: "Get it on", ar: "متوفر على" },
-  rights: { en: "All rights reserved.", ar: "جميع الحقوق محفوظة." },
-  dataSafe: { en: "Your data is safe with us.", ar: "بياناتك بأمان معنا." },
-  uaeProud: { en: "UAE made, UAE proud.", ar: "صُنع في الإمارات، فخر الإمارات." },
+// Social key → icon component. Which socials render (and their hrefs) comes
+// from the CMS; unrecognized keys are skipped.
+const SOCIAL_ICONS = {
+  linkedin: SlSocialLinkedin,
+  instagram: SiInstagram,
+  facebook: SiFacebook,
+  tiktok: SiTiktok,
+  snapchat: SiSnapchat,
 };
 
 export default function Footer() {
   const { language } = useLanguage();
   // Site logo from global Settings (falls back to the bundled asset).
   const [logo, setLogo] = useState({ image: "/logo-blue-11.svg", alt: "HalaPark" });
+  // Footer content is fully CMS-driven (settings → sections.footer) — no
+  // hardcoded fallbacks; anything missing in the DB simply doesn't render.
+  const [footer, setFooter] = useState(null);
   useEffect(() => {
     fetchPage("settings").then((page) => {
       const l = page?.sections?.logo;
       if (l?.image) setLogo({ image: l.image, alt: l.alt || "HalaPark" });
+      if (page?.sections?.footer) setFooter(page.sections.footer);
     });
   }, []);
-  const tr = (key) => FOOTER_TEXT[key]?.[language] ?? FOOTER_TEXT[key]?.en ?? "";
 
-  const appDownloadUrl = "https://halapark.com/app";
-  const qrCodeSrc = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(
-    appDownloadUrl,
-  )}`;
+  const f = footer ?? {};
+  // Strict Arabic: AR mode shows ar.<field> or blank; EN shows the EN field.
+  const tr = (key) => t(f, key, language);
 
-  const quickLinks = [
-    { name: { en: "Home", ar: "الرئيسية" }, href: "/" },
-    { name: { en: "App", ar: "التطبيق" }, href: "/app" },
-    { name: { en: "Services", ar: "الخدمات" }, href: "/solutions" },
-    { name: { en: "Solutions", ar: "الحلول" }, href: "/solutions" },
-    { name: { en: "Business", ar: "الأعمال" }, href: "/business" },
-    { name: { en: "Terms & Conditions", ar: "الشروط والأحكام" }, href: "/terms-and-conditions" },
-    { name: { en: "Privacy Policy", ar: "سياسة الخصوصية" }, href: "/privacy-policy" },
-    { name: { en: "Refund Policy", ar: "سياسة الاسترداد" }, href: "/refund-policy" },
-    { name: { en: "About Us", ar: "من نحن" }, href: "/about" },
-    { name: { en: "FAQ", ar: "الأسئلة الشائعة" }, href: "/faqs" },
-  ];
+  const tagline = tr("tagline");
+  const email = f.email ?? "";
+  const phone = f.phone ?? "";
+  const socials = (Array.isArray(f.socials) ? f.socials : []).filter(
+    (s) => s?.href && SOCIAL_ICONS[s?.key],
+  );
+  const quickLinksHeading = tr("quickLinksHeading");
+  const quickLinks = (Array.isArray(f.quickLinks) ? f.quickLinks : [])
+    .map((link) => ({
+      href: link?.href ?? "",
+      label: language === "ar" ? link?.ar?.label ?? "" : link?.label ?? "",
+    }))
+    .filter((link) => link.label && link.href);
+  const appHeading = tr("appHeading");
+  const appText = tr("appText");
+  const appDownloadUrl = f.appDownloadUrl ?? "";
+  const rights = tr("rights");
+  const dataSafe = tr("dataSafe");
+  const uaeProud = tr("uaeProud");
 
-  const socialLinks = [
-    {
-      name: "LinkedIn",
-      href: "https://www.linkedin.com/company/109206771/admin/dashboard/",
-      icon: SlSocialLinkedin,
-    },
-    {
-      name: "Instagram",
-      href: "https://www.instagram.com/halapark.ai/",
-      icon: SiInstagram,
-    },
-    {
-      name: "Facebook",
-      href: "https://www.facebook.com/profile.php?id=61571036017442",
-      icon: SiFacebook,
-    },
-    {
-      name: "TikTok",
-      href: "https://www.tiktok.com/@halapark.ai",
-      icon: SiTiktok,
-    },
-    {
-      name: "Snapchat",
-      href: "https://www.snapchat.com/@halapark.ai",
-      icon: SiSnapchat,
-    },
-  ];
+  const qrCodeSrc = appDownloadUrl
+    ? `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(
+        appDownloadUrl,
+      )}`
+    : "";
 
   return (
     <footer className="relative w-full overflow-hidden border-t border-[#E4EAF2] bg-[linear-gradient(180deg,#FFFFFF_0%,#FBFDFF_52%,#F6FAFF_100%)] font-sans text-[#050A13]">
@@ -133,138 +112,166 @@ export default function Footer() {
                   className="h-10 w-auto"
                 />
               </Link>
-              <p className="mt-2 max-w-[17rem] text-sm leading-5 text-[#667085] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
-                {tr("tagline")}
-              </p>
+              {tagline ? (
+                <p className="mt-2 max-w-[17rem] text-sm leading-5 text-[#667085] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
+                  {tagline}
+                </p>
+              ) : null}
             </div>
 
-            <div className="mt-4">
-              <ul className="space-y-2 text-sm leading-5 text-[#667085]">
-                <li>
-                  <a
-                    href="mailto:info@halapark.com"
-                    className="transition hover:text-[#0088FF]"
-                  >
-                    support@halapark.com
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="tel:+97143782022"
-                    className="transition hover:text-[#0088FF]"
-                  >
-                    +971 4 378 2022
-                  </a>
-                </li>
+            {email || phone ? (
+              <div className="mt-4">
+                <ul className="space-y-2 text-sm leading-5 text-[#667085]">
+                  {email ? (
+                    <li>
+                      <a
+                        href={`mailto:${email}`}
+                        className="transition hover:text-[#0088FF]"
+                      >
+                        {email}
+                      </a>
+                    </li>
+                  ) : null}
+                  {phone ? (
+                    <li>
+                      <a
+                        href={`tel:${phone.replace(/\s+/g, "")}`}
+                        className="transition hover:text-[#0088FF]"
+                      >
+                        {phone}
+                      </a>
+                    </li>
+                  ) : null}
+                </ul>
+              </div>
+            ) : null}
+
+            {socials.length > 0 ? (
+              <div className="mt-4 flex flex-wrap items-center gap-2.5">
+                {socials.map((social) => {
+                  const Icon = SOCIAL_ICONS[social.key];
+                  return (
+                    <Link
+                      key={social.key + social.href}
+                      href={social.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={social.key}
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-[#D8E6F7] bg-[#F2F8FF] text-[#0088FF] shadow-[0_8px_20px_rgba(15,23,42,0.04)] transition hover:border-[#0088FF] hover:bg-[#0088FF] hover:text-white hover:shadow-[0_10px_24px_rgba(0,136,255,0.18)]"
+                    >
+                      <Icon className="h-4 w-4" aria-hidden="true" />
+                    </Link>
+                  );
+                })}
+              </div>
+            ) : null}
+          </div>
+
+          {quickLinks.length > 0 ? (
+            <div className="w-full md:justify-self-start">
+              {quickLinksHeading ? (
+                <h4 className="text-sm font-semibold uppercase tracking-[0.1em] text-[#050A13]" dir={language === "ar" ? "rtl" : "ltr"}>
+                  {quickLinksHeading}
+                </h4>
+              ) : null}
+              <ul className="mt-3 grid grid-cols-2 gap-x-7 gap-y-2.5 text-left md:gap-x-10" dir={language === "ar" ? "rtl" : "ltr"}>
+                {quickLinks.map((link) => (
+                  <li key={link.href + link.label}>
+                    <Link
+                      href={link.href}
+                      className="text-sm text-[#667085] transition hover:text-[#0088FF] [overflow-wrap:anywhere]"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </div>
+          ) : null}
 
-            <div className="mt-4 flex flex-wrap items-center gap-2.5">
-              {socialLinks.map((social) => {
-                const Icon = social.icon;
-                return (
+          {appHeading || appText || appDownloadUrl ? (
+            <div className="w-full md:max-w-[22.5rem] md:justify-self-end md:text-right">
+              {appHeading ? (
+                <h4 className="text-sm font-semibold uppercase tracking-[0.1em] text-[#050A13] md:text-right" dir={language === "ar" ? "rtl" : "ltr"}>
+                  {appHeading}
+                </h4>
+              ) : null}
+              {appText ? (
+                <p className="mt-3 max-w-sm text-sm leading-6 text-[#667085] md:ml-auto md:text-right [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
+                  {appText}
+                </p>
+              ) : null}
+              {appDownloadUrl ? (
+                <div className="mt-4 flex flex-col gap-4 min-[420px]:flex-row min-[420px]:items-start md:justify-end">
                   <Link
-                    key={social.name}
-                    href={social.href}
+                    href={appDownloadUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    aria-label={social.name}
-                    className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-[#D8E6F7] bg-[#F2F8FF] text-[#0088FF] shadow-[0_8px_20px_rgba(15,23,42,0.04)] transition hover:border-[#0088FF] hover:bg-[#0088FF] hover:text-white hover:shadow-[0_10px_24px_rgba(0,136,255,0.18)]"
+                    className="shrink-0"
                   >
-                    <Icon className="h-4 w-4" aria-hidden="true" />
+                    <img
+                      src={qrCodeSrc}
+                      alt="QR code for HalaPark app download"
+                      className="h-36 w-36 rounded-xl border border-[#D7E5F6] bg-white p-2.5 shadow-[0_10px_24px_rgba(15,23,42,0.05)]"
+                    />
                   </Link>
-                );
-              })}
+                  <div className="flex w-[6.75rem] flex-col items-start gap-2 md:items-end">
+                    <img
+                      src="/google-play.svg"
+                      alt="Get it on Google Play"
+                      className="h-9 w-[6.75rem] object-contain"
+                    />
+                    <img
+                      src="/app-store.svg"
+                      alt="Download on the App Store"
+                      className="h-9 w-[6.75rem] object-contain"
+                    />
+                    <Link
+                      href={appDownloadUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex h-9 w-[6.75rem] items-center gap-1.5 rounded-2xl border-2 border-black bg-black px-2.5"
+                      aria-label="Download on Huawei AppGallery"
+                    >
+                      <img
+                        src="/channels4_profile.jpg"
+                        alt="Huawei AppGallery"
+                        className="h-4 w-4 rounded-sm object-cover"
+                      />
+                      <span className="flex flex-col leading-none text-white">
+                        <span className="text-[7px] font-medium opacity-90">
+                          {language === "ar" ? "متوفر على" : "Get it on"}
+                        </span>
+                        <span className="mt-0.5 text-[13px] font-semibold">
+                          Huawei
+                        </span>
+                      </span>
+                    </Link>
+                  </div>
+                </div>
+              ) : null}
             </div>
-          </div>
-
-          <div className="w-full md:justify-self-start">
-            <h4 className="text-sm font-semibold uppercase tracking-[0.1em] text-[#050A13]" dir={language === "ar" ? "rtl" : "ltr"}>
-              {tr("quickLinksHeading")}
-            </h4>
-            <ul className="mt-3 grid grid-cols-2 gap-x-7 gap-y-2.5 text-left md:gap-x-10" dir={language === "ar" ? "rtl" : "ltr"}>
-              {quickLinks.map((link) => (
-                <li key={link.href + link.name.en}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-[#667085] transition hover:text-[#0088FF] [overflow-wrap:anywhere]"
-                  >
-                    {link.name[language] ?? link.name.en}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="w-full md:max-w-[22.5rem] md:justify-self-end md:text-right">
-            <h4 className="text-sm font-semibold uppercase tracking-[0.1em] text-[#050A13] md:text-right" dir={language === "ar" ? "rtl" : "ltr"}>
-              {tr("getTheApp")}
-            </h4>
-            <p className="mt-3 max-w-sm text-sm leading-6 text-[#667085] md:ml-auto md:text-right [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
-              {tr("scanQr")}
-            </p>
-            <div className="mt-4 flex flex-col gap-4 min-[420px]:flex-row min-[420px]:items-start md:justify-end">
-              <Link
-                href={appDownloadUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="shrink-0"
-              >
-                <img
-                  src={qrCodeSrc}
-                  alt="QR code for HalaPark app download"
-                  className="h-36 w-36 rounded-xl border border-[#D7E5F6] bg-white p-2.5 shadow-[0_10px_24px_rgba(15,23,42,0.05)]"
-                />
-              </Link>
-              <div className="flex w-[6.75rem] flex-col items-start gap-2 md:items-end">
-                <img
-                  src="/google-play.svg"
-                  alt="Get it on Google Play"
-                  className="h-9 w-[6.75rem] object-contain"
-                />
-                <img
-                  src="/app-store.svg"
-                  alt="Download on the App Store"
-                  className="h-9 w-[6.75rem] object-contain"
-                />
-                <Link
-                  href={appDownloadUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex h-9 w-[6.75rem] items-center gap-1.5 rounded-2xl border-2 border-black bg-black px-2.5"
-                  aria-label="Download on Huawei AppGallery"
-                >
-                  <img
-                    src="/channels4_profile.jpg"
-                    alt="Huawei AppGallery"
-                    className="h-4 w-4 rounded-sm object-cover"
-                  />
-                  <span className="flex flex-col leading-none text-white">
-                    <span className="text-[7px] font-medium opacity-90">
-                      {tr("getItOn")}
-                    </span>
-                    <span className="mt-0.5 text-[13px] font-semibold">
-                      Huawei 
-                    </span>
-                  </span>
-                </Link>
-              </div>
-            </div>
-          </div>
+          ) : null}
         </div>
 
         <div className="mt-6 flex flex-col gap-3 pt-4 text-sm font-medium text-[#667085] sm:text-base md:flex-row md:items-center md:justify-between">
-          <p className="text-left" dir={language === "ar" ? "rtl" : "ltr"}>© {new Date().getFullYear()} HalaPark. {tr("rights")}</p>
-          <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-left text-[#050A13] md:justify-end md:text-right" dir={language === "ar" ? "rtl" : "ltr"}>
-            <span className="inline-flex items-center gap-1.5">
-              <ShieldCheck className="h-4 w-4 text-[#0088FF]" aria-hidden="true" />
-              {tr("dataSafe")}
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <span className="text-base leading-none" aria-hidden="true">🇦🇪</span>
-              {tr("uaeProud")}
-            </span>
-          </p>
+          <p className="text-left" dir={language === "ar" ? "rtl" : "ltr"}>© {new Date().getFullYear()} HalaPark.{rights ? ` ${rights}` : ""}</p>
+          {dataSafe || uaeProud ? (
+            <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-left text-[#050A13] md:justify-end md:text-right" dir={language === "ar" ? "rtl" : "ltr"}>
+              {dataSafe ? (
+                <span className="inline-flex items-center gap-1.5">
+                  <ShieldCheck className="h-4 w-4 text-[#0088FF]" aria-hidden="true" />
+                  {dataSafe}
+                </span>
+              ) : null}
+              {uaeProud ? (
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="text-base leading-none" aria-hidden="true">🇦🇪</span>
+                  {uaeProud}
+                </span>
+              ) : null}
+            </p>
+          ) : null}
         </div>
       </div>
     </footer>
