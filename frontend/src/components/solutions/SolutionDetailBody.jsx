@@ -34,8 +34,10 @@ export default function SolutionDetailBody({ detail, heroImage, relatedList = []
   // paragraphs. In AR, prefer the parallel ar.<field> (string or array).
   const paras = (key) => {
     const src = isAr ? detail.ar?.[key] : detail[key];
-    if (Array.isArray(src)) return src.filter(Boolean);
-    if (typeof src === "string" && src.trim()) return src.split(/\n{2,}|\n/).filter(Boolean);
+    if (Array.isArray(src)) return src.filter((p) => typeof p === "string" && p.trim());
+    // Split on blank lines into paragraphs; keep single newlines INSIDE a
+    // paragraph so `whitespace-pre-line` preserves admin line breaks/spacing.
+    if (typeof src === "string" && src.trim()) return src.split(/\n{2,}/).filter((p) => p.trim());
     return [];
   };
 
@@ -62,9 +64,11 @@ export default function SolutionDetailBody({ detail, heroImage, relatedList = []
 
   const problemHeading = tx("problemHeading") || (isAr ? "" : "Problem We Face");
   const problemBody = paras("problemBody");
+  const problemImage = detail.problemImage || "";
 
   const solutionHeading = tx("solutionHeading") || (isAr ? "" : "Our Solution");
   const solutionBody = paras("solutionBody");
+  const solutionImage = detail.solutionImage || "";
 
   const benefitsHeading = tx("benefitsHeading") || (isAr ? "" : "Key Benefits");
   const keyBenefits = objList("keyBenefits");
@@ -116,7 +120,7 @@ export default function SolutionDetailBody({ detail, heroImage, relatedList = []
                 {banner.title}
               </h1>
               {banner.shortDescription ? (
-                <p className="mt-6 max-w-[560px] text-[1.05rem] leading-[1.85] text-slate-600 sm:text-[1.12rem] [overflow-wrap:anywhere]">
+                <p className="mt-6 max-w-[560px] whitespace-pre-line text-[1.05rem] leading-[1.85] text-slate-600 sm:text-[1.12rem] [overflow-wrap:anywhere]">
                   {banner.shortDescription}
                 </p>
               ) : null}
@@ -160,7 +164,7 @@ export default function SolutionDetailBody({ detail, heroImage, relatedList = []
                 ) : null}
                 <div className="mt-5 space-y-4">
                   {whyBody.map((p, i) => (
-                    <p key={i} className="text-[0.98rem] leading-[1.9] text-slate-600 [overflow-wrap:anywhere]">
+                    <p key={i} className="whitespace-pre-line text-[0.98rem] leading-[1.9] text-slate-600 [overflow-wrap:anywhere]">
                       {p}
                     </p>
                   ))}
@@ -183,11 +187,11 @@ export default function SolutionDetailBody({ detail, heroImage, relatedList = []
       ) : null}
 
       {/* ── 3. Problem We Face + 4. Our Solution ──────────────────────── */}
-      {problemBody.length > 0 || solutionBody.length > 0 ? (
+      {problemBody.length > 0 || solutionBody.length > 0 || problemImage || solutionImage ? (
         <section className="bg-[#F4F8FF] py-14 sm:py-16 lg:py-20">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
-              {problemBody.length > 0 ? (
+              {problemBody.length > 0 || problemImage ? (
                 <div className="rounded-[24px] border border-[rgba(239,68,68,0.18)] bg-white p-7 shadow-[0_4px_24px_rgba(6,6,22,0.05)] sm:p-9">
                   <div className="flex items-center gap-3">
                     <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#FEF2F2] text-[#EF4444]">
@@ -199,13 +203,24 @@ export default function SolutionDetailBody({ detail, heroImage, relatedList = []
                   </div>
                   <div className="mt-5 space-y-4">
                     {problemBody.map((p, i) => (
-                      <p key={i} className="text-[0.95rem] leading-8 text-slate-600 [overflow-wrap:anywhere]">{p}</p>
+                      <p key={i} className="whitespace-pre-line text-[0.95rem] leading-8 text-slate-600 [overflow-wrap:anywhere]">{p}</p>
                     ))}
                   </div>
+                  {problemImage ? (
+                    <div className="relative mt-6 aspect-[4/3] w-full overflow-hidden rounded-[18px] border border-[rgba(239,68,68,0.14)] bg-white shadow-[0_18px_48px_rgba(15,23,42,0.08)]">
+                      <Image
+                        src={problemImage}
+                        alt={problemHeading || banner.title}
+                        fill
+                        className="object-cover object-center"
+                        sizes="(min-width: 1024px) 540px, 90vw"
+                      />
+                    </div>
+                  ) : null}
                 </div>
               ) : null}
 
-              {solutionBody.length > 0 ? (
+              {solutionBody.length > 0 || solutionImage ? (
                 <div className="rounded-[24px] border border-[rgba(0,136,255,0.18)] bg-white p-7 shadow-[0_4px_24px_rgba(6,6,22,0.05)] sm:p-9">
                   <div className="flex items-center gap-3">
                     <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#EFF6FF] text-[#0088FF]">
@@ -217,9 +232,20 @@ export default function SolutionDetailBody({ detail, heroImage, relatedList = []
                   </div>
                   <div className="mt-5 space-y-4">
                     {solutionBody.map((p, i) => (
-                      <p key={i} className="text-[0.95rem] leading-8 text-slate-600 [overflow-wrap:anywhere]">{p}</p>
+                      <p key={i} className="whitespace-pre-line text-[0.95rem] leading-8 text-slate-600 [overflow-wrap:anywhere]">{p}</p>
                     ))}
                   </div>
+                  {solutionImage ? (
+                    <div className="relative mt-6 aspect-[4/3] w-full overflow-hidden rounded-[18px] border border-[rgba(0,136,255,0.14)] bg-white shadow-[0_18px_48px_rgba(15,23,42,0.08)]">
+                      <Image
+                        src={solutionImage}
+                        alt={solutionHeading || banner.title}
+                        fill
+                        className="object-cover object-center"
+                        sizes="(min-width: 1024px) 540px, 90vw"
+                      />
+                    </div>
+                  ) : null}
                 </div>
               ) : null}
             </div>
@@ -291,7 +317,7 @@ export default function SolutionDetailBody({ detail, heroImage, relatedList = []
             ) : (
               <div className="mx-auto max-w-3xl space-y-4">
                 {howBody.map((p, i) => (
-                  <p key={i} className="text-[0.98rem] leading-8 text-white/70 [overflow-wrap:anywhere]">{p}</p>
+                  <p key={i} className="whitespace-pre-line text-[0.98rem] leading-8 text-white/70 [overflow-wrap:anywhere]">{p}</p>
                 ))}
               </div>
             )}

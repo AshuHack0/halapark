@@ -13,6 +13,7 @@ import {
   CreditCard,
   Zap,
   Shield,
+  ShieldCheck,
   Car,
   Cctv,
   MapPin,
@@ -20,6 +21,8 @@ import {
   Lock,
   TrendingUp,
   CalendarCheck,
+  ParkingCircle,
+  Cpu,
 } from "lucide-react";
 
 const ease = [0.22, 1, 0.36, 1];
@@ -469,19 +472,41 @@ function GlobalExpansionSection() {
 
 // ─── Our Solutions ─────────────────────────────────────────────────────────────
 
-// Build the link for a solution card. Uses an explicit `slug` when present
-// (CMS or defaults), otherwise slugifies the title. Falls back to /contact.
+// A card links to its detail page ONLY when it has a real detail page — i.e. a
+// non-blank slug (the admin backfills the slug when a detail is created, so a
+// card with no detail page has no slug). No /contact fallback.
 function solutionCardHref(card) {
-  const slug =
-    card?.slug ||
-    (card?.title
-      ? card.title.toLowerCase().replace(/&/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "")
-      : "");
-  return slug ? `/solutions/${slug}` : "/contact";
+  const slug = typeof card?.slug === "string" ? card.slug.trim() : "";
+  return slug ? `/solutions/${slug}` : null;
 }
 
 function SolutionCard({ card, i, reduced }) {
   const { language } = useLanguage();
+  const href = solutionCardHref(card);
+  const clickable = Boolean(href);
+
+  // Inner card content is identical whether or not it's clickable; only the
+  // "Learn more" arrow affordance is dropped when there's no detail page.
+  const inner = (
+    <>
+      <div className="relative h-48 w-full overflow-hidden bg-slate-100">
+        <Image src={card.image} alt={card.title} fill className="object-cover transition duration-500 group-hover:scale-105" sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#050A13]/40 to-transparent" />
+      </div>
+      <div className="flex items-start justify-between gap-4 p-5">
+        <div className="flex-1">
+          <h3 className="text-[1rem] font-semibold leading-tight tracking-[-0.02em] text-[#050A13] sm:text-[1.05rem]">{t(card, "title", language)}</h3>
+          <p className="mt-2 line-clamp-3 text-[0.82rem] leading-6 text-slate-500 sm:text-[0.88rem]">{t(card, "description", language)}</p>
+        </div>
+        {clickable ? (
+          <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EEF6FF] text-[#0088FF] transition group-hover:bg-[#0088FF] group-hover:text-white">
+            <ArrowRight className="h-4 w-4" aria-hidden />
+          </span>
+        ) : null}
+      </div>
+    </>
+  );
+
   return (
     <motion.article
       initial={reduced ? false : { opacity: 0, y: 20 }}
@@ -490,21 +515,13 @@ function SolutionCard({ card, i, reduced }) {
       transition={{ duration: 0.5, ease, delay: (i % 4) * 0.06 }}
       className="group overflow-hidden rounded-[22px] bg-white shadow-[0_4px_24px_rgba(6,6,22,0.06)] transition hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(0,136,255,0.12)]"
     >
-      <Link href={solutionCardHref(card)} className="block" aria-label={`Learn more about ${card.title}`}>
-        <div className="relative h-48 w-full overflow-hidden bg-slate-100">
-          <Image src={card.image} alt={card.title} fill className="object-cover transition duration-500 group-hover:scale-105" sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#050A13]/40 to-transparent" />
-        </div>
-        <div className="flex items-start justify-between gap-4 p-5">
-          <div className="flex-1">
-            <h3 className="text-[1rem] font-semibold leading-tight tracking-[-0.02em] text-[#050A13] sm:text-[1.05rem]">{t(card, "title", language)}</h3>
-            <p className="mt-2 line-clamp-3 text-[0.82rem] leading-6 text-slate-500 sm:text-[0.88rem]">{t(card, "description", language)}</p>
-          </div>
-          <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EEF6FF] text-[#0088FF] transition group-hover:bg-[#0088FF] group-hover:text-white">
-            <ArrowRight className="h-4 w-4" aria-hidden />
-          </span>
-        </div>
-      </Link>
+      {clickable ? (
+        <Link href={href} className="block" aria-label={`Learn more about ${card.title}`}>
+          {inner}
+        </Link>
+      ) : (
+        <div className="block cursor-default">{inner}</div>
+      )}
     </motion.article>
   );
 }
@@ -614,24 +631,70 @@ function StatsSection() {
 
 // ─── Solution Integration ──────────────────────────────────────────────────────
 
-function IntegrationCard({ card, i, reduced }) {
+function IntegrationCard({ card, i, reduced, accent }) {
   const { language } = useLanguage();
+  const [open, setOpen] = useState(false);
+  const title = t(card, "title", language);
+  const description = t(card, "description", language);
+  const points = Array.isArray(card.points)
+    ? card.points
+        .map((p) => (typeof p === "string" ? p : t(p, "label", language)))
+        .filter((p) => typeof p === "string" && p.trim() !== "")
+    : [];
+  const hasDetails = Boolean(description) || points.length > 0;
+
   return (
     <motion.article
+      dir={language === "ar" ? "rtl" : "ltr"}
       initial={reduced ? false : { opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.1 }}
       transition={{ duration: 0.5, ease, delay: i * 0.06 }}
-      className="group relative h-[220px] overflow-hidden rounded-[18px] bg-slate-800 sm:h-[260px]"
+      className="group relative flex min-h-[220px] flex-col overflow-hidden rounded-[18px] bg-slate-800 sm:min-h-[260px]"
     >
-      <Image src={card.image} alt={card.title} fill className="object-cover transition duration-700 group-hover:scale-105" sizes="(min-width: 640px) 25vw, 50vw" />
-      <div className={`absolute inset-0 bg-gradient-to-b ${card.gradient}`} />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
-      <div className="absolute inset-0 flex flex-col justify-between p-4 sm:p-5">
-        <h3 className="text-[0.9rem] font-semibold leading-tight tracking-[-0.02em] text-white sm:text-[1rem]">{t(card, "title", language)}</h3>
-        <div className="translate-y-4 opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
-          <p className="text-[0.75rem] leading-relaxed text-white/85">{t(card, "description", language)}</p>
-        </div>
+      <button
+        type="button"
+        onClick={() => hasDetails && setOpen((v) => !v)}
+        aria-expanded={open}
+        className="absolute inset-0 z-30 h-full w-full cursor-pointer"
+        aria-label={title}
+      />
+      {card.image ? (
+        <Image src={card.image} alt={title || ""} fill className="object-cover transition duration-700 group-hover:scale-105" sizes="(min-width: 640px) 25vw, 50vw" />
+      ) : null}
+      <div className={`absolute inset-0 bg-gradient-to-b ${card.gradient || ""}`} />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
+      <div className="pointer-events-none relative z-20 flex flex-1 flex-col justify-end gap-2 p-4 sm:p-5">
+        {title ? (
+          <h3 className="text-[0.9rem] font-semibold leading-tight tracking-[-0.02em] text-white [overflow-wrap:anywhere] sm:text-[1rem]">
+            {title}
+          </h3>
+        ) : null}
+        {hasDetails ? (
+          <div
+            className={`grid transition-all duration-500 ${
+              open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0 group-hover:grid-rows-[1fr] group-hover:opacity-100"
+            }`}
+          >
+            <div className="min-h-0 overflow-hidden">
+              {description ? (
+                <p className="whitespace-pre-line text-[0.75rem] leading-relaxed text-white/85 [overflow-wrap:anywhere]">
+                  {description}
+                </p>
+              ) : null}
+              {points.length > 0 ? (
+                <ul className="mt-2 space-y-1.5">
+                  {points.map((point, pi) => (
+                    <li key={pi} className="flex items-start gap-2 text-[0.72rem] leading-snug text-white/85 [overflow-wrap:anywhere]">
+                      <Check className="mt-0.5 h-3 w-3 shrink-0" style={{ color: accent }} strokeWidth={3} aria-hidden />
+                      <span className="whitespace-pre-line">{point}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </div>
+          </div>
+        ) : null}
       </div>
     </motion.article>
   );
@@ -639,42 +702,64 @@ function IntegrationCard({ card, i, reduced }) {
 
 function SectorSolutionsSection() {
   const reduced = useReducedMotion();
-  const [integrationCards, setIntegrationCards] = useState([]);
+  const { language } = useLanguage();
+  const [content, setContent] = useState({});
+  const [resolved, setResolved] = useState(false);
 
   useEffect(() => {
     fetchPage("solutions").then((data) => {
-      if (data?.sections?.integration?.cards && Array.isArray(data.sections.integration.cards)) {
-        setIntegrationCards(data.sections.integration.cards);
-      }
+      const c = data?.sections?.integration;
+      if (c && typeof c === "object") setContent(c);
+      setResolved(true);
     });
   }, []);
+
+  const heading = t(content, "heading", language) || "";
+  const gradient = t(content, "headingGradient", language)?.trim() || "";
+  const subtitle = t(content, "subtitle", language) || "";
+  const accent = (typeof content.color === "string" && content.color.trim()) || "#0088FF";
+  const cards = Array.isArray(content.cards)
+    ? content.cards.filter((c) => c && (t(c, "title", language) || t(c, "description", language)))
+    : [];
+
+  // Hide the whole section when there's nothing to show.
+  if (resolved && !heading && !gradient && !subtitle && cards.length === 0) {
+    return null;
+  }
 
   return (
     <section className="bg-white py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto mb-14 max-w-3xl text-center">
-          <h2 className="text-[clamp(3rem,5.5vw,5rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
-            Solution{" "}
-            <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">Integration</span>
-          </h2>
-          <p className="mt-4 text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-[#050A13]">
-            End-to-End Integrated Parking Solution
-          </p>
-        </div>
+        {heading || gradient || subtitle ? (
+          <div dir={language === "ar" ? "rtl" : "ltr"} className="mx-auto mb-14 max-w-3xl text-center">
+            {heading || gradient ? (
+              <h2 className="text-[clamp(3rem,5.5vw,5rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]">
+                {heading}
+                {gradient ? (
+                  <>
+                    {heading ? " " : null}
+                    <span className="bg-clip-text text-transparent" style={{ backgroundImage: `linear-gradient(to right, ${accent}, ${accent})` }}>
+                      {gradient}
+                    </span>
+                  </>
+                ) : null}
+              </h2>
+            ) : null}
+            {subtitle ? (
+              <p className="mt-4 whitespace-pre-line text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-[#050A13] [overflow-wrap:anywhere]">
+                {subtitle}
+              </p>
+            ) : null}
+          </div>
+        ) : null}
 
-        {/* Row 1: 3 cards */}
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-          {integrationCards.slice(0, 3).map((card, i) => (
-            <IntegrationCard key={card.title} card={card} i={i} reduced={reduced} />
-          ))}
-        </div>
-
-        {/* Row 2: 3 cards */}
-        <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3">
-          {integrationCards.slice(3, 6).map((card, i) => (
-            <IntegrationCard key={card.title} card={card} i={i + 3} reduced={reduced} />
-          ))}
-        </div>
+        {cards.length > 0 ? (
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+            {cards.map((card, i) => (
+              <IntegrationCard key={i} card={card} i={i} reduced={reduced} accent={accent} />
+            ))}
+          </div>
+        ) : null}
       </div>
     </section>
   );
@@ -682,50 +767,63 @@ function SectorSolutionsSection() {
 
 // ─── Smart Cities + Seamless Integrations ─────────────────────────────────────
 
-const smartCityCapabilities = [
-  "Traffic system integration",
-  "Municipality dashboards",
-  "Mobility data sharing",
-  "Scalable infrastructure layer",
-];
-
-const integrationSystems = [
-  { icon: CreditCard, label: "Payment gateways" },
-  { icon: Car, label: "Access control systems (ANPR, RFID, barriers)" },
-  { icon: Cctv, label: "CCTV security systems" },
-  { icon: Building2, label: "Building Management Systems (BMS)" },
-  { icon: Zap, label: "EV charging networks" },
-];
+// Icon-name → component for the Seamless Integrations items (CMS-editable by
+// icon name; an item's `iconImage` URL overrides the named icon when present).
+const SEAMLESS_ICONS = {
+  ParkingCircle, ShieldCheck, CreditCard, Building2, Zap, Cpu,
+  Car, Cctv, Shield,
+};
 
 function TrustedBySection() {
   const reduced = useReducedMotion();
   const { language } = useLanguage();
-  const [trust, setTrust] = useState({
-    heading: "Built for Smart Cities",
-    headingGradient: "Smart Cities",
-    subtitle: "HalaPark extends beyond parking into urban mobility infrastructure, supporting large-scale smart city development and city-wide optimization.",
-  });
+  const [trust, setTrust] = useState({});
+  const [seamless, setSeamless] = useState({});
+  const [resolved, setResolved] = useState(false);
 
   useEffect(() => {
     fetchPage("solutions").then((data) => {
-      const t = data?.sections?.trust;
-      if (t && typeof t === "object") {
-        setTrust((prev) => ({
-          ...prev,
-          ...Object.fromEntries(Object.entries(t).filter(([, v]) => v !== "" && v != null)),
-        }));
-      }
+      const tr = data?.sections?.trust;
+      if (tr && typeof tr === "object") setTrust(tr);
+      const sm = data?.sections?.seamless;
+      if (sm && typeof sm === "object") setSeamless(sm);
+      setResolved(true);
     });
   }, []);
 
-  // Render the heading with the gradient word highlighted if it appears at the end.
+  // Seamless Integrations (CMS-driven).
+  const smHeading = t(seamless, "heading", language) || "";
+  const smGradient = t(seamless, "headingGradient", language)?.trim() || "";
+  const smSubtitle = t(seamless, "subtitle", language) || "";
+  const smItems = (Array.isArray(seamless.items) ? seamless.items : [])
+    .map((it, i) => ({
+      title: t(it, "title", language) || "",
+      icon: it?.icon,
+      iconImage: typeof it?.iconImage === "string" ? it.iconImage.trim() : "",
+      key: i,
+    }))
+    .filter((it) => typeof it.title === "string" && it.title.trim() !== "");
+  const smHasContent = Boolean(smHeading || smGradient || smSubtitle || smItems.length > 0);
+
+  // Heading + gradient accent (gradient shown only when non-blank, with a space).
   const heading = t(trust, "heading", language) || "";
   const gradient = t(trust, "headingGradient", language)?.trim() || "";
-  const headBase =
-    gradient && heading.endsWith(gradient)
-      ? heading.slice(0, heading.length - gradient.length).trimEnd()
-      : heading;
-  const showGradient = gradient && heading.endsWith(gradient);
+  const subtitle = t(trust, "subtitle", language) || "";
+  const image = typeof trust.image === "string" ? trust.image.trim() : "";
+
+  // Key points — strict Arabic via a parallel `ar.keyPoints` array by index.
+  // Only points with text in the current language render; blank ones are hidden.
+  const keyPoints = (Array.isArray(trust.keyPoints) ? trust.keyPoints : [])
+    .map((pt, i) =>
+      language === "ar" ? trust.ar?.keyPoints?.[i] ?? "" : pt ?? "",
+    )
+    .map((s) => (typeof s === "string" ? s.trim() : ""))
+    .filter((s) => s !== "");
+
+  // Whole section hides when there is nothing at all to show.
+  if (resolved && !heading && !gradient && !subtitle && keyPoints.length === 0 && !image) {
+    return null;
+  }
 
   return (
     <>
@@ -733,40 +831,48 @@ function TrustedBySection() {
       <section className="bg-[#F4F8FF] py-16 sm:py-20 lg:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-            <motion.div initial={reduced ? false : { opacity: 0, x: -28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }}>
-              <h2 className="text-[clamp(3rem,5.5vw,5rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]">
-                {headBase}
-                {showGradient ? (
-                  <>
-                    {" "}
-                    <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">{gradient}</span>
-                  </>
-                ) : null}
-              </h2>
-              <p className="mt-4 max-w-[520px] text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem] [overflow-wrap:anywhere]">
-                {t(trust, "subtitle", language)}
-              </p>
-              <ul className="mt-8 grid gap-3 sm:grid-cols-2">
-                {smartCityCapabilities.map((item) => (
-                  <motion.li key={item} initial={reduced ? false : { opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, ease }} className="flex items-center gap-3 rounded-xl border border-[rgba(0,136,255,0.12)] bg-white px-4 py-3.5 text-[0.88rem] font-medium text-slate-700 shadow-sm">
-                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#0088FF]">
-                      <Check className="h-3 w-3 text-white" strokeWidth={3} aria-hidden />
-                    </span>
-                    {item}
-                  </motion.li>
-                ))}
-              </ul>
+            <motion.div dir={language === "ar" ? "rtl" : "ltr"} initial={reduced ? false : { opacity: 0, x: -28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }}>
+              {heading || gradient ? (
+                <h2 className="text-[clamp(3rem,5.5vw,5rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]">
+                  {heading}
+                  {gradient ? (
+                    <>
+                      {heading ? " " : null}
+                      <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">{gradient}</span>
+                    </>
+                  ) : null}
+                </h2>
+              ) : null}
+              {subtitle ? (
+                <p className="mt-4 max-w-[520px] whitespace-pre-line text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem] [overflow-wrap:anywhere]">
+                  {subtitle}
+                </p>
+              ) : null}
+              {keyPoints.length > 0 ? (
+                <ul className="mt-8 grid gap-3 sm:grid-cols-2">
+                  {keyPoints.map((item, i) => (
+                    <motion.li key={`${item}-${i}`} initial={reduced ? false : { opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, ease }} className="flex items-center gap-3 rounded-xl border border-[rgba(0,136,255,0.12)] bg-white px-4 py-3.5 text-[0.88rem] font-medium text-slate-700 shadow-sm [overflow-wrap:anywhere]">
+                      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#0088FF]">
+                        <Check className="h-3 w-3 text-white" strokeWidth={3} aria-hidden />
+                      </span>
+                      {item}
+                    </motion.li>
+                  ))}
+                </ul>
+              ) : null}
             </motion.div>
 
             <motion.div initial={reduced ? false : { opacity: 0, x: 28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease, delay: 0.1 }} className="relative overflow-hidden rounded-[28px] bg-[#06111f]">
-              {/* Smart-city image backdrop */}
-              <Image
-                src="/Smart Public Parking.jpeg"
-                alt="Smart public parking infrastructure"
-                fill
-                sizes="(min-width: 1024px) 50vw, 100vw"
-                className="object-cover object-center"
-              />
+              {/* Smart-city image backdrop — CMS-driven (hidden when blank) */}
+              {image ? (
+                <Image
+                  src={image}
+                  alt={heading || "Smart public parking infrastructure"}
+                  fill
+                  sizes="(min-width: 1024px) 50vw, 100vw"
+                  className="object-cover object-center"
+                />
+              ) : null}
               <div className="absolute inset-0 bg-[linear-gradient(150deg,rgba(6,17,31,0.92)_0%,rgba(6,17,31,0.6)_50%,rgba(6,17,31,0.85)_100%)]" />
               <div className="absolute right-0 top-0 h-64 w-64 rounded-full bg-[#0088FF]/20 blur-3xl" />
 
@@ -795,17 +901,18 @@ function TrustedBySection() {
                   <Image src="/Layer_1.svg" alt="HalaPark" width={44} height={56} className="relative h-11 w-auto sm:h-12" />
                 </div>
 
-                {/* Capability nodes (labels) at the corners */}
-                {smartCityCapabilities.map((cap, i) => {
+                {/* Capability nodes (labels) at the corners — from CMS keyPoints */}
+                {keyPoints.slice(0, 4).map((cap, i) => {
                   const pos = ["left-[3%] top-[6%]", "right-[3%] top-[6%]", "left-[3%] bottom-[6%]", "right-[3%] bottom-[6%]"];
                   return (
                     <motion.div
-                      key={cap}
+                      key={`${cap}-${i}`}
+                      dir={language === "ar" ? "rtl" : "ltr"}
                       initial={reduced ? false : { opacity: 0, scale: 0.85 }}
                       whileInView={{ opacity: 1, scale: 1 }}
                       viewport={{ once: true }}
                       transition={{ duration: 0.4, ease, delay: 0.3 + i * 0.12 }}
-                      className={`absolute z-20 ${pos[i]} max-w-[140px] rounded-xl border border-white/20 bg-white/10 px-3 py-2 text-center text-[10px] font-medium leading-snug text-white backdrop-blur-md sm:text-[11px]`}
+                      className={`absolute z-20 ${pos[i]} max-w-[140px] rounded-xl border border-white/20 bg-white/10 px-3 py-2 text-center text-[10px] font-medium leading-snug text-white backdrop-blur-md sm:text-[11px] [overflow-wrap:anywhere]`}
                     >
                       {cap}
                     </motion.div>
@@ -834,17 +941,27 @@ function TrustedBySection() {
         </div>
       </section>
 
-      {/* Seamless Integrations */}
+      {/* Seamless Integrations (CMS-driven — hidden when nothing to show) */}
+      {resolved && smHasContent ? (
       <section className="bg-white py-12 sm:py-14 lg:py-16">
         <div className="mx-auto w-full max-w-[min(100%,1400px)] px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-[980px] text-center">
-            <h2 className="text-[clamp(3rem,5.5vw,5rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
-              Seamless{" "}
-              <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">Integrations</span>
-            </h2>
-            <p className="mx-auto mt-3 max-w-[650px] text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem]">
-              End-to-end integrated parking solution that connects hardware, software, and operations into one unified platform.
-            </p>
+          <div dir={language === "ar" ? "rtl" : "ltr"} className="mx-auto max-w-[980px] text-center">
+            {smHeading || smGradient ? (
+              <h2 className="text-[clamp(3rem,5.5vw,5rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]">
+                {smHeading}
+                {smGradient ? (
+                  <>
+                    {smHeading ? " " : null}
+                    <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">{smGradient}</span>
+                  </>
+                ) : null}
+              </h2>
+            ) : null}
+            {smSubtitle ? (
+              <p className="mx-auto mt-3 max-w-[650px] whitespace-pre-line text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem] [overflow-wrap:anywhere]">
+                {smSubtitle}
+              </p>
+            ) : null}
           </div>
 
           {/* Diagram — exact home page style */}
@@ -910,8 +1027,10 @@ function TrustedBySection() {
             </div>
           </div>
 
-          {/* Scrolling cards — same as home page */}
+          {/* Scrolling cards — CMS items (icon + title) */}
+          {smItems.length > 0 ? (
           <div
+            dir={language === "ar" ? "rtl" : "ltr"}
             className="mx-auto mt-10 w-full overflow-x-hidden pb-2 lg:mt-12 [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)] [-webkit-mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]"
             aria-label="Integration systems, scrolling"
           >
@@ -924,21 +1043,27 @@ function TrustedBySection() {
               @media (prefers-reduced-motion: reduce) { .seamless-marquee { animation: none; } }
             `}</style>
             <div className="flex w-max gap-4 sm:gap-5 md:gap-6 seamless-marquee">
-              {[...integrationSystems, ...integrationSystems].map((sys, i) => {
-                const Icon = sys.icon;
+              {[...smItems, ...smItems].map((sys, i) => {
+                const Icon = SEAMLESS_ICONS[sys.icon] || ParkingCircle;
                 return (
                   <div key={i} className="flex w-[min(72vw,300px)] shrink-0 items-center gap-4 rounded-[24px] border border-[#E7EAF0] bg-white p-5 shadow-sm sm:w-[min(40vw,340px)] lg:w-[280px]">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] bg-[#EEF6FF]">
-                      <Icon className="h-5 w-5 text-[#0088FF]" strokeWidth={1.7} aria-hidden />
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-[12px] bg-[#EEF6FF]">
+                      {sys.iconImage ? (
+                        <Image src={sys.iconImage} alt="" width={40} height={40} className="h-10 w-10 object-cover" />
+                      ) : (
+                        <Icon className="h-5 w-5 text-[#0088FF]" strokeWidth={1.7} aria-hidden />
+                      )}
                     </div>
-                    <p className="text-[0.88rem] font-medium leading-snug text-[#050A13]">{sys.label}</p>
+                    <p className="text-[0.88rem] font-medium leading-snug text-[#050A13] [overflow-wrap:anywhere]">{sys.title}</p>
                   </div>
                 );
               })}
             </div>
           </div>
+          ) : null}
         </div>
       </section>
+      ) : null}
     </>
   );
 }
@@ -950,42 +1075,12 @@ const INDUSTRY_ICONS = {
   Zap, Building2, BadgeCheck, Cctv, Shield, MapPin, Lock, TrendingUp, Car, CreditCard, Check,
 };
 
-const DEFAULT_FEATURES = {
-  heading: "Built for High-Demand",
-  headingGradient: "Environments",
-  subtitle: "From airports to smart cities, HalaPark scales across every high-traffic environment.",
-  image: "/hf_20260327_061900_db12a62e-2867-44b6-83f0-ea7f1a5442ef.png",
-  industries: [
-    { icon: "Zap", label: "Airports" },
-    { icon: "Building2", label: "Shopping Malls" },
-    { icon: "BadgeCheck", label: "Hotels" },
-    { icon: "Cctv", label: "Residential Towers" },
-    { icon: "Shield", label: "Hospitals" },
-    { icon: "MapPin", label: "Universities" },
-    { icon: "Lock", label: "Government Facilities" },
-    { icon: "TrendingUp", label: "Smart Cities" },
-  ],
-};
-
-const DEFAULT_DEPLOYMENT = {
-  heading: "Deployment",
-  headingGradient: "Journey",
-  subtitle: "We ensure a smooth rollout by understanding your environment, integrating with existing systems, and improving performance over time without disruption.",
-  steps: [
-    { step: "01", title: "Audit Current Setup", description: "Mapping gates, cameras, payment flows, access rules, and workflows." },
-    { step: "02", title: "Connect the Stack", description: "Integration with hardware, software, and payment systems while preserving operations." },
-    { step: "03", title: "Launch & Optimize", description: "Go live with dashboards, alerts, reporting, and continuous optimization." },
-  ],
-  image: "/hf_20260327_061900_db12a62e-2867-44b6-83f0-ea7f1a5442ef.png",
-  panelTitle: "Go live in days,",
-  panelTitleAccent: "not months.",
-};
-
 function FeatureHighlightsSection() {
   const reduced = useReducedMotion();
   const { language } = useLanguage();
   const [features, setFeatures] = useState({});
   const [deployment, setDeployment] = useState({});
+  const [resolved, setResolved] = useState(false);
 
   useEffect(() => {
     fetchPage("solutions").then((data) => {
@@ -993,99 +1088,204 @@ function FeatureHighlightsSection() {
       if (f && typeof f === "object") setFeatures(f);
       const d = data?.sections?.deployment;
       if (d && typeof d === "object") setDeployment(d);
+      setResolved(true);
     });
   }, []);
 
-  const industries = Array.isArray(features.industries) ? features.industries : [];
-  const steps = Array.isArray(deployment.steps) ? deployment.steps : [];
+  // ── Features (Industries / Environments) — strictly CMS-driven ──────────────
+  const featHeading = t(features, "heading", language) || "";
+  const featGradient = t(features, "headingGradient", language)?.trim() || "";
+  const featSubtitle = t(features, "subtitle", language) || "";
+  const featImage = typeof features.image === "string" ? features.image.trim() : "";
+  // An industry chip's title may come from `title` (new) or legacy `label`. In
+  // Arabic, `t()` reads the parallel `ar` sibling for the same key.
+  const industries = (Array.isArray(features.industries) ? features.industries : [])
+    .map((it) => ({
+      raw: it,
+      title: (t(it, "title", language) || t(it, "label", language) || "").trim(),
+    }))
+    .filter((it) => it.title !== "");
+
+  // ── Deployment Journey — strictly CMS-driven ────────────────────────────────
+  const depBrand = t(deployment, "brand", language) || "";
+  const depHeading = t(deployment, "heading", language) || "";
+  const depGradient = t(deployment, "headingGradient", language)?.trim() || "";
+  const depSubtitle = t(deployment, "subtitle", language) || "";
+  const depImage = typeof deployment.image === "string" ? deployment.image.trim() : "";
+  const depPanelTitle = t(deployment, "panelTitle", language) || "";
+  const depPanelAccent = t(deployment, "panelTitleAccent", language) || "";
+  const steps = (Array.isArray(deployment.steps) ? deployment.steps : [])
+    .filter((s) => (t(s, "title", language) || t(s, "description", language) || "").trim() !== "");
+
+  // Each sub-section hides when it has nothing to show.
+  const featuresEmpty =
+    !featHeading && !featGradient && !featSubtitle && !featImage && industries.length === 0;
+  const deploymentEmpty =
+    !depBrand &&
+    !depHeading &&
+    !depGradient &&
+    !depSubtitle &&
+    !depImage &&
+    !depPanelTitle &&
+    !depPanelAccent &&
+    steps.length === 0;
+
+  // Whole block hides only when BOTH sub-sections are empty.
+  if (resolved && featuresEmpty && deploymentEmpty) return null;
+
+  // Duplicate the industries so the marquee loops seamlessly.
+  const marquee = industries.length > 0 ? [...industries, ...industries] : [];
 
   return (
     <>
-      {/* Industries */}
-      <section className="relative overflow-hidden bg-[#06111f] py-16 sm:py-20 lg:py-24">
-        <div className="pointer-events-none absolute inset-0" aria-hidden>
-          <Image src={features.image || DEFAULT_FEATURES.image} alt="" fill className="object-cover object-center opacity-20" />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#06111f]/50 via-[#06111f]/30 to-[#06111f]/70" />
-        </div>
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto mb-12 max-w-4xl text-center">
-            <h2 className="text-[clamp(3rem,5.5vw,5rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-white">
-              {t(features, "heading", language)}{" "}
-              <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">{t(features, "headingGradient", language)}</span>
-            </h2>
-            <p className="mt-4 text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-white/70">
-              {t(features, "subtitle", language)}
-            </p>
-          </div>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
-            {industries.map((item, i) => {
-              const Icon = INDUSTRY_ICONS[item.icon] || Building2;
-              return (
-                <motion.div
-                  key={`${item.label}-${i}`}
-                  initial={reduced ? false : { opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, ease, delay: i * 0.06 }}
-                  className="group relative overflow-hidden rounded-[20px] border border-white/10 bg-white/8 p-6 text-center backdrop-blur-sm transition hover:-translate-y-1 hover:border-[#0088FF]/40 hover:bg-white/12 hover:shadow-[0_12px_32px_rgba(0,136,255,0.25)]"
-                >
-                  <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 transition duration-300 group-hover:bg-[#0088FF] group-hover:shadow-[0_6px_20px_rgba(0,136,255,0.4)]">
-                    <Icon className="h-6 w-6 text-white/70 transition duration-300 group-hover:text-white" strokeWidth={1.7} aria-hidden />
-                  </div>
-                  <p className="text-[0.88rem] font-semibold leading-tight tracking-[-0.01em] text-white/85 sm:text-[0.94rem]">{t(item, "label", language)}</p>
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Deployment Journey */}
-      <section className="bg-white py-16 sm:py-20 lg:py-24">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
-            <motion.div initial={reduced ? false : { opacity: 0, x: -28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }}>
-              <h2 className="text-[clamp(3rem,5.5vw,5rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
-                {t(deployment, "heading", language)}{" "}
-                <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">{t(deployment, "headingGradient", language)}</span>
-              </h2>
-              <p className="mt-5 max-w-[520px] text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem]">
-                {t(deployment, "subtitle", language)}
-              </p>
-              <div className="mt-10 space-y-5">
-                {steps.map((step, i) => (
-                  <motion.div key={`${step.title}-${i}`} initial={reduced ? false : { opacity: 0, x: -16 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, ease, delay: i * 0.1 }} className="flex gap-5 rounded-2xl border border-slate-100 bg-[#F4F8FF] p-5">
-                    <span className="text-[1.6rem] font-bold leading-none tracking-[-0.04em] text-[#0088FF]/30">{step.step || String(i + 1).padStart(2, "0")}</span>
-                    <div>
-                      <h3 className="font-semibold text-[#050A13]">{t(step, "title", language)}</h3>
-                      <p className="mt-1 text-[0.88rem] leading-6 text-slate-600">{t(step, "description", language)}</p>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-
-            <motion.div initial={reduced ? false : { opacity: 0, x: 28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease, delay: 0.1 }} className="relative overflow-hidden rounded-[28px] bg-[#06111f] p-8 sm:p-10">
-              <div className="absolute inset-0">
-                <Image src={deployment.image || DEFAULT_DEPLOYMENT.image} alt="" fill className="object-cover object-center" aria-hidden />
-                <div className="absolute inset-0 bg-gradient-to-tr from-[#06111f]/90 via-[#06111f]/70 to-[#06111f]/40" />
-              </div>
-              <div className="relative z-10 flex h-[280px] items-center justify-center sm:h-[320px]">
-                <div className="text-center">
-                  <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-[18px] bg-[#0088FF] shadow-[0_0_40px_rgba(0,136,255,0.45)]">
-                    <Image src="/Layer_1.svg" alt="HalaPark" width={32} height={40} className="h-9 w-auto" />
-                  </div>
-                  <p className="text-[0.82rem] font-semibold uppercase tracking-[0.2em] text-white/50">HalaPark</p>
-                  <p className="mt-2 text-[1.2rem] font-semibold leading-snug tracking-[-0.03em] text-white">
-                    {t(deployment, "panelTitle", language)}<br />
-                    <span className="text-[#5BC4FF]">{t(deployment, "panelTitleAccent", language)}</span>
+      {/* Industries / Environments */}
+      {!featuresEmpty ? (
+        <section className="relative overflow-hidden bg-[#06111f] py-16 sm:py-20 lg:py-24">
+          {featImage ? (
+            <div className="pointer-events-none absolute inset-0" aria-hidden>
+              <Image src={featImage} alt="" fill className="object-cover object-center opacity-40" />
+              <div className="absolute inset-0 bg-gradient-to-b from-[#06111f]/50 via-[#06111f]/30 to-[#06111f]/70" />
+            </div>
+          ) : null}
+          <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            {featHeading || featGradient || featSubtitle ? (
+              <div dir={language === "ar" ? "rtl" : "ltr"} className="mx-auto mb-12 max-w-4xl text-center">
+                {featHeading || featGradient ? (
+                  <h2 className="text-[clamp(3rem,5.5vw,5rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-white [overflow-wrap:anywhere]">
+                    {featHeading}
+                    {featGradient ? (
+                      <>
+                        {featHeading ? " " : null}
+                        <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">{featGradient}</span>
+                      </>
+                    ) : null}
+                  </h2>
+                ) : null}
+                {featSubtitle ? (
+                  <p className="mt-4 text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-white/70 [overflow-wrap:anywhere]">
+                    {featSubtitle}
                   </p>
+                ) : null}
+              </div>
+            ) : null}
+
+            {industries.length > 0 ? (
+              <div
+                className="w-full overflow-x-hidden [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)] [-webkit-mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]"
+                aria-label="High-demand environments, scrolling"
+              >
+                <style>{`
+                  @keyframes industriesMarquee {
+                    from { transform: translateX(0); }
+                    to   { transform: translateX(-50%); }
+                  }
+                  .industries-marquee { animation: industriesMarquee 40s linear infinite; }
+                  .industries-marquee:hover { animation-play-state: paused; }
+                  @media (prefers-reduced-motion: reduce) { .industries-marquee { animation: none; } }
+                `}</style>
+                <div className="flex w-max gap-3 industries-marquee sm:gap-4">
+                  {marquee.map((item, i) => {
+                    const iconImage =
+                      typeof item.raw?.iconImage === "string" ? item.raw.iconImage.trim() : "";
+                    const Icon = INDUSTRY_ICONS[item.raw?.icon] || Building2;
+                    return (
+                      <div
+                        key={`${item.title}-${i}`}
+                        dir={language === "ar" ? "rtl" : "ltr"}
+                        className="group relative w-[160px] shrink-0 overflow-hidden rounded-[20px] border border-white/10 bg-white/8 p-6 text-center backdrop-blur-sm transition hover:border-[#0088FF]/40 hover:bg-white/12 hover:shadow-[0_12px_32px_rgba(0,136,255,0.25)] sm:w-[180px]"
+                      >
+                        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl bg-white/10 transition duration-300 group-hover:bg-[#0088FF] group-hover:shadow-[0_6px_20px_rgba(0,136,255,0.4)]">
+                          {iconImage ? (
+                            <Image src={iconImage} alt="" width={32} height={32} className="h-8 w-8 object-contain" />
+                          ) : (
+                            <Icon className="h-6 w-6 text-white/70 transition duration-300 group-hover:text-white" strokeWidth={1.7} aria-hidden />
+                          )}
+                        </div>
+                        <p className="text-[0.88rem] font-semibold leading-tight tracking-[-0.01em] text-white/85 [overflow-wrap:anywhere] sm:text-[0.94rem]">{item.title}</p>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
-            </motion.div>
+            ) : null}
           </div>
-        </div>
-      </section>
+        </section>
+      ) : null}
+
+      {/* Deployment Journey */}
+      {!deploymentEmpty ? (
+        <section className="bg-white py-16 sm:py-20 lg:py-24">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
+              <motion.div initial={reduced ? false : { opacity: 0, x: -28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }}>
+                {depHeading || depGradient || depSubtitle ? (
+                  <div dir={language === "ar" ? "rtl" : "ltr"} className="mx-auto max-w-2xl text-center">
+                    {depHeading || depGradient ? (
+                      <h2 className="text-[clamp(3rem,5.5vw,5rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]">
+                        {depHeading}
+                        {depGradient ? (
+                          <>
+                            {depHeading ? " " : null}
+                            <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">{depGradient}</span>
+                          </>
+                        ) : null}
+                      </h2>
+                    ) : null}
+                    {depSubtitle ? (
+                      <p className="mt-5 whitespace-pre-line text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem] [overflow-wrap:anywhere]">
+                        {depSubtitle}
+                      </p>
+                    ) : null}
+                  </div>
+                ) : null}
+                {steps.length > 0 ? (
+                  <div dir={language === "ar" ? "rtl" : "ltr"} className="mt-10 space-y-5">
+                    {steps.map((step, i) => {
+                      const stepTitle = t(step, "title", language);
+                      const stepDesc = t(step, "description", language);
+                      return (
+                        <motion.div key={`${stepTitle}-${i}`} initial={reduced ? false : { opacity: 0, x: -16 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, ease, delay: i * 0.1 }} className="flex gap-5 rounded-2xl border border-slate-100 bg-[#F4F8FF] p-5">
+                          <span className="text-[1.6rem] font-bold leading-none tracking-[-0.04em] text-[#0088FF]/30">{step.step || String(i + 1).padStart(2, "0")}</span>
+                          <div>
+                            {stepTitle ? <h3 className="font-semibold text-[#050A13] [overflow-wrap:anywhere]">{stepTitle}</h3> : null}
+                            {stepDesc ? <p className="mt-1 whitespace-pre-line text-[0.88rem] leading-6 text-slate-600 [overflow-wrap:anywhere]">{stepDesc}</p> : null}
+                          </div>
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+                ) : null}
+              </motion.div>
+
+              <motion.div initial={reduced ? false : { opacity: 0, x: 28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease, delay: 0.1 }} className="relative overflow-hidden rounded-[28px] bg-[#06111f] p-8 sm:p-10">
+                {depImage ? (
+                  <div className="absolute inset-0">
+                    <Image src={depImage} alt="" fill className="object-cover object-center" aria-hidden />
+                    <div className="absolute inset-0 bg-gradient-to-tr from-[#06111f]/90 via-[#06111f]/70 to-[#06111f]/40" />
+                  </div>
+                ) : null}
+                <div dir={language === "ar" ? "rtl" : "ltr"} className="relative z-10 flex h-[280px] items-center justify-center sm:h-[320px]">
+                  <div className="text-center">
+                    <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-[18px] bg-[#0088FF] shadow-[0_0_40px_rgba(0,136,255,0.45)]">
+                      <Image src="/Layer_1.svg" alt={depBrand || "HalaPark"} width={32} height={40} className="h-9 w-auto" />
+                    </div>
+                    {depBrand ? (
+                      <p className="text-[0.82rem] font-semibold uppercase tracking-[0.2em] text-white/50 [overflow-wrap:anywhere]">{depBrand}</p>
+                    ) : null}
+                    {depPanelTitle || depPanelAccent ? (
+                      <p className="mt-2 text-[1.2rem] font-semibold leading-snug tracking-[-0.03em] text-white [overflow-wrap:anywhere]">
+                        {depPanelTitle}
+                        {depPanelTitle && depPanelAccent ? <br /> : null}
+                        {depPanelAccent ? <span className="text-[#5BC4FF]">{depPanelAccent}</span> : null}
+                      </p>
+                    ) : null}
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+      ) : null}
     </>
   );
 }
@@ -1202,33 +1402,38 @@ function WhyHalaparkSection() {
 
 // ─── Final CTA ─────────────────────────────────────────────────────────────────
 
-const DEFAULT_FINAL_CTA = {
-  heading: "Transform Parking Into a",
-  headingGradient: "Fully Connected Mobility Infrastructure",
-  subtitle:
-    "Halapark replaces fragmented parking systems with one intelligent platform that connects access control, real-time operations, and data-driven intelligence. Built for scale, designed for modern developments, and engineered to upgrade existing infrastructure without disruption.",
-  ctaLabel: "Request Demo",
-  ctaSecondaryLabel: "Talk to Our Team",
-  image: "/hf_20260327_064457_c75923ba-dc06-4c6e-9b63-fa181e94bcfa.png",
-};
-
 function NewFinalCTA() {
   const reduced = useReducedMotion();
   const { language } = useLanguage();
   const [cta, setCta] = useState({});
+  const [resolved, setResolved] = useState(false);
 
   useEffect(() => {
     fetchPage("solutions").then((data) => {
       const c = data?.sections?.cta;
-      if (c && typeof c === "object") {
-        // Merge over defaults so any empty CMS field falls back gracefully.
-        setCta((prev) => ({
-          ...prev,
-          ...Object.fromEntries(Object.entries(c).filter(([, v]) => v !== "" && v != null)),
-        }));
-      }
+      if (c && typeof c === "object") setCta(c);
+      setResolved(true);
     });
   }, []);
+
+  // Strictly CMS-driven — no hardcoded fallbacks.
+  const heading = t(cta, "heading", language) || "";
+  const gradient = t(cta, "headingGradient", language)?.trim() || "";
+  const subtitle = t(cta, "subtitle", language) || "";
+  const description = t(cta, "description", language) || "";
+  const image = typeof cta.image === "string" ? cta.image.trim() : "";
+
+  // Primary button — new primaryLabel, falling back to legacy ctaLabel.
+  const primaryLabel = (t(cta, "primaryLabel", language) || t(cta, "ctaLabel", language) || "").trim();
+  const primaryLink = (typeof cta.primaryLink === "string" && cta.primaryLink.trim()) || "/contact";
+  const secondaryLabel = (t(cta, "secondaryLabel", language) || "").trim();
+  const secondaryLink = (typeof cta.secondaryLink === "string" && cta.secondaryLink.trim()) || "/solutions";
+  const hasButtons = Boolean(primaryLabel || secondaryLabel);
+
+  // Hide the whole section when there's nothing at all to show.
+  if (resolved && !heading && !gradient && !subtitle && !description && !hasButtons && !image) {
+    return null;
+  }
 
   return (
     <section className="bg-white py-4 sm:py-5 lg:py-6">
@@ -1236,7 +1441,9 @@ function NewFinalCTA() {
         <div className="relative overflow-hidden rounded-[28px] bg-[#06111f]">
           {/* Background: city skyline (CMS-editable: sections.cta.image) */}
           <div className="absolute inset-0">
-            <Image src={cta.image || DEFAULT_FINAL_CTA.image} alt="" fill className="object-cover object-center opacity-40" aria-hidden />
+            {image ? (
+              <Image src={image} alt="" fill className="object-cover object-center opacity-40" aria-hidden />
+            ) : null}
             <div className="absolute inset-0 bg-gradient-to-b from-[#06111f]/60 via-[#06111f]/40 to-[#06111f]/80" />
           </div>
 
@@ -1264,25 +1471,45 @@ function NewFinalCTA() {
             <circle cx="400" cy="200" r="6" fill="#0088FF" />
           </svg>
 
-          <motion.div initial={reduced ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.65, ease }} className="relative z-10 flex flex-col items-center px-6 py-16 text-center sm:px-10 sm:py-20 lg:py-24">
-            <h2 className="max-w-[720px] text-[clamp(2.65rem,4.5vw,4.2rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-white">
-              {t(cta, "heading", language)}{" "}
-              <span className="bg-gradient-to-r from-[#3AADFF] to-[#0088FF] bg-clip-text text-transparent">
-                {t(cta, "headingGradient", language)}
-              </span>
-            </h2>
-            <p className="mt-5 max-w-[560px] text-[0.88rem] leading-6 text-white/65 sm:text-[0.94rem]">
-              {t(cta, "subtitle", language)}
-            </p>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <Link href="/contact" className="inline-flex items-center gap-2 rounded-full bg-[#0088FF] px-8 py-3.5 text-sm font-semibold text-white shadow-[0_8px_28px_rgba(0,136,255,0.45)] transition hover:brightness-110">
-                {t(cta, "ctaLabel", language) || ""} <ArrowRight className="h-4 w-4" aria-hidden />
-              </Link>
-              <Link href="/contact" className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-8 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20">
-                <CalendarCheck className="h-4 w-4" aria-hidden />
-                {t(cta, "ctaSecondaryLabel", language) || ""}
-              </Link>
-            </div>
+          <motion.div dir={language === "ar" ? "rtl" : "ltr"} initial={reduced ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.65, ease }} className="relative z-10 flex flex-col items-center px-6 py-12 text-center sm:px-10 sm:py-14 lg:py-16">
+            {heading || gradient ? (
+              <h2 className="max-w-[720px] text-[clamp(2.65rem,4.5vw,4.2rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-white [overflow-wrap:anywhere]">
+                {heading}
+                {gradient ? (
+                  <>
+                    {heading ? " " : null}
+                    <span className="bg-gradient-to-r from-[#3AADFF] to-[#0088FF] bg-clip-text text-transparent">
+                      {gradient}
+                    </span>
+                  </>
+                ) : null}
+              </h2>
+            ) : null}
+            {subtitle ? (
+              <p className="mt-5 max-w-[560px] whitespace-pre-line text-[0.88rem] leading-6 text-white/65 sm:text-[0.94rem] [overflow-wrap:anywhere]">
+                {subtitle}
+              </p>
+            ) : null}
+            {description ? (
+              <p className="mt-3 max-w-[560px] whitespace-pre-line text-[0.82rem] leading-6 text-white/55 sm:text-[0.88rem] [overflow-wrap:anywhere]">
+                {description}
+              </p>
+            ) : null}
+            {hasButtons ? (
+              <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+                {primaryLabel ? (
+                  <Link href={primaryLink} className="inline-flex items-center gap-2 rounded-full bg-[#0088FF] px-8 py-3.5 text-sm font-semibold text-white shadow-[0_8px_28px_rgba(0,136,255,0.45)] transition hover:brightness-110">
+                    {primaryLabel} <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
+                  </Link>
+                ) : null}
+                {secondaryLabel ? (
+                  <Link href={secondaryLink} className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-8 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20">
+                    <CalendarCheck className="h-4 w-4" aria-hidden />
+                    {secondaryLabel}
+                  </Link>
+                ) : null}
+              </div>
+            ) : null}
           </motion.div>
         </div>
       </div>
