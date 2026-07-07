@@ -190,6 +190,7 @@ function NewHero() {
     });
   }, []);
 
+  if (hero?.enabled === false) return null;
   return (
     <section
       id="hero-section"
@@ -377,6 +378,7 @@ function GlobalExpansionSection() {
   const image = content.image || "";
 
   // Whole section hides when there's nothing to show.
+  if (content?.enabled === false) return null;
   if (
     resolved &&
     !heading &&
@@ -563,6 +565,7 @@ function StatsSection() {
 
   // Hide the whole Solutions section when there are no categories with
   // solutions to show — a heading alone (with no solutions) is not rendered.
+  if (sol?.enabled === false) return null;
   if (grouped.length === 0) {
     return null;
   }
@@ -723,6 +726,7 @@ function SectorSolutionsSection() {
     : [];
 
   // Hide the whole section when there's nothing to show.
+  if (content?.enabled === false) return null;
   if (resolved && !heading && !gradient && !subtitle && cards.length === 0) {
     return null;
   }
@@ -803,7 +807,7 @@ function TrustedBySection() {
       key: i,
     }))
     .filter((it) => typeof it.title === "string" && it.title.trim() !== "");
-  const smHasContent = Boolean(smHeading || smGradient || smSubtitle || smItems.length > 0);
+  const smHasContent = seamless?.enabled !== false && Boolean(smHeading || smGradient || smSubtitle || smItems.length > 0);
 
   // Heading + gradient accent (gradient shown only when non-blank, with a space).
   const heading = t(trust, "heading", language) || "";
@@ -821,6 +825,7 @@ function TrustedBySection() {
     .filter((s) => s !== "");
 
   // Whole section hides when there is nothing at all to show.
+  if (trust?.enabled === false) return null;
   if (resolved && !heading && !gradient && !subtitle && keyPoints.length === 0 && !image) {
     return null;
   }
@@ -1117,20 +1122,23 @@ function FeatureHighlightsSection() {
   const steps = (Array.isArray(deployment.steps) ? deployment.steps : [])
     .filter((s) => (t(s, "title", language) || t(s, "description", language) || "").trim() !== "");
 
-  // Each sub-section hides when it has nothing to show.
+  // Each sub-section hides when it has nothing to show OR the admin toggled it
+  // off ("Show this section on the website").
   const featuresEmpty =
-    !featHeading && !featGradient && !featSubtitle && !featImage && industries.length === 0;
+    features?.enabled === false ||
+    (!featHeading && !featGradient && !featSubtitle && !featImage && industries.length === 0);
   const deploymentEmpty =
-    !depBrand &&
-    !depHeading &&
-    !depGradient &&
-    !depSubtitle &&
-    !depImage &&
-    !depPanelTitle &&
-    !depPanelAccent &&
-    steps.length === 0;
+    deployment?.enabled === false ||
+    (!depBrand &&
+      !depHeading &&
+      !depGradient &&
+      !depSubtitle &&
+      !depImage &&
+      !depPanelTitle &&
+      !depPanelAccent &&
+      steps.length === 0);
 
-  // Whole block hides only when BOTH sub-sections are empty.
+  // Whole block hides only when BOTH sub-sections are empty/off.
   if (resolved && featuresEmpty && deploymentEmpty) return null;
 
   // Duplicate the industries so the marquee loops seamlessly.
@@ -1305,6 +1313,7 @@ function WhyHalaparkSection() {
     });
   }, []);
 
+  if (why?.enabled === false) return null;
   if (!why) return null;
 
   const points = Array.isArray(why.points) ? why.points : [];
@@ -1431,6 +1440,7 @@ function NewFinalCTA() {
   const hasButtons = Boolean(primaryLabel || secondaryLabel);
 
   // Hide the whole section when there's nothing at all to show.
+  if (cta?.enabled === false) return null;
   if (resolved && !heading && !gradient && !subtitle && !description && !hasButtons && !image) {
     return null;
   }
