@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import {
   BadgePercent,
@@ -27,18 +27,12 @@ import {
   TriangleAlert,
   WalletCards,
 } from "lucide-react";
+import { fetchPage } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
 
-// Fixed FAQ-page chrome — inline EN/AR (the questions themselves come from CMS).
+// Fixed FAQ-page chrome — inline EN/AR. Only functional labels live here; the
+// heading/subtitle/search placeholder come from the CMS (sections.searchHeader).
 const FAQ_UI = {
-  headingMain: { en: "What would you like to", ar: "ماذا تريد أن" },
-  headingAccent: { en: "know?", ar: "تعرف؟" },
-  subtitle: {
-    en: "Browse by category to find quick answers, or search below.",
-    ar: "تصفّح حسب الفئة للعثور على إجابات سريعة، أو ابحث في الأسفل.",
-  },
-  searchPlaceholder: { en: "Search FAQs...", ar: "...ابحث في الأسئلة الشائعة" },
-  searchAria: { en: "Search FAQs", ar: "ابحث في الأسئلة الشائعة" },
   categories: { en: "Categories", ar: "الفئات" },
   questions: { en: "questions", ar: "سؤال" },
   noMatch: { en: "No FAQs match your search. Try a different query.", ar: "لا توجد أسئلة تطابق بحثك. جرّب كلمة أخرى." },
@@ -146,12 +140,24 @@ function collectVideos(item) {
 export default function FAQCategorySection({ categories = [] }) {
   const { language } = useLanguage();
   const fq = (key) => FAQ_UI[key]?.[language] ?? FAQ_UI[key]?.en ?? "";
+  const [searchHeader, setSearchHeader] = useState(null);
   const [activeCategoryId, setActiveCategoryId] = useState(categories[0]?.id);
   const [searchQuery, setSearchQuery] = useState("");
   const makeKey = (catId, itemId) => `${catId}::${itemId}`;
   const [openQuestionKey, setOpenQuestionKey] = useState(
     categories[0] ? makeKey(categories[0].id, categories[0].items?.[0]?.id ?? "") : null
   );
+
+  // The search header (heading/subtitle/placeholder) is CMS-driven — fetch once.
+  useEffect(() => {
+    let active = true;
+    fetchPage("faqs").then((data) => {
+      if (active) setSearchHeader(data?.sections?.searchHeader ?? null);
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const activeCategory = useMemo(
     () => categories.find((c) => c.id === activeCategoryId),
@@ -183,28 +189,34 @@ export default function FAQCategorySection({ categories = [] }) {
     <section className="bg-white py-12 sm:py-16 lg:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
-        {/* Section heading */}
+        {/* Section heading — CMS-driven (sections.searchHeader) */}
         <div className="mx-auto mb-12 max-w-[780px] text-center">
-          <h2 className="text-[clamp(2.4rem,4.5vw,3.8rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
-            {fq("headingMain")}{" "}
-            <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">
-              {fq("headingAccent")}
-            </span>
-          </h2>
-          <p className="mx-auto mt-4 max-w-[560px] text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
-            {fq("subtitle")}
-          </p>
+          {t(searchHeader, "heading", language) || t(searchHeader, "headingAccent", language) ? (
+            <h2 className="text-[clamp(2.4rem,4.5vw,3.8rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
+              {t(searchHeader, "heading", language)}{" "}
+              {t(searchHeader, "headingAccent", language) ? (
+                <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">
+                  {t(searchHeader, "headingAccent", language)}
+                </span>
+              ) : null}
+            </h2>
+          ) : null}
+          {t(searchHeader, "subtitle", language) ? (
+            <p className="mx-auto mt-4 max-w-[560px] text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
+              {t(searchHeader, "subtitle", language)}
+            </p>
+          ) : null}
 
           {/* Search input */}
           <div className="mt-8">
             <input
               type="text"
-              placeholder={fq("searchPlaceholder")}
+              placeholder={t(searchHeader, "searchPlaceholder", language) || ""}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               dir={language === "ar" ? "rtl" : "ltr"}
               className="mx-auto block w-full max-w-md rounded-full border border-[#E7EAF0] bg-white px-5 py-3 text-sm placeholder-slate-400 outline-none transition focus:border-[#0088FF] focus:ring-2 focus:ring-[#0088FF]/20"
-              aria-label={fq("searchAria")}
+              aria-label={t(searchHeader, "searchPlaceholder", language) || undefined}
             />
           </div>
         </div>
@@ -249,7 +261,12 @@ export default function FAQCategorySection({ categories = [] }) {
                             : "text-[#050A13] hover:bg-[#F4F8FF]"
                         }`}
                       >
-                        <Icon className={`h-3.5 w-3.5 shrink-0 ${isActive ? "text-white" : "text-[#0088FF]"}`} strokeWidth={1.8} aria-hidden />
+                        {category.iconImage ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={category.iconImage} alt="" aria-hidden className="h-3.5 w-3.5 shrink-0 object-contain" />
+                        ) : (
+                          <Icon className={`h-3.5 w-3.5 shrink-0 ${isActive ? "text-white" : "text-[#0088FF]"}`} strokeWidth={1.8} aria-hidden />
+                        )}
                         <span className={`flex-1 text-[0.82rem] font-medium leading-snug ${isActive ? "text-white" : "text-[#050A13]"}`}>
                           {t(category, "title", language)}
                         </span>
@@ -271,7 +288,12 @@ export default function FAQCategorySection({ categories = [] }) {
                 const Icon = iconMap[activeCategory?.icon] ?? Building2;
                 return (
                   <div className="flex h-10 w-10 items-center justify-center rounded-[12px] bg-[#EEF6FF]">
-                    <Icon className="h-5 w-5 text-[#0088FF]" strokeWidth={1.7} aria-hidden />
+                    {activeCategory?.iconImage ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={activeCategory.iconImage} alt="" aria-hidden className="h-5 w-5 object-contain" />
+                    ) : (
+                      <Icon className="h-5 w-5 text-[#0088FF]" strokeWidth={1.7} aria-hidden />
+                    )}
                   </div>
                 );
               })()}

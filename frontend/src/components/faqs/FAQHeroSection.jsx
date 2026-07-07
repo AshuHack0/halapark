@@ -5,25 +5,41 @@ import Image from "next/image";
 import { fetchPage } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
 
-const DEFAULT_HERO = {
-  title: "Got Questions? We've Got Answers.",
-  description: "Find helpful information about HalaPark's smart parking solutions, system features, payments, access, and operations — all organized into easy-to-browse categories for a faster and smoother experience.",
-  image: "/hf_20260327_061900_db12a62e-2867-44b6-83f0-ea7f1a5442ef.png",
-};
-
+// CMS-only hero: the DB is the single source of truth (seeded). No hardcoded
+// fallbacks — anything deleted from the database simply doesn't render.
 export default function FAQHeroSection() {
   const { language } = useLanguage();
   const [hero, setHero] = useState({});
+  const [resolved, setResolved] = useState(false);
 
   useEffect(() => {
-    fetchPage("faqs").then((data) => {
-      if (data?.sections?.hero) {
-        setHero(data.sections.hero);
-      }
-    });
+    let active = true;
+    fetchPage("faqs")
+      .then((data) => {
+        if (active && data?.sections?.hero) {
+          setHero(data.sections.hero);
+        }
+      })
+      .finally(() => {
+        if (active) setResolved(true);
+      });
+    return () => {
+      active = false;
+    };
   }, []);
 
-  const titleParts = (t(hero, "title", language) || "").split("?");
+  if (!resolved) return null;
+
+  const image = (hero.image || "").trim();
+
+  // Hide the whole hero when everything has been cleared from admin.
+  const hasContent =
+    (hero.title || "").trim() || (hero.description || "").trim() || image;
+  if (!hasContent) return null;
+
+  const title = t(hero, "title", language);
+  const description = t(hero, "description", language);
+  const titleParts = (title || "").split("?");
   const firstPart = titleParts[0] ? titleParts[0] + "?" : "";
   const secondPart = titleParts[1]?.trim() || "";
 
@@ -32,26 +48,32 @@ export default function FAQHeroSection() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="relative overflow-hidden rounded-[24px] bg-[#06111f] text-white">
           <div className="absolute inset-0">
-            <Image
-              src={hero.image || DEFAULT_HERO.image}
-              alt=""
-              fill
-              className="object-cover object-center opacity-30"
-              aria-hidden
-            />
+            {image ? (
+              <Image
+                src={image}
+                alt=""
+                fill
+                className="object-cover object-center opacity-30"
+                aria-hidden
+              />
+            ) : null}
             <div className="absolute inset-0 bg-gradient-to-r from-[#06111f]/90 via-[#06111f]/70 to-[#06111f]/40" />
           </div>
           <div className="relative flex min-h-[320px] w-full flex-col justify-center px-8 py-14 sm:px-12 md:min-h-[380px] lg:px-20">
             <div className="relative z-10 w-full max-w-xl">
-              <h1 className="text-4xl font-semibold leading-[1.05] tracking-[-0.04em] text-white sm:text-5xl md:text-6xl">
-                {firstPart}{" "}
-                <span className="bg-gradient-to-r from-[#3AADFF] to-[#0088FF] bg-clip-text text-transparent">
-                  {secondPart}
-                </span>
-              </h1>
-              <p className="mt-4 max-w-md text-sm leading-relaxed text-white/75 sm:text-base">
-                {t(hero, "description", language)}
-              </p>
+              {title ? (
+                <h1 className="text-4xl font-semibold leading-[1.05] tracking-[-0.04em] text-white sm:text-5xl md:text-6xl [overflow-wrap:anywhere]">
+                  {firstPart}{" "}
+                  <span className="bg-gradient-to-r from-[#3AADFF] to-[#0088FF] bg-clip-text text-transparent">
+                    {secondPart}
+                  </span>
+                </h1>
+              ) : null}
+              {description ? (
+                <p className="mt-4 max-w-md text-sm leading-relaxed text-white/75 sm:text-base [overflow-wrap:anywhere]">
+                  {description}
+                </p>
+              ) : null}
             </div>
           </div>
         </div>
