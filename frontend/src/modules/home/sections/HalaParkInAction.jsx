@@ -72,33 +72,24 @@ function StoreBadge({
   alt,
   eyebrow,
   label,
+  href,
   index,
   prefersReducedMotion,
 }) {
-  return (
-    <motion.div
-      custom={index}
-      variants={prefersReducedMotion ? undefined : badgeVariants}
-      whileHover={
-        prefersReducedMotion
-          ? undefined
-          : {
-              y: -4,
-              transition: { duration: 0.2, ease: "easeOut" },
-            }
-      }
-      className="flex min-w-0 flex-1 items-center gap-2.5 sm:gap-3"
-    >
-      <div className="relative shrink-0">
-        <div className="absolute inset-1 rounded-[18px] bg-[#0088FF]/12 blur-md" />
-        <Image
-          src={icon}
-          alt={alt}
-          width={50}
-          height={50}
-          className="relative h-10 w-10 rounded-[14px] object-contain shadow-[0_10px_24px_rgba(15,23,42,0.08)] sm:h-[50px] sm:w-[50px] sm:rounded-[16px]"
-        />
-      </div>
+  const content = (
+    <>
+      {icon ? (
+        <div className="relative shrink-0">
+          <div className="absolute inset-1 rounded-[18px] bg-[#0088FF]/12 blur-md" />
+          <Image
+            src={icon}
+            alt={alt || label || "Store"}
+            width={50}
+            height={50}
+            className="relative h-10 w-10 rounded-[14px] object-contain shadow-[0_10px_24px_rgba(15,23,42,0.08)] sm:h-[50px] sm:w-[50px] sm:rounded-[16px]"
+          />
+        </div>
+      ) : null}
 
       <div className="min-w-0 text-left leading-none">
         <p className="text-[8px] font-normal text-[#0F172A] sm:text-[9.2px]">
@@ -108,7 +99,31 @@ function StoreBadge({
           {label}
         </p>
       </div>
-    </motion.div>
+    </>
+  );
+
+  const sharedProps = {
+    custom: index,
+    variants: prefersReducedMotion ? undefined : badgeVariants,
+    whileHover: prefersReducedMotion
+      ? undefined
+      : { y: -4, transition: { duration: 0.2, ease: "easeOut" } },
+    className: "flex min-w-0 flex-1 items-center gap-2.5 sm:gap-3",
+  };
+
+  // With a store URL the whole badge is a link; without one it stays static.
+  return href ? (
+    <motion.a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={label || alt || "App store"}
+      {...sharedProps}
+    >
+      {content}
+    </motion.a>
+  ) : (
+    <motion.div {...sharedProps}>{content}</motion.div>
   );
 }
 
@@ -129,7 +144,13 @@ export default function HalaParkInAction({ cmsKey = "halaParkInAction", pageSlug
         ar: { ...d.ar, title: d.ar?.heading ?? d.ar?.title, subtitle: d.ar?.subtitle },
         title: d.heading || d.title || "",
         subtitle: d.subtitle || "",
-        storeLinks: Array.isArray(d.storeLinks) ? d.storeLinks : [],
+        // Only store links with real text count — a cleared item must not
+        // render an empty icon/badge shell.
+        storeLinks: (Array.isArray(d.storeLinks) ? d.storeLinks : []).filter(
+          (s) =>
+            s &&
+            (((s.label ?? "").trim()) || ((s.eyebrow ?? "").trim())),
+        ),
       });
     };
     if (pageSlug) {
@@ -141,9 +162,14 @@ export default function HalaParkInAction({ cmsKey = "halaParkInAction", pageSlug
 
   const storeLinks = copy.storeLinks || [];
 
-  // Hide the section entirely when the admin hasn't entered any content:
-  // no title (EN), no subtitle (EN), and no store links.
-  if (!copy.title && !copy.subtitle && storeLinks.length === 0) return null;
+  // Hide the section entirely when the admin has cleared all content:
+  // no title/subtitle (EN, non-blank) and no store links with text.
+  if (
+    !((copy.title ?? "").trim()) &&
+    !((copy.subtitle ?? "").trim()) &&
+    storeLinks.length === 0
+  )
+    return null;
 
   return (
     <motion.section
@@ -177,21 +203,23 @@ export default function HalaParkInAction({ cmsKey = "halaParkInAction", pageSlug
                
               </div>
 
-              <motion.div
-                variants={prefersReducedMotion ? undefined : copyItemVariants}
-                className="mt-8 flex items-center justify-between gap-3 sm:gap-4 lg:gap-6"
-              >
-                {storeLinks.map((store, index) => (
-                  <StoreBadge
-                    key={store.label}
-                    {...store}
-                    eyebrow={t(store, "eyebrow", language)}
-                    label={t(store, "label", language)}
-                    index={index}
-                    prefersReducedMotion={prefersReducedMotion}
-                  />
-                ))}
-              </motion.div>
+              {storeLinks.length > 0 ? (
+                <motion.div
+                  variants={prefersReducedMotion ? undefined : copyItemVariants}
+                  className="mt-8 flex items-center justify-between gap-3 sm:gap-4 lg:gap-6"
+                >
+                  {storeLinks.map((store, index) => (
+                    <StoreBadge
+                      key={store.label || index}
+                      {...store}
+                      eyebrow={t(store, "eyebrow", language)}
+                      label={t(store, "label", language)}
+                      index={index}
+                      prefersReducedMotion={prefersReducedMotion}
+                    />
+                  ))}
+                </motion.div>
+              ) : null}
             </motion.div>
 
             <div className="relative flex min-h-[250px] items-end justify-start sm:min-h-[310px] lg:min-h-[390px] lg:self-end">
