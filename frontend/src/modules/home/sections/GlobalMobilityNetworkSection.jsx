@@ -45,23 +45,6 @@ const impactStats = [
   },
 ];
 
-const mapNodes = [
-  { id: "dubai", x: 56, y: 57, label: "Dubai" },
-  { id: "europe", x: 46, y: 38, label: "Europe" },
-  { id: "east-asia", x: 74, y: 44, label: "East Asia" },
-  { id: "south-asia", x: 66, y: 52, label: "South Asia" },
-  { id: "africa", x: 50, y: 66, label: "Africa" },
-  { id: "americas", x: 23, y: 56, label: "Americas" },
-];
-
-const mapLinks = [
-  { from: "dubai", to: "europe", curve: -14 },
-  { from: "dubai", to: "east-asia", curve: -16 },
-  { from: "dubai", to: "south-asia", curve: -10 },
-  { from: "dubai", to: "africa", curve: 11 },
-  { from: "dubai", to: "americas", curve: -26 },
-];
-
 function MetricIcon({ type }) {
   const common = "h-5 w-5 text-[#0088FF]";
 
@@ -192,35 +175,109 @@ function CapabilityIcon({ type }) {
 
 export default function GlobalMobilityNetworkSection() {
   const { language } = useLanguage();
-  const nodesById = mapNodes.reduce((acc, node) => {
-    acc[node.id] = node;
-    return acc;
-  }, {});
 
-  // Merge CMS text onto the hardcoded capability/stat lists (keep icons by index).
-  const [caps, setCaps] = useState(capabilities);
-  const [stats, setStats] = useState(impactStats);
+  // CMS-only content: the DB is the source of truth. Text deleted in the admin
+  // is not rendered — no hardcoded defaults resurface. Named icons are UI
+  // chrome and may still fall back to the base lists by index.
+  const [caps, setCaps] = useState([]);
+  const [stats, setStats] = useState([]);
+  const [nodes, setNodes] = useState([]);
+  const [links, setLinks] = useState([]);
   const [content, setContent] = useState({});
 
   useEffect(() => {
     fetchHomeSection("globalMobility").then((d) => {
       if (!d || typeof d !== "object") return;
       setContent(d);
-      if (Array.isArray(d.capabilities) && d.capabilities.length) {
-        setCaps(capabilities.map((base, i) => ({ ...base, ...(d.capabilities[i] ?? {}) })));
-      }
-      if (Array.isArray(d.impactStats) && d.impactStats.length) {
-        setStats(impactStats.map((base, i) => ({ ...base, ...(d.impactStats[i] ?? {}) })));
-      }
+
+      const cmsCaps = Array.isArray(d.capabilities) ? d.capabilities : [];
+      setCaps(
+        cmsCaps
+          .map((c, i) => ({
+            // Text strictly from the CMS — cleared text stays cleared.
+            title: c?.title ?? "",
+            description: c?.description ?? "",
+            // Icon is UI chrome: CMS pick first, else the base icon by index.
+            icon: c?.icon || capabilities[i]?.icon,
+            iconImage: c?.iconImage,
+            ar: c?.ar,
+          }))
+          // A cleared item must not render an empty icon shell.
+          .filter((c) => c.title.trim() || c.description.trim()),
+      );
+
+      const cmsStats = Array.isArray(d.impactStats) ? d.impactStats : [];
+      setStats(
+        cmsStats
+          .map((s, i) => ({
+            value: s?.value ?? "",
+            label: s?.label ?? "",
+            icon: s?.icon || impactStats[i]?.icon,
+            iconImage: s?.iconImage,
+            ar: s?.ar,
+          }))
+          .filter((s) => s.value.trim() || s.label.trim()),
+      );
+
+      // Map nodes/links come from the CMS only. Keep nodes with an id, a
+      // label and numeric x/y within 0-100; keep links whose endpoints both
+      // resolve to surviving nodes.
+      const cmsNodes = Array.isArray(d.mapNodes) ? d.mapNodes : [];
+      const validNodes = cmsNodes
+        .map((n) => ({ ...n, x: Number(n?.x), y: Number(n?.y) }))
+        .filter(
+          (n) =>
+            n.id &&
+            String(n.label ?? "").trim() &&
+            Number.isFinite(n.x) &&
+            n.x >= 0 &&
+            n.x <= 100 &&
+            Number.isFinite(n.y) &&
+            n.y >= 0 &&
+            n.y <= 100,
+        );
+      setNodes(validNodes);
+
+      const nodeIds = new Set(validNodes.map((n) => n.id));
+      const cmsLinks = Array.isArray(d.mapLinks) ? d.mapLinks : [];
+      setLinks(
+        cmsLinks.filter((l) => l && nodeIds.has(l.from) && nodeIds.has(l.to)),
+      );
     });
   }, []);
+
+  const nodesById = nodes.reduce((acc, node) => {
+    acc[node.id] = node;
+    return acc;
+  }, {});
 
   const heading = t(content, "heading", language);
   const headingGradient = t(content, "headingGradient", language);
 
-  // Hide the section entirely when the admin hasn't entered any heading content
-  // (capabilities/stats/map are decorative defaults; the heading is the CMS content).
-  if (!content.heading && !content.headingGradient) return null;
+  const isBlank = (v) => !String(v ?? "").trim();
+  const hasMap = nodes.length > 0;
+  const hasPanelText =
+    !isBlank(content.panelTitle) ||
+    !isBlank(content.panelTitleAccent) ||
+    !isBlank(content.panelBody) ||
+    caps.length > 0;
+
+  // Hide the section entirely when the admin has cleared all content — no
+  // heading/subtitle/description/panel text (EN, non-blank), no capabilities,
+  // no stats and no map nodes.
+  if (
+    isBlank(content.heading) &&
+    isBlank(content.headingGradient) &&
+    isBlank(content.subtitle) &&
+    isBlank(content.description) &&
+    isBlank(content.panelTitle) &&
+    isBlank(content.panelBody) &&
+    caps.length === 0 &&
+    stats.length === 0 &&
+    !hasMap
+  ) {
+    return null;
+  }
 
   return (
     <section className="relative overflow-hidden bg-[linear-gradient(180deg,#F6FAFF_0%,#FFFFFF_68%)] py-8 sm:py-10 md:py-12">
@@ -259,115 +316,150 @@ export default function GlobalMobilityNetworkSection() {
             ))}
           </div> */}
 
-          <div className="relative z-10 mt-4 isolate min-h-[420px] overflow-hidden sm:min-h-[460px] lg:min-h-[500px]">
-            <div className="relative flex min-h-[420px] flex-col sm:min-h-[460px] lg:min-h-[500px]">
-              <img
-                src="/map_6824dc8ea581a9958227b98c_map.svg"
-                alt="Global mobility map"
-                className="absolute inset-0 h-full w-full object-cover opacity-[0.96]"
-              />
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_22%,rgba(0,136,255,0.08),transparent_32%),radial-gradient(circle_at_86%_18%,rgba(0,136,255,0.09),transparent_30%),linear-gradient(180deg,rgba(248,252,255,0.2),rgba(241,248,255,0.44))]" />
-              <svg
-                className="absolute inset-0 h-full w-full"
-                viewBox="0 0 100 100"
-                preserveAspectRatio="none"
-                aria-hidden
-              >
-                {mapLinks.map((link, index) => {
-                  const from = nodesById[link.from];
-                  const to = nodesById[link.to];
-                  const cx = (from.x + to.x) / 2;
-                  const cy = (from.y + to.y) / 2 + link.curve;
-                  const path = `M ${from.x} ${from.y} Q ${cx} ${cy} ${to.x} ${to.y}`;
-
-                  return (
-                    <path
-                      key={`${link.from}-${link.to}`}
-                      d={path}
-                      fill="none"
-                      stroke="rgba(0,136,255,0.62)"
-                      strokeWidth="0.26"
-                      strokeLinecap="round"
-                      className="gm-link-path"
-                      style={{
-                        animationDelay: `${index * 0.35}s`,
-                      }}
+          {hasMap || hasPanelText ? (
+            <div className="relative z-10 mt-4 isolate min-h-[420px] overflow-hidden sm:min-h-[460px] lg:min-h-[500px]">
+              <div className="relative flex min-h-[420px] flex-col sm:min-h-[460px] lg:min-h-[500px]">
+                {hasMap ? (
+                  <>
+                    <img
+                      src="/map_6824dc8ea581a9958227b98c_map.svg"
+                      alt="Global mobility map"
+                      className="absolute inset-0 h-full w-full object-cover opacity-[0.96]"
                     />
-                  );
-                })}
-              </svg>
-              {mapNodes.map((node, index) => (
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_22%,rgba(0,136,255,0.08),transparent_32%),radial-gradient(circle_at_86%_18%,rgba(0,136,255,0.09),transparent_30%),linear-gradient(180deg,rgba(248,252,255,0.2),rgba(241,248,255,0.44))]" />
+                    <svg
+                      className="absolute inset-0 h-full w-full"
+                      viewBox="0 0 100 100"
+                      preserveAspectRatio="none"
+                      aria-hidden
+                    >
+                      {links.map((link, index) => {
+                        const from = nodesById[link.from];
+                        const to = nodesById[link.to];
+                        const curve = Number(link.curve) || 0;
+                        const cx = (from.x + to.x) / 2;
+                        const cy = (from.y + to.y) / 2 + curve;
+                        const path = `M ${from.x} ${from.y} Q ${cx} ${cy} ${to.x} ${to.y}`;
+
+                        return (
+                          <path
+                            key={`${link.from}-${link.to}-${index}`}
+                            d={path}
+                            fill="none"
+                            stroke="rgba(0,136,255,0.62)"
+                            strokeWidth="0.26"
+                            strokeLinecap="round"
+                            className="gm-link-path"
+                            style={{
+                              animationDelay: `${index * 0.35}s`,
+                            }}
+                          />
+                        );
+                      })}
+                    </svg>
+                    {nodes.map((node, index) => (
+                      <div
+                        key={node.id}
+                        className="absolute gm-map-node"
+                        style={{
+                          left: `${node.x}%`,
+                          top: `${node.y}%`,
+                          animationDelay: `${index * 0.3}s`,
+                        }}
+                        aria-label={
+                          language === "ar"
+                            ? node.ar?.label || node.label
+                            : node.label
+                        }
+                      >
+                        <span className="gm-map-dot" />
+                      </div>
+                    ))}
+                    <div className="absolute left-[56.1%] top-[58.2%] z-20 -translate-x-1/2 -translate-y-1/2">
+                      <div className="gm-city-lens">
+                        <span className="gm-city-label gm-city-label-main">DUBAI</span>
+                        <span className="gm-city-label">ABU DHABI</span>
+                      </div>
+                    </div>
+                  </>
+                ) : null}
+                {hasPanelText ? (
+                  <div className="absolute left-0 top-[10%] z-20 w-full max-w-[360px] px-4 sm:max-w-[390px] sm:px-6">
+                    <h3 className="text-[1.45rem] font-semibold uppercase leading-[1.18] tracking-[0.02em] text-[#071221] sm:text-[1.85rem] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
+                      {t(content, "panelTitle", language)}
+                      {t(content, "panelTitleAccent", language) ? (
+                        <>
+                          <br />
+                          {t(content, "panelTitleAccent", language)}
+                        </>
+                      ) : null}
+                    </h3>
+                    <p className="mt-2 max-w-[300px] text-sm leading-relaxed text-slate-600 [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
+                      {t(content, "panelBody", language)}
+                    </p>
+
+                    {caps.length > 0 ? (
+                      <ul className="mt-3 space-y-2.5">
+                        {caps.map((item, index) => (
+                          <li key={`cap-${index}`}>
+                            <div className="flex items-center gap-2.5">
+                              {item.iconImage ? (
+                                <img
+                                  src={item.iconImage}
+                                  alt=""
+                                  aria-hidden
+                                  className="h-[18px] w-[18px] object-contain"
+                                />
+                              ) : (
+                                <CapabilityIcon type={item.icon} />
+                              )}
+                              <p className="text-[1.03rem] font-semibold text-[#050A13]">
+                                {t(item, "title", language)}
+                              </p>
+                            </div>
+                            <p className="mt-1 max-w-[290px] text-[0.92rem] leading-relaxed text-slate-600">
+                              {t(item, "description", language)}
+                            </p>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : null}
+                  </div>
+                ) : null}
+
+              </div>
+            </div>
+          ) : null}
+
+          {stats.length > 0 ? (
+            <div className="relative z-20 grid gap-2 border-t border-[#DCE9F8] bg-[linear-gradient(180deg,#F8FBFF_0%,#F3F9FF_100%)] px-1 py-3 sm:grid-cols-2 sm:px-3 lg:grid-cols-4 lg:gap-0 lg:py-4">
+              {stats.map((item, index) => (
                 <div
-                  key={node.id}
-                  className="absolute gm-map-node"
-                  style={{
-                    left: `${node.x}%`,
-                    top: `${node.y}%`,
-                    animationDelay: `${index * 0.3}s`,
-                  }}
-                  aria-label={node.label}
+                  key={`stat-${index}`}
+                  className={`px-2 py-2 text-center lg:px-5 ${index > 0 ? "lg:border-l lg:border-[#DCE9F8]" : ""}`}
                 >
-                  <span className="gm-map-dot" />
+                  <div className="mb-2 flex items-center justify-center">
+                    {item.iconImage ? (
+                      <img
+                        src={item.iconImage}
+                        alt=""
+                        aria-hidden
+                        className="h-5 w-5 object-contain"
+                      />
+                    ) : (
+                      <MetricIcon type={item.icon} />
+                    )}
+                  </div>
+                  <p className="text-[1.55rem] font-semibold leading-none tracking-[-0.02em] text-[#071221]">
+                    {t(item, "value", language)}
+                  </p>
+                  <p className="mt-1.5 text-[0.76rem] font-medium uppercase tracking-[0.06em] text-slate-500">
+                    {t(item, "label", language)}
+                  </p>
                 </div>
               ))}
-              <div className="absolute left-[56.1%] top-[58.2%] z-20 -translate-x-1/2 -translate-y-1/2">
-                <div className="gm-city-lens">
-                  <span className="gm-city-label gm-city-label-main">DUBAI</span>
-                  <span className="gm-city-label">ABU DHABI</span>
-                </div>
-              </div>
-              <div className="absolute left-0 top-[10%] z-20 w-full max-w-[360px] px-4 sm:max-w-[390px] sm:px-6">
-                <h3 className="text-[1.45rem] font-semibold uppercase leading-[1.18] tracking-[0.02em] text-[#071221] sm:text-[1.85rem] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
-                  {t(content, "panelTitle", language)}
-                  {t(content, "panelTitleAccent", language) ? (
-                    <>
-                      <br />
-                      {t(content, "panelTitleAccent", language)}
-                    </>
-                  ) : null}
-                </h3>
-                <p className="mt-2 max-w-[300px] text-sm leading-relaxed text-slate-600 [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
-                  {t(content, "panelBody", language)}
-                </p>
-
-                <ul className="mt-3 space-y-2.5">
-                  {caps.map((item) => (
-                    <li key={item.title}>
-                      <div className="flex items-center gap-2.5">
-                        <CapabilityIcon type={item.icon} />
-                        <p className="text-[1.03rem] font-semibold text-[#050A13]">
-                          {t(item, "title", language)}
-                        </p>
-                      </div>
-                      <p className="mt-1 max-w-[290px] text-[0.92rem] leading-relaxed text-slate-600">
-                        {t(item, "description", language)}
-                      </p>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
             </div>
-          </div>
-
-          <div className="relative z-20 grid gap-2 border-t border-[#DCE9F8] bg-[linear-gradient(180deg,#F8FBFF_0%,#F3F9FF_100%)] px-1 py-3 sm:grid-cols-2 sm:px-3 lg:grid-cols-4 lg:gap-0 lg:py-4">
-            {stats.map((item, index) => (
-              <div
-                key={item.label}
-                className={`px-2 py-2 text-center lg:px-5 ${index > 0 ? "lg:border-l lg:border-[#DCE9F8]" : ""}`}
-              >
-                <div className="mb-2 flex items-center justify-center">
-                  <MetricIcon type={item.icon} />
-                </div>
-                <p className="text-[1.55rem] font-semibold leading-none tracking-[-0.02em] text-[#071221]">
-                  {t(item, "value", language)}
-                </p>
-                <p className="mt-1.5 text-[0.76rem] font-medium uppercase tracking-[0.06em] text-slate-500">
-                  {t(item, "label", language)}
-                </p>
-              </div>
-            ))}
-          </div>
+          ) : null}
         </div>
       </div>
       <style jsx>{`

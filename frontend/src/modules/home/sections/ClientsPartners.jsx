@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { fetchHomeSection } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
@@ -15,6 +16,10 @@ export default function ClientsPartners() {
           ar: d.ar,
           heading: d.heading || "",
           headingEnd: d.headingEnd || "",
+          // Admin toggle: split the heading onto two lines (default: one line).
+          headingBr: d.headingBr === true,
+          ctaLabel: d.ctaLabel || "",
+          ctaHref: d.ctaHref || "",
           logos: Array.isArray(d.logos) ? d.logos.filter((l) => l && l.image) : [],
           logoPlaceholders: Array.isArray(d.logoPlaceholders)
             ? d.logoPlaceholders
@@ -66,11 +71,16 @@ export default function ClientsPartners() {
                 </p> */}
 
                 <h2
-                  id="ai-powered-parking-service-title"
-                  className="mx-auto mt-4 max-w-[940px] text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]"
+                  id="clients-partners-title"
+                  className="mx-auto mt-4 max-w-[940px] text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]"
                 >
-                 {t(cp, "heading", language)} <br/>  {t(cp, "headingEnd", language)}
-
+                  {t(cp, "heading", language)}
+                  {t(cp, "headingEnd", language) ? (
+                    <>
+                      {cp.headingBr ? <br /> : " "}
+                      {t(cp, "headingEnd", language)}
+                    </>
+                  ) : null}
                 </h2>
               </div>
             </div>
@@ -82,16 +92,18 @@ export default function ClientsPartners() {
 
             <div className="clients-ticker flex w-max items-center gap-5 sm:gap-7">
               {hasLogos
-                ? cp.logos.map((logo, index) => (
+                ? // Duplicate the list so the -50% loop is seamless (no jump /
+                  // clipped card borders mid-scroll).
+                  [...cp.logos, ...cp.logos].map((logo, index) => (
                     <div
                       key={`${logo.image}-${index}`}
-                      className="flex min-w-[140px] items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-5 sm:min-w-[200px] sm:px-7 sm:py-6"
+                      className="flex shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-4 sm:px-6 sm:py-5"
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={logo.image}
                         alt={logo.alt || "Client logo"}
-                        className="max-h-12 w-auto max-w-[150px] object-contain sm:max-h-14"
+                        className="h-12 w-auto min-w-[64px] max-w-[220px] object-contain sm:h-14"
                       />
                     </div>
                   ))
@@ -105,6 +117,18 @@ export default function ClientsPartners() {
                   ))}
             </div>
           </div>
+
+          {/* CTA — CMS-driven; hidden when no label is set in admin. */}
+          {t(cp, "ctaLabel", language) ? (
+            <div className="mt-8 flex justify-center">
+              <Link
+                href={cp.ctaHref || "/contact"}
+                className="inline-flex min-h-[3.05rem] items-center justify-center rounded-full bg-[#0088FF] px-8 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(0,136,255,0.2)] transition hover:brightness-110 [overflow-wrap:anywhere]"
+              >
+                {t(cp, "ctaLabel", language)}
+              </Link>
+            </div>
+          ) : null}
           {/* ========================= from left to right =============================== */}
           {/* <div className="relative mt-6 overflow-hidden py-2">
             <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-white via-white/90 to-transparent sm:w-24" />
