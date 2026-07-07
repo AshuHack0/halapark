@@ -20,25 +20,23 @@ const ease = [0.22, 1, 0.36, 1];
 // thumbnail rail + step counter. Rectangular — distinct from the card-deck
 // (Business), mosaic (Careers), single card (Services) and dashboard (Solutions).
 
-const ABOUT_SLIDES = [
-  { img: "/AI-Driven Parking Intelligence.jpeg", label: "AI-Powered Technology" },
-  { img: "/Smart & Seamless Experience.jpeg",    label: "Seamless Experience" },
-  { img: "/Smart Public Parking.jpeg",           label: "Built for the UAE" },
-  { img: "/Maximize Parking Value dekhna ye.jpeg", label: "Maximizing Value" },
-];
+const hasText = (value) => typeof value === "string" && value.trim().length > 0;
 
-function AboutVisual({ heroImage, reduced }) {
-  const slides = [{ img: heroImage || ABOUT_SLIDES[0].img, label: ABOUT_SLIDES[0].label }, ...ABOUT_SLIDES.slice(1)];
+function AboutVisual({ slides, language, reduced }) {
   const [active, setActive] = useState(0);
+  const count = slides.length;
 
   useEffect(() => {
-    if (reduced) return undefined;
-    const id = setInterval(() => setActive((p) => (p + 1) % slides.length), 3400);
+    if (reduced || count < 2) return undefined;
+    const id = setInterval(() => setActive((p) => (p + 1) % count), 3400);
     return () => clearInterval(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reduced]);
+  }, [reduced, count]);
 
-  const current = slides[active];
+  if (count === 0) return null;
+
+  const index = active % count;
+  const current = slides[index];
+  const currentLabel = language === "ar" ? (current.ar?.label ?? "") : (current.label ?? "");
 
   return (
     <div className="relative flex items-center justify-center">
@@ -59,7 +57,7 @@ function AboutVisual({ heroImage, reduced }) {
       >
         <AnimatePresence mode="popLayout" initial={false}>
           <motion.div
-            key={active}
+            key={index}
             initial={reduced ? false : { x: "100%" }}
             animate={reduced ? { opacity: 1 } : { x: 0 }}
             exit={reduced ? undefined : { x: "-100%" }}
@@ -68,7 +66,7 @@ function AboutVisual({ heroImage, reduced }) {
           >
             <Image
               src={current.img}
-              alt={current.label}
+              alt={currentLabel}
               fill
               sizes="(min-width: 1024px) 360px, (min-width: 640px) 310px, 270px"
               className="object-cover object-center"
@@ -81,26 +79,28 @@ function AboutVisual({ heroImage, reduced }) {
 
         {/* Step counter — top-right */}
         <div className="absolute right-4 top-4 z-10 rounded-full bg-black/35 px-2.5 py-1 text-[10px] font-bold text-white backdrop-blur-sm">
-          {String(active + 1).padStart(2, "0")} / {String(slides.length).padStart(2, "0")}
+          {String(index + 1).padStart(2, "0")} / {String(count).padStart(2, "0")}
         </div>
 
         {/* Caption */}
-        <div className="absolute inset-x-0 bottom-0 p-6">
+        <div className="absolute inset-x-0 bottom-0 p-6" dir={language === "ar" ? "rtl" : "ltr"}>
           <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-white backdrop-blur-sm">
             <span className="h-1.5 w-1.5 rounded-full bg-[#5BE49B] animate-pulse" /> About HalaPark
           </span>
-          <AnimatePresence mode="wait">
-            <motion.p
-              key={current.label}
-              initial={reduced ? false : { opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={reduced ? undefined : { opacity: 0, y: -6 }}
-              transition={{ duration: 0.4 }}
-              className="mt-2 text-[1.25rem] font-semibold leading-tight tracking-[-0.03em] text-white"
-            >
-              {current.label}
-            </motion.p>
-          </AnimatePresence>
+          {hasText(currentLabel) ? (
+            <AnimatePresence mode="wait">
+              <motion.p
+                key={`${index}-${currentLabel}`}
+                initial={reduced ? false : { opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={reduced ? undefined : { opacity: 0, y: -6 }}
+                transition={{ duration: 0.4 }}
+                className="mt-2 text-[1.25rem] font-semibold leading-tight tracking-[-0.03em] text-white [overflow-wrap:anywhere]"
+              >
+                {currentLabel}
+              </motion.p>
+            </AnimatePresence>
+          ) : null}
         </div>
       </motion.div>
 
@@ -108,12 +108,12 @@ function AboutVisual({ heroImage, reduced }) {
       <div className="absolute -bottom-3 left-1/2 z-40 flex -translate-x-1/2 gap-2">
         {slides.map((s, i) => (
           <button
-            key={s.label}
+            key={`${s.img}-${i}`}
             type="button"
-            aria-label={`Show ${s.label}`}
+            aria-label={`Show slide ${i + 1}`}
             onClick={() => setActive(i)}
             className={`relative h-10 w-10 overflow-hidden rounded-xl border-2 transition-all duration-300 ${
-              i === active
+              i === index
                 ? "border-[#0088FF] shadow-[0_8px_20px_rgba(0,136,255,0.3)] scale-105"
                 : "border-white/70 opacity-60 hover:opacity-100"
             }`}
@@ -163,6 +163,10 @@ function AboutHero({ hero }) {
   const reduced = useReducedMotion();
   const { language } = useLanguage();
 
+  if (hero?.enabled === false) return null;
+
+  const heroSlides = (hero?.images ?? []).filter((s) => hasText(s?.img));
+
   return (
     <section
       id="about-hero"
@@ -185,31 +189,38 @@ function AboutHero({ hero }) {
             initial={reduced ? false : { opacity: 0, x: -28 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.65, ease }}
+            dir={language === "ar" ? "rtl" : "ltr"}
           >
-            <h1 className="max-w-[600px] text-[clamp(2.4rem,4.8vw,4.2rem)] font-semibold leading-[1.02] tracking-[-0.055em] text-[#050A13]">
-              {t(hero, "title", language)}
-            </h1>
+            {hasText(hero?.title) ? (
+              <h1 className="max-w-[600px] text-[clamp(2.4rem,4.8vw,4.2rem)] font-semibold leading-[1.02] tracking-[-0.055em] text-[#050A13] [overflow-wrap:anywhere]">
+                {t(hero, "title", language)}
+              </h1>
+            ) : null}
 
             {t(hero, "tagline", language) ? (
-              <p className="mt-4 text-[1rem] font-semibold text-[#0088FF]">
+              <p className="mt-4 text-[1rem] font-semibold text-[#0088FF] [overflow-wrap:anywhere]">
                 {t(hero, "tagline", language)}
               </p>
             ) : null}
 
-            <p className="mt-5 max-w-[470px] text-[0.95rem] leading-[1.75] text-slate-500">
-              {t(hero, "description", language)}
-            </p>
+            {hasText(hero?.description) ? (
+              <p className="mt-5 max-w-[470px] text-[0.95rem] leading-[1.75] text-slate-500 [overflow-wrap:anywhere]">
+                {t(hero, "description", language)}
+              </p>
+            ) : null}
 
             <div className="mt-9 flex flex-wrap items-center gap-3">
-              <Link
-                href={hero?.primaryCtaLink || "/contact"}
-                className="group inline-flex items-center gap-2.5 rounded-full bg-[#0088FF] px-7 py-3.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,136,255,0.32)] transition hover:brightness-110"
-              >
-                {t(hero, "primaryCtaText", language) || ""}
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 transition-transform duration-200 group-hover:translate-x-0.5">
-                  <ArrowRight className="h-3.5 w-3.5" aria-hidden />
-                </span>
-              </Link>
+              {hasText(hero?.primaryCtaText) ? (
+                <Link
+                  href={hero?.primaryCtaLink || "/contact"}
+                  className="group inline-flex items-center gap-2.5 rounded-full bg-[#0088FF] px-7 py-3.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,136,255,0.32)] transition hover:brightness-110"
+                >
+                  {t(hero, "primaryCtaText", language)}
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 transition-transform duration-200 group-hover:translate-x-0.5">
+                    <ArrowRight className="h-3.5 w-3.5 rtl:rotate-180" aria-hidden />
+                  </span>
+                </Link>
+              ) : null}
               {t(hero, "secondaryCtaText", language) ? (
                 <Link
                   href={hero?.secondaryCtaLink || "/contact"}
@@ -222,14 +233,16 @@ function AboutHero({ hero }) {
           </motion.div>
 
           {/* RIGHT — imagery collage */}
-          <motion.div
-            initial={reduced ? false : { opacity: 0, x: 32 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.75, ease, delay: 0.1 }}
-            className="relative mt-16 flex min-h-[420px] items-center justify-center lg:mt-0 lg:min-h-[560px]"
-          >
-            <AboutVisual heroImage={hero?.image} reduced={reduced} />
-          </motion.div>
+          {heroSlides.length > 0 ? (
+            <motion.div
+              initial={reduced ? false : { opacity: 0, x: 32 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.75, ease, delay: 0.1 }}
+              className="relative mt-16 flex min-h-[420px] items-center justify-center lg:mt-0 lg:min-h-[560px]"
+            >
+              <AboutVisual slides={heroSlides} language={language} reduced={reduced} />
+            </motion.div>
+          ) : null}
         </div>
       </div>
     </section>
@@ -294,32 +307,49 @@ function AboutIntro() {
 function OurMission({ mission }) {
   const reduced = useReducedMotion();
   const { language } = useLanguage();
+
+  if (mission?.enabled === false) return null;
+
+  const paragraphs = (mission?.paragraphs ?? [])
+    .map((paragraph, i) => (language === "ar" ? (mission?.ar?.paragraphs?.[i] ?? "") : paragraph))
+    .filter(hasText);
+  const hasContent =
+    hasText(mission?.title) ||
+    hasText(mission?.subtitle) ||
+    (mission?.paragraphs ?? []).some(hasText) ||
+    hasText(mission?.image);
+  if (!hasContent) return null;
+
   return (
     <section className="bg-white py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
-          <motion.div initial={reduced ? false : { opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.6, ease }}>
-            <h2 className="mb-3 text-[clamp(2.4rem,4vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-[#050A13]">
-              {t(mission, "title", language)}
-            </h2>
-            <p className="mb-7 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500">
-              {t(mission, "subtitle", language)}
-            </p>
-            <div className="space-y-5 text-[0.93rem] leading-7 text-slate-500">
-              {(mission?.paragraphs ?? []).map((paragraph, i) => {
-                const para = language === "ar" ? (mission.ar?.paragraphs?.[i] ?? "") : paragraph;
-                return <p key={paragraph.slice(0, 48)}>{para}</p>;
-              })}
-            </div>
-          </motion.div>
-
-          <motion.div initial={reduced ? false : { opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.6, ease, delay: 0.1 }} className="flex flex-col gap-5">
-            {mission?.image ? (
-              <div className="relative h-56 w-full overflow-hidden rounded-[20px] sm:h-64">
-                <Image src={mission.image} alt="Smart city mobility" fill className="object-cover object-center" />
-                <div className="absolute inset-0 bg-[#050A13]/20" />
+          <motion.div initial={reduced ? false : { opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.6, ease }} dir={language === "ar" ? "rtl" : "ltr"}>
+            {hasText(mission?.title) ? (
+              <h2 className="mb-3 text-[clamp(2.4rem,4vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-[#050A13] [overflow-wrap:anywhere]">
+                {t(mission, "title", language)}
+              </h2>
+            ) : null}
+            {hasText(mission?.subtitle) ? (
+              <p className="mb-7 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500 [overflow-wrap:anywhere]">
+                {t(mission, "subtitle", language)}
+              </p>
+            ) : null}
+            {paragraphs.length > 0 ? (
+              <div className="space-y-5 text-[0.93rem] leading-7 text-slate-500">
+                {paragraphs.map((para, i) => (
+                  <p key={`${i}-${para.slice(0, 48)}`} className="[overflow-wrap:anywhere]">{para}</p>
+                ))}
               </div>
             ) : null}
+          </motion.div>
+
+          {mission?.image ? (
+          <motion.div initial={reduced ? false : { opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.6, ease, delay: 0.1 }} className="flex flex-col gap-5">
+            <div className="relative h-56 w-full overflow-hidden rounded-[20px] sm:h-64">
+              <Image src={mission.image} alt="Smart city mobility" fill className="object-cover object-center" />
+              <div className="absolute inset-0 bg-[#050A13]/20" />
+            </div>
             <div className="space-y-3">
               {/* Extra mission pillars — not in content doc
               {pillars.map((p, i) => {
@@ -339,6 +369,7 @@ function OurMission({ mission }) {
               */}
             </div>
           </motion.div>
+          ) : null}
         </div>
       </div>
     </section>
@@ -350,27 +381,55 @@ function OurMission({ mission }) {
 function OurVision({ vision }) {
   const reduced = useReducedMotion();
   const { language } = useLanguage();
+
+  if (vision?.enabled === false) return null;
+
   const card = vision?.card ?? {};
+  const paragraphs = (vision?.paragraphs ?? [])
+    .map((paragraph, i) => (language === "ar" ? (vision?.ar?.paragraphs?.[i] ?? "") : paragraph))
+    .filter(hasText);
+  const highlights = (card.highlights ?? [])
+    .map((item, i) => (language === "ar" ? (card.ar?.highlights?.[i] ?? null) : item))
+    .filter((item) => hasText(item?.line1) || hasText(item?.line2));
+  const cardHasContent =
+    hasText(card.badge) ||
+    hasText(card.title) ||
+    hasText(card.subtitle) ||
+    (card.highlights ?? []).some((h) => hasText(h?.line1) || hasText(h?.line2));
+  const hasContent =
+    hasText(vision?.title) ||
+    hasText(vision?.subtitle) ||
+    (vision?.paragraphs ?? []).some(hasText) ||
+    hasText(vision?.image) ||
+    cardHasContent;
+  if (!hasContent) return null;
+
   return (
     <section className="bg-[#F4F8FF] py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-          <motion.div initial={reduced ? false : { opacity: 0, x: -28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }}>
-            <h2 className="mb-3 text-[clamp(2.4rem,4vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-[#050A13]">
-              {t(vision, "title", language)}
-            </h2>
-            <p className="mb-6 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500">
-              {t(vision, "subtitle", language)}
-            </p>
-            <div className="space-y-4 text-[0.93rem] leading-7 text-slate-500">
-              {(vision?.paragraphs ?? []).map((paragraph, i) => {
-                const para = language === "ar" ? (vision.ar?.paragraphs?.[i] ?? "") : paragraph;
-                return <p key={paragraph.slice(0, 48)}>{para}</p>;
-              })}
-            </div>
+          <motion.div initial={reduced ? false : { opacity: 0, x: -28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }} dir={language === "ar" ? "rtl" : "ltr"}>
+            {hasText(vision?.title) ? (
+              <h2 className="mb-3 text-[clamp(2.4rem,4vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-[#050A13] [overflow-wrap:anywhere]">
+                {t(vision, "title", language)}
+              </h2>
+            ) : null}
+            {hasText(vision?.subtitle) ? (
+              <p className="mb-6 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500 [overflow-wrap:anywhere]">
+                {t(vision, "subtitle", language)}
+              </p>
+            ) : null}
+            {paragraphs.length > 0 ? (
+              <div className="space-y-4 text-[0.93rem] leading-7 text-slate-500">
+                {paragraphs.map((para, i) => (
+                  <p key={`${i}-${para.slice(0, 48)}`} className="[overflow-wrap:anywhere]">{para}</p>
+                ))}
+              </div>
+            ) : null}
           </motion.div>
 
-          <motion.div initial={reduced ? false : { opacity: 0, x: 28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease, delay: 0.1 }} className="relative min-h-[340px] overflow-hidden rounded-[28px] bg-[#06111f] p-8 sm:p-10">
+          {vision?.image || cardHasContent ? (
+          <motion.div initial={reduced ? false : { opacity: 0, x: 28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease, delay: 0.1 }} className="relative min-h-[340px] overflow-hidden rounded-[28px] bg-[#06111f] p-8 sm:p-10" dir={language === "ar" ? "rtl" : "ltr"}>
             <div className="absolute inset-0">
               {vision?.image ? (
                 <Image src={vision.image} alt="" fill className="object-cover object-center opacity-25" aria-hidden />
@@ -379,30 +438,36 @@ function OurVision({ vision }) {
             </div>
             <div className="relative z-10 flex h-full flex-col justify-between gap-8">
               <div>
-                <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1">
-                  <span className="h-1.5 w-1.5 rounded-full bg-[#5BC4FF]" />
-                  <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/70">
-                    {t(card, "badge", language)}
-                  </span>
-                </div>
-                <p className="text-[clamp(1.3rem,2vw,1.7rem)] font-semibold leading-[1.3] tracking-[-0.03em] text-white">
-                  {t(card, "title", language)}
-                </p>
-                <p className="mt-4 text-[0.88rem] leading-6 text-white/55">{t(card, "subtitle", language)}</p>
+                {hasText(card.badge) ? (
+                  <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1">
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#5BC4FF]" />
+                    <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/70 [overflow-wrap:anywhere]">
+                      {t(card, "badge", language)}
+                    </span>
+                  </div>
+                ) : null}
+                {hasText(card.title) ? (
+                  <p className="text-[clamp(1.3rem,2vw,1.7rem)] font-semibold leading-[1.3] tracking-[-0.03em] text-white [overflow-wrap:anywhere]">
+                    {t(card, "title", language)}
+                  </p>
+                ) : null}
+                {hasText(card.subtitle) ? (
+                  <p className="mt-4 text-[0.88rem] leading-6 text-white/55 [overflow-wrap:anywhere]">{t(card, "subtitle", language)}</p>
+                ) : null}
               </div>
-              <div className="grid grid-cols-3 gap-3 border-t border-white/10 pt-6">
-                {(card.highlights ?? []).map((item, i) => {
-                  const arItem = language === "ar" ? (card.ar?.highlights?.[i] ?? "") : item;
-                  return (
-                    <div key={`${item.line1}-${item.line2}`} className="text-center">
-                      <p className="text-[0.78rem] font-semibold text-white">{arItem.line1}</p>
-                      <p className="text-[0.72rem] text-white/45">{arItem.line2}</p>
+              {highlights.length > 0 ? (
+                <div className="grid grid-cols-3 gap-3 border-t border-white/10 pt-6">
+                  {highlights.map((item, i) => (
+                    <div key={`${i}-${item.line1}-${item.line2}`} className="text-center">
+                      <p className="text-[0.78rem] font-semibold text-white [overflow-wrap:anywhere]">{item.line1}</p>
+                      <p className="text-[0.72rem] text-white/45 [overflow-wrap:anywhere]">{item.line2}</p>
                     </div>
-                  );
-                })}
-              </div>
+                  ))}
+                </div>
+              ) : null}
             </div>
           </motion.div>
+          ) : null}
         </div>
       </div>
     </section>
@@ -414,23 +479,41 @@ function OurVision({ vision }) {
 function OurStory({ story }) {
   const reduced = useReducedMotion();
   const { language } = useLanguage();
+
+  if (story?.enabled === false) return null;
+
+  const paragraphs = (story?.paragraphs ?? [])
+    .map((paragraph, i) => (language === "ar" ? (story?.ar?.paragraphs?.[i] ?? "") : paragraph))
+    .filter(hasText);
+  const hasContent =
+    hasText(story?.title) ||
+    hasText(story?.subtitle) ||
+    (story?.paragraphs ?? []).some(hasText) ||
+    hasText(story?.image);
+  if (!hasContent) return null;
+
   return (
     <section className="bg-white py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid items-start gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-20">
-          <motion.div initial={reduced ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }}>
-            <h2 className="mb-3 text-[clamp(2.4rem,4vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-[#050A13]">
-              {t(story, "title", language)}
-            </h2>
-            <p className="mb-6 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500">
-              {t(story, "subtitle", language)}
-            </p>
-            <div className="space-y-5 text-[0.93rem] leading-7 text-slate-500">
-              {(story?.paragraphs ?? []).map((paragraph, i) => {
-                const para = language === "ar" ? (story.ar?.paragraphs?.[i] ?? "") : paragraph;
-                return <p key={paragraph.slice(0, 48)}>{para}</p>;
-              })}
-            </div>
+          <motion.div initial={reduced ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }} dir={language === "ar" ? "rtl" : "ltr"}>
+            {hasText(story?.title) ? (
+              <h2 className="mb-3 text-[clamp(2.4rem,4vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-[#050A13] [overflow-wrap:anywhere]">
+                {t(story, "title", language)}
+              </h2>
+            ) : null}
+            {hasText(story?.subtitle) ? (
+              <p className="mb-6 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500 [overflow-wrap:anywhere]">
+                {t(story, "subtitle", language)}
+              </p>
+            ) : null}
+            {paragraphs.length > 0 ? (
+              <div className="space-y-5 text-[0.93rem] leading-7 text-slate-500">
+                {paragraphs.map((para, i) => (
+                  <p key={`${i}-${para.slice(0, 48)}`} className="[overflow-wrap:anywhere]">{para}</p>
+                ))}
+              </div>
+            ) : null}
           </motion.div>
 
           {/* Extra story stats & milestones — not in content doc
@@ -438,14 +521,14 @@ function OurStory({ story }) {
             ...
           </motion.div>
           */}
-          <motion.div initial={reduced ? false : { opacity: 0, x: 24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.6, ease, delay: 0.12 }}>
-            {story?.image ? (
+          {story?.image ? (
+            <motion.div initial={reduced ? false : { opacity: 0, x: 24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.6, ease, delay: 0.12 }}>
               <div className="relative h-72 w-full overflow-hidden rounded-[24px] sm:h-80">
                 <Image src={story.image} alt="HalaPark story" fill className="object-cover object-center" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#06111f]/80 via-[#06111f]/20 to-transparent" />
               </div>
-            ) : null}
-          </motion.div>
+            </motion.div>
+          ) : null}
         </div>
       </div>
     </section>
@@ -457,19 +540,37 @@ function OurStory({ story }) {
 function WhatWeDo({ whatWeDo }) {
   const reduced = useReducedMotion();
   const { language } = useLanguage();
-  const items = whatWeDo?.ecosystemItems ?? [];
+
+  if (whatWeDo?.enabled === false) return null;
+
+  const items = (whatWeDo?.ecosystemItems ?? [])
+    .map((item, i) => (language === "ar" ? (whatWeDo?.ar?.ecosystemItems?.[i] ?? "") : item))
+    .filter(hasText);
+  const hasContent =
+    hasText(whatWeDo?.title) ||
+    hasText(whatWeDo?.subtitle) ||
+    hasText(whatWeDo?.intro) ||
+    (whatWeDo?.ecosystemItems ?? []).some(hasText);
+  if (!hasContent) return null;
+
   return (
     <section className="bg-[#F4F8FF] py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid items-start gap-10 lg:grid-cols-[0.7fr_1.3fr] lg:gap-16">
-          <motion.div initial={reduced ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }} className="lg:sticky lg:top-24">
-            <h2 className="mb-3 text-[clamp(2.2rem,3.5vw,3rem)] font-semibold leading-[1.06] tracking-[-0.05em] text-[#050A13]">
-              {t(whatWeDo, "title", language)}
-            </h2>
-            <p className="mb-5 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500">
-              {t(whatWeDo, "subtitle", language)}
-            </p>
-            <p className="text-[0.93rem] leading-7 text-slate-500">{t(whatWeDo, "intro", language)}</p>
+          <motion.div initial={reduced ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }} className="lg:sticky lg:top-24" dir={language === "ar" ? "rtl" : "ltr"}>
+            {hasText(whatWeDo?.title) ? (
+              <h2 className="mb-3 text-[clamp(2.2rem,3.5vw,3rem)] font-semibold leading-[1.06] tracking-[-0.05em] text-[#050A13] [overflow-wrap:anywhere]">
+                {t(whatWeDo, "title", language)}
+              </h2>
+            ) : null}
+            {hasText(whatWeDo?.subtitle) ? (
+              <p className="mb-5 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500 [overflow-wrap:anywhere]">
+                {t(whatWeDo, "subtitle", language)}
+              </p>
+            ) : null}
+            {hasText(whatWeDo?.intro) ? (
+              <p className="text-[0.93rem] leading-7 text-slate-500 [overflow-wrap:anywhere]">{t(whatWeDo, "intro", language)}</p>
+            ) : null}
             {whatWeDo?.image ? (
             <div className="relative mt-8 h-48 w-full overflow-hidden rounded-[18px]">
               <Image src={whatWeDo.image} alt="HalaPark smart parking" fill className="object-cover object-center" />
@@ -478,19 +579,18 @@ function WhatWeDo({ whatWeDo }) {
             ) : null}
           </motion.div>
 
-          <motion.div initial={reduced ? false : { opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.1 }} transition={{ duration: 0.55, ease }} className="grid gap-2.5 sm:grid-cols-2">
-            {items.map((item, i) => {
-              const label = language === "ar" ? (whatWeDo.ar?.ecosystemItems?.[i] ?? "") : item;
-              return (
-                <motion.div key={item} initial={reduced ? false : { opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.35, ease, delay: i * 0.025 }} className="flex items-center gap-3 rounded-[12px] bg-white px-4 py-3.5 shadow-sm">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#0088FF]">
-                    <Check className="h-3 w-3 text-white" strokeWidth={3} aria-hidden />
-                  </span>
-                  <span className="text-[0.85rem] font-medium text-[#050A13]">{label}</span>
-                </motion.div>
-              );
-            })}
+          {items.length > 0 ? (
+          <motion.div initial={reduced ? false : { opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.1 }} transition={{ duration: 0.55, ease }} className="grid gap-2.5 sm:grid-cols-2" dir={language === "ar" ? "rtl" : "ltr"}>
+            {items.map((label, i) => (
+              <motion.div key={`${i}-${label}`} initial={reduced ? false : { opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.35, ease, delay: i * 0.025 }} className="flex items-center gap-3 rounded-[12px] bg-white px-4 py-3.5 shadow-sm">
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#0088FF]">
+                  <Check className="h-3 w-3 text-white" strokeWidth={3} aria-hidden />
+                </span>
+                <span className="text-[0.85rem] font-medium text-[#050A13] [overflow-wrap:anywhere]">{label}</span>
+              </motion.div>
+            ))}
           </motion.div>
+          ) : null}
         </div>
       </div>
     </section>
@@ -502,33 +602,52 @@ function WhatWeDo({ whatWeDo }) {
 function TechnologyInnovation({ technology }) {
   const reduced = useReducedMotion();
   const { language } = useLanguage();
+
+  if (technology?.enabled === false) return null;
+
+  const hasContent =
+    hasText(technology?.title) ||
+    hasText(technology?.subtitle) ||
+    hasText(technology?.body) ||
+    hasText(technology?.imageBadge) ||
+    hasText(technology?.image);
+  if (!hasContent) return null;
+
   return (
     <section className="bg-white py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-          <motion.div initial={reduced ? false : { opacity: 0, x: -24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }} className="relative h-72 w-full overflow-hidden rounded-[24px] sm:h-80 lg:h-[420px]">
-            {technology?.image ? (
-              <Image src={technology.image} alt="HalaPark technology" fill className="object-cover object-center" />
-            ) : null}
+          {technology?.image ? (
+          <motion.div initial={reduced ? false : { opacity: 0, x: -24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }} className="relative h-72 w-full overflow-hidden rounded-[24px] sm:h-80 lg:h-[420px]" dir={language === "ar" ? "rtl" : "ltr"}>
+            <Image src={technology.image} alt="HalaPark technology" fill className="object-cover object-center" />
             <div className="absolute inset-0 bg-gradient-to-tr from-[#06111f]/60 via-transparent to-transparent" />
-            <div className="absolute bottom-6 left-6">
-              <span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-3 py-1 backdrop-blur-sm">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#5BC4FF]" />
-                <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/80">
-                  {t(technology, "imageBadge", language)}
+            {hasText(technology?.imageBadge) ? (
+              <div className="absolute bottom-6 left-6 rtl:left-auto rtl:right-6">
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-3 py-1 backdrop-blur-sm">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#5BC4FF]" />
+                  <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/80 [overflow-wrap:anywhere]">
+                    {t(technology, "imageBadge", language)}
+                  </span>
                 </span>
-              </span>
-            </div>
+              </div>
+            ) : null}
           </motion.div>
+          ) : null}
 
-          <motion.div initial={reduced ? false : { opacity: 0, x: 24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease, delay: 0.1 }}>
-            <h2 className="mb-3 text-[clamp(2.4rem,4vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-[#050A13]">
-              {t(technology, "title", language)}
-            </h2>
-            <p className="mb-5 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500">
-              {t(technology, "subtitle", language)}
-            </p>
-            <p className="text-[0.93rem] leading-7 text-slate-500">{t(technology, "body", language)}</p>
+          <motion.div initial={reduced ? false : { opacity: 0, x: 24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease, delay: 0.1 }} dir={language === "ar" ? "rtl" : "ltr"}>
+            {hasText(technology?.title) ? (
+              <h2 className="mb-3 text-[clamp(2.4rem,4vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-[#050A13] [overflow-wrap:anywhere]">
+                {t(technology, "title", language)}
+              </h2>
+            ) : null}
+            {hasText(technology?.subtitle) ? (
+              <p className="mb-5 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500 [overflow-wrap:anywhere]">
+                {t(technology, "subtitle", language)}
+              </p>
+            ) : null}
+            {hasText(technology?.body) ? (
+              <p className="text-[0.93rem] leading-7 text-slate-500 [overflow-wrap:anywhere]">{t(technology, "body", language)}</p>
+            ) : null}
             {/* Extra feature cards — not in content doc
             <div className="mt-8 grid grid-cols-2 gap-3">
               {techPoints.map((p, i) => {
@@ -1169,6 +1288,15 @@ function PoweringFutureCities() {
 function FinalCTA({ cta }) {
   const reduced = useReducedMotion();
   const { language } = useLanguage();
+
+  if (cta?.enabled === false) return null;
+
+  const hasPrimary = hasText(cta?.primaryCtaText);
+  const hasSecondary = hasText(cta?.secondaryCtaText);
+  const hasContent =
+    hasText(cta?.title) || hasText(cta?.description) || hasPrimary || hasSecondary;
+  if (!hasContent) return null;
+
   return (
     <section className="bg-white py-4 sm:py-5 lg:py-6">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -1187,27 +1315,38 @@ function FinalCTA({ cta }) {
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.65, ease }}
             className="relative z-10 mx-auto max-w-3xl px-8 py-14 text-center sm:px-12 sm:py-16 lg:px-16 lg:py-20"
+            dir={language === "ar" ? "rtl" : "ltr"}
           >
-            <h2 className="text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-white">
-              {t(cta, "title", language)}
-            </h2>
-            <p className="mx-auto mt-5 max-w-2xl text-sm leading-7 text-white/75 sm:text-base">
-              {t(cta, "description", language)}
-            </p>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <Link
-                href={cta?.primaryCtaLink || "/contact"}
-                className="inline-flex items-center gap-2 rounded-full bg-[#0088FF] px-8 py-3.5 text-sm font-semibold text-white shadow-[0_8px_28px_rgba(0,136,255,0.45)] transition hover:brightness-110"
-              >
-                {t(cta, "primaryCtaText", language)} <ArrowRight className="h-4 w-4" aria-hidden />
-              </Link>
-              <Link
-                href={cta?.secondaryCtaLink || "/contact"}
-                className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-8 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/15"
-              >
-                {t(cta, "secondaryCtaText", language)}
-              </Link>
-            </div>
+            {hasText(cta?.title) ? (
+              <h2 className="text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-white [overflow-wrap:anywhere]">
+                {t(cta, "title", language)}
+              </h2>
+            ) : null}
+            {hasText(cta?.description) ? (
+              <p className="mx-auto mt-5 max-w-2xl text-sm leading-7 text-white/75 sm:text-base [overflow-wrap:anywhere]">
+                {t(cta, "description", language)}
+              </p>
+            ) : null}
+            {hasPrimary || hasSecondary ? (
+              <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+                {hasPrimary ? (
+                  <Link
+                    href={cta?.primaryCtaLink || "/contact"}
+                    className="inline-flex items-center gap-2 rounded-full bg-[#0088FF] px-8 py-3.5 text-sm font-semibold text-white shadow-[0_8px_28px_rgba(0,136,255,0.45)] transition hover:brightness-110"
+                  >
+                    {t(cta, "primaryCtaText", language)} <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
+                  </Link>
+                ) : null}
+                {hasSecondary ? (
+                  <Link
+                    href={cta?.secondaryCtaLink || "/contact"}
+                    className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-8 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/15"
+                  >
+                    {t(cta, "secondaryCtaText", language)}
+                  </Link>
+                ) : null}
+              </div>
+            ) : null}
           </motion.div>
         </div>
       </div>

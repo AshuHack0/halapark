@@ -29,10 +29,11 @@ const ct = (key, language) => CAREERS_TEXT[key]?.[language] ?? CAREERS_TEXT[key]
 // True when a CMS value is a non-blank string — hide-when-empty helper.
 const hasText = (v) => typeof v === "string" && v.trim().length > 0;
 
-// Job posts are DATA (facts), not marketing copy: in Arabic they fall back to
-// English when no Arabic translation exists, so listings still work in AR.
+// Job post fields are strict per language (site-wide rule): Arabic mode shows
+// the Arabic value or nothing — no English fallback. Posts without an Arabic
+// title are filtered out entirely in AR (see JobOpenings) so no blank cards.
 const jt = (post, key, language) =>
-  language === "ar" ? post?.ar?.[key] || post?.[key] || "" : post?.[key] ?? "";
+  language === "ar" ? post?.ar?.[key] ?? "" : post?.[key] ?? "";
 
 const opportunityIcons = {
   Briefcase,
@@ -407,7 +408,11 @@ function JobApplyButton({ post, onApply, className }) {
   const { language } = useLanguage();
   const useForm = post.applyMode === "form";
   const applyHref = post.applyLink || "/contact";
-  const label = jt(post, "applyLabel", language);
+  // The apply button is functional chrome — when the post has no label in the
+  // current language, use a fixed UI label so the button is never blank.
+  const label =
+    jt(post, "applyLabel", language) ||
+    (language === "ar" ? "قدّم الآن" : "Apply Now");
   if (useForm) {
     return (
       <button type="button" onClick={() => onApply(post)} className={className}>
@@ -524,8 +529,14 @@ function JobDetailModal({ job, onClose, onApply }) {
 function JobOpenings({ openPositions }) {
   const reduced = useReducedMotion();
   const { language } = useLanguage();
-  // Only show active jobs — closed ones are hidden from the website.
-  const posts = (openPositions?.posts ?? []).filter((p) => p?.status !== "closed");
+  // Only show active jobs — closed ones are hidden from the website. In Arabic
+  // mode, posts without an Arabic title are hidden too (strict — no English
+  // fallback, and no blank cards).
+  const posts = (openPositions?.posts ?? [])
+    .filter((p) => p?.status !== "closed")
+    .filter((p) =>
+      language === "ar" ? hasText(p?.ar?.title) : hasText(p?.title),
+    );
   const [applyJob, setApplyJob] = useState(null);
   const [detailJob, setDetailJob] = useState(null);
 
