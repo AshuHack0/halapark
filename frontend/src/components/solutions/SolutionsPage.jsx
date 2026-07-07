@@ -531,21 +531,23 @@ function StatsSection() {
   const gradient = t(sol, "headingGradient", language)?.trim() || "";
   const subtitle = t(sol, "subtitle", language);
 
-  // Group the cards. Cards without a group fall into "Other Solutions".
-  const hasGroups = solutionItems.some((c) => c.group);
-  const grouped = [];
-  if (hasGroups) {
-    const order = [...groupOrder];
-    // include any group names that appear on cards but aren't in groupOrder
-    solutionItems.forEach((c) => {
-      if (c.group && !order.includes(c.group)) order.push(c.group);
-    });
-    order.forEach((g) => {
-      const items = solutionItems.filter((c) => (c.group || "") === g);
-      if (items.length) grouped.push({ group: g, items });
-    });
-    const ungrouped = solutionItems.filter((c) => !c.group);
-    if (ungrouped.length) grouped.push({ group: "More Solutions", items: ungrouped });
+  // Categories (groups) are the source of truth and drive what shows. A solution
+  // only appears if it belongs to an EXISTING category — so deleting a category
+  // removes its solutions, and deleting every category hides the whole section.
+  // Only cards with a real slug count (cleared/blank cards never render).
+  const validCards = solutionItems.filter((c) => c && c.slug);
+  const categories = Array.isArray(groupOrder) ? groupOrder.filter(Boolean) : [];
+  const grouped = categories
+    .map((g) => ({
+      group: g,
+      items: validCards.filter((c) => (c.group || "") === g),
+    }))
+    .filter((g) => g.items.length > 0);
+
+  // Hide the whole Solutions section when there are no categories with
+  // solutions to show — a heading alone (with no solutions) is not rendered.
+  if (grouped.length === 0) {
+    return null;
   }
 
   return (
@@ -583,36 +585,27 @@ function StatsSection() {
         </div>
 
         <div id="solutions-grid" className="scroll-mt-24" style={{ scrollMarginTop: "90px" }}>
-          {hasGroups ? (
-            <div className="space-y-14">
-              {grouped.map((g) => (
-                <div key={g.group}>
-                  {/* Group heading */}
-                  <div className="mb-6 flex items-center gap-4">
-                    <h3 className="text-[clamp(1.3rem,2.4vw,1.9rem)] font-semibold tracking-[-0.03em] text-[#050A13]">
-                      {g.group}
-                    </h3>
-                    <span className="h-px flex-1 bg-gradient-to-r from-[#0088FF]/30 to-transparent" />
-                    <span className="rounded-full bg-[#0088FF]/10 px-2.5 py-1 text-[11px] font-bold text-[#0088FF]">
-                      {g.items.length}
-                    </span>
-                  </div>
-                  <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                    {g.items.map((card, i) => (
-                      <SolutionCard key={card.slug || card.title} card={card} i={i} reduced={reduced} />
-                    ))}
-                  </div>
+          <div className="space-y-14">
+            {grouped.map((g) => (
+              <div key={g.group}>
+                {/* Category heading */}
+                <div className="mb-6 flex items-center gap-4">
+                  <h3 className="text-[clamp(1.3rem,2.4vw,1.9rem)] font-semibold tracking-[-0.03em] text-[#050A13] [overflow-wrap:anywhere]">
+                    {g.group}
+                  </h3>
+                  <span className="h-px flex-1 bg-gradient-to-r from-[#0088FF]/30 to-transparent" />
+                  <span className="rounded-full bg-[#0088FF]/10 px-2.5 py-1 text-[11px] font-bold text-[#0088FF]">
+                    {g.items.length}
+                  </span>
                 </div>
-              ))}
-            </div>
-          ) : (
-            // Fallback (no groups): flat responsive grid
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {solutionItems.map((card, i) => (
-                <SolutionCard key={card.slug || card.title} card={card} i={i} reduced={reduced} />
-              ))}
-            </div>
-          )}
+                <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                  {g.items.map((card, i) => (
+                    <SolutionCard key={card.slug || card.title} card={card} i={i} reduced={reduced} />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
