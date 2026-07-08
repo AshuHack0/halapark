@@ -82,7 +82,7 @@ export default function WhyChooseHalaPark() {
   if (validReasons.length === 0 && !headingText.trim()) return null;
 
   return (
-    <section className="bg-white py-16 sm:py-20 lg:py-24">
+    <section className="bg-white pt-8 pb-16 sm:pt-10 sm:pb-20 lg:pt-12 lg:pb-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
         <motion.div

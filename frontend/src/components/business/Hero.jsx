@@ -7,6 +7,7 @@ import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { ArrowRight, TrendingUp, Check, Gauge } from "lucide-react";
 import { fetchBusinessSection } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
+import { GetProposalModal, ConsultationModal } from "./BusinessLeadModals";
 
 const ease = [0.22, 1, 0.36, 1];
 
@@ -30,16 +31,18 @@ const DECK_LAYOUT = [
   { x: 18,  y: 50,  rotate: 9,  scale: 0.86, opacity: 0.7,  z: 10 },
 ];
 
-function BusinessGrowthPanel({ reduced }) {
+function BusinessGrowthPanel({ reduced, slides }) {
+  // CMS-driven deck images with a fallback so the hero never renders empty.
+  const deck = Array.isArray(slides) && slides.length > 0 ? slides : BIZ_SLIDES;
   const [active, setActive] = useState(0);
 
   useEffect(() => {
     if (reduced) return undefined;
-    const id = setInterval(() => setActive((p) => (p + 1) % BIZ_SLIDES.length), 3200);
+    const id = setInterval(() => setActive((p) => (p + 1) % deck.length), 3200);
     return () => clearInterval(id);
-  }, [reduced]);
+  }, [reduced, deck.length]);
 
-  const current = BIZ_SLIDES[active];
+  const current = deck[active] ?? deck[0];
 
   return (
     <div className="relative flex items-center justify-center">
@@ -53,15 +56,15 @@ function BusinessGrowthPanel({ reduced }) {
         className="relative z-20 h-[330px] w-[250px] sm:h-[380px] sm:w-[290px] lg:h-[430px] lg:w-[330px]"
         style={{ perspective: 1200 }}
       >
-        {BIZ_SLIDES.map((slide, i) => {
+        {deck.map((slide, i) => {
           // Depth = how far this card is behind the active (front) one.
-          const depth = (i - active + BIZ_SLIDES.length) % BIZ_SLIDES.length;
+          const depth = (i - active + deck.length) % deck.length;
           const layout = DECK_LAYOUT[depth] || DECK_LAYOUT[DECK_LAYOUT.length - 1];
           const isFront = depth === 0;
 
           return (
             <motion.div
-              key={slide.label}
+              key={`${slide.img}-${i}`}
               initial={false}
               animate={
                 reduced
@@ -115,11 +118,11 @@ function BusinessGrowthPanel({ reduced }) {
 
       {/* Progress dots */}
       <div className="absolute -bottom-2 left-1/2 z-40 flex -translate-x-1/2 gap-1.5">
-        {BIZ_SLIDES.map((s, i) => (
+        {deck.map((s, i) => (
           <button
-            key={s.label}
+            key={`${s.img}-${i}`}
             type="button"
-            aria-label={`Show ${s.label}`}
+            aria-label={`Show ${s.label || i + 1}`}
             onClick={() => setActive(i)}
             className={`h-1.5 rounded-full transition-all duration-300 ${
               i === active ? "w-5 bg-[#0088FF]" : "w-1.5 bg-[#0088FF]/30 hover:bg-[#0088FF]/60"
@@ -194,6 +197,8 @@ export default function BusinessHero() {
   const reduced = useReducedMotion();
   const { language } = useLanguage();
   const [hero, setHero] = useState({});
+  const [proposalOpen, setProposalOpen] = useState(false);
+  const [consultOpen, setConsultOpen] = useState(false);
 
   useEffect(() => {
     fetchBusinessSection("hero").then((section) => {
@@ -202,6 +207,12 @@ export default function BusinessHero() {
       }
     });
   }, []);
+
+  // CMS deck images: array of { img, label } (label optional). Falls back to the
+  // built-in slides when the admin hasn't set any.
+  const deckImages = (Array.isArray(hero.deckImages) ? hero.deckImages : [])
+    .map((d) => (typeof d === "string" ? { img: d, label: "" } : d))
+    .filter((d) => d && (d.img || "").trim());
 
   // Checklist items from CMS (parallel ar.features in Arabic; blank when missing).
   const features =
@@ -264,21 +275,23 @@ export default function BusinessHero() {
             </ul>
 
             <div className="mt-9 flex flex-wrap items-center gap-3">
-              <Link
-                href="/contact"
+              <button
+                type="button"
+                onClick={() => setProposalOpen(true)}
                 className="group inline-flex items-center gap-2.5 rounded-full bg-[#0088FF] px-7 py-3.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,136,255,0.32)] transition hover:brightness-110"
               >
                 {t(hero, "ctaPrimary", language) || (language === "ar" ? "" : "Get Proposal")}
                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 transition-transform duration-200 group-hover:translate-x-0.5">
                   <ArrowRight className="h-3.5 w-3.5" aria-hidden />
                 </span>
-              </Link>
-              <Link
-                href="/contact"
+              </button>
+              <button
+                type="button"
+                onClick={() => setConsultOpen(true)}
                 className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-7 py-3.5 text-sm font-semibold text-slate-700 shadow-[0_2px_12px_rgba(6,6,22,0.07)] transition hover:border-[#0088FF]/50 hover:text-[#0088FF]"
               >
                 {t(hero, "ctaSecondary", language) || (language === "ar" ? "" : "Book a Free Consultation")}
-              </Link>
+              </button>
             </div>
           </motion.div>
 
@@ -289,10 +302,24 @@ export default function BusinessHero() {
             transition={{ duration: 0.75, ease, delay: 0.1 }}
             className="relative mt-16 flex min-h-[420px] items-center justify-center lg:mt-0 lg:min-h-[560px]"
           >
-            <BusinessGrowthPanel reduced={reduced} />
+            <BusinessGrowthPanel reduced={reduced} slides={deckImages} />
           </motion.div>
         </div>
       </div>
+
+      {/* Popups — opened by the two hero CTAs (kept separate from Contact Us) */}
+      <GetProposalModal
+        isOpen={proposalOpen}
+        onClose={() => setProposalOpen(false)}
+        config={hero.proposalForm}
+        options={hero.proposalOptions}
+      />
+      <ConsultationModal
+        isOpen={consultOpen}
+        onClose={() => setConsultOpen(false)}
+        config={hero.consultationForm}
+        options={hero.consultationTopics}
+      />
     </section>
   );
 }

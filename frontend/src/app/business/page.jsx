@@ -3,7 +3,7 @@ import BuiltForEverySpace from "@/components/business/BuiltForEverySpace";
 import WhyChooseHalaPark from "@/components/business/WhyChooseHalaPark";
 import BusinessSolutions from "@/components/business/BusinessSolutions";
 import WhoWeWorkWith from "@/components/business/WhoWeWorkWith";
-import PartnersShowcase from "@/components/business/PartnersShowcase";
+import PartnersShowcase, { PartnerCarousel, PartnerCTA } from "@/components/business/PartnersShowcase";
 import TransformParking from "@/components/business/TransformParking";
 import HalaParkAdvantage from "@/components/business/HalaParkAdvantage";
 import BusinessValueProps from "@/components/business/ValueProps";
@@ -36,6 +36,12 @@ export default function BusinessPage() {
       </SectionReveal>
       <SectionReveal delay={0.065}>
         <PartnersShowcase />
+      </SectionReveal>
+      <SectionReveal delay={0.066}>
+        <PartnerCarousel />
+      </SectionReveal>
+      <SectionReveal delay={0.067}>
+        <PartnerCTA />
       </SectionReveal>
       <SectionReveal delay={0.07}>
         <TransformParking />

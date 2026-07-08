@@ -21,8 +21,27 @@ export default function BuiltForEverySpace() {
   // Admin "Show this section on the website" toggle.
   if (data?.enabled === false) return null;
 
+  // Heading: prefer the explicit Title + Title Gradient fields. For older content
+  // that only has a single `title`, fall back to the previous behaviour (last two
+  // words become the gradient) so nothing breaks.
+  const fullTitle = (t(data, "title", language) || "").trim();
+  const explicitGradient = (t(data, "titleGradient", language) || "").trim();
+  let line1 = fullTitle;
+  let line2 = explicitGradient;
+  if (!explicitGradient && fullTitle) {
+    const words = fullTitle.split(" ");
+    line1 = words.slice(0, -2).join(" ");
+    line2 = words.slice(-2).join(" ");
+  }
+  const description = t(data, "description", language) || "";
+
+  // Hide the whole section when the admin cleared the title + description.
+  if (!fullTitle && !description.trim()) return null;
+
   return (
-    <section className="bg-white py-16 sm:py-20 lg:py-24">
+    // Reduced bottom padding so this section sits closer to "Why Choose HalaPark"
+    // below (removes the large white gap between the two).
+    <section className="bg-white pt-16 pb-6 sm:pt-20 sm:pb-8 lg:pt-24 lg:pb-10">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={reduced ? false : { opacity: 0, y: 24 }}
@@ -31,15 +50,20 @@ export default function BuiltForEverySpace() {
           transition={{ duration: 0.65, ease }}
           className="mx-auto max-w-[980px] text-center"
         >
-          <h2 className="text-[clamp(3rem,5.5vw,5rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]">
-            {(t(data, "title", language) || "").split(" ").slice(0, -2).join(" ")}{" "}
-            <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">
-              {(t(data, "title", language) || "").split(" ").slice(-2).join(" ")}
-            </span>
+          {/* Title on one line; the gradient accent drops to a second line. */}
+          <h2 className="text-[clamp(3rem,5.5vw,5rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]">
+            {line1 ? <span className="block">{line1}</span> : null}
+            {line2 ? (
+              <span className="block bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">
+                {line2}
+              </span>
+            ) : null}
           </h2>
-          <p className="mx-auto mt-5 max-w-[650px] text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem]">
-            {t(data, "description", language) || ""}
-          </p>
+          {description ? (
+            <p className="mx-auto mt-5 max-w-[650px] text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem] [overflow-wrap:anywhere] whitespace-pre-line">
+              {description}
+            </p>
+          ) : null}
         </motion.div>
       </div>
     </section>

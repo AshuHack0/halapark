@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
 import { ChevronLeft, ChevronRight, ArrowRight, Sparkles } from "lucide-react";
@@ -15,6 +16,22 @@ export default function WhoWeWorkWith() {
   const [partners, setPartners] = useState([]);
   const [header, setHeader] = useState({});
   const [activeIndex, setActiveIndex] = useState(0);
+  const [direction, setDirection] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const scrollRef = useRef(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+  const [hasOverflow, setHasOverflow] = useState(false);
+
+  // Declared before the effects that call it so it is defined at call time.
+  function checkScroll() {
+    if (scrollRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+      setCanScrollLeft(scrollLeft > 0);
+      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
+      setHasOverflow(scrollWidth > clientWidth + 10);
+    }
+  }
 
   useEffect(() => {
     fetchBusinessSection("whoWeWork").then((section) => {
@@ -28,33 +45,24 @@ export default function WhoWeWorkWith() {
       }
     });
   }, []);
-  const [direction, setDirection] = useState(0);
-  const scrollRef = useRef(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
 
   useEffect(() => {
     checkScroll();
-  }, []);
+  }, [partners]);
 
   useEffect(() => {
+    // Auto-advance stops once the user takes manual control (paused).
+    if (paused || partners.length === 0) return;
     const interval = setInterval(() => {
-      setActiveIndex((prev) => (partners.length ? (prev + 1) % partners.length : 0));
+      setActiveIndex((prev) => (prev + 1) % partners.length);
       setDirection(1);
     }, 5000);
 
     return () => clearInterval(interval);
-  }, []);
-
-  const checkScroll = () => {
-    if (scrollRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
-      setCanScrollLeft(scrollLeft > 0);
-      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
-    }
-  };
+  }, [paused, partners.length]);
 
   const scrollTabs = (dir) => {
+    setPaused(true);
     if (scrollRef.current) {
       const tabWidth = scrollRef.current.querySelector('[data-tab]')?.offsetWidth || 150;
       scrollRef.current.scrollBy({
@@ -66,6 +74,7 @@ export default function WhoWeWorkWith() {
   };
 
   const handleTabClick = (index) => {
+    setPaused(true);
     setDirection(index > activeIndex ? 1 : -1);
     setActiveIndex(index);
   };
@@ -99,6 +108,15 @@ export default function WhoWeWorkWith() {
   // Admin "Show this section on the website" toggle.
   if (header?.enabled === false) return null;
 
+  // Empty guard: hide the whole section when there are no meaningful partners
+  // (a partner counts if it has a title, image or description) and no heading.
+  const validPartners = partners.filter(
+    (p) => p && (p.title || p.image || p.description)
+  );
+  const hasHeading =
+    t(header, "heading", language) || t(header, "headingGradient", language);
+  if (validPartners.length === 0 && !hasHeading) return null;
+
   return (
     <section className="bg-gradient-to-b from-white via-[#F8FAFC] to-white py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -115,8 +133,10 @@ export default function WhoWeWorkWith() {
             dir={language === "ar" ? "rtl" : "ltr"}
             className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight tracking-[-0.06em] text-[#050A13] mb-4 [overflow-wrap:anywhere]"
           >
-            {t(header, "heading", language) || (language === "ar" ? "" : "Who We")}{" "}
-            <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">
+            <span className="block whitespace-nowrap">
+              {t(header, "heading", language) || (language === "ar" ? "" : "Who We")}
+            </span>
+            <span className="block bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">
               {t(header, "headingGradient", language) || (language === "ar" ? "" : "Work With")}
             </span>
           </h2>
@@ -136,17 +156,19 @@ export default function WhoWeWorkWith() {
           transition={{ duration: 0.65, ease, delay: 0.1 }}
           className="relative mb-16"
         >
-          {/* Left Arrow */}
-          <motion.button
-            onClick={() => scrollTabs('left')}
-            disabled={!canScrollLeft}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-            className="absolute -left-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-white shadow-lg hover:shadow-xl disabled:opacity-30 disabled:cursor-not-allowed transition border border-[#E7EAF0]"
-            aria-label="Scroll tabs left"
-          >
-            <ChevronLeft className="h-5 w-5 text-[#0088FF]" />
-          </motion.button>
+          {/* Left Arrow — only shown when the tabs actually overflow */}
+          {hasOverflow && (
+            <motion.button
+              onClick={() => scrollTabs('left')}
+              disabled={!canScrollLeft}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              className="absolute -left-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-white shadow-lg hover:shadow-xl disabled:opacity-30 disabled:cursor-not-allowed transition border border-[#E7EAF0]"
+              aria-label="Scroll tabs left"
+            >
+              <ChevronLeft className="h-5 w-5 text-[#0088FF]" />
+            </motion.button>
+          )}
 
           {/* Tabs Container */}
           <div className="relative">
@@ -183,17 +205,19 @@ export default function WhoWeWorkWith() {
             <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white to-transparent pointer-events-none" />
           </div>
 
-          {/* Right Arrow */}
-          <motion.button
-            onClick={() => scrollTabs('right')}
-            disabled={!canScrollRight}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-            className="absolute -right-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-white shadow-lg hover:shadow-xl disabled:opacity-30 disabled:cursor-not-allowed transition border border-[#E7EAF0]"
-            aria-label="Scroll tabs right"
-          >
-            <ChevronRight className="h-5 w-5 text-[#0088FF]" />
-          </motion.button>
+          {/* Right Arrow — only shown when the tabs actually overflow */}
+          {hasOverflow && (
+            <motion.button
+              onClick={() => scrollTabs('right')}
+              disabled={!canScrollRight}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              className="absolute -right-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-white shadow-lg hover:shadow-xl disabled:opacity-30 disabled:cursor-not-allowed transition border border-[#E7EAF0]"
+              aria-label="Scroll tabs right"
+            >
+              <ChevronRight className="h-5 w-5 text-[#0088FF]" />
+            </motion.button>
+          )}
         </motion.div>
 
         {/* Content Area with Enhanced Animations */}
@@ -214,8 +238,17 @@ export default function WhoWeWorkWith() {
             <motion.div variants={itemVariants} className="mb-6">
               <span
                 dir={language === "ar" ? "rtl" : "ltr"}
-                className="inline-block px-3 py-1 bg-[#0088FF]/10 text-[#0088FF] text-xs font-semibold rounded-full mb-2 [overflow-wrap:anywhere]"
+                className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#0088FF]/10 text-[#0088FF] text-xs font-semibold rounded-full mb-2 [overflow-wrap:anywhere]"
               >
+                {activePartner.icon && (
+                  <Image
+                    src={activePartner.icon}
+                    alt=""
+                    width={16}
+                    height={16}
+                    className="h-4 w-4 object-contain"
+                  />
+                )}
                 {t(header, "categoryLabel", language) || (language === "ar" ? "" : "Category")}
               </span>
               <h3 className="text-3xl sm:text-4xl font-bold text-[#050A13]">
@@ -259,23 +292,37 @@ export default function WhoWeWorkWith() {
               </motion.ul>
             </motion.div>
 
-            {/* CTA Button */}
-            <motion.button
-              variants={itemVariants}
-              whileHover={{ x: 4 }}
-              whileTap={{ scale: 0.98 }}
-              className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] text-white font-semibold rounded-full hover:shadow-lg hover:shadow-[#0088FF]/30 transition"
-            >
-              <span dir={language === "ar" ? "rtl" : "ltr"} className="[overflow-wrap:anywhere]">
-                {t(header, "ctaLabel", language) || (language === "ar" ? "" : "Learn More")}
-              </span>
-              <motion.div
-                whileHover={{ x: 4 }}
-                transition={{ duration: 0.3 }}
-              >
-                <ArrowRight className="h-4 w-4" />
+            {/* CTA Button — links to header.ctaLink when set, otherwise a plain button */}
+            {header.ctaLink ? (
+              <motion.div variants={itemVariants} className="inline-block">
+                <Link
+                  href={header.ctaLink}
+                  className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] text-white font-semibold rounded-full hover:shadow-lg hover:shadow-[#0088FF]/30 transition"
+                >
+                  <span dir={language === "ar" ? "rtl" : "ltr"} className="[overflow-wrap:anywhere]">
+                    {t(header, "ctaLabel", language) || (language === "ar" ? "" : "Learn More")}
+                  </span>
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
               </motion.div>
-            </motion.button>
+            ) : (
+              <motion.button
+                variants={itemVariants}
+                whileHover={{ x: 4 }}
+                whileTap={{ scale: 0.98 }}
+                className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] text-white font-semibold rounded-full hover:shadow-lg hover:shadow-[#0088FF]/30 transition"
+              >
+                <span dir={language === "ar" ? "rtl" : "ltr"} className="[overflow-wrap:anywhere]">
+                  {t(header, "ctaLabel", language) || (language === "ar" ? "" : "Learn More")}
+                </span>
+                <motion.div
+                  whileHover={{ x: 4 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <ArrowRight className="h-4 w-4" />
+                </motion.div>
+              </motion.button>
+            )}
           </motion.div>
 
           {/* Right: Image with Enhanced Effects */}
@@ -285,13 +332,18 @@ export default function WhoWeWorkWith() {
             transition={{ duration: 0.5, ease, delay: 0.1 }}
             className="relative h-80 sm:h-96 lg:h-[480px] rounded-[32px] overflow-hidden shadow-[0_20px_80px_rgba(0,136,255,0.2)] border border-[#E7EAF0]"
           >
-            <Image
-              src={activePartner.image || "/hf_20260327_065515_cd3808b8-d99d-4faa-817d-e3f772726da6.png"}
-              alt={activePartner.title || ""}
-              fill
-              className="object-cover"
-              priority
-            />
+            {activePartner.image ? (
+              <Image
+                src={activePartner.image}
+                alt={activePartner.title || ""}
+                fill
+                className="object-cover"
+                priority
+              />
+            ) : (
+              // No hardcoded fallback — neutral placeholder when a partner has no image.
+              <div className="absolute inset-0 bg-gradient-to-br from-[#EEF6FF] to-[#DCEBFF]" />
+            )}
 
             {/* Gradient Overlays */}
             <motion.div
