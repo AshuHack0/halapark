@@ -282,28 +282,9 @@ function NewHero() {
             transition={{ duration: 0.75, ease, delay: 0.1 }}
             className="relative mt-16 flex min-h-[420px] items-center justify-center lg:mt-0 lg:min-h-[560px]"
           >
-            {hero.mediaType === "video" && hero.videoUrl ? (
-              <video
-                src={hero.videoUrl}
-                autoPlay={!reduced}
-                muted
-                loop
-                playsInline
-                preload="metadata"
-                className="h-full max-h-[560px] min-h-[420px] w-full rounded-[24px] object-cover shadow-[0_24px_60px_rgba(15,23,42,0.18)]"
-              />
-            ) : hero.image ? (
-              <Image
-                src={hero.image}
-                alt={t(hero, "title", language) || ""}
-                width={720}
-                height={560}
-                sizes="(min-width: 1024px) 45vw, 100vw"
-                className="h-full max-h-[560px] min-h-[420px] w-full rounded-[24px] object-cover shadow-[0_24px_60px_rgba(15,23,42,0.18)]"
-              />
-            ) : (
-              <SolutionsControlPanel reduced={reduced} showcase={hero.showcase} language={language} />
-            )}
+            {/* The Solutions hero always uses the animated mosaic + badges
+                showcase (fully editable from admin). */}
+            <SolutionsControlPanel reduced={reduced} showcase={hero.showcase} language={language} />
           </motion.div>
         </div>
       </div>
