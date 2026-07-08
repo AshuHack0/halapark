@@ -26,6 +26,8 @@ export async function POST(request) {
         company:  body.company  || undefined,
         subject:  body.subject  || undefined,
         message:  body.message,
+        // Optional attachments already uploaded to Cloudinary (URL + metadata).
+        attachments: Array.isArray(body.attachments) ? body.attachments.slice(0, 5) : [],
         source:   "website",
       }),
     });

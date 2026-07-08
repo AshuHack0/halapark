@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Send } from "lucide-react";
+import { Send, Paperclip, X, Loader2, FileText } from "lucide-react";
 
 import { useLanguage, t } from "@/context/LanguageContext";
 
@@ -27,6 +27,15 @@ const COPY = {
     success: "✓ Message sent! Our team will get back to you shortly.",
     genericError: "Something went wrong. Please try again.",
     networkError: "Network error. Please try again.",
+    attachments: "Attachments (Optional)",
+    attachmentsHint: "Attach images, photos, or documents (PDF, DOC). Up to 5 files, 10MB each.",
+    addFiles: "Add files",
+    uploading: "Uploading…",
+    remove: "Remove",
+    attachmentTypeError: "Unsupported file type. Use an image or a PDF/DOC/DOCX file.",
+    attachmentSizeError: "File is too large (max 10MB).",
+    attachmentCountError: "You can attach up to 5 files.",
+    attachmentUploadError: "Attachment upload failed. Please try again.",
   },
   ar: {
     eyebrow: "نموذج التواصل",
@@ -48,8 +57,56 @@ const COPY = {
     success: "✓ تم إرسال الرسالة! سيتواصل معك فريقنا قريبًا.",
     genericError: "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
     networkError: "حدث خطأ في الشبكة. يرجى المحاولة مرة أخرى.",
+    attachments: "المرفقات (اختياري)",
+    attachmentsHint: "أرفق صورًا أو مستندات (PDF أو DOC). حتى 5 ملفات، 10 ميجابايت لكل ملف.",
+    addFiles: "إضافة ملفات",
+    uploading: "جارٍ الرفع…",
+    remove: "إزالة",
+    attachmentTypeError: "نوع الملف غير مدعوم. استخدم صورة أو ملف PDF/DOC/DOCX.",
+    attachmentSizeError: "حجم الملف كبير جدًا (بحد أقصى 10 ميجابايت).",
+    attachmentCountError: "يمكنك إرفاق حتى 5 ملفات.",
+    attachmentUploadError: "فشل رفع المرفق. يرجى المحاولة مرة أخرى.",
   },
 };
+
+// Attachment constraints.
+const ATTACH_MAX_BYTES = 10 * 1024 * 1024;
+const ATTACH_MAX_COUNT = 5;
+const ATTACH_ACCEPT =
+  "image/jpeg,image/png,image/webp,image/gif,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+const ATTACH_ALLOWED_TYPES = new Set(ATTACH_ACCEPT.split(","));
+// Some browsers report DOC/DOCX with an empty or generic MIME type; fall back
+// to the extension so legitimate documents aren't rejected.
+const ATTACH_ALLOWED_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp", ".gif", ".pdf", ".doc", ".docx"];
+
+function isAllowedAttachment(file) {
+  if (ATTACH_ALLOWED_TYPES.has(file.type)) return true;
+  const name = (file.name || "").toLowerCase();
+  return ATTACH_ALLOWED_EXTENSIONS.some((ext) => name.endsWith(ext));
+}
+
+// POST a single file to Cloudinary with signed params from the backend.
+function uploadAttachmentToCloudinary(file, sig) {
+  return new Promise((resolve, reject) => {
+    const fd = new FormData();
+    fd.append("file", file);
+    fd.append("api_key", sig.apiKey);
+    fd.append("timestamp", sig.timestamp);
+    fd.append("signature", sig.signature);
+    fd.append("folder", sig.folder);
+
+    fetch(`https://api.cloudinary.com/v1_1/${sig.cloudName}/auto/upload`, {
+      method: "POST",
+      body: fd,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.secure_url) resolve(data.secure_url);
+        else reject(new Error("Cloudinary upload failed"));
+      })
+      .catch(() => reject(new Error("Cloudinary upload failed")));
+  });
+}
 
 const initialFormData = {
   fullName: "",
@@ -96,6 +153,9 @@ export default function ContactFormPanel({ form }) {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submitting, setSubmitting]  = useState(false);
   const [formError, setFormError]    = useState("");
+  // Attachments: each item is { name, type, url } once uploaded to Cloudinary.
+  const [attachments, setAttachments] = useState([]);
+  const [uploadingCount, setUploadingCount] = useState(0);
 
   // CMS-only content — hidden when deleted from the database.
   const eyebrow = t(form, "eyebrow", language);
@@ -129,6 +189,56 @@ export default function ContactFormPanel({ form }) {
     setFormData((current) => ({ ...current, [name]: value }));
   };
 
+  const handleFilesSelected = async (event) => {
+    const picked = Array.from(event.target.files ?? []);
+    event.target.value = ""; // allow re-picking the same file
+    if (picked.length === 0) return;
+
+    setFormError("");
+    setIsSubmitted(false);
+
+    // Enforce the count cap up front (existing + newly selected).
+    if (attachments.length + picked.length > ATTACH_MAX_COUNT) {
+      setFormError(c.attachmentCountError);
+      return;
+    }
+    // Validate each file before touching the network.
+    for (const file of picked) {
+      if (!isAllowedAttachment(file)) {
+        setFormError(c.attachmentTypeError);
+        return;
+      }
+      if (file.size > ATTACH_MAX_BYTES) {
+        setFormError(c.attachmentSizeError);
+        return;
+      }
+    }
+
+    setUploadingCount((n) => n + picked.length);
+    try {
+      // One signed set of params is valid for this batch's folder.
+      const sigRes = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/contact/attachment-signature`,
+      );
+      const sig = await sigRes.json().catch(() => ({}));
+      if (!sigRes.ok || !sig?.signature || !sig?.cloudName) {
+        throw new Error("signature");
+      }
+      for (const file of picked) {
+        const url = await uploadAttachmentToCloudinary(file, sig);
+        setAttachments((prev) => [...prev, { name: file.name, type: file.type, url }]);
+      }
+    } catch {
+      setFormError(c.attachmentUploadError);
+    } finally {
+      setUploadingCount((n) => Math.max(0, n - picked.length));
+    }
+  };
+
+  const removeAttachment = (index) => {
+    setAttachments((prev) => prev.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     setFormError("");
@@ -137,7 +247,7 @@ export default function ContactFormPanel({ form }) {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, attachments }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -146,6 +256,7 @@ export default function ContactFormPanel({ form }) {
       }
       setIsSubmitted(true);
       setFormData({ ...initialFormData, subject: subjects[0] || "" });
+      setAttachments([]);
     } catch {
       setFormError(c.networkError);
     } finally {
@@ -252,6 +363,81 @@ export default function ContactFormPanel({ form }) {
           />
         </label>
 
+        {/* Attachments (optional) */}
+        <div>
+          <span className="mb-2 block text-sm font-medium text-slate-700">
+            {c.attachments}
+          </span>
+
+          {attachments.length > 0 ? (
+            <ul className="mb-3 space-y-2">
+              {attachments.map((file, index) => (
+                <li
+                  key={`${file.url}-${index}`}
+                  className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2.5"
+                >
+                  {file.type?.startsWith("image/") ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={file.url} alt="" className="h-10 w-10 shrink-0 rounded-lg object-cover" />
+                  ) : (
+                    <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white text-slate-400">
+                      <FileText className="h-5 w-5" aria-hidden="true" />
+                    </span>
+                  )}
+                  <a
+                    href={file.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="min-w-0 flex-1 truncate text-sm font-medium text-slate-700 hover:text-[#0088FF]"
+                    title={file.name}
+                  >
+                    {file.name || file.url}
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => removeAttachment(index)}
+                    className="inline-flex shrink-0 items-center gap-1 rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-semibold text-slate-500 transition hover:border-red-200 hover:bg-red-50 hover:text-red-600"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                    {c.remove}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+
+          {attachments.length < ATTACH_MAX_COUNT ? (
+            <label
+              className={`inline-flex cursor-pointer items-center gap-2 rounded-2xl border border-dashed px-4 py-3 text-sm font-medium transition ${
+                uploadingCount > 0
+                  ? "cursor-not-allowed border-slate-200 text-slate-400"
+                  : "border-slate-300 text-slate-600 hover:border-[#0088FF] hover:text-[#0088FF]"
+              }`}
+            >
+              {uploadingCount > 0 ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  {c.uploading}
+                </>
+              ) : (
+                <>
+                  <Paperclip className="h-4 w-4" />
+                  {c.addFiles}
+                </>
+              )}
+              <input
+                type="file"
+                multiple
+                accept={ATTACH_ACCEPT}
+                className="hidden"
+                disabled={uploadingCount > 0}
+                onChange={handleFilesSelected}
+              />
+            </label>
+          ) : null}
+          <p className="mt-2 text-xs text-slate-400">{c.attachmentsHint}</p>
+        </div>
+
         {formError ? (
           <p className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
             {formError}
@@ -267,7 +453,7 @@ export default function ContactFormPanel({ form }) {
         <div className="flex flex-col gap-4 border-t border-slate-100 pt-6 sm:flex-row sm:items-center sm:justify-end">
           <button
             type="submit"
-            disabled={submitting}
+            disabled={submitting || uploadingCount > 0}
             className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-full bg-[#0088FF] px-6 py-3.5 text-base font-semibold text-white transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
           >
             <Send className="h-4 w-4" />
