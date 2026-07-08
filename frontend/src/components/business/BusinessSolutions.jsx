@@ -30,6 +30,18 @@ export default function BusinessSolutions() {
   // Admin "Show this section on the website" toggle.
   if (header?.enabled === false) return null;
 
+  // Only cards with real text/image count — so cleared cards don't render ghosts.
+  const validCards = (Array.isArray(solutions) ? solutions : []).filter(
+    (c) => c && ((c.title ?? "").trim() || (c.description ?? "").trim() || (c.image ?? "").trim()),
+  );
+
+  // Hide the whole section when the admin cleared everything (no cards and no
+  // heading/description). No hardcoded defaults resurface after delete.
+  const hasHeaderText =
+    (t(header, "heading", language) || "").trim() ||
+    (t(header, "description", language) || "").trim();
+  if (validCards.length === 0 && !hasHeaderText) return null;
+
   return (
     <section className="bg-gradient-to-b from-white via-[#F8FAFC] to-white py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -64,26 +76,34 @@ export default function BusinessSolutions() {
                 {t(header, "description2", language)}
               </p>
 
-              {/* CTA Button */}
-              <Link href="/solutions">
-                <motion.button
-                  whileHover={{ x: 4 }}
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-[#0088FF] text-white font-semibold rounded-full hover:bg-[#0066CC] transition"
-                >
-                  <span dir={language === "ar" ? "rtl" : "ltr"} className="[overflow-wrap:anywhere]">
-                    {t(header, "ctaLabel", language) || (language === "ar" ? "" : "Explore All Solutions")}
-                  </span>
-                  <ArrowRight className="h-4 w-4" />
-                </motion.button>
-              </Link>
+              {/* CTA Button — link is admin-configurable (defaults to /solutions) */}
+              {t(header, "ctaLabel", language) || (language !== "ar") ? (
+                <Link href={(header.ctaLink || "").trim() || "/solutions"}>
+                  <motion.button
+                    whileHover={{ x: 4 }}
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-[#0088FF] text-white font-semibold rounded-full hover:bg-[#0066CC] transition"
+                  >
+                    <span dir={language === "ar" ? "rtl" : "ltr"} className="[overflow-wrap:anywhere]">
+                      {t(header, "ctaLabel", language) || (language === "ar" ? "" : "Explore All Solutions")}
+                    </span>
+                    <ArrowRight className="h-4 w-4" />
+                  </motion.button>
+                </Link>
+              ) : null}
             </motion.div>
           </div>
 
           {/* RIGHT: 2-Column Grid of Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 lg:gap-6">
-            {(solutions || []).map((card, i) => (
+            {validCards.map((card, i) => {
+              // Per-card accent color (admin-picked); default to HalaPark blue.
+              const accent = (card.color || "").trim() || "#0088FF";
+              const href = (card.link || "").trim();
+              const CardTag = href ? Link : "div";
+              const cardProps = href ? { href } : {};
+              return (
               <motion.article
-                key={card.title}
+                key={card.title || i}
                 initial={reduced ? false : { opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.1 }}
@@ -91,33 +111,50 @@ export default function BusinessSolutions() {
                 whileHover={{ y: -8 }}
                 className="group overflow-hidden rounded-[24px] bg-white border border-[#E7EAF0] shadow-[0_4px_24px_rgba(6,6,22,0.06)] transition hover:border-[rgba(0,136,255,0.3)] hover:shadow-[0_20px_50px_rgba(0,136,255,0.15)]"
               >
+                <CardTag {...cardProps} className={`block h-full ${href ? "cursor-pointer" : ""}`}>
                 {/* Image Container with Icon Overlay */}
                 <div className="relative h-44 w-full overflow-hidden bg-gradient-to-br from-slate-100 to-slate-50">
-                  <Image
-                    src={card.image}
-                    alt={card.title}
-                    fill
-                    className="object-cover transition duration-500 group-hover:scale-110"
-                    sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                  />
+                  {card.image ? (
+                    <Image
+                      src={card.image}
+                      alt={t(card, "title", language) || ""}
+                      fill
+                      className="object-cover transition duration-500 group-hover:scale-110"
+                      sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                    />
+                  ) : null}
                   <div className="absolute inset-0 bg-gradient-to-t from-[#050A13]/50 via-transparent to-transparent" />
+
+                  {/* Emoji badge (admin-set), tinted with the card's accent color */}
+                  {card.icon ? (
+                    <span
+                      className="absolute left-3 top-3 flex h-10 w-10 items-center justify-center rounded-xl text-lg shadow-sm backdrop-blur-sm"
+                      style={{ backgroundColor: `${accent}22`, border: `1px solid ${accent}55` }}
+                      aria-hidden
+                    >
+                      {card.icon}
+                    </span>
+                  ) : null}
 
                   {/* Hover Overlay */}
                   <motion.div
                     initial={{ opacity: 0 }}
                     whileHover={{ opacity: 1 }}
                     transition={{ duration: 0.3 }}
-                    className="absolute inset-0 bg-gradient-to-t from-[#0088FF]/40 to-transparent flex items-end p-4"
+                    className="absolute inset-0 flex items-end p-4"
+                    style={{ background: `linear-gradient(to top, ${accent}66, transparent)` }}
                   >
-                    <motion.div
-                      initial={{ y: 20, opacity: 0 }}
-                      whileHover={{ y: 0, opacity: 1 }}
-                      transition={{ duration: 0.3 }}
-                      className="text-white text-xs font-semibold flex items-center gap-2"
-                    >
-                      {ui("learnMore", language)}
-                      <ArrowRight className="h-3 w-3" />
-                    </motion.div>
+                    {href ? (
+                      <motion.div
+                        initial={{ y: 20, opacity: 0 }}
+                        whileHover={{ y: 0, opacity: 1 }}
+                        transition={{ duration: 0.3 }}
+                        className="text-white text-xs font-semibold flex items-center gap-2"
+                      >
+                        {ui("learnMore", language)}
+                        <ArrowRight className="h-3 w-3" />
+                      </motion.div>
+                    ) : null}
                   </motion.div>
                 </div>
 
@@ -126,20 +163,23 @@ export default function BusinessSolutions() {
                   <h3 className="text-sm sm:text-base font-bold leading-tight tracking-[-0.02em] text-[#050A13] group-hover:text-[#0088FF] transition">
                     {t(card, "title", language)}
                   </h3>
-                  <p className="mt-3 text-xs sm:text-sm leading-5 text-slate-600">
+                  <p className="mt-3 text-xs sm:text-sm leading-5 text-slate-600 [overflow-wrap:anywhere] whitespace-pre-line">
                     {t(card, "description", language)}
                   </p>
 
-                  {/* Bottom Accent Line */}
+                  {/* Bottom Accent Line — uses the card's accent color */}
                   <motion.div
                     initial={{ width: 0 }}
                     whileHover={{ width: 40 }}
                     transition={{ duration: 0.3 }}
-                    className="mt-4 h-1 bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] rounded-full"
+                    className="mt-4 h-1 rounded-full"
+                    style={{ background: `linear-gradient(to right, ${accent}, ${accent}99)` }}
                   ></motion.div>
                 </div>
+                </CardTag>
               </motion.article>
-            ))}
+              );
+            })}
           </div>
 
         </div>

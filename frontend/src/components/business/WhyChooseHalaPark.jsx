@@ -14,19 +14,29 @@ export default function WhyChooseHalaPark() {
   const scrollRef = useRef(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
+  const [hasOverflow, setHasOverflow] = useState(false);
   const [reasons, setReasons] = useState([]);
   const [header, setHeader] = useState({});
 
   useEffect(() => {
     fetchBusinessSection("whyChoose").then((section) => {
-      if (Array.isArray(section) && section.length > 0) {
-        setReasons(section);
-      }
+      // Honour the DB array exactly (including empty) — never keep stale state.
+      setReasons(Array.isArray(section) ? section : []);
     });
     fetchBusinessSection("whyChooseHeader").then((section) => {
       if (section && typeof section === "object") setHeader(section);
     });
   }, []);
+
+  function checkScroll() {
+    if (scrollRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+      setCanScrollLeft(scrollLeft > 0);
+      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
+      // Whether the cards overflow the viewport (i.e. arrows are useful at all).
+      setHasOverflow(scrollWidth > clientWidth + 10);
+    }
+  }
 
   useEffect(() => {
     checkScroll();
@@ -34,13 +44,12 @@ export default function WhyChooseHalaPark() {
     return () => window.removeEventListener('resize', checkScroll);
   }, []);
 
-  const checkScroll = () => {
-    if (scrollRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
-      setCanScrollLeft(scrollLeft > 0);
-      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
-    }
-  };
+  // Re-measure once the cards have loaded from the CMS so the arrows show/hide
+  // correctly (e.g. hidden when there's only one card that fits).
+  useEffect(() => {
+    const id = setTimeout(checkScroll, 60);
+    return () => clearTimeout(id);
+  }, [reasons]);
 
   const scroll = (direction) => {
     if (scrollRef.current) {
@@ -60,6 +69,18 @@ export default function WhyChooseHalaPark() {
   // Admin "Show this section on the website" toggle.
   if (header?.enabled === false) return null;
 
+  // Only cards with real content count — cleared cards must not render.
+  const validReasons = (Array.isArray(reasons) ? reasons : []).filter(
+    (c) => c && ((c.title ?? "").trim() || (c.description ?? "").trim() || (c.image ?? "").trim()),
+  );
+
+  const headingText = t(header, "heading", language) || (language === "ar" ? "" : "Why Choose");
+  const gradientText = t(header, "headingGradient", language) || (language === "ar" ? "" : "HalaPark");
+
+  // Hide the whole section when the admin cleared everything (no cards and no
+  // heading). No hardcoded defaults resurface after delete.
+  if (validReasons.length === 0 && !headingText.trim()) return null;
+
   return (
     <section className="bg-white py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -71,15 +92,13 @@ export default function WhyChooseHalaPark() {
           transition={{ duration: 0.65, ease }}
           className="mb-12"
         >
+          {/* Heading on one line; the gradient accent drops to a second line. */}
           <h2 className="text-4xl sm:text-5xl font-bold tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
-            {t(header, "heading", language) || (language === "ar" ? "" : "Why Choose")}
-            {t(header, "headingGradient", language) || (language === "ar" ? "" : "HalaPark") ? (
-              <>
-                {" "}
-                <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">
-                  {t(header, "headingGradient", language) || (language === "ar" ? "" : "HalaPark")}
-                </span>
-              </>
+            <span className="block whitespace-nowrap">{headingText}</span>
+            {gradientText ? (
+              <span className="block whitespace-nowrap bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">
+                {gradientText}
+              </span>
             ) : null}
           </h2>
         </motion.div>
@@ -92,9 +111,16 @@ export default function WhyChooseHalaPark() {
             onScroll={checkScroll}
             className="flex gap-5 overflow-x-auto scroll-smooth scrollbar-hide pb-4"
           >
-            {(reasons || []).map((item, i) => (
+            {validReasons.map((item, i) => {
+              // Left panel: an uploaded image if present, else a gradient built
+              // from two admin-picked colors (inline style — always works, unlike
+              // runtime Tailwind class strings).
+              const from = (item.colorFrom || "").trim() || "#0088FF";
+              const to = (item.colorTo || "").trim() || "#0066CC";
+              const img = (item.image || "").trim();
+              return (
               <motion.div
-                key={item.title}
+                key={item.title || i}
                 data-card
                 initial={reduced ? false : { opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -104,56 +130,70 @@ export default function WhyChooseHalaPark() {
               >
                 {/* Card Layout: Image Left + Text Right */}
                 <div className="flex h-80">
-                  {/* Left: Image with Gradient Background */}
-                  <div className={`w-2/5 bg-gradient-to-br ${item.bgGradient} flex items-center justify-center relative overflow-hidden`}>
-                    {/* Decorative gradient shapes */}
-                    <div className="absolute inset-0 opacity-30">
-                      <div className="absolute top-0 right-0 w-32 h-32 bg-white rounded-full mix-blend-overlay"></div>
-                      <div className="absolute bottom-2 left-4 w-24 h-24 bg-white rounded-full mix-blend-overlay"></div>
-                    </div>
+                  {/* Left: uploaded image OR color gradient */}
+                  <div
+                    className="w-2/5 flex items-center justify-center relative overflow-hidden"
+                    style={img ? undefined : { background: `linear-gradient(135deg, ${from}, ${to})` }}
+                  >
+                    {img ? (
+                      <>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={img} alt={t(item, "title", language) || ""} className="absolute inset-0 h-full w-full object-cover" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#050A13]/55 via-[#050A13]/10 to-transparent" />
+                      </>
+                    ) : (
+                      <div className="absolute inset-0 opacity-30">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-white rounded-full mix-blend-overlay"></div>
+                        <div className="absolute bottom-2 left-4 w-24 h-24 bg-white rounded-full mix-blend-overlay"></div>
+                      </div>
+                    )}
 
                     {/* Center Text Overlay */}
                     <div className="relative z-10 text-white text-center px-4">
                       <p className="text-sm font-medium opacity-90 mb-2" dir={language === "ar" ? "rtl" : "ltr"}>{t(header, "cardEyebrow", language) || (language === "ar" ? "" : "Smart Solutions")}</p>
-                      <p className="text-lg font-bold leading-tight">{t(item, "title", language)}</p>
+                      <p className="text-lg font-bold leading-tight [overflow-wrap:anywhere]">{t(item, "title", language)}</p>
                     </div>
                   </div>
 
                   {/* Right: Text Content */}
                   <div className="w-3/5 p-6 sm:p-8 flex flex-col justify-between">
                     <div>
-                      <h3 className="text-xl font-semibold text-[#050A13] mb-3">
+                      <h3 className="text-xl font-semibold text-[#050A13] mb-3 [overflow-wrap:anywhere]">
                         {t(item, "title", language)}
                       </h3>
-                      <p className="text-sm leading-6 text-slate-600">
+                      <p className="text-sm leading-6 text-slate-600 [overflow-wrap:anywhere] whitespace-pre-line">
                         {t(item, "description", language)}
                       </p>
                     </div>
                   </div>
                 </div>
               </motion.div>
-            ))}
+              );
+            })}
           </div>
 
-          {/* Navigation Arrows */}
-          <div className="mt-8 flex justify-center gap-3">
-            <button
-              onClick={() => scroll('left')}
-              disabled={!canScrollLeft}
-              className="flex items-center justify-center h-10 w-10 rounded-full border border-[#0088FF] bg-white text-[#0088FF] transition hover:bg-[#0088FF] hover:text-white disabled:border-gray-300 disabled:text-gray-300 disabled:cursor-not-allowed"
-              aria-label="Scroll left"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </button>
-            <button
-              onClick={() => scroll('right')}
-              disabled={!canScrollRight}
-              className="flex items-center justify-center h-10 w-10 rounded-full border border-[#0088FF] bg-white text-[#0088FF] transition hover:bg-[#0088FF] hover:text-white disabled:border-gray-300 disabled:text-gray-300 disabled:cursor-not-allowed"
-              aria-label="Scroll right"
-            >
-              <ChevronRight className="h-5 w-5" />
-            </button>
-          </div>
+          {/* Navigation Arrows — only shown when the cards actually overflow
+              (hidden when a single card, or a few, already fit on screen). */}
+          {hasOverflow ? (
+            <div className="mt-8 flex justify-center gap-3">
+              <button
+                onClick={() => scroll('left')}
+                disabled={!canScrollLeft}
+                className="flex items-center justify-center h-10 w-10 rounded-full border border-[#0088FF] bg-white text-[#0088FF] transition hover:bg-[#0088FF] hover:text-white disabled:border-gray-300 disabled:text-gray-300 disabled:cursor-not-allowed"
+                aria-label="Scroll left"
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </button>
+              <button
+                onClick={() => scroll('right')}
+                disabled={!canScrollRight}
+                className="flex items-center justify-center h-10 w-10 rounded-full border border-[#0088FF] bg-white text-[#0088FF] transition hover:bg-[#0088FF] hover:text-white disabled:border-gray-300 disabled:text-gray-300 disabled:cursor-not-allowed"
+                aria-label="Scroll right"
+              >
+                <ChevronRight className="h-5 w-5" />
+              </button>
+            </div>
+          ) : null}
         </div>
 
       </div>
