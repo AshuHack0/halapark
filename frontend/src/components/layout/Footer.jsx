@@ -22,6 +22,13 @@ const SOCIAL_ICONS = {
   snapchat: SiSnapchat,
 };
 
+// Legal pages (CMS-driven content, fixed bilingual labels + routes).
+const LEGAL_LINKS = [
+  { href: "/terms-conditions", en: "Terms & Conditions", ar: "الشروط والأحكام" },
+  { href: "/privacy-policy", en: "Privacy Policy", ar: "سياسة الخصوصية" },
+  { href: "/refund-policy", en: "Refund Policy", ar: "سياسة الاسترداد" },
+];
+
 export default function Footer() {
   const { language } = useLanguage();
   // Site logo from global Settings (falls back to the bundled asset).
@@ -272,6 +279,22 @@ export default function Footer() {
               ) : null}
             </p>
           ) : null}
+        </div>
+
+        {/* Legal links — fixed bilingual labels; pages are CMS-driven. */}
+        <div
+          className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-slate-100 pt-4 text-sm text-[#667085]"
+          dir={language === "ar" ? "rtl" : "ltr"}
+        >
+          {LEGAL_LINKS.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="transition hover:text-[#0088FF]"
+            >
+              {language === "ar" ? link.ar : link.en}
+            </Link>
+          ))}
         </div>
       </div>
     </footer>
