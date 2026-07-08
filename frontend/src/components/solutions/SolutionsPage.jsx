@@ -78,7 +78,20 @@ function SolutionImageColumn({ images, direction = "up", reduced }) {
   );
 }
 
-function SolutionsControlPanel({ reduced }) {
+function SolutionsControlPanel({ reduced, showcase, language }) {
+  const sc = showcase && typeof showcase === "object" ? showcase : {};
+  // Strict-Arabic helper for showcase text (blank AR → English text).
+  const sct = (key, fallback) => {
+    if (language === "ar") return (sc.ar?.[key] ?? "").trim() || fallback;
+    return (sc[key] ?? "").trim() || fallback;
+  };
+  // Mosaic images: use CMS lists when provided (filter blanks), else the
+  // built-in defaults so the hero never renders empty frames.
+  const colA = (Array.isArray(sc.imagesA) ? sc.imagesA.filter(Boolean) : []);
+  const colB = (Array.isArray(sc.imagesB) ? sc.imagesB.filter(Boolean) : []);
+  const imagesA = colA.length > 0 ? colA : SOL_COL_A;
+  const imagesB = colB.length > 0 ? colB : SOL_COL_B;
+
   return (
     <div className="relative flex items-center justify-center">
       {/* Soft glow halo */}
@@ -91,8 +104,8 @@ function SolutionsControlPanel({ reduced }) {
         transition={{ duration: 0.7, ease, delay: 0.1 }}
         className="relative z-20 flex h-[420px] items-stretch gap-4 sm:h-[480px] sm:gap-5 lg:h-[540px]"
       >
-        <SolutionImageColumn images={SOL_COL_A} direction="up" reduced={reduced} />
-        <SolutionImageColumn images={SOL_COL_B} direction="down" reduced={reduced} />
+        <SolutionImageColumn images={imagesA} direction="up" reduced={reduced} />
+        <SolutionImageColumn images={imagesB} direction="down" reduced={reduced} />
       </motion.div>
 
       {/* Center connector line glow */}
@@ -110,11 +123,11 @@ function SolutionsControlPanel({ reduced }) {
             <Image src="/Layer_1.svg" alt="HalaPark" width={26} height={32} className="h-7 w-auto" />
           </span>
           <div>
-            <p className="text-[0.95rem] font-bold leading-tight tracking-[-0.03em] text-[#050A13]">One Connected</p>
-            <p className="text-[0.95rem] font-bold leading-tight tracking-[-0.03em] text-[#0088FF]">Platform</p>
+            <p className="text-[0.95rem] font-bold leading-tight tracking-[-0.03em] text-[#050A13] [overflow-wrap:anywhere]">{sct("centerTitle", "One Connected")}</p>
+            <p className="text-[0.95rem] font-bold leading-tight tracking-[-0.03em] text-[#0088FF] [overflow-wrap:anywhere]">{sct("centerTitleAccent", "Platform")}</p>
           </div>
           <span className="inline-flex items-center gap-1.5 rounded-full bg-[rgba(22,179,100,0.1)] px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.12em] text-[#16B364]">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#16B364] animate-pulse" /> Unified
+            <span className="h-1.5 w-1.5 rounded-full bg-[#16B364] animate-pulse" /> {sct("centerBadge", "Unified")}
           </span>
         </div>
       </motion.div>
@@ -131,8 +144,8 @@ function SolutionsControlPanel({ reduced }) {
             <Car className="h-4.5 w-4.5" aria-hidden />
           </span>
           <div>
-            <p className="text-[11px] font-semibold text-[#050A13]">Plate Recognized</p>
-            <p className="text-[10px] font-mono text-[#667085]">DXB · A 48291</p>
+            <p className="text-[11px] font-semibold text-[#050A13] [overflow-wrap:anywhere]">{sct("plateTitle", "Plate Recognized")}</p>
+            <p className="text-[10px] font-mono text-[#667085] [overflow-wrap:anywhere]">{sct("plateValue", "DXB · A 48291")}</p>
           </div>
         </div>
       </motion.div>
@@ -147,10 +160,10 @@ function SolutionsControlPanel({ reduced }) {
         <div className="w-[150px] rounded-2xl border border-white/80 bg-white p-3 shadow-[0_16px_40px_rgba(15,23,42,0.15)]">
           <div className="flex items-center gap-1.5">
             <Zap className="h-3.5 w-3.5 text-[#16B364]" fill="currentColor" aria-hidden />
-            <p className="text-[11px] font-semibold text-[#050A13]">EV Bay · 12</p>
+            <p className="text-[11px] font-semibold text-[#050A13] [overflow-wrap:anywhere]">{sct("evTitle", "EV Bay · 12")}</p>
           </div>
-          <p className="mt-1.5 text-[1.1rem] font-bold tracking-[-0.03em] text-[#050A13]">7.4 kW</p>
-          <p className="text-[9px] text-slate-400">charging · 4 active</p>
+          <p className="mt-1.5 text-[1.1rem] font-bold tracking-[-0.03em] text-[#050A13] [overflow-wrap:anywhere]">{sct("evValue", "7.4 kW")}</p>
+          <p className="text-[9px] text-slate-400 [overflow-wrap:anywhere]">{sct("evNote", "charging · 4 active")}</p>
         </div>
       </motion.div>
 
@@ -289,7 +302,7 @@ function NewHero() {
                 className="h-full max-h-[560px] min-h-[420px] w-full rounded-[24px] object-cover shadow-[0_24px_60px_rgba(15,23,42,0.18)]"
               />
             ) : (
-              <SolutionsControlPanel reduced={reduced} />
+              <SolutionsControlPanel reduced={reduced} showcase={hero.showcase} language={language} />
             )}
           </motion.div>
         </div>
