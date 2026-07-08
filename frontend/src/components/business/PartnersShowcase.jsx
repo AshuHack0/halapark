@@ -79,6 +79,9 @@ export default function PartnersShowcase() {
   // own `ar` (ctaSection.ar.{title,description}), so read it straight through.
   const ctaSection = showcase.ctaSection || {};
 
+  // Admin "Show this section on the website" toggle.
+  if (showcase?.enabled === false) return null;
+
   return (
     <section className="bg-white py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

@@ -30,6 +30,9 @@ export default function BusinessCTA() {
     });
   }, []);
 
+  // Admin "Show this section on the website" toggle.
+  if (cta?.enabled === false) return null;
+
   return (
     <section className="bg-white py-4 sm:py-5 lg:py-6">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

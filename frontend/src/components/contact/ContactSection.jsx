@@ -41,7 +41,7 @@ export default function ContactSection() {
   return (
     <section className="bg-[linear-gradient(180deg,rgba(0,136,255,0.06)_0%,#FFFFFF_20%,#FFFFFF_100%)] pb-20 pt-32 sm:pb-24 sm:pt-36">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {eyebrow || heading || subtitle ? (
+        {hero?.enabled !== false && (eyebrow || heading || subtitle) ? (
           <div className="max-w-3xl">
             {eyebrow ? (
               <span className="inline-flex rounded-full border border-[rgba(0,136,255,0.14)] bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-[#0088FF] [overflow-wrap:anywhere]">
@@ -61,13 +61,25 @@ export default function ContactSection() {
           </div>
         ) : null}
 
-        <div className="mt-12 grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
-          <ContactInfoPanel details={sections?.details} />
-          <ContactFormPanel form={sections?.form} />
-        </div>
+        {/* Each block hides when its admin "Show this section" toggle is off
+            (enabled === false). Undefined/true → show. */}
+        {(sections?.details?.enabled !== false || sections?.form?.enabled !== false) ? (
+          <div className="mt-12 grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
+            {sections?.details?.enabled !== false && (
+              <ContactInfoPanel details={sections?.details} />
+            )}
+            {sections?.form?.enabled !== false && (
+              <ContactFormPanel form={sections?.form} />
+            )}
+          </div>
+        ) : null}
 
-        <WhatsAppSection whatsappCta={sections?.whatsappCta} />
-        <ContactMapSection map={sections?.map} />
+        {sections?.whatsappCta?.enabled !== false && (
+          <WhatsAppSection whatsappCta={sections?.whatsappCta} />
+        )}
+        {sections?.map?.enabled !== false && (
+          <ContactMapSection map={sections?.map} />
+        )}
       </div>
     </section>
   );

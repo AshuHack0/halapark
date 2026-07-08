@@ -211,6 +211,9 @@ export default function BusinessHero() {
           ? hero.features
           : ["Maximize parking revenue", "Automate day-to-day operations", "Seamless smart mobility experience"]);
 
+  // Admin "Show this section on the website" toggle.
+  if (hero?.enabled === false) return null;
+
   return (
     <section
       id="hero-section"

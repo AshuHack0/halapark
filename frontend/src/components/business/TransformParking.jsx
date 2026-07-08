@@ -70,6 +70,9 @@ export default function TransformParking() {
       ? (Array.isArray(transformData.ar?.servicePartnerPerks) ? transformData.ar.servicePartnerPerks : [])
       : transformData.servicePartnerPerks;
 
+  // Admin "Show this section on the website" toggle.
+  if (transformData?.enabled === false) return null;
+
   return (
     <section className="bg-[#F4F8FF] py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
