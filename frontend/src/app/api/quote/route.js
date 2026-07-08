@@ -63,6 +63,8 @@ export async function POST(request) {
         tower: body.tower || undefined,
         slots: body.slots || undefined,
         message: body.message || undefined,
+        // Optional attachments already uploaded to Cloudinary (URL + metadata).
+        attachments: Array.isArray(body.attachments) ? body.attachments.slice(0, 5) : [],
         source: "website",
       }),
     });

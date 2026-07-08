@@ -150,16 +150,25 @@ function ServiceModal({ service, onClose }) {
                   {includedLabel}
                 </p>
                 <ul className="mt-2 space-y-1.5 sm:mt-3 sm:space-y-2.5">
-                  {service.whatsIncluded.map((item) => (
-                    <li key={item} className="flex items-start gap-2.5">
-                      <span className="mt-0.5 flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full bg-[rgba(0,136,255,0.1)] sm:h-5 sm:w-5">
-                        <Check className="h-2.5 w-2.5 text-[#0088FF] sm:h-3 sm:w-3" />
-                      </span>
-                      <span className="text-[0.78rem] leading-5 text-slate-700 sm:text-[0.84rem] sm:leading-6">
-                        {item}
-                      </span>
-                    </li>
-                  ))}
+                  {service.whatsIncluded.map((item, index) => {
+                    // Strict Arabic: in AR use the parallel ar.whatsIncluded[index]
+                    // (blank when missing → hide that item), never the English text.
+                    const text =
+                      language === "ar"
+                        ? (Array.isArray(service.ar?.whatsIncluded) ? service.ar.whatsIncluded[index] : "") || ""
+                        : item;
+                    if (!text) return null;
+                    return (
+                      <li key={`${index}-${text}`} className="flex items-start gap-2.5">
+                        <span className="mt-0.5 flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full bg-[rgba(0,136,255,0.1)] sm:h-5 sm:w-5">
+                          <Check className="h-2.5 w-2.5 text-[#0088FF] sm:h-3 sm:w-3" />
+                        </span>
+                        <span className="text-[0.78rem] leading-5 text-slate-700 sm:text-[0.84rem] sm:leading-6">
+                          {text}
+                        </span>
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             )}
@@ -277,14 +286,55 @@ const BLANK_FORM = {
   slots: "",
 };
 
-function QuoteModal({ isOpen, onClose }) {
+// ── Attachment constraints + upload helper (shared by the quote form) ─────────
+const ATTACH_MAX_BYTES = 10 * 1024 * 1024;
+const ATTACH_MAX_COUNT = 5;
+const ATTACH_ACCEPT =
+  "image/jpeg,image/png,image/webp,image/gif,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+const ATTACH_ALLOWED_TYPES = new Set(ATTACH_ACCEPT.split(","));
+const ATTACH_ALLOWED_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp", ".gif", ".pdf", ".doc", ".docx"];
+
+function isAllowedAttachment(file) {
+  if (ATTACH_ALLOWED_TYPES.has(file.type)) return true;
+  const name = (file.name || "").toLowerCase();
+  return ATTACH_ALLOWED_EXTENSIONS.some((ext) => name.endsWith(ext));
+}
+
+function uploadAttachmentToCloudinary(file, sig) {
+  return new Promise((resolve, reject) => {
+    const fd = new FormData();
+    fd.append("file", file);
+    fd.append("api_key", sig.apiKey);
+    fd.append("timestamp", sig.timestamp);
+    fd.append("signature", sig.signature);
+    fd.append("folder", sig.folder);
+    fetch(`https://api.cloudinary.com/v1_1/${sig.cloudName}/auto/upload`, { method: "POST", body: fd })
+      .then((res) => res.json())
+      .then((data) => (data?.secure_url ? resolve(data.secure_url) : reject(new Error("upload failed"))))
+      .catch(() => reject(new Error("upload failed")));
+  });
+}
+
+function QuoteModal({ isOpen, onClose, quoteForm }) {
+  const { language } = useLanguage();
   const [form, setForm] = useState(BLANK_FORM);
   const [done, setDone] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState("");
   const [serviceSearch, setServiceSearch] = useState("");
   const [serviceOpen, setServiceOpen] = useState(false);
+  // Attachments: each item is { name, type, url } once uploaded to Cloudinary.
+  const [attachments, setAttachments] = useState([]);
+  const [uploadingCount, setUploadingCount] = useState(0);
   const recaptchaRef = useRef(null);
+
+  // CMS-editable copy (bilingual, with sensible fallbacks so the form still
+  // reads well when the admin hasn't customised it).
+  const qEyebrow = t(quoteForm, "eyebrow", language) || (language === "ar" ? "" : "Long-Term Parking");
+  const qHeading = t(quoteForm, "heading", language) || (language === "ar" ? "احصل على عرض سعر" : "Get a Quote");
+  const qIntro = t(quoteForm, "intro", language) || (language === "ar" ? "" : "Fill in the details and our team will be in touch.");
+  const qSuccessTitle = t(quoteForm, "successTitle", language) || (language === "ar" ? "تم استلام الطلب!" : "Request Received!");
+  const qSuccessMessage = t(quoteForm, "successMessage", language) || (language === "ar" ? "سيراجع فريقنا طلبك ويتواصل معك خلال 24 ساعة." : "Our team will review your request and get back to you within 24 hours.");
 
   const filteredServices = serviceNames.filter((s) =>
     s.toLowerCase().includes(serviceSearch.toLowerCase())
@@ -308,11 +358,45 @@ function QuoteModal({ isOpen, onClose }) {
     setForm((p) => ({ ...p, [name]: type === "checkbox" ? checked : value }));
   };
 
-  // Phone field: only allow digits, +, spaces, hyphens, parentheses.
+  // Phone field: only allow digits, +, spaces, hyphens, parentheses. A leading
+  // "+" is kept only at the very start (a phone can't have "+" mid-number).
   const onPhoneChange = (e) => {
-    const filtered = e.target.value.replace(/[^\d+\s\-().]/g, "");
-    setForm((p) => ({ ...p, phone: filtered }));
+    let v = e.target.value.replace(/[^\d+\s\-().]/g, "");
+    // Collapse any "+" that isn't the first character.
+    v = v.replace(/(?!^)\+/g, "");
+    setForm((p) => ({ ...p, phone: v }));
   };
+
+  const onAttachmentsSelected = async (event) => {
+    const picked = Array.from(event.target.files ?? []);
+    event.target.value = "";
+    if (picked.length === 0) return;
+    setFormError("");
+    if (attachments.length + picked.length > ATTACH_MAX_COUNT) {
+      setFormError(`You can attach up to ${ATTACH_MAX_COUNT} files.`);
+      return;
+    }
+    for (const file of picked) {
+      if (!isAllowedAttachment(file)) { setFormError("Unsupported file type. Use an image or a PDF/DOC/DOCX file."); return; }
+      if (file.size > ATTACH_MAX_BYTES) { setFormError("File is too large (max 10MB)."); return; }
+    }
+    setUploadingCount((n) => n + picked.length);
+    try {
+      const sigRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/contact/attachment-signature`);
+      const sig = await sigRes.json().catch(() => ({}));
+      if (!sigRes.ok || !sig?.signature || !sig?.cloudName) throw new Error("signature");
+      for (const file of picked) {
+        const url = await uploadAttachmentToCloudinary(file, sig);
+        setAttachments((prev) => [...prev, { name: file.name, type: file.type, url }]);
+      }
+    } catch {
+      setFormError("Attachment upload failed. Please try again.");
+    } finally {
+      setUploadingCount((n) => Math.max(0, n - picked.length));
+    }
+  };
+
+  const removeAttachment = (index) => setAttachments((prev) => prev.filter((_, i) => i !== index));
 
   const validate = () => {
     if (!form.fullName.trim()) return "Full name is required.";
@@ -328,6 +412,7 @@ function QuoteModal({ isOpen, onClose }) {
     setDone(false);
     setFormError("");
     setSubmitting(false);
+    setAttachments([]);
     recaptchaRef.current?.reset();
     onClose();
   };
@@ -355,7 +440,7 @@ function QuoteModal({ isOpen, onClose }) {
       const res = await fetch("/api/quote", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, recaptchaToken }),
+        body: JSON.stringify({ ...form, attachments, recaptchaToken }),
       });
       const data = await res.json().catch(() => ({}));
 
@@ -411,17 +496,17 @@ function QuoteModal({ isOpen, onClose }) {
                 <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[rgba(0,136,255,0.1)] sm:h-16 sm:w-16">
                   <Check className="h-7 w-7 text-[#0088FF] sm:h-8 sm:w-8" />
                 </div>
-                <h2 className="mt-4 text-xl font-semibold tracking-[-0.04em] text-[#050A13] sm:mt-5 sm:text-2xl">Request Received!</h2>
-                <p className="mt-2 text-[0.82rem] leading-6 text-slate-500 sm:mt-3 sm:text-sm sm:leading-7">Our team will review your request and get back to you within 24 hours.</p>
+                <h2 className="mt-4 text-xl font-semibold tracking-[-0.04em] text-[#050A13] sm:mt-5 sm:text-2xl [overflow-wrap:anywhere]">{qSuccessTitle}</h2>
+                <p className="mt-2 text-[0.82rem] leading-6 text-slate-500 sm:mt-3 sm:text-sm sm:leading-7 [overflow-wrap:anywhere]">{qSuccessMessage}</p>
                 <button type="button" onClick={handleClose}
                   className="mt-5 inline-flex items-center justify-center rounded-full bg-[#0088FF] px-7 py-2.5 text-sm font-semibold text-white transition hover:brightness-95 sm:mt-6 sm:py-3"
                 >Close</button>
               </div>
             ) : (
               <>
-                <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#0088FF]">Long-Term Parking</p>
-                <h2 className="mt-1 text-xl font-semibold tracking-[-0.04em] text-[#050A13] sm:mt-2 sm:text-2xl">Get a Quote</h2>
-                <p className="mt-0.5 text-[0.78rem] text-slate-500 sm:text-[0.84rem]">Fill in the details and our team will be in touch.</p>
+                {qEyebrow ? <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#0088FF] [overflow-wrap:anywhere]">{qEyebrow}</p> : null}
+                <h2 className="mt-1 text-xl font-semibold tracking-[-0.04em] text-[#050A13] sm:mt-2 sm:text-2xl [overflow-wrap:anywhere]">{qHeading}</h2>
+                {qIntro ? <p className="mt-0.5 text-[0.78rem] text-slate-500 sm:text-[0.84rem] [overflow-wrap:anywhere]">{qIntro}</p> : null}
 
                 <form onSubmit={handleSubmit} className="mt-4 space-y-3 sm:mt-6 sm:space-y-4">
                   {/* compact input style shared */}
@@ -518,6 +603,28 @@ function QuoteModal({ isOpen, onClose }) {
                       />
                     </div>
                   </div>
+                  {/* Attachments (optional) */}
+                  <div>
+                    <label className="mb-1 block text-[11px] font-medium text-slate-700 sm:mb-1.5 sm:text-xs">Attachments (Optional)</label>
+                    {attachments.length > 0 ? (
+                      <ul className="mb-2 space-y-1.5">
+                        {attachments.map((file, index) => (
+                          <li key={`${file.url}-${index}`} className="flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5">
+                            <span className="min-w-0 flex-1 truncate text-xs text-slate-600" title={file.name}>{file.name || file.url}</span>
+                            <button type="button" onClick={() => removeAttachment(index)} className="shrink-0 rounded-md border border-slate-200 px-2 py-0.5 text-[11px] font-semibold text-slate-500 hover:border-red-200 hover:bg-red-50 hover:text-red-600">Remove</button>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : null}
+                    {attachments.length < ATTACH_MAX_COUNT ? (
+                      <label className={`inline-flex cursor-pointer items-center gap-2 rounded-lg border border-dashed px-3 py-2 text-xs font-medium transition ${uploadingCount > 0 ? "cursor-not-allowed border-slate-200 text-slate-400" : "border-slate-300 text-slate-600 hover:border-[#0088FF] hover:text-[#0088FF]"}`}>
+                        {uploadingCount > 0 ? "Uploading…" : "Add files"}
+                        <input type="file" multiple accept={ATTACH_ACCEPT} className="hidden" disabled={uploadingCount > 0} onChange={onAttachmentsSelected} />
+                      </label>
+                    ) : null}
+                    <p className="mt-1 text-[10px] text-slate-400">Images or documents (PDF, DOC). Up to 5 files, 10MB each.</p>
+                  </div>
+
                   <div>
                     {RECAPTCHA_SITE_KEY ? (
                       <ReCAPTCHA
@@ -538,7 +645,7 @@ function QuoteModal({ isOpen, onClose }) {
                   ) : null}
                   <button
                     type="submit"
-                    disabled={submitting}
+                    disabled={submitting || uploadingCount > 0}
                     className="w-full rounded-full bg-[#0088FF] py-3 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(0,136,255,0.22)] transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-60 sm:py-3.5"
                   >
                     {submitting ? "Submitting…" : "Submit Request"}
@@ -1129,24 +1236,48 @@ function ServicesGrid({ onServiceClick, cmsServices, gridHeader }) {
 
   // CMS-only: render exactly the services from the CMS (empty → empty grid).
   // Each CMS service is enriched with any matching local extras (subCategories,
-  // packages, etc.) so the detail modal still works for known slugs.
+  // packages, etc.) so the detail modal still works for known slugs. Each
+  // service also carries a resolved `_category` used to build the tab bar.
   const services = useMemo(() => {
     if (!Array.isArray(cmsServices) || cmsServices.length === 0) return [];
     const localBySlug = new Map(allServicesData.map((s) => [s.slug, s]));
     return cmsServices.map((cms) => {
       const local = localBySlug.get(cms.slug);
-      return local ? { ...local, ...cms } : cms;
+      const merged = local ? { ...local, ...cms } : cms;
+      // Category priority: explicit CMS category → legacy static map → default.
+      const category =
+        (typeof cms.category === "string" && cms.category.trim())
+          ? cms.category.trim()
+          : (SLUG_CATEGORY[cms.slug] || "parking");
+      return { ...merged, _category: category };
     });
   }, [cmsServices]);
 
-  const filtered = activeFilter === "all"
-    ? services
-    : services.filter(s => SLUG_CATEGORY[s.slug] === activeFilter);
+  // Build the tab bar DYNAMICALLY: always "All Services", then only the category
+  // tabs that actually have at least one service. Add one service → 2 tabs.
+  const visibleFilters = useMemo(() => {
+    const present = new Set(services.map((s) => s._category));
+    const catTabs = FILTERS.filter((f) => f.id !== "all" && present.has(f.id));
+    return [FILTERS[0], ...catTabs];
+  }, [services]);
 
-  const counts = FILTERS.map(f =>
+  // If the active category tab is no longer visible (e.g. all its services were
+  // deleted), fall back to "All Services" — derived during render, so we never
+  // store an invalid filter (no setState-in-effect needed).
+  const effectiveFilter = visibleFilters.some((f) => f.id === activeFilter) ? activeFilter : "all";
+
+  const filtered = effectiveFilter === "all"
+    ? services
+    : services.filter(s => s._category === effectiveFilter);
+
+  const counts = visibleFilters.map(f =>
     f.id === "all" ? services.length
-    : services.filter(s => SLUG_CATEGORY[s.slug] === f.id).length
+    : services.filter(s => s._category === f.id).length
   );
+
+  // Hide the whole section (header, tab bar, grid) when the admin has no
+  // services — so nothing leftover/default shows after all data is deleted.
+  if (services.length === 0) return null;
 
   return (
     <section ref={sectionRef} className="relative overflow-x-clip bg-white py-16 sm:py-20 lg:py-24">
@@ -1202,11 +1333,11 @@ function ServicesGrid({ onServiceClick, cmsServices, gridHeader }) {
               <span className="text-[#0088FF]">+</span>
             </motion.p>
             <p className="mt-1 text-sm text-slate-400" dir={language === "ar" ? "rtl" : "ltr"}>
-              {activeFilter === "all"
+              {effectiveFilter === "all"
                 ? (language === "ar" ? "خدمة متاحة" : "Services available")
                 : language === "ar"
-                  ? `خدمات ${FILTERS.find(f=>f.id===activeFilter)?.labelAr}`
-                  : `${FILTERS.find(f=>f.id===activeFilter)?.label} services`}
+                  ? `خدمات ${FILTERS.find(f=>f.id===effectiveFilter)?.labelAr}`
+                  : `${FILTERS.find(f=>f.id===effectiveFilter)?.label} services`}
             </p>
           </div>
         </motion.div>
@@ -1219,8 +1350,8 @@ function ServicesGrid({ onServiceClick, cmsServices, gridHeader }) {
           transition={{ duration: 0.5, ease }}
           className="mb-8 flex gap-2 overflow-x-auto pb-1 sm:gap-3 [&::-webkit-scrollbar]:hidden"
         >
-          {FILTERS.map((f, i) => {
-            const isActive = activeFilter === f.id;
+          {visibleFilters.map((f, i) => {
+            const isActive = effectiveFilter === f.id;
             return (
               <motion.button
                 key={f.id}
@@ -1263,7 +1394,7 @@ function ServicesGrid({ onServiceClick, cmsServices, gridHeader }) {
                 service={service}
                 index={index}
                 onClick={onServiceClick}
-                category={SLUG_CATEGORY[service.slug] || "parking"}
+                category={service._category}
               />
             ))}
           </AnimatePresence>
@@ -1365,22 +1496,25 @@ function PartnerCard({ partner }) {
 function PartnersSection({ partners }) {
   const reduced = useReducedMotion();
   const { language } = useLanguage();
-  // Use the CMS partner list when provided; otherwise the built-in defaults.
-  // A single CMS list is split across the two marquee rows.
+  // CMS-only partner list — no hardcoded fallback. A partner counts only when it
+  // has a logo or a name, so cleared rows don't render ghost cards.
   const cmsList = Array.isArray(partners?.partners) ? partners.partners.filter((p) => p && (p.name || p.logo)) : [];
-  let base1 = PARTNERS_ROW1;
-  let base2 = PARTNERS_ROW2;
-  if (cmsList.length > 0) {
-    const mid = Math.ceil(cmsList.length / 2);
-    base1 = cmsList.slice(0, mid);
-    base2 = cmsList.slice(mid).length > 0 ? cmsList.slice(mid) : cmsList.slice(0, mid);
-  }
+  const mid = Math.ceil(cmsList.length / 2);
+  const base1 = cmsList.slice(0, mid);
+  // Second marquee row: the remainder, or a copy of the first when there's only
+  // enough for one row (keeps the two-row marquee visually balanced).
+  const base2 = cmsList.slice(mid).length > 0 ? cmsList.slice(mid) : base1;
   const row1 = [...base1, ...base1];
   const row2 = [...base2, ...base2];
   const heading = (t(partners, "heading", language) || "").trim();
   const headingGradient = (t(partners, "headingGradient", language) || "").trim();
   const subtitle = (t(partners, "subtitle", language) || "").trim();
   const description = (t(partners, "description", language) || "").trim();
+
+  // Hide the whole section when the admin has cleared all partners and text.
+  if (cmsList.length === 0 && !heading && !headingGradient && !subtitle && !description) {
+    return null;
+  }
 
   return (
     <section className="relative overflow-hidden bg-white py-20 sm:py-24">
@@ -1500,11 +1634,18 @@ function TrustSection({ trust }) {
   const heading = (t(trust, "heading", language) || "").trim();
   const headingGradient = (t(trust, "headingGradient", language) || "").trim();
   const subtitle = (t(trust, "subtitle", language) || "").trim();
-  // Render the CMS trust items when present; otherwise the bundled defaults.
-  const trustItems =
-    Array.isArray(trust?.items) && trust.items.length > 0
-      ? trust.items.map((it) => ({ ...it, Icon: TRUST_ICONS[it.icon] || Shield }))
-      : TRUST;
+  // CMS-only: render exactly the trust items from the admin. No hardcoded
+  // fallback — when the admin deletes them all, the section disappears (the DB
+  // is the single source of truth). Only items with a label count.
+  const trustItems = (Array.isArray(trust?.items) ? trust.items : [])
+    .filter((it) => it && ((it.label ?? "").trim() || (it.ar?.label ?? "").trim()))
+    .map((it) => ({ ...it, Icon: TRUST_ICONS[it.icon] || Shield }));
+
+  // Hide the whole section when the admin cleared everything (no items and no
+  // heading/subtitle text).
+  if (trustItems.length === 0 && !heading && !headingGradient && !subtitle) {
+    return null;
+  }
 
   return (
     <section className="relative overflow-hidden bg-[#F4F8FF] py-16 sm:py-20 lg:py-24">
@@ -1652,7 +1793,7 @@ export default function ServicesListPage() {
   return (
     <>
       <ServiceModal service={selectedService} onClose={() => setSelectedService(null)} />
-      <QuoteModal   isOpen={quoteOpen}        onClose={() => setQuoteOpen(false)} />
+      <QuoteModal   isOpen={quoteOpen}        onClose={() => setQuoteOpen(false)} quoteForm={cms?.quoteForm} />
 
       <main>
         {/* OLD hero (dark, mirrored the home page — client disliked it):
