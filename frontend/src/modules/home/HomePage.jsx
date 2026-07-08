@@ -22,10 +22,13 @@ import BlogSection from "./sections/BlogSection";
 import HalaParkInAction from "./sections/HalaParkInAction";
 import SupportContactCTA from "./sections/SupportContactCTA";
 import HowItWorksDemoSection from "./sections/HowItWorksDemoSection";
+import PromoPopup from "./sections/PromoPopup";
 
 export default function HomePage() {
   return (
     <div className="min-h-screen font-sans">
+      {/* Dynamic offer/ad pop-up — CMS-driven, shows over the home page. */}
+      <PromoPopup />
       <HeroSection />
       <WhoWeAre />
       <WhyHalapark />
