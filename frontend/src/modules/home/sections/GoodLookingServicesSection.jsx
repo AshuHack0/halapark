@@ -215,6 +215,7 @@ export default function GoodLookingServicesSection() {
   // no heading (EN) and no service cards.
   // Hide the section entirely when the admin has cleared all content: no
   // heading, no cards with text, and no CTA labels.
+  if (copy?.enabled === false) return null;
   if (
     !((copy.heading ?? "").trim()) &&
     featuredServices.length === 0 &&

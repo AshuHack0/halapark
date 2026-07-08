@@ -1657,11 +1657,23 @@ export default function ServicesListPage() {
       <main>
         {/* OLD hero (dark, mirrored the home page — client disliked it):
         <GoodLookingServiceHero onGetQuote={() => setQuoteOpen(true)} /> */}
-        <HeroSection    onGetQuote={() => setQuoteOpen(true)} hero={cms?.hero} />
-        <ServicesGrid   onServiceClick={setSelectedService} cmsServices={cms?.services} gridHeader={cms?.servicesGridHeader} />
-        <PartnersSection partners={cms?.partnersSection} />
-        <TrustSection trust={cms?.trustSection} />
-        <LongTermCTA    onGetQuote={() => setQuoteOpen(true)} cta={cms?.ctaSection} />
+        {/* Each section hides when its admin "Show this section" toggle is off
+            (enabled === false). Undefined/true → show. */}
+        {cms?.hero?.enabled !== false && (
+          <HeroSection    onGetQuote={() => setQuoteOpen(true)} hero={cms?.hero} />
+        )}
+        {cms?.servicesGridHeader?.enabled !== false && (
+          <ServicesGrid   onServiceClick={setSelectedService} cmsServices={cms?.services} gridHeader={cms?.servicesGridHeader} />
+        )}
+        {cms?.partnersSection?.enabled !== false && (
+          <PartnersSection partners={cms?.partnersSection} />
+        )}
+        {cms?.trustSection?.enabled !== false && (
+          <TrustSection trust={cms?.trustSection} />
+        )}
+        {cms?.ctaSection?.enabled !== false && (
+          <LongTermCTA    onGetQuote={() => setQuoteOpen(true)} cta={cms?.ctaSection} />
+        )}
       </main>
     </>
   );

@@ -20,6 +20,7 @@ export default function SupportContactCTA() {
   }, []);
 
   if (!resolved) return null;
+  if (data?.enabled === false) return null;
   // Hide the whole section when the admin has not filled it in.
   if (!data || (!data.heading && !data.eyebrow)) return null;
 

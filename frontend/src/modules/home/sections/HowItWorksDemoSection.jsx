@@ -63,6 +63,7 @@ export default function HowItWorksDemoSection() {
     ((content.heading ?? "").trim()) ||
     ((content.headingGradient ?? "").trim()) ||
     ((content.subtitle ?? "").trim());
+  if (content?.enabled === false) return null;
   if (!hasHeading && stepItems.length === 0 && !content.videoUrl) return null;
 
   return (

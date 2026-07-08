@@ -337,6 +337,7 @@ export default function SolutionIntegration() {
   // Hide the section entirely when the admin hasn't entered any content:
   // no heading (EN) and no CMS solution cards.
   const hasCmsCards = Array.isArray(si.solutionCards) && si.solutionCards.length > 0;
+  if (si?.enabled === false) return null;
   if (!si.heading && !hasCmsCards) return null;
 
   return (

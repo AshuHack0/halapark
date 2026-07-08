@@ -265,6 +265,7 @@ export default function GlobalMobilityNetworkSection() {
   // Hide the section entirely when the admin has cleared all content — no
   // heading/subtitle/description/panel text (EN, non-blank), no capabilities,
   // no stats and no map nodes.
+  if (content?.enabled === false) return null;
   if (
     isBlank(content.heading) &&
     isBlank(content.headingGradient) &&

@@ -35,6 +35,7 @@ export default function ClientsPartners() {
 
   // Hide the section entirely when the admin hasn't entered any content:
   // no heading (EN), no headingEnd (EN), and no logos or placeholders.
+  if (cp?.enabled === false) return null;
   if (
     !cp.heading &&
     !cp.headingEnd &&

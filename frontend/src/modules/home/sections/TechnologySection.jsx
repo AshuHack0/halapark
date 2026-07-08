@@ -149,6 +149,7 @@ export default function TechnologySection() {
 
   // Hide the section entirely when the admin hasn't entered any heading content
   // (the marquee imagery is decorative; the heading/subtitle are the CMS content).
+  if (tech?.enabled === false) return null;
   if (!tech.heading && !tech.subtitle) return null;
 
   return (

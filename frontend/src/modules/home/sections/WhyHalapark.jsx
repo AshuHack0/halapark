@@ -257,6 +257,7 @@ export default function WhyHalapark() {
 
   // Hide the section entirely when the admin has cleared all content:
   // no heading (EN, non-blank) and no feature items with text.
+  if (content?.enabled === false) return null;
   if (!(content.heading ?? "").trim() && visibleWhyItems.length === 0) {
     return null;
   }

@@ -181,6 +181,7 @@ export default function WhoWeAre() {
       typeof a === "object" &&
       (((a.heading ?? "").trim()) || ((a.body ?? "").trim())),
   );
+  if (content?.enabled === false) return null;
   if (!hasAudienceContent && highlights.length === 0) return null;
 
   return (

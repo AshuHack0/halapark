@@ -29,6 +29,7 @@ export default function FAQHeroSection() {
   }, []);
 
   if (!resolved) return null;
+  if (hero?.enabled === false) return null;
 
   const image = (hero.image || "").trim();
 

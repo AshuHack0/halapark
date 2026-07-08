@@ -268,6 +268,7 @@ export default function AiPoweredParkingService() {
   // heading/description (EN, non-blank) and no cards with text. Render nothing
   // until the CMS resolves so the defaults never flash.
   if (!resolved) return null;
+  if (copy?.enabled === false) return null;
   if (
     !((copy.heading ?? "").trim()) &&
     !((copy.description ?? "").trim()) &&

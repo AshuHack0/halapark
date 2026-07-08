@@ -28,6 +28,7 @@ export default function FAQBottomCTA() {
   }, []);
 
   if (!resolved) return null;
+  if (bottomCta?.enabled === false) return null;
 
   const heading = (t(bottomCta, "heading", language) || "").trim();
   const description = (t(bottomCta, "description", language) || "").trim();

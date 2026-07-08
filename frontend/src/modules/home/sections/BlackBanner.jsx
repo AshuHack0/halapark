@@ -28,6 +28,7 @@ export default function BlackBanner() {
 
   // Hide the section entirely when the admin has cleared all TEXT content —
   // an image alone does not keep the box alive.
+  if (featureCard?.enabled === false) return null;
   if (
     !((featureCard.title ?? "").trim()) &&
     !((featureCard.description ?? "").trim()) &&

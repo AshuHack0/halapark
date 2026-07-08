@@ -828,19 +828,29 @@ export default function CareersPage({ content }) {
 
   return (
     <main className="min-h-screen bg-white">
-      <CareersHero hero={content.hero} />
-      <BuildingSmarterMobility building={content.building} />
-      <JobOpenings openPositions={content.openPositions} />
-      <OpportunitiesSection
-        opportunities={content.opportunities}
-        header={content.opportunitiesHeader}
-      />
-      <WhyJoinUs whyJoin={content.whyJoin} />
-      <CareersCTA
-        cta={content.cta}
-        heroImage={content.hero?.image || (content.hero?.images ?? [])[0]}
-        hasOpenPositions={(content.openPositions?.posts ?? []).filter((p) => p?.status !== "closed").length > 0}
-      />
+      {/* Each section hides when its admin "Show this section" toggle is off
+          (enabled === false). Undefined/true → show. */}
+      {content.hero?.enabled !== false && <CareersHero hero={content.hero} />}
+      {content.building?.enabled !== false && (
+        <BuildingSmarterMobility building={content.building} />
+      )}
+      {content.openPositions?.enabled !== false && (
+        <JobOpenings openPositions={content.openPositions} />
+      )}
+      {content.opportunitiesHeader?.enabled !== false && (
+        <OpportunitiesSection
+          opportunities={content.opportunities}
+          header={content.opportunitiesHeader}
+        />
+      )}
+      {content.whyJoin?.enabled !== false && <WhyJoinUs whyJoin={content.whyJoin} />}
+      {content.cta?.enabled !== false && (
+        <CareersCTA
+          cta={content.cta}
+          heroImage={content.hero?.image || (content.hero?.images ?? [])[0]}
+          hasOpenPositions={(content.openPositions?.posts ?? []).filter((p) => p?.status !== "closed").length > 0}
+        />
+      )}
     </main>
   );
 }

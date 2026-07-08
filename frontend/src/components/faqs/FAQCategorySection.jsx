@@ -185,6 +185,9 @@ export default function FAQCategorySection({ categories = [] }) {
     setOpenQuestionKey(category.items[0] ? makeKey(category.id, category.items[0].id) : null);
   };
 
+  // Admin "Show this section on the website" toggle (Search Header section).
+  if (searchHeader?.enabled === false) return null;
+
   return (
     <section className="bg-white py-12 sm:py-16 lg:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
