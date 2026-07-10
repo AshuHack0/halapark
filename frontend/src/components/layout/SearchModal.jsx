@@ -250,7 +250,7 @@ export default function SearchModal({ isOpen, onClose }) {
                         <p className="truncate text-[0.88rem] font-medium text-[#050A13]">{item.label}</p>
                         <p className={`text-[0.72rem] font-semibold uppercase tracking-[0.1em] ${cfg.color}`}>{item.type}</p>
                       </div>
-                      <ArrowRight className="h-3.5 w-3.5 shrink-0 text-slate-300" />
+                      <ArrowRight className="h-3.5 w-3.5 shrink-0 text-slate-300 rtl:rotate-180" />
                     </Link>
                   );
                 })

@@ -118,7 +118,7 @@ export default function FloatingActions() {
   if (!whatsapp && !payHref && stores.length === 0) return null;
 
   return (
-    <div className="fixed bottom-5 right-4 z-[60] sm:bottom-6 sm:right-6">
+    <div className="fixed bottom-5 end-4 z-[60] sm:bottom-6 sm:end-6">
       <div className="flex flex-col items-end gap-2.5">
         {whatsapp ? (
           <FloatingIconButton

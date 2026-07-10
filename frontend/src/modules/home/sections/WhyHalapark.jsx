@@ -328,8 +328,8 @@ export default function WhyHalapark() {
                 {/* <SectionIntro /> */}
 
                 <div className="relative mt-10">
-                  <div className="absolute left-[0.4rem] top-6 bottom-6 w-px bg-slate-200" />
-                  <div className="absolute left-[0.35rem] top-6 bottom-6 w-[3px] overflow-hidden rounded-full">
+                  <div className="absolute start-[0.4rem] top-6 bottom-6 w-px bg-slate-200" />
+                  <div className="absolute start-[0.35rem] top-6 bottom-6 w-[3px] overflow-hidden rounded-full">
                     <div
                       ref={lineFillRef}
                       className="absolute inset-0 origin-top rounded-full bg-slate-950"
@@ -347,10 +347,10 @@ export default function WhyHalapark() {
                         <motion.div
                           key={item.id}
                           transition={{ duration: 0.35, ease: "easeOut" }}
-                          className="relative min-h-[5.4rem] pl-10 pr-3 py-3"
+                          className="relative min-h-[5.4rem] ps-10 pe-3 py-3"
                         >
                           <span
-                            className="absolute left-0 top-5 inline-flex h-[15px] w-[15px] rounded-full border-2 bg-white"
+                            className="absolute start-0 top-5 inline-flex h-[15px] w-[15px] rounded-full border-2 bg-white"
                             style={{
                               borderColor:
                                 isActive || isComplete ? "#0f172a" : "#cbd5e1",

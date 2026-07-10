@@ -481,7 +481,7 @@ export default function AppPlatformSection() {
                     <PhonePreview screen={appScreen} alt="HalaPark booking app screen" />
                   ) : null}
 
-                  <div className="absolute -left-8 top-16 hidden rounded-2xl border border-[#E4EAF2] bg-white px-3 py-2 shadow-[0_14px_30px_rgba(15,23,42,0.1)] sm:block rtl:-left-auto rtl:-right-8">
+                  <div className="absolute -left-8 top-16 hidden rounded-2xl border border-[#E4EAF2] bg-white px-3 py-2 shadow-[0_14px_30px_rgba(15,23,42,0.1)] sm:block rtl:left-auto rtl:-right-8">
                     <p className="text-[11px] font-semibold text-[#050A13]">
                       Live booking
                     </p>
@@ -490,7 +490,7 @@ export default function AppPlatformSection() {
                     </p>
                   </div>
 
-                  <div className="absolute -bottom-2 -right-8 hidden items-center gap-2 rounded-2xl border border-[#E4EAF2] bg-white px-3 py-2 shadow-[0_14px_30px_rgba(15,23,42,0.1)] sm:flex rtl:-right-auto rtl:-left-8">
+                  <div className="absolute -bottom-2 -right-8 hidden items-center gap-2 rounded-2xl border border-[#E4EAF2] bg-white px-3 py-2 shadow-[0_14px_30px_rgba(15,23,42,0.1)] sm:flex rtl:right-auto rtl:-left-8">
                     <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#EAF3FF]">
                       <HalaparkMonogram size={18} />
                     </span>

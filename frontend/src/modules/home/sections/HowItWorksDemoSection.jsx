@@ -95,14 +95,14 @@ export default function HowItWorksDemoSection() {
           <div className="mt-8 grid gap-8 lg:grid-cols-[1.04fr_0.96fr] lg:items-start">
             <div className="mx-auto w-full max-w-[620px] lg:mx-0">
               {stepItems.length > 0 ? (
-              <div className="relative pl-[72px] sm:pl-[116px]">
+              <div className="relative ps-[72px] sm:ps-[116px]">
                 <span
                   aria-hidden="true"
-                  className="absolute left-[16px] top-9 bottom-[48px] border-l-2 border-dashed border-[#BDD0E6] sm:left-[28px]"
+                  className="absolute start-[16px] top-9 bottom-[48px] border-s-2 border-dashed border-[#BDD0E6] sm:start-[28px]"
                 />
                 <span
                   aria-hidden="true"
-                  className="how-it-works-progress absolute left-[16px] top-9 h-14 border-l-2 border-dashed border-[#0088FF] sm:left-[28px]"
+                  className="how-it-works-progress absolute start-[16px] top-9 h-14 border-s-2 border-dashed border-[#0088FF] sm:start-[28px]"
                 />
 
                 <div className="space-y-3.5 sm:space-y-4">
@@ -115,7 +115,7 @@ export default function HowItWorksDemoSection() {
                         key={step.id}
                         className="relative flex min-h-[82px] items-center gap-3.5 rounded-[15px] border border-[#E5EEF8] bg-white p-3 shadow-[0_7px_18px_rgba(15,23,42,0.07)] transition duration-300 hover:-translate-y-0.5 hover:border-[#BFDFFF] hover:shadow-[0_14px_30px_rgba(0,136,255,0.13)] sm:min-h-[94px] sm:gap-4 sm:rounded-[18px] sm:p-3.5"
                       >
-                        <span className="absolute -left-[70px] top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-[#168EFF] text-[0.85rem] font-bold text-white shadow-[0_8px_18px_rgba(0,136,255,0.34)] ring-4 ring-white sm:-left-[110px] sm:h-[48px] sm:w-[48px] sm:text-[0.95rem]">
+                        <span className="absolute -start-[70px] top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-[#168EFF] text-[0.85rem] font-bold text-white shadow-[0_8px_18px_rgba(0,136,255,0.34)] ring-4 ring-white sm:-start-[110px] sm:h-[48px] sm:w-[48px] sm:text-[0.95rem]">
                           {step.id}
                         </span>
                         <div className="relative flex h-[62px] w-[82px] shrink-0 items-center justify-center overflow-hidden rounded-[8px] bg-[#F1F7FF] text-[#168EFF] sm:h-[68px] sm:w-[96px]">
@@ -126,7 +126,7 @@ export default function HowItWorksDemoSection() {
                           {AccentIcon ? (
                             <AccentIcon
                               aria-hidden="true"
-                              className="absolute right-4 top-3 h-6 w-6 fill-white stroke-[2.4]"
+                              className="absolute end-4 top-3 h-6 w-6 fill-white stroke-[2.4]"
                             />
                           ) : null}
                           <Icon
@@ -148,7 +148,7 @@ export default function HowItWorksDemoSection() {
               ) : null}
 
               {t(content, "ctaLabel", language) ? (
-                <div className="mt-4 flex flex-wrap items-center gap-3 pl-[88px] sm:pl-[116px]">
+                <div className="mt-4 flex flex-wrap items-center gap-3 ps-[88px] sm:ps-[116px]">
                   <Link
                     href={content.ctaHref || "/app"}
                     className="inline-flex min-h-11 items-center justify-center gap-3 rounded-[10px] bg-[#168EFF] px-7 py-3 text-[0.98rem] font-bold text-white shadow-[0_10px_24px_rgba(0,136,255,0.34)] transition hover:-translate-y-0.5 hover:brightness-95"

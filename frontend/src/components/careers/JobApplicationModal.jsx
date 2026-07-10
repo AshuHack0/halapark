@@ -235,7 +235,7 @@ export default function JobApplicationModal({ isOpen, onClose, job }) {
             type="button"
             onClick={handleClose}
             aria-label="Close"
-            className="absolute right-4 top-4 z-30 flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition hover:bg-slate-200"
+            className="absolute right-4 top-4 z-30 flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition hover:bg-slate-200 rtl:right-auto rtl:left-4"
           >
             <X className="h-4 w-4" />
           </button>

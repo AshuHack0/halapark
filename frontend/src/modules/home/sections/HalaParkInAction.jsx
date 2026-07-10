@@ -91,7 +91,7 @@ function StoreBadge({
         </div>
       ) : null}
 
-      <div className="min-w-0 text-left leading-none">
+      <div className="min-w-0 text-start leading-none">
         <p className="text-[8px] font-normal text-[#0F172A] sm:text-[9.2px]">
           {eyebrow}
         </p>
@@ -187,7 +187,7 @@ export default function HalaParkInAction({ cmsKey = "halaParkInAction", pageSlug
           <div className="grid items-center gap-6 lg:items-end lg:min-h-[390px] lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
             <motion.div
               variants={prefersReducedMotion ? undefined : copyStackVariants}
-              className="flex h-full flex-col justify-between px-5 pb-6 pt-6 sm:px-10 md:px-14 lg:py-[40px] lg:pl-[58px] lg:pr-6"
+              className="flex h-full flex-col justify-between px-5 pb-6 pt-6 sm:px-10 md:px-14 lg:py-[40px] lg:ps-[58px] lg:pe-6"
             >
               <div className="max-w-[560px]">
                 <motion.h1

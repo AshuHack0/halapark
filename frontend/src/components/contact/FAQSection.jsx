@@ -119,9 +119,9 @@ export default function FAQSection() {
                 >
                   <button
                     onClick={() => toggleFaq(faq.id)}
-                    className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
+                    className="w-full px-6 py-5 flex items-center justify-between text-start hover:bg-gray-50 transition-colors"
                   >
-                    <span className="font-medium text-gray-900 pr-4 text-base">
+                    <span className="font-medium text-gray-900 pe-4 text-base">
                       {faq.question}
                     </span>
                     {isOpen ? (

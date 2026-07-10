@@ -279,7 +279,7 @@ export default function AppServiceTabs() {
           </div>
         </div>
 
-        <div className="flex flex-col items-center gap-10 text-center md:flex-row md:items-center md:justify-between md:text-left">
+        <div className="flex flex-col items-center gap-10 text-center md:flex-row md:items-center md:justify-between md:text-start">
           <div
             dir={dir}
             className="w-full max-w-[360px] md:flex-1 md:max-w-[500px] md:pt-6 lg:max-w-[560px] lg:pt-10"
@@ -370,14 +370,14 @@ export default function AppServiceTabs() {
                         setActiveStep(step);
                       }}
                       aria-pressed={isActive}
-                      className="min-w-0 flex-1 rounded-[28px] p-2 text-left transition-transform duration-200 hover:-translate-y-0.5"
+                      className="min-w-0 flex-1 rounded-[28px] p-2 text-start transition-transform duration-200 hover:-translate-y-0.5"
                     >
                       <span className="flex items-center">
                         <StepStatusIcon state={state} stepNumber={index + 1} />
                         {index < activeService.steps.length - 1 ? (
                           <span
                             aria-hidden="true"
-                            className="ml-3 h-1.5 flex-1 overflow-hidden rounded-full bg-[#E4E7EC]"
+                            className="ms-3 h-1.5 flex-1 overflow-hidden rounded-full bg-[#E4E7EC]"
                           >
                             {isCompleted ? (
                               <span className="block h-full w-full rounded-full bg-[#16B364]" />

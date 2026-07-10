@@ -181,17 +181,21 @@ export default function HeroSection() {
                 type="button"
                 onClick={showPreviousSlide}
                 aria-label="Previous slide"
-                className="absolute left-3 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-sm transition hover:bg-white/30 sm:left-5 sm:h-11 sm:w-11"
+                className="absolute start-3 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-sm transition hover:bg-white/30 sm:start-5 sm:h-11 sm:w-11"
               >
-                <ArrowLeftIcon />
+                <span className="rtl:rotate-180">
+                  <ArrowLeftIcon />
+                </span>
               </button>
               <button
                 type="button"
                 onClick={showNextSlide}
                 aria-label="Next slide"
-                className="absolute right-3 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-sm transition hover:bg-white/30 sm:right-5 sm:h-11 sm:w-11"
+                className="absolute end-3 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-sm transition hover:bg-white/30 sm:end-5 sm:h-11 sm:w-11"
               >
-                <ArrowRightIcon />
+                <span className="rtl:rotate-180">
+                  <ArrowRightIcon />
+                </span>
               </button>
             </>
           ) : null}

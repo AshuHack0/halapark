@@ -49,7 +49,7 @@ export default function FAQBottomCTA() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="relative overflow-hidden rounded-[24px] bg-[#0088FF] px-8 py-12 text-white sm:px-12 sm:py-14">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.15),transparent_60%)]" aria-hidden />
-          <div className="relative z-10 flex flex-col items-center gap-6 text-center sm:flex-row sm:justify-between sm:text-left">
+          <div className="relative z-10 flex flex-col items-center gap-6 text-center sm:flex-row sm:justify-between sm:text-start">
             {heading || description ? (
               <div>
                 {heading ? (
@@ -69,7 +69,7 @@ export default function FAQBottomCTA() {
                     href={contactHref}
                     className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-[#0088FF] shadow-[0_4px_16px_rgba(0,0,0,0.12)] transition hover:brightness-95"
                   >
-                    {contactLabel} <ArrowRight className="h-4 w-4" aria-hidden />
+                    {contactLabel} <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
                   </Link>
                 ) : null}
                 {showWhatsApp ? (

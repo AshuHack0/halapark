@@ -138,7 +138,7 @@ function SolutionsControlPanel({ reduced, showcase, language }) {
         initial={reduced ? false : { opacity: 0, y: -14, rotate: -5 }}
         animate={reduced ? undefined : { opacity: 1, y: 0, rotate: -5 }}
         transition={{ duration: 0.6, ease, delay: 0.55 }}
-        className="absolute left-[-8%] top-[6%] z-40 hidden sm:block lg:left-[-16%]"
+        className="absolute left-[-8%] rtl:left-auto rtl:right-[-8%] top-[6%] z-40 hidden sm:block lg:left-[-16%] rtl:lg:left-auto rtl:lg:right-[-16%]"
       >
         <div className="flex items-center gap-2.5 rounded-2xl border border-white/80 bg-white px-3 py-2.5 shadow-[0_16px_40px_rgba(15,23,42,0.15)]">
           <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#0088FF] to-[#2563EB] text-white">
@@ -156,7 +156,7 @@ function SolutionsControlPanel({ reduced, showcase, language }) {
         initial={reduced ? false : { opacity: 0, x: 16, rotate: 5 }}
         animate={reduced ? undefined : { opacity: 1, x: 0, rotate: 5 }}
         transition={{ duration: 0.6, ease, delay: 0.65 }}
-        className="absolute bottom-[6%] right-[-8%] z-40 hidden sm:block lg:right-[-14%]"
+        className="absolute bottom-[6%] right-[-8%] rtl:right-auto rtl:left-[-8%] z-40 hidden sm:block lg:right-[-14%] rtl:lg:right-auto rtl:lg:left-[-14%]"
       >
         <div className="w-[150px] rounded-2xl border border-white/80 bg-white p-3 shadow-[0_16px_40px_rgba(15,23,42,0.15)]">
           <div className="flex items-center gap-1.5">
@@ -256,7 +256,7 @@ function NewHero() {
                   className="group inline-flex items-center gap-2.5 rounded-full bg-[#0088FF] px-7 py-3.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,136,255,0.32)] transition hover:brightness-110"
                 >
                   {t(hero, "ctaLabel", language)}
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 transition-transform duration-200 group-hover:translate-x-0.5 rtl:rotate-180">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 transition-transform duration-200 group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5">
                     <ArrowRight className="h-3.5 w-3.5" aria-hidden />
                   </span>
                 </Link>
@@ -503,7 +503,7 @@ function SolutionCard({ card, i, reduced, detailSlugs }) {
         </div>
         {clickable ? (
           <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EEF6FF] text-[#0088FF] transition group-hover:bg-[#0088FF] group-hover:text-white">
-            <ArrowRight className="h-4 w-4" aria-hidden />
+            <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
           </span>
         ) : null}
       </div>

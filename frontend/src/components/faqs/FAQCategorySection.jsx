@@ -259,7 +259,7 @@ export default function FAQCategorySection({ categories = [] }) {
                       <button
                         type="button"
                         onClick={() => handleCategoryClick(category)}
-                        className={`group flex w-full items-center gap-3 rounded-[12px] px-3 py-2.5 text-left transition-all duration-200 ${
+                        className={`group flex w-full items-center gap-3 rounded-[12px] px-3 py-2.5 text-start transition-all duration-200 ${
                           isActive
                             ? "bg-[#0088FF] text-white"
                             : "text-[#050A13] hover:bg-[#F4F8FF]"
@@ -316,7 +316,7 @@ export default function FAQCategorySection({ categories = [] }) {
                     <button
                       type="button"
                       onClick={() => setOpenQuestionKey(isOpen ? null : key)}
-                      className="flex w-full items-center justify-between gap-3 px-4 py-4 text-left sm:gap-4 sm:px-6 sm:py-5"
+                      className="flex w-full items-center justify-between gap-3 px-4 py-4 text-start sm:gap-4 sm:px-6 sm:py-5"
                       aria-expanded={isOpen}
                       aria-controls={`${key}-content`}
                     >

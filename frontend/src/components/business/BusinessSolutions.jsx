@@ -83,7 +83,7 @@ export default function BusinessSolutions() {
                     <span dir={language === "ar" ? "rtl" : "ltr"} className="[overflow-wrap:anywhere]">
                       {t(header, "ctaLabel", language) || (language === "ar" ? "" : "Explore All Solutions")}
                     </span>
-                    <ArrowRight className="h-4 w-4" />
+                    <ArrowRight className="h-4 w-4 rtl:rotate-180" />
                   </motion.button>
                 </Link>
               ) : null}
@@ -125,7 +125,7 @@ export default function BusinessSolutions() {
                   {/* Emoji badge (admin-set), tinted with the card's accent color */}
                   {card.icon ? (
                     <span
-                      className="absolute left-3 top-3 flex h-10 w-10 items-center justify-center rounded-xl text-lg shadow-sm backdrop-blur-sm"
+                      className="absolute start-3 top-3 flex h-10 w-10 items-center justify-center rounded-xl text-lg shadow-sm backdrop-blur-sm"
                       style={{ backgroundColor: `${accent}22`, border: `1px solid ${accent}55` }}
                       aria-hidden
                     >
@@ -149,7 +149,7 @@ export default function BusinessSolutions() {
                         className="text-white text-xs font-semibold flex items-center gap-2"
                       >
                         {ui("learnMore", language)}
-                        <ArrowRight className="h-3 w-3" />
+                        <ArrowRight className="h-3 w-3 rtl:rotate-180" />
                       </motion.div>
                     ) : null}
                   </motion.div>

@@ -386,7 +386,7 @@ export default function GlobalMobilityNetworkSection() {
                   </>
                 ) : null}
                 {hasPanelText ? (
-                  <div className="absolute left-0 top-[10%] z-20 w-full max-w-[360px] px-4 sm:max-w-[390px] sm:px-6">
+                  <div className="absolute start-0 top-[10%] z-20 w-full max-w-[360px] px-4 sm:max-w-[390px] sm:px-6">
                     <h3 className="text-[1.45rem] font-semibold uppercase leading-[1.18] tracking-[0.02em] text-[#071221] sm:text-[1.85rem] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
                       {t(content, "panelTitle", language)}
                       {t(content, "panelTitleAccent", language) ? (

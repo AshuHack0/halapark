@@ -24,7 +24,7 @@ function ContactDetailItem({ detail }) {
       className="inline-flex items-center gap-2 text-base font-semibold text-slate-900 transition hover:text-[#0088FF]"
     >
       {displayValue}
-      <ArrowUpRight className="h-4 w-4" />
+      <ArrowUpRight className="h-4 w-4 rtl:-scale-x-100" />
     </a>
   ) : (
     <p className="text-base font-semibold text-slate-900">{displayValue}</p>

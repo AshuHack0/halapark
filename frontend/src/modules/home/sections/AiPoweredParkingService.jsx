@@ -191,7 +191,7 @@ function AudienceCard({
             className={`inline-flex w-fit items-center justify-center gap-2 rounded-full border border-white/45 bg-[linear-gradient(135deg,#0750b9_0%,#0088FF_100%)] px-5 py-2.5 text-[0.96rem] font-semibold leading-none tracking-[-0.01em] text-white ring-1 ring-black/10 transition-[transform,filter,box-shadow] duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)] hover:scale-[1.03] hover:brightness-105 focus-visible:scale-[1.03] focus-visible:outline-none lg:px-5 lg:py-2.5 lg:text-[16px] ${shellShadowClass}`}
           >
             {ctaLabel}
-            <span aria-hidden="true">-&gt;</span>
+            <span aria-hidden="true" className="inline-block rtl:rotate-180">-&gt;</span>
           </Link>
         </motion.div>
       </div>

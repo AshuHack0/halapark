@@ -86,7 +86,7 @@ export default function AppPromotionSection() {
               </div>
 
               {/* Phone 2 - Right */}
-              <div className="absolute top-12 left-32 lg:left-40 transform rotate-6 z-20 w-56">
+              <div className="absolute top-12 start-32 lg:start-40 transform rotate-6 z-20 w-56">
                 <div className="w-full aspect-[9/19] bg-gray-800 rounded-[3rem] p-3 shadow-2xl">
                   <div className="w-full h-full bg-white rounded-[2.5rem] overflow-hidden relative">
                     {/* Status Bar */}

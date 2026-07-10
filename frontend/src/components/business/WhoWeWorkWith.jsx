@@ -303,7 +303,7 @@ export default function WhoWeWorkWith() {
                   <span dir={language === "ar" ? "rtl" : "ltr"} className="[overflow-wrap:anywhere]">
                     {t(header, "ctaLabel", language) || (language === "ar" ? "" : "Learn More")}
                   </span>
-                  <ArrowRight className="h-4 w-4" />
+                  <ArrowRight className="h-4 w-4 rtl:rotate-180" />
                 </Link>
               </motion.div>
             ) : (
@@ -320,7 +320,7 @@ export default function WhoWeWorkWith() {
                   whileHover={{ x: 4 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <ArrowRight className="h-4 w-4" />
+                  <ArrowRight className="h-4 w-4 rtl:rotate-180" />
                 </motion.div>
               </motion.button>
             )}

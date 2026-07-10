@@ -293,7 +293,7 @@ export default function BusinessHero() {
                   >
                     {proposalLabel}
                     <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 transition-transform duration-200 group-hover:translate-x-0.5">
-                      <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+                      <ArrowRight className="h-3.5 w-3.5 rtl:rotate-180" aria-hidden />
                     </span>
                   </button>
                 ) : null}

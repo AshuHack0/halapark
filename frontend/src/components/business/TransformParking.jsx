@@ -128,7 +128,7 @@ export default function TransformParking() {
                   href={transformData.parkingPartnerCtaLink || "/contact"}
                   className="inline-flex items-center gap-2 rounded-full bg-[#0088FF] px-8 py-3.5 text-sm font-semibold text-white shadow-[0_8px_28px_rgba(0,136,255,0.35)] transition hover:brightness-110"
                 >
-                  {parkingPartnerCtaLabel} <ArrowRight className="h-4 w-4" aria-hidden />
+                  {parkingPartnerCtaLabel} <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
                 </Link>
               </div>
             ) : null}
@@ -180,7 +180,7 @@ export default function TransformParking() {
                   href={transformData.servicePartnerCtaLink || "/contact"}
                   className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-8 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20"
                 >
-                  {servicePartnerCtaLabel} <ArrowRight className="h-4 w-4" aria-hidden />
+                  {servicePartnerCtaLabel} <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
                 </Link>
               </div>
             ) : null}

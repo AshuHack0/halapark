@@ -121,11 +121,11 @@ function ServiceModal({ service, onClose }) {
               type="button"
               onClick={onClose}
               aria-label="Close"
-              className="absolute right-4 top-4 z-30 flex h-9 w-9 items-center justify-center rounded-full bg-black/28 text-white backdrop-blur-sm transition hover:bg-black/48"
+              className="absolute right-4 top-4 rtl:right-auto rtl:left-4 z-30 flex h-9 w-9 items-center justify-center rounded-full bg-black/28 text-white backdrop-blur-sm transition hover:bg-black/48"
             >
               <X className="h-4 w-4" />
             </button>
-            <div className="absolute bottom-3 left-4">
+            <div className="absolute bottom-3 left-4 rtl:left-auto rtl:right-4">
               <span className="rounded-full bg-[#0088FF] px-2.5 py-0.5 text-[11px] font-semibold text-white shadow-[0_4px_14px_rgba(0,136,255,0.35)]">
                 Service {String(service.id).padStart(2, "0")}
               </span>
@@ -482,7 +482,7 @@ function QuoteModal({ isOpen, onClose, quoteForm }) {
           </div>
 
           <button type="button" onClick={handleClose} aria-label="Close"
-            className="absolute right-4 top-4 z-30 flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition hover:bg-slate-200"
+            className="absolute right-4 top-4 rtl:right-auto rtl:left-4 z-30 flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition hover:bg-slate-200"
           >
             <X className="h-4 w-4" />
           </button>
@@ -510,7 +510,7 @@ function QuoteModal({ isOpen, onClose, quoteForm }) {
                   <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
                     {[["fullName","Full Name","John Smith","text",true],["companyName","Company Name","Acme Corp","text",false]].map(([name,label,ph,type,req]) => (
                       <div key={name}>
-                        <label className="mb-1 block text-[11px] font-medium text-slate-700 sm:mb-1.5 sm:text-xs">{label}{req && <span className="ml-0.5 text-red-500">*</span>}</label>
+                        <label className="mb-1 block text-[11px] font-medium text-slate-700 sm:mb-1.5 sm:text-xs">{label}{req && <span className="ms-0.5 text-red-500">*</span>}</label>
                         <input required={req} type={type} name={name} value={form[name]} onChange={onChange} placeholder={ph}
                           className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#0088FF] focus:bg-white focus:ring-2 focus:ring-[rgba(0,136,255,0.12)] sm:rounded-xl sm:px-4 sm:py-2.5"
                         />
@@ -519,13 +519,13 @@ function QuoteModal({ isOpen, onClose, quoteForm }) {
                   </div>
                   <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
                     <div>
-                      <label className="mb-1 block text-[11px] font-medium text-slate-700 sm:mb-1.5 sm:text-xs">Email Address <span className="ml-0.5 text-red-500">*</span></label>
+                      <label className="mb-1 block text-[11px] font-medium text-slate-700 sm:mb-1.5 sm:text-xs">Email Address <span className="ms-0.5 text-red-500">*</span></label>
                       <input required type="email" name="email" value={form.email} onChange={onChange} placeholder="john@company.com"
                         className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#0088FF] focus:bg-white focus:ring-2 focus:ring-[rgba(0,136,255,0.12)] sm:rounded-xl sm:px-4 sm:py-2.5"
                       />
                     </div>
                     <div>
-                      <label className="mb-1 block text-[11px] font-medium text-slate-700 sm:mb-1.5 sm:text-xs">Phone Number <span className="ml-0.5 text-red-500">*</span></label>
+                      <label className="mb-1 block text-[11px] font-medium text-slate-700 sm:mb-1.5 sm:text-xs">Phone Number <span className="ms-0.5 text-red-500">*</span></label>
                       <input required type="tel" name="phone" value={form.phone} onChange={onPhoneChange}
                         placeholder="+971 50 000 0000"
                         inputMode="tel"
@@ -541,7 +541,7 @@ function QuoteModal({ isOpen, onClose, quoteForm }) {
                       <button
                         type="button"
                         onClick={() => setServiceOpen(!serviceOpen)}
-                        className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-left text-sm text-slate-900 outline-none transition focus:border-[#0088FF] focus:bg-white focus:ring-2 focus:ring-[rgba(0,136,255,0.12)] sm:rounded-xl sm:px-4 sm:py-2.5 flex items-center justify-between"
+                        className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-start text-sm text-slate-900 outline-none transition focus:border-[#0088FF] focus:bg-white focus:ring-2 focus:ring-[rgba(0,136,255,0.12)] sm:rounded-xl sm:px-4 sm:py-2.5 flex items-center justify-between"
                       >
                         <span className={form.service ? "text-slate-900" : "text-slate-400"}>
                           {form.service || "Choose a service…"}
@@ -572,7 +572,7 @@ function QuoteModal({ isOpen, onClose, quoteForm }) {
                                       setServiceOpen(false);
                                       setServiceSearch("");
                                     }}
-                                    className={`w-full px-3 py-2 text-left text-sm transition hover:bg-slate-100 sm:px-4 sm:py-2.5 ${
+                                    className={`w-full px-3 py-2 text-start text-sm transition hover:bg-slate-100 sm:px-4 sm:py-2.5 ${
                                       form.service === service ? "bg-[#0088FF] text-white hover:bg-[#0088FF]" : "text-slate-700"
                                     }`}
                                   >
@@ -715,7 +715,7 @@ function ServiceCard({ service, index, onClick, category }) {
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
 
           {/* Number badge — bottom-left of media */}
-          <div className="absolute bottom-2.5 left-3 z-10">
+          <div className="absolute bottom-2.5 left-3 rtl:left-auto rtl:right-3 z-10">
             <span className="rounded-md bg-black/40 px-1.5 py-0.5 text-[10px] font-bold tracking-[0.12em] text-white backdrop-blur-sm">
               {String(index + 1).padStart(2, "0")}
             </span>
@@ -733,7 +733,7 @@ function ServiceCard({ service, index, onClick, category }) {
               className="mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-slate-100 bg-slate-50 text-slate-400 transition-all duration-200 group-hover/card:border-transparent group-hover/card:text-white"
               style={{ "--hover-bg": cat.color }}
             >
-              <ArrowUpRight className="h-3.5 w-3.5 transition-colors duration-200 group-hover/card:[color:var(--hover-bg)]" />
+              <ArrowUpRight className="h-3.5 w-3.5 transition-colors duration-200 group-hover/card:[color:var(--hover-bg)] rtl:-scale-x-100" />
             </span>
           </div>
           <RichText text={t(service, "fullDesc", language)} className="mt-1.5 line-clamp-3 text-[0.775rem] leading-5 text-slate-500 block" />
@@ -742,9 +742,9 @@ function ServiceCard({ service, index, onClick, category }) {
           <div
             className="mt-3.5 flex items-center justify-between border-t border-slate-50 pt-3"
           >
-            <span className="flex items-center gap-1 text-[11px] font-semibold transition-all duration-200 opacity-0 translate-x-0 group-hover/card:opacity-100 group-hover/card:translate-x-0.5"
+            <span className="flex items-center gap-1 text-[11px] font-semibold transition-all duration-200 opacity-0 translate-x-0 group-hover/card:opacity-100 group-hover/card:translate-x-0.5 rtl:group-hover/card:-translate-x-0.5"
               style={{ color: cat.color }}>
-              Read More <ChevronRight className="h-3 w-3" />
+              Read More <ChevronRight className="h-3 w-3 rtl:rotate-180" />
             </span>
             {service.packages && (
               <span className="rounded-full border px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide"
@@ -1168,8 +1168,8 @@ function HeroSection({ onGetQuote, hero }) {
                       className="group/btn inline-flex items-center gap-2.5 rounded-full bg-[#0088FF] px-6 py-3.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,136,255,0.32),0_2px_8px_rgba(0,136,255,0.18)] transition hover:brightness-110"
                     >
                       {primaryCtaLabel}
-                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 transition-transform duration-200 group-hover/btn:translate-x-0.5">
-                        <ArrowRight className="h-3.5 w-3.5" />
+                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 transition-transform duration-200 group-hover/btn:translate-x-0.5 rtl:group-hover/btn:-translate-x-0.5">
+                        <ArrowRight className="h-3.5 w-3.5 rtl:rotate-180" />
                       </span>
                     </Link>
                   </motion.div>
@@ -1375,7 +1375,7 @@ function ServicesGrid({ onServiceClick, cmsServices, gridHeader }) {
           </div>
 
           {/* Right — live count */}
-          <div className="mt-6 shrink-0 lg:mt-0 lg:text-right">
+          <div className="mt-6 shrink-0 lg:mt-0 lg:text-end">
             <motion.p
               key={filtered.length}
               initial={{ opacity: 0, y: -8 }}

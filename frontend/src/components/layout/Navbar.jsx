@@ -417,7 +417,7 @@ export default function Navbar() {
                             onClick={() => setServicesOpen(false)}
                           >
                             <span>{dd.viewAllLabel}</span>
-                            <span className="shrink-0 opacity-80"><ArrowRightIcon /></span>
+                            <span className="shrink-0 opacity-80 rtl:rotate-180"><ArrowRightIcon /></span>
                           </Link>
                           <div className="my-1 border-t border-slate-100" />
 
@@ -428,7 +428,7 @@ export default function Navbar() {
                               return (
                                 <div className="flex gap-1">
                                   {/* LEFT: group names */}
-                                  <div className="w-[44%] shrink-0 border-r border-slate-100 pr-1">
+                                  <div className="w-[44%] shrink-0 border-e border-slate-100 pe-1">
                                     {dd.groups.map((grp) => {
                                       const isSel = selected?.group === grp.group;
                                       return (
@@ -438,7 +438,7 @@ export default function Navbar() {
                                           onMouseEnter={() => setActiveGroup(grp.group)}
                                           onFocus={() => setActiveGroup(grp.group)}
                                           onClick={() => setActiveGroup(grp.group)}
-                                          className={`flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-left text-[12px] font-semibold transition ${
+                                          className={`flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-start text-[12px] font-semibold transition ${
                                             isSel
                                               ? "bg-[rgba(0,136,255,0.10)] text-[#0078E0]"
                                               : "text-slate-700 hover:bg-[rgba(0,136,255,0.06)] hover:text-[#0078E0]"
@@ -446,7 +446,7 @@ export default function Navbar() {
                                           aria-current={isSel}
                                         >
                                           <span className="leading-snug">{grp.group}</span>
-                                          <span className={`shrink-0 opacity-70 transition-transform ${isSel ? "translate-x-0.5" : ""}`}>
+                                          <span className={`shrink-0 opacity-70 transition-transform rtl:rotate-180 ${isSel ? "translate-x-0.5 rtl:-translate-x-0.5" : ""}`}>
                                             <ArrowRightIcon />
                                           </span>
                                         </button>
@@ -455,7 +455,7 @@ export default function Navbar() {
                                   </div>
 
                                   {/* RIGHT: selected group's items */}
-                                  <div className="min-w-0 flex-1 pl-1.5">
+                                  <div className="min-w-0 flex-1 ps-1.5">
                                     <p className="px-3 pb-1 pt-1.5 text-[10px] font-bold uppercase tracking-[0.14em] text-[#0088FF]">
                                       {selected?.group}
                                     </p>
@@ -492,7 +492,7 @@ export default function Navbar() {
                                 onClick={() => setServicesOpen(false)}
                               >
                                 <span>{item.label}</span>
-                                <span className="shrink-0 opacity-80">
+                                <span className="shrink-0 opacity-80 rtl:rotate-180">
                                   <ArrowRightIcon />
                                 </span>
                               </Link>
@@ -666,7 +666,7 @@ export default function Navbar() {
                           className="flex items-center justify-between rounded-md bg-[rgba(0,136,255,0.08)] px-3 py-3 text-sm font-semibold text-[#0078E0] transition hover:bg-[rgba(0,136,255,0.14)]"
                         >
                           <span>{dd.viewAllLabel}</span>
-                          <span className="shrink-0 opacity-80"><ArrowRightIcon /></span>
+                          <span className="shrink-0 opacity-80 rtl:rotate-180"><ArrowRightIcon /></span>
                         </Link>
                         <div className="border-t border-slate-200 my-1" />
                         {dd.groups
@@ -725,7 +725,7 @@ export default function Navbar() {
                                 }`}
                               >
                                 <span>{item.label}</span>
-                                <span className="shrink-0 opacity-80">
+                                <span className="shrink-0 opacity-80 rtl:rotate-180">
                                   <ArrowRightIcon />
                                 </span>
                               </Link>

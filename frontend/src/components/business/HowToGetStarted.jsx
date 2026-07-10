@@ -74,7 +74,7 @@ export default function BusinessHowToGetStarted() {
 
           <div className="relative mt-10 lg:mt-0">
             <div
-              className="pointer-events-none absolute left-[18px] top-4 h-[calc(100%-2rem)] w-px bg-[linear-gradient(180deg,rgba(141,134,255,0.34)_0%,rgba(141,134,255,0.08)_100%)]"
+              className="pointer-events-none absolute left-[18px] rtl:left-auto rtl:right-[18px] top-4 h-[calc(100%-2rem)] w-px bg-[linear-gradient(180deg,rgba(141,134,255,0.34)_0%,rgba(141,134,255,0.08)_100%)]"
               aria-hidden="true"
             />
 

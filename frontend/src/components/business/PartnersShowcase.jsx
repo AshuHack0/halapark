@@ -119,7 +119,7 @@ export default function PartnersShowcase() {
                 className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] text-white font-semibold rounded-full hover:shadow-lg hover:shadow-[#0088FF]/30 transition"
               >
                 <span dir={language === "ar" ? "rtl" : "ltr"} className="[overflow-wrap:anywhere]">{ctaLabel}</span>
-                <ArrowRight className="h-4 w-4" />
+                <ArrowRight className="h-4 w-4 rtl:rotate-180" />
               </Link>
             ) : null}
           </motion.div>
@@ -291,7 +291,7 @@ export function PartnerCTA() {
                 className="mt-7 inline-flex items-center gap-2 rounded-full bg-[#0088FF] px-8 py-3.5 text-sm font-semibold text-white shadow-[0_8px_28px_rgba(0,136,255,0.45)] transition hover:brightness-110"
               >
                 <span dir={language === "ar" ? "rtl" : "ltr"} className="[overflow-wrap:anywhere]">{label}</span>
-                <ArrowRight className="h-4 w-4" aria-hidden />
+                <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
               </Link>
             ) : null}
           </div>

@@ -89,7 +89,7 @@ export default function BusinessCTA() {
               href={cta.ctaLink}
               className="shrink-0 inline-flex items-center gap-2 rounded-full bg-[#0088FF] px-6 py-2.5 text-sm font-semibold text-white shadow-[0_4px_20px_rgba(0,136,255,0.4)] transition hover:brightness-110"
             >
-              {t(cta, "ctaLabel", language)} <ArrowRight className="h-4 w-4" aria-hidden />
+              {t(cta, "ctaLabel", language)} <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
             </Link>
           </motion.div>
         </div>
