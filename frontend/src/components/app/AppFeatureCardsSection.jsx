@@ -6,6 +6,7 @@ import { BarChart3, Check, MapPin, WalletCards, Zap } from "lucide-react";
 import { useEffect, useState } from "react";
 import { fetchPage } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
+import RichText from "@/components/common/RichText";
 
 // Built-in icon + preview are UI chrome only, kept by index. All copy (title,
 // description) comes strictly from the CMS — no hardcoded content fallbacks.
@@ -198,9 +199,10 @@ export default function AppFeatureCardsSection() {
               </h2>
             )}
             {description ? (
-              <p className="mt-3 text-base font-medium text-[#667085] [overflow-wrap:anywhere]">
-                {description}
-              </p>
+              <RichText
+                text={description}
+                className="mt-3 block text-base font-medium text-[#667085] [overflow-wrap:anywhere]"
+              />
             ) : null}
           </motion.div>
         )}
@@ -244,9 +246,10 @@ export default function AppFeatureCardsSection() {
                   </div>
 
                   {item.description ? (
-                    <p className="mt-6 min-h-[4.5rem] whitespace-pre-line text-[15px] font-medium leading-6 text-[#4F5B6F] [overflow-wrap:anywhere]">
-                      {item.description}
-                    </p>
+                    <RichText
+                      text={item.description}
+                      className="mt-6 block min-h-[4.5rem] text-[15px] font-medium leading-6 text-[#4F5B6F] [overflow-wrap:anywhere]"
+                    />
                   ) : null}
 
                   {item.image ? (

@@ -294,7 +294,7 @@ export default function AppCurrencySection() {
 
             {cardFeatures.length > 0 ? (
               <div
-                className={`mt-8 grid gap-3 lg:mt-auto lg:max-w-[610px] ${
+                className={`mt-8 grid gap-3 lg:max-w-[610px] ${
                   cardFeatures.length === 1
                     ? "sm:grid-cols-1"
                     : cardFeatures.length === 2
