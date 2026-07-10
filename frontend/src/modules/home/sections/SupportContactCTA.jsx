@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { FaWhatsapp } from "react-icons/fa";
 import { ArrowRight, Mail, PhoneCall } from "lucide-react";
 import { useLanguage, t } from "@/context/LanguageContext";
+import RichText from "@/components/common/RichText";
 import { fetchPage } from "@/lib/cms";
 
 export default function SupportContactCTA() {
@@ -69,7 +70,7 @@ export default function SupportContactCTA() {
 
                 {t(data, "description", language) ? (
                   <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-600 sm:text-base [overflow-wrap:anywhere]">
-                    {t(data, "description", language)}
+                    <RichText text={t(data, "description", language)} />
                   </p>
                 ) : null}
 

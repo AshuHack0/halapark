@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { fetchHomeSection } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
+import RichText from "@/components/common/RichText";
 
 const serviceAudienceCards = [
   {
@@ -304,7 +305,7 @@ export default function AiPoweredParkingService() {
             ) : null}
           </h2>
           <p className="mx-auto mt-3 max-w-[650px] text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem] [overflow-wrap:anywhere]">
-            {t(copy, "description", language)}
+            <RichText text={t(copy, "description", language)} />
           </p>
         </div>
 

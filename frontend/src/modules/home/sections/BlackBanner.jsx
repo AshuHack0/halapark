@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { fetchHomeSection } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
+import RichText from "@/components/common/RichText";
 
 export default function BlackBanner() {
   const { language } = useLanguage();
@@ -89,7 +90,7 @@ export default function BlackBanner() {
                   </h2>
 
                   <p className="mt-5 max-w-[650px] text-justify text-[0.88rem] leading-6 tracking-[-0.02em] text-white/74 [overflow-wrap:anywhere] sm:text-[0.94rem]">
-                    {t(featureCard, "description", language)}
+                    <RichText text={t(featureCard, "description", language)} />
                   </p>
 
                   <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">

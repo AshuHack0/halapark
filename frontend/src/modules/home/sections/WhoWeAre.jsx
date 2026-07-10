@@ -14,6 +14,7 @@ import Image from "next/image";
 import { Building2, Layers, TrendingUp } from "lucide-react";
 import { fetchHomeSection } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
+import RichText from "@/components/common/RichText";
 
 // Map serializable icon names (stored in CMS) to lucide components.
 const whoWeAreIcons = { Layers, TrendingUp, Building2 };
@@ -69,6 +70,11 @@ export default function WhoWeAre() {
   const { language } = useLanguage();
   const [activeAudience, setActiveAudience] = useState("business");
   const [content, setContent] = useState({});
+  // Track when the <section> element is actually attached to the DOM. useScroll
+  // must only measure a mounted target — this component can early-return null
+  // before the section renders, which otherwise throws "Target ref is defined
+  // but not hydrated" under Next/Turbopack.
+  const [scrollTarget, setScrollTarget] = useState(null);
 
   useEffect(() => {
     fetchHomeSection("whoWeAre").then((cms) => {
@@ -95,9 +101,13 @@ export default function WhoWeAre() {
 
   const spotlight = useMotionTemplate`radial-gradient(42% 38% at ${smoothX}px ${smoothY}px, rgba(0,136,255,0.16), rgba(37,99,235,0.08) 38%, transparent 72%)`;
 
+  // Only give useScroll a target once the section is mounted (scrollTarget is a
+  // ref-object wrapping the live element, or undefined). Passing `undefined`
+  // makes useScroll a harmless no-op until the element exists.
   const { scrollYProgress } = useScroll({
-    target: sectionRef,
+    target: scrollTarget ?? undefined,
     offset: ["start end", "end start"],
+    layoutEffect: false,
   });
 
   const smoothProgress = useSpring(scrollYProgress, {
@@ -145,6 +155,13 @@ export default function WhoWeAre() {
     mouseY.set(r.height * 0.38);
   };
 
+  // Callback ref: stores the element AND registers it as the scroll target only
+  // once it's actually in the DOM (avoids the "not hydrated" error).
+  const setSectionNode = (node) => {
+    sectionRef.current = node;
+    if (node) setScrollTarget(sectionRef);
+  };
+
   useLayoutEffect(() => {
     if (reduced || !sectionRef.current) return;
     const r = sectionRef.current.getBoundingClientRect();
@@ -186,7 +203,7 @@ export default function WhoWeAre() {
 
   return (
     <section
-      ref={sectionRef}
+      ref={setSectionNode}
       aria-labelledby="who-we-are-heading"
       onPointerMove={onSectionPointerMove}
       onPointerLeave={onSectionPointerLeave}
@@ -285,9 +302,45 @@ export default function WhoWeAre() {
       <div className="pointer-events-none absolute inset-x-0 top-0 z-[2] h-px bg-gradient-to-r from-transparent via-slate-300/70 to-transparent" />
 
       <div className="relative z-[2] mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid items-start gap-12 lg:grid-cols-12 lg:gap-16">
+        {/* Centered header — heading + subheading, like the other home sections */}
+        <motion.div
+          className="mx-auto max-w-[900px] text-center"
+          {...view}
+          variants={
+            reduced
+              ? undefined
+              : {
+                  hidden: {},
+                  visible: {
+                    transition: { staggerChildren: 0.1, delayChildren: 0.04 },
+                  },
+                }
+          }
+        >
+          <MagicHeading
+            key={activeAudience}
+            text={t(activeContent, "heading", language)}
+            reduced={reduced}
+          />
+
+          {t(activeContent, "subheading", language) ? (
+            <motion.p
+              className="mx-auto mt-4 max-w-[680px] text-base leading-7 text-slate-600 sm:text-lg [overflow-wrap:anywhere]"
+              {...fadeUp}
+            >
+              {t(activeContent, "subheading", language)}
+            </motion.p>
+          ) : null}
+        </motion.div>
+
+        {/* Body paragraph (left) + highlight cards (right) */}
+        <div className="mt-12 grid items-start gap-12 lg:mt-16 lg:grid-cols-12 lg:gap-16">
           <motion.div
-            className="lg:col-span-6 lg:max-w-[560px]"
+            className={
+              highlights.length > 0
+                ? "lg:col-span-5"
+                : "mx-auto max-w-[760px] text-center lg:col-span-12"
+            }
             style={{ y: colLeftY }}
             {...view}
             variants={
@@ -304,127 +357,17 @@ export default function WhoWeAre() {
                   }
             }
           >
-            {/* <motion.div {...fadeUp}>
-              <motion.div
-                className="relative inline-flex items-center gap-1.5 overflow-hidden rounded-full border border-[#0088FF]/25 bg-white/70 px-2.5 py-1 backdrop-blur-md sm:gap-2 sm:px-3"
-                whileHover={reduced ? undefined : { scale: 1.02 }}
-                transition={springSoft}
-              >
-                {!reduced && (
-                  <span className="pointer-events-none absolute inset-0 overflow-hidden rounded-full">
-                    <span
-                      className="absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-transparent via-white/55 to-transparent opacity-80"
-                      style={{
-                        animation: "who-shimmer 2.8s ease-in-out infinite",
-                      }}
-                    />
-                  </span>
-                )}
-                <motion.span
-                  className="relative flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#0088FF] sm:h-7 sm:w-7"
-                  animate={
-                    reduced
-                      ? undefined
-                      : { rotate: [0, 12, -8, 0], scale: [1, 1.06, 1] }
-                  }
-                  transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
-                >
-                  <Image
-                    src="/Layer_1.svg"
-                    alt="Hala Park"
-                    width={14}
-                    height={18}
-                    className="object-contain"
-                  />
-                </motion.span>
-                <p className="relative text-[10px] font-semibold uppercase tracking-[0.12em] text-[#0088FF] sm:text-[11px]">
-                  {headingText}
-                </p>
-              </motion.div>
-            </motion.div> */}
-
-            {/* <motion.div
-              {...fadeUp}
-              className="mt-5 inline-flex items-center rounded-full border border-slate-200 bg-white/75 p-1 backdrop-blur-sm"
-            >
-              <button
-                type="button"
-                onClick={() => setActiveAudience("users")}
-                className={`rounded-full px-4 py-1.5 text-sm font-semibold transition ${
-                  activeAudience === "users"
-                    ? "bg-[#0088FF] text-white"
-                    : "text-slate-700 hover:text-[#0088FF]"
-                }`}
-              >
-                Users
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveAudience("business")}
-                className={`rounded-full px-4 py-1.5 text-sm font-semibold transition ${
-                  activeAudience === "business"
-                    ? "bg-[#0088FF] text-white"
-                    : "text-slate-700 hover:text-[#0088FF]"
-                }`}
-              >
-                Business
-              </button>
-            </motion.div> */}
-
-            <MagicHeading
-              key={activeAudience}
-              text={t(activeContent, "heading", language)}
-              reduced={reduced}
-            />
-
             <motion.p
-              className="mt-4 max-w-[650px] text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem] [overflow-wrap:anywhere]"
+              className="text-[0.95rem] leading-7 text-slate-600 sm:text-base [overflow-wrap:anywhere]"
               {...fadeUp}
             >
-              {t(activeContent, "body", language)}
+              <RichText text={t(activeContent, "body", language)} />
             </motion.p>
-
-            <motion.div
-              className="mt-8 flex flex-wrap gap-3"
-              variants={
-                reduced
-                  ? undefined
-                  : {
-                      hidden: {},
-                      visible: {
-                        transition: { staggerChildren: 0.08, delayChildren: 0.05 },
-                      },
-                    }
-              }
-            >
-              {/* {chipLabels.map((label) => (
-                <motion.span
-                  key={label}
-                  variants={
-                    reduced
-                      ? undefined
-                      : {
-                          hidden: { opacity: 0, scale: 0.86, y: 12 },
-                          visible: {
-                            opacity: 1,
-                            scale: 1,
-                            y: 0,
-                            transition: springPop,
-                          },
-                        }
-                  }
-                  whileHover={reduced ? undefined : { y: -3, scale: 1.03 }}
-                  className="relative cursor-default rounded-full border border-slate-200/90 bg-white/85 px-4 py-2 text-xs font-medium text-slate-700 shadow-[0_2px_12px_-4px_rgba(6,6,22,0.08)] backdrop-blur-sm sm:text-[13px]"
-                >
-                  {label}
-                </motion.span>
-              ))} */}
-            </motion.div>
           </motion.div>
 
           {highlights.length > 0 ? (
           <motion.div
-            className="relative lg:col-span-6 lg:pt-1"
+            className="relative lg:col-span-7 lg:pt-1"
             style={{ y: colRightY }}
           >
             <motion.div
@@ -497,7 +440,12 @@ export default function WhoWeAre() {
                             }
                             transition={{ duration: 0.45 }}
                           >
-                            <Icon className="h-6 w-6" strokeWidth={1.75} aria-hidden />
+                            {item.iconImage ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img src={item.iconImage} alt="" className="h-7 w-7 object-contain" />
+                            ) : (
+                              <Icon className="h-6 w-6" strokeWidth={1.75} aria-hidden />
+                            )}
                           </motion.div>
                           <div className="min-w-0">
                             <h3 className="text-base font-semibold text-[#050A13] sm:text-[17px]">

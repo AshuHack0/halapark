@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { fetchHomeSection } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
+import RichText from "@/components/common/RichText";
 
 const partnerLogos = [
   "Parkin Dubai",
@@ -302,7 +303,7 @@ export default function GlobalMobilityNetworkSection() {
               {t(content, "subtitle", language)}
             </p>
             <p className="mx-auto mt-2 max-w-[650px] px-4 text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
-              {t(content, "description", language)}
+              <RichText text={t(content, "description", language)} />
             </p>
           </div>
 

@@ -284,7 +284,12 @@ export default function WhyHalapark() {
                     </div>
 
                     <div className="inline-flex h-11 w-11 items-center justify-center rounded-[1.2rem] bg-slate-950 text-white">
-                      <Icon className="h-5 w-5" aria-hidden="true" />
+                      {item.iconImage ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={item.iconImage} alt="" className="h-6 w-6 object-contain" />
+                      ) : (
+                        <Icon className="h-5 w-5" aria-hidden="true" />
+                      )}
                     </div>
                   </div>
 
