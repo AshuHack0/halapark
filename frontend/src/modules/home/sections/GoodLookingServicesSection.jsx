@@ -13,7 +13,10 @@ function toCard(svc) {
   return {
     slug: svc.slug,
     name: svc.name,
+    // Description 1 (left side) — the longer text.
     summary: svc.summary || svc.fullDesc || svc.description || "",
+    // Description 2 (right card).
+    description2: svc.description2 || "",
     mediaType: svc.mediaType,
     mediaSrc: svc.mediaSrc,
     ar: svc.ar,
@@ -91,8 +94,9 @@ function ServiceCard({ service, index, cardRef, isActive, language }) {
               <h3 className="mt-2 text-[1.35rem] font-medium tracking-tight text-slate-950 sm:text-[1.6rem]">
                 {t(service, "name", language)}
               </h3>
-              <p className="mt-3 text-sm leading-6 text-slate-600">
-                {t(service, "summary", language)}
+              <p className="mt-3 text-sm leading-6 text-slate-600 [overflow-wrap:anywhere] whitespace-pre-line">
+                {/* Right card shows Description 2; falls back to Description 1. */}
+                {t(service, "description2", language) || t(service, "summary", language)}
               </p>
             </div>
 
@@ -279,7 +283,8 @@ export default function GoodLookingServicesSection() {
               <h2 className="mt-3 text-[clamp(2rem,3.25vw,3rem)] font-semibold leading-[1.04] tracking-[-0.045em] text-[#050A13]">
                 {t(activeService, "name", language)}
               </h2>
-              <p className="mt-3 max-w-[650px] text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem]">
+              <p className="mt-3 max-w-[650px] text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem] [overflow-wrap:anywhere] whitespace-pre-line">
+                {/* Left side shows Description 1 (the longer text). */}
                 {t(activeService, "summary", language)}
               </p>
               {/* <div className="mt-5 flex flex-wrap gap-2.5">
