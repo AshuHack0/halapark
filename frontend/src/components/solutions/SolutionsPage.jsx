@@ -612,7 +612,7 @@ function StatsSection() {
                     {g.items.length}
                   </span>
                 </div>
-                <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
                   {g.items.map((card, i) => (
                     <SolutionCard key={card.slug || card.title} card={card} i={i} reduced={reduced} />
                   ))}

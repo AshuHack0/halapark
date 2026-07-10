@@ -30,7 +30,7 @@ function StepItem({ step, index, prefersReducedMotion }) {
       whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.45 }}
       transition={{ duration: 0.4, ease: "easeOut", delay: index * 0.05 }}
-      className="flex w-full min-w-0 items-center gap-3 md:min-w-[172px]"
+      className="flex w-full min-w-0 items-center gap-3 lg:min-w-[172px]"
     >
       <span className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-[16px] border border-[#E4EAF2] bg-white text-[#0088FF] shadow-[0_10px_26px_rgba(15,23,42,0.05)] sm:h-[52px] sm:w-[52px]">
         {step.iconImage ? (
@@ -52,7 +52,7 @@ function StepItem({ step, index, prefersReducedMotion }) {
           </span>
         ) : null}
         {step.text ? (
-          <span className="mt-1.5 block max-w-[11rem] text-[11px] font-medium leading-[1.25] text-[#6B7280] md:max-w-[106px] [overflow-wrap:anywhere]">
+          <span className="mt-1.5 block max-w-[11rem] text-[11px] font-medium leading-[1.25] text-[#6B7280] lg:max-w-[106px] [overflow-wrap:anywhere]">
             {step.text}
           </span>
         ) : null}
@@ -67,7 +67,7 @@ function StepConnector({ index, prefersReducedMotion }) {
   return (
     <span
       aria-hidden="true"
-      className="hidden h-px w-7 origin-left overflow-hidden rounded-full md:block rtl:origin-right"
+      className="hidden h-px w-7 origin-left overflow-hidden rounded-full lg:block rtl:origin-right"
     >
       <motion.span
         className="block h-full w-full bg-gradient-to-r from-[#0088FF] to-[#8EC7FF] rtl:bg-gradient-to-l"
@@ -228,13 +228,13 @@ export default function AppScreenshots() {
 
         {displaySteps.length > 0 && (
           <div className="mx-auto mt-8 max-w-[1180px] pb-2 sm:mt-9">
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:flex md:min-w-[930px] md:items-center md:justify-center md:gap-2">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:flex lg:min-w-[930px] lg:items-center lg:justify-center lg:gap-2">
               {displaySteps.map((step, index) => (
                 <div
                   key={index}
-                  className={`flex items-center gap-2 rounded-2xl border border-[#E4EAF2] bg-white p-3 shadow-[0_10px_26px_rgba(15,23,42,0.04)] md:rounded-none md:border-0 md:bg-transparent md:p-0 md:shadow-none ${
+                  className={`flex items-center gap-2 rounded-2xl border border-[#E4EAF2] bg-white p-3 shadow-[0_10px_26px_rgba(15,23,42,0.04)] lg:rounded-none lg:border-0 lg:bg-transparent lg:p-0 lg:shadow-none ${
                     index === displaySteps.length - 1
-                      ? "sm:col-span-2 sm:mx-auto sm:w-full sm:max-w-[22rem] md:col-span-1 md:mx-0 md:max-w-none"
+                      ? "sm:col-span-2 sm:mx-auto sm:w-full sm:max-w-[22rem] lg:col-span-1 lg:mx-0 lg:max-w-none"
                       : ""
                   }`}
                 >

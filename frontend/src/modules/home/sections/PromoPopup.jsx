@@ -32,6 +32,7 @@ export default function PromoPopup() {
   const image = (popup?.image || "").trim();
   const video = (popup?.video || "").trim();
   const hasMedia = mediaType === "video" ? Boolean(video) : Boolean(image);
+  const eyebrow = t(popup, "eyebrow", language);
   const heading = t(popup, "heading", language);
   const description = t(popup, "description", language);
   const ctaLabel = t(popup, "ctaLabel", language);
@@ -80,8 +81,12 @@ export default function PromoPopup() {
         className="absolute inset-0 h-full w-full cursor-default bg-slate-950/60 backdrop-blur-[2px]"
       />
 
+      {/* Split card: media on the left, content panel on the right.
+          Stacks (media on top) on mobile. */}
       <div
-        className="relative z-[1] w-full max-w-lg overflow-hidden rounded-3xl bg-white shadow-[0_28px_80px_rgba(2,6,23,0.35)]"
+        className={`relative z-[1] grid w-full max-w-3xl overflow-hidden rounded-[28px] bg-white shadow-[0_30px_90px_rgba(2,6,23,0.4)] ${
+          hasMedia ? "sm:grid-cols-2" : "sm:grid-cols-1"
+        }`}
         dir={dir}
       >
         {/* Close button */}
@@ -89,14 +94,14 @@ export default function PromoPopup() {
           type="button"
           onClick={() => setOpen(false)}
           aria-label="Close"
-          className="absolute end-3 top-3 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/85 text-slate-700 shadow-sm backdrop-blur transition hover:bg-white"
+          className="absolute end-4 top-4 z-20 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-slate-600 shadow-[0_4px_14px_rgba(2,6,23,0.18)] backdrop-blur transition hover:bg-white hover:text-slate-900"
         >
           <X className="h-5 w-5" aria-hidden="true" />
         </button>
 
-        {/* Media */}
+        {/* Media panel (left) */}
         {hasMedia ? (
-          <div className="relative w-full overflow-hidden bg-slate-100">
+          <div className="relative min-h-[220px] w-full overflow-hidden bg-slate-100 sm:min-h-[380px]">
             {mediaType === "video" ? (
               <video
                 src={video}
@@ -106,29 +111,34 @@ export default function PromoPopup() {
                 loop
                 playsInline
                 preload="auto"
-                className="h-auto max-h-[52vh] w-full object-cover"
+                className="absolute inset-0 h-full w-full object-cover"
               />
             ) : (
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={image}
                 alt={heading || "Promotion"}
-                className="h-auto max-h-[52vh] w-full object-cover"
+                className="absolute inset-0 h-full w-full object-cover"
               />
             )}
           </div>
         ) : null}
 
-        {/* Text + CTA */}
-        {(heading || description || (ctaLabel && ctaHref)) ? (
-          <div className="px-6 py-6 sm:px-8 sm:py-7 text-center">
+        {/* Content panel (right) */}
+        {(eyebrow || heading || description || (ctaLabel && ctaHref)) ? (
+          <div className="flex flex-col items-center justify-center px-6 py-9 text-center sm:px-9 sm:py-11">
+            {eyebrow ? (
+              <p className="mb-3 text-[0.72rem] font-semibold uppercase tracking-[0.28em] text-[#0088FF] [overflow-wrap:anywhere]">
+                {eyebrow}
+              </p>
+            ) : null}
             {heading ? (
-              <h2 className="text-2xl font-semibold tracking-tight text-slate-950 sm:text-[1.7rem] [overflow-wrap:anywhere]">
+              <h2 className="text-[1.75rem] font-bold leading-[1.15] tracking-tight text-slate-950 sm:text-[2rem] [overflow-wrap:anywhere]">
                 {heading}
               </h2>
             ) : null}
             {description ? (
-              <p className="mt-3 whitespace-pre-line text-sm leading-7 text-slate-600 sm:text-base [overflow-wrap:anywhere]">
+              <p className="mt-4 whitespace-pre-line text-sm leading-7 text-slate-500 sm:text-[0.95rem] [overflow-wrap:anywhere]">
                 {description}
               </p>
             ) : null}
@@ -136,7 +146,7 @@ export default function PromoPopup() {
               <Link
                 href={ctaHref}
                 onClick={() => setOpen(false)}
-                className="mt-5 inline-flex items-center justify-center rounded-full bg-[#0088FF] px-7 py-3 text-sm font-semibold text-white shadow-[0_10px_24px_rgba(0,136,255,0.28)] transition hover:brightness-110 [overflow-wrap:anywhere]"
+                className="mt-6 inline-flex w-full items-center justify-center rounded-2xl bg-[#0088FF] px-8 py-3.5 text-sm font-bold uppercase tracking-[0.14em] text-white shadow-[0_12px_28px_rgba(0,136,255,0.32)] transition hover:brightness-110 sm:w-auto [overflow-wrap:anywhere]"
               >
                 {ctaLabel}
               </Link>

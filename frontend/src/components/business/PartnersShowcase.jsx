@@ -95,7 +95,7 @@ export default function PartnersShowcase() {
             ) : null}
 
             {stats.length > 0 ? (
-              <div className="grid grid-cols-3 gap-4 mb-8">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
                 {stats.map((stat, i) => (
                   <motion.div
                     key={stat.label || i}
