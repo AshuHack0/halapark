@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 import { allServicesData, serviceNames } from "./allServicesData";
 import { fetchPage } from "@/lib/cms";
-import { useLanguage, t, ui } from "@/context/LanguageContext";
+import { useLanguage, t } from "@/context/LanguageContext";
 import RichText from "@/components/common/RichText";
 // import GoodLookingServiceHero from "./GoodLookingServiceHero"; // OLD dark hero (looked like home page) — replaced by the light HeroSection below
 
@@ -769,27 +769,37 @@ function ServiceCard({ service, index, onClick, category }) {
 /* Auto-cycling stack of real service images + floating accent chips.
    (Replaces the old phone mockup — client wanted service imagery here.) */
 
-const HERO_SERVICE_SLIDES = [
-  { img: "/valets.jpeg",                     name: "Valet Service",    tag: "Parking" },
-  { img: "/Electric Vehicle Charging.jpeg",  name: "EV Charging",      tag: "Vehicle Care" },
-  { img: "/Car Wash Services .jpeg",         name: "Car Wash",         tag: "Vehicle Care" },
-  { img: "/selfParking.jpeg",                name: "Self-Parking",     tag: "Parking" },
-  { img: "/Airport Parking Services  .jpeg", name: "Airport Parking",  tag: "Parking" },
-  { img: "/Battery Replacement Service.jpeg",name: "Battery Service",  tag: "Vehicle Care" },
-];
-
-function SvcHeroVisual({ reduced }) {
+// CMS-driven right-side visual. `slides` and both floating cards come strictly
+// from the CMS (sections.hero) — no hardcoded content, no defaults. When there
+// are no slides the whole visual is hidden; each floating card hides on its own
+// when the admin leaves it empty.
+function SvcHeroVisual({ reduced, slides, floatTop, floatBottom, language }) {
   const [active, setActive] = useState(0);
 
   useEffect(() => {
-    if (reduced) return undefined;
+    if (reduced || slides.length === 0) return undefined;
     const id = setInterval(() => {
-      setActive((p) => (p + 1) % HERO_SERVICE_SLIDES.length);
+      setActive((p) => (p + 1) % slides.length);
     }, 3200);
     return () => clearInterval(id);
-  }, [reduced]);
+  }, [reduced, slides.length]);
 
-  const current = HERO_SERVICE_SLIDES[active];
+  // No slides configured → render nothing (no default imagery).
+  if (slides.length === 0) return null;
+
+  const current = slides[active % slides.length];
+
+  // Floating-card visibility (hide-when-empty, strictly from CMS).
+  const topTitle = (t(floatTop, "title", language) || "").trim();
+  const topSubtitle = (t(floatTop, "subtitle", language) || "").trim();
+  const showTop = Boolean(topTitle || topSubtitle);
+  const botTitle = (t(floatBottom, "title", language) || "").trim();
+  const botValue = (t(floatBottom, "value", language) || "").trim();
+  const botCaption = (t(floatBottom, "caption", language) || "").trim();
+  const botBadge = (t(floatBottom, "badge", language) || "").trim();
+  const botPercent = Number.parseInt(String(floatBottom?.percent ?? "").trim(), 10);
+  const botPercentValid = Number.isFinite(botPercent) && botPercent >= 0 && botPercent <= 100;
+  const showBottom = Boolean(botTitle || botValue || botCaption || botBadge || botPercentValid);
 
   return (
     <div className="relative flex items-center justify-center">
@@ -868,67 +878,75 @@ function SvcHeroVisual({ reduced }) {
 
         {/* Progress dots */}
         <div className="absolute left-5 top-5 flex gap-1.5">
-          {HERO_SERVICE_SLIDES.map((s, i) => (
+          {slides.map((s, i) => (
             <span
-              key={s.name}
+              key={`${s.img}-${i}`}
               className={`h-1.5 rounded-full transition-all duration-300 ${
-                i === active ? "w-5 bg-white" : "w-1.5 bg-white/45"
+                i === active % slides.length ? "w-5 bg-white" : "w-1.5 bg-white/45"
               }`}
             />
           ))}
         </div>
       </motion.div>
 
-      {/* ── Floating card: Service Booked — top-left ── */}
-      <motion.div
-        initial={reduced ? false : { opacity: 0, y: -16, rotate: -6 }}
-        animate={reduced ? undefined : { opacity: 1, y: 0, rotate: -6 }}
-        transition={{ duration: 0.6, ease: [0.22,1,0.36,1], delay: 0.3 }}
-        className="absolute left-[-6%] top-2 z-30 hidden sm:block lg:left-[-16%] lg:top-6"
-      >
-        <div className="flex items-center gap-2.5 rounded-2xl border border-white/80 bg-white px-3 py-2.5 shadow-[0_16px_40px_rgba(15,23,42,0.13)]">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#0088FF] to-[#2563EB] text-white shadow-[0_4px_10px_rgba(0,136,255,0.35)]">
-            <ParkingCircle aria-hidden className="h-4.5 w-4.5" />
-          </span>
-          <div>
-            <p className="text-[11px] font-semibold text-[#050A13]">Service Booked</p>
-            <p className="text-[10px] text-[#667085]">Valet, Dubai Mall</p>
-          </div>
-          <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#16B364] text-white">
-            <Check aria-hidden className="h-3 w-3" strokeWidth={3} />
-          </span>
-        </div>
-      </motion.div>
-
-      {/* ── EV Charging progress — bottom-right ── */}
-      <motion.div
-        initial={reduced ? false : { opacity: 0, x: 16, rotate: 5 }}
-        animate={reduced ? undefined : { opacity: 1, x: 0, rotate: 5 }}
-        transition={{ duration: 0.6, ease: [0.22,1,0.36,1], delay: 0.5 }}
-        className="absolute bottom-[10%] right-[-6%] z-30 hidden sm:block lg:right-[-14%]"
-      >
-        <div className="w-[162px] rounded-2xl border border-white/80 bg-white p-3 shadow-[0_16px_40px_rgba(15,23,42,0.13)]">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5">
-              <Zap aria-hidden className="h-3.5 w-3.5 text-[#16B364]" fill="currentColor" />
-              <p className="text-[11px] font-semibold text-[#050A13]">EV Charging</p>
+      {/* ── Floating card (top-left) — CMS-driven, hides when empty ── */}
+      {showTop ? (
+        <motion.div
+          initial={reduced ? false : { opacity: 0, y: -16, rotate: -6 }}
+          animate={reduced ? undefined : { opacity: 1, y: 0, rotate: -6 }}
+          transition={{ duration: 0.6, ease: [0.22,1,0.36,1], delay: 0.3 }}
+          className="absolute left-[-6%] top-2 z-30 hidden sm:block lg:left-[-16%] lg:top-6"
+        >
+          <div className="flex items-center gap-2.5 rounded-2xl border border-white/80 bg-white px-3 py-2.5 shadow-[0_16px_40px_rgba(15,23,42,0.13)]">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#0088FF] to-[#2563EB] text-white shadow-[0_4px_10px_rgba(0,136,255,0.35)]">
+              <ParkingCircle aria-hidden className="h-4.5 w-4.5" />
+            </span>
+            <div>
+              {topTitle ? <p className="text-[11px] font-semibold text-[#050A13] [overflow-wrap:anywhere]">{topTitle}</p> : null}
+              {topSubtitle ? <p className="text-[10px] text-[#667085] [overflow-wrap:anywhere]">{topSubtitle}</p> : null}
             </div>
-            <span className="rounded-full bg-[rgba(22,179,100,0.1)] px-1.5 py-0.5 text-[9px] font-bold text-[#16B364]">Live</span>
+            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#16B364] text-white">
+              <Check aria-hidden className="h-3 w-3" strokeWidth={3} />
+            </span>
           </div>
-          <div className="mt-2.5 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
-            <motion.div
-              className="h-full rounded-full bg-gradient-to-r from-[#0088FF] to-[#16B364]"
-              initial={{ width: "0%" }}
-              animate={{ width: "68%" }}
-              transition={{ duration: 1.4, ease: "easeOut", delay: 0.7 }}
-            />
+        </motion.div>
+      ) : null}
+
+      {/* ── Floating stat card (bottom-right) — CMS-driven, hides when empty ── */}
+      {showBottom ? (
+        <motion.div
+          initial={reduced ? false : { opacity: 0, x: 16, rotate: 5 }}
+          animate={reduced ? undefined : { opacity: 1, x: 0, rotate: 5 }}
+          transition={{ duration: 0.6, ease: [0.22,1,0.36,1], delay: 0.5 }}
+          className="absolute bottom-[10%] right-[-6%] z-30 hidden sm:block lg:right-[-14%]"
+        >
+          <div className="w-[162px] rounded-2xl border border-white/80 bg-white p-3 shadow-[0_16px_40px_rgba(15,23,42,0.13)]">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5">
+                <Zap aria-hidden className="h-3.5 w-3.5 text-[#16B364]" fill="currentColor" />
+                {botTitle ? <p className="text-[11px] font-semibold text-[#050A13] [overflow-wrap:anywhere]">{botTitle}</p> : null}
+              </div>
+              {botBadge ? <span className="rounded-full bg-[rgba(22,179,100,0.1)] px-1.5 py-0.5 text-[9px] font-bold text-[#16B364] [overflow-wrap:anywhere]">{botBadge}</span> : null}
+            </div>
+            {botPercentValid ? (
+              <div className="mt-2.5 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
+                <motion.div
+                  className="h-full rounded-full bg-gradient-to-r from-[#0088FF] to-[#16B364]"
+                  initial={{ width: "0%" }}
+                  animate={{ width: `${botPercent}%` }}
+                  transition={{ duration: 1.4, ease: "easeOut", delay: 0.7 }}
+                />
+              </div>
+            ) : null}
+            {(botValue || botCaption) ? (
+              <div className="mt-1.5 flex justify-between gap-2">
+                {botValue ? <p className="text-[9px] text-slate-400 [overflow-wrap:anywhere]">{botValue}</p> : null}
+                {botCaption ? <p className="text-[9px] font-semibold text-[#0088FF] [overflow-wrap:anywhere]">{botCaption}</p> : null}
+              </div>
+            ) : null}
           </div>
-          <div className="mt-1.5 flex justify-between">
-            <p className="text-[9px] text-slate-400">68% charged</p>
-            <p className="text-[9px] font-semibold text-[#0088FF]">~22 min</p>
-          </div>
-        </div>
-      </motion.div>
+        </motion.div>
+      ) : null}
 
       {/* ── Pulsing location pin ── */}
       {!reduced && (
@@ -1011,19 +1029,29 @@ function HeroSection({ onGetQuote, hero }) {
     },
   };
 
-  // Hero service chips: prefer CMS (`hero.chips` / `hero.ar.chips`), else fall back
-  // to the static list. The last pill is the "+N more" counter (also CMS-editable).
-  const baseChips =
+  // Hero service chips — strictly from CMS (no hardcoded fallback list).
+  const baseChips = (
     language === "ar"
       ? (Array.isArray(hero?.ar?.chips) ? hero.ar.chips : [])
-      : (Array.isArray(hero?.chips) && hero.chips.length
-          ? hero.chips
-          : ["Self-Parking", "Valet Service", "EV Charging", "Car Storage", "Airport Parking"]);
-  const moreChip =
-    language === "ar"
-      ? (hero?.ar?.chipsMore ?? "")
-      : (hero?.chipsMore ?? `+${allServicesData.length - 5} More`);
+      : (Array.isArray(hero?.chips) ? hero.chips : [])
+  ).filter((c) => typeof c === "string" && c.trim());
+  // Optional "+N more" pill — only when the admin sets it (no default).
+  const moreChip = (t(hero, "chipsMore", language) || "").trim();
   const SERVICE_CHIPS = moreChip ? [...baseChips, moreChip] : baseChips;
+
+  // CTA labels — CMS-driven; each button shows only when it has a label.
+  const primaryCtaLabel = (t(hero, "ctaPrimary", language) || "").trim();
+  const secondaryCtaLabel = (t(hero, "ctaSecondary", language) || "").trim();
+
+  // Right-side visual — strictly CMS. Slides: [{ img, name, tag }]. Float cards
+  // are objects (with their own ar sibling) resolved inside SvcHeroVisual.
+  const heroSlides = (Array.isArray(hero?.slides) ? hero.slides : [])
+    .map((s) => ({
+      img: (s?.img || "").trim(),
+      name: t(s, "name", language),
+      tag: t(s, "tag", language),
+    }))
+    .filter((s) => s.img);
 
   return (
     <section
@@ -1099,15 +1127,18 @@ function HeroSection({ onGetQuote, hero }) {
               {heroTitle}
             </motion.h1>
 
-            {/* Description with left accent bar */}
-            <motion.div {...fadeUp} className="mt-7 flex gap-4">
-              <div className="mt-1 w-0.5 shrink-0 self-stretch rounded-full bg-gradient-to-b from-[#0088FF] via-[#0088FF]/40 to-transparent" />
-              <p className="max-w-[440px] text-[0.9rem] leading-[1.75] text-slate-500 [overflow-wrap:anywhere] line-clamp-6">
-                {heroSubtitle}
-              </p>
-            </motion.div>
+            {/* Description with left accent bar — hidden when empty */}
+            {heroSubtitle ? (
+              <motion.div {...fadeUp} className="mt-7 flex gap-4">
+                <div className="mt-1 w-0.5 shrink-0 self-stretch rounded-full bg-gradient-to-b from-[#0088FF] via-[#0088FF]/40 to-transparent" />
+                <p className="max-w-[440px] text-[0.9rem] leading-[1.75] text-slate-500 [overflow-wrap:anywhere] line-clamp-6">
+                  {heroSubtitle}
+                </p>
+              </motion.div>
+            ) : null}
 
-            {/* Service chip tags */}
+            {/* Service chip tags — hidden entirely when the admin adds none */}
+            {SERVICE_CHIPS.length > 0 ? (
             <motion.div {...fadeUp} className="mt-6 flex flex-wrap gap-2">
               {SERVICE_CHIPS.map((chip, i) => (
                 <span
@@ -1122,45 +1153,60 @@ function HeroSection({ onGetQuote, hero }) {
                 </span>
               ))}
             </motion.div>
+            ) : null}
 
-            {/* CTAs */}
-            <motion.div {...fadeUp} className="mt-8 flex flex-wrap items-center gap-3">
-              <motion.div
-                whileHover={reduced ? undefined : { scale: 1.03 }}
-                whileTap={reduced ? undefined : { scale: 0.97 }}
-                transition={springSoft}
-              >
-                <Link href="/contact"
-                  className="group/btn inline-flex items-center gap-2.5 rounded-full bg-[#0088FF] px-6 py-3.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,136,255,0.32),0_2px_8px_rgba(0,136,255,0.18)] transition hover:brightness-110"
-                >
-                  {ui("getInTouch", language)}
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 transition-transform duration-200 group-hover/btn:translate-x-0.5">
-                    <ArrowRight className="h-3.5 w-3.5" />
-                  </span>
-                </Link>
+            {/* CTAs — CMS-driven labels; each button hides when its label is empty */}
+            {(primaryCtaLabel || secondaryCtaLabel) ? (
+              <motion.div {...fadeUp} className="mt-8 flex flex-wrap items-center gap-3">
+                {primaryCtaLabel ? (
+                  <motion.div
+                    whileHover={reduced ? undefined : { scale: 1.03 }}
+                    whileTap={reduced ? undefined : { scale: 0.97 }}
+                    transition={springSoft}
+                  >
+                    <Link href={(hero?.ctaPrimaryLink || "/contact").trim() || "/contact"}
+                      className="group/btn inline-flex items-center gap-2.5 rounded-full bg-[#0088FF] px-6 py-3.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,136,255,0.32),0_2px_8px_rgba(0,136,255,0.18)] transition hover:brightness-110"
+                    >
+                      {primaryCtaLabel}
+                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 transition-transform duration-200 group-hover/btn:translate-x-0.5">
+                        <ArrowRight className="h-3.5 w-3.5" />
+                      </span>
+                    </Link>
+                  </motion.div>
+                ) : null}
+                {secondaryCtaLabel ? (
+                  <motion.button
+                    type="button" onClick={onGetQuote}
+                    whileHover={reduced ? undefined : { scale: 1.03 }}
+                    whileTap={reduced ? undefined : { scale: 0.97 }}
+                    transition={springSoft}
+                    className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-6 py-3.5 text-sm font-semibold text-slate-700 shadow-[0_2px_12px_rgba(6,6,22,0.07)] transition hover:border-[#0088FF]/50 hover:text-[#0088FF]"
+                  >
+                    {secondaryCtaLabel}
+                  </motion.button>
+                ) : null}
               </motion.div>
-              <motion.button
-                type="button" onClick={onGetQuote}
-                whileHover={reduced ? undefined : { scale: 1.03 }}
-                whileTap={reduced ? undefined : { scale: 0.97 }}
-                transition={springSoft}
-                className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-6 py-3.5 text-sm font-semibold text-slate-700 shadow-[0_2px_12px_rgba(6,6,22,0.07)] transition hover:border-[#0088FF]/50 hover:text-[#0088FF]"
-              >
-                {ui("getAQuote", language)}
-              </motion.button>
+            ) : null}
+
+          </motion.div>
+
+          {/* ─── RIGHT — service imagery (hidden when no CMS slides) ─── */}
+          {heroSlides.length > 0 ? (
+            <motion.div
+              initial={reduced ? false : { opacity: 0, x: 40 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.75, ease, delay: 0.12 }}
+              className="relative mt-16 flex min-h-[480px] items-center justify-center lg:mt-0 lg:min-h-[620px]"
+            >
+              <SvcHeroVisual
+                reduced={reduced}
+                slides={heroSlides}
+                floatTop={hero?.floatCardTop}
+                floatBottom={hero?.floatCardBottom}
+                language={language}
+              />
             </motion.div>
-
-          </motion.div>
-
-          {/* ─── RIGHT — service imagery ─── */}
-          <motion.div
-            initial={reduced ? false : { opacity: 0, x: 40 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.75, ease, delay: 0.12 }}
-            className="relative mt-16 flex min-h-[480px] items-center justify-center lg:mt-0 lg:min-h-[620px]"
-          >
-            <SvcHeroVisual reduced={reduced} />
-          </motion.div>
+          ) : null}
 
         </div>
       </div>
@@ -1224,8 +1270,22 @@ function ServicesGrid({ onServiceClick, cmsServices, gridHeader }) {
   const { language } = useLanguage();
   const [activeFilter, setActiveFilter] = useState("all");
   const reduced  = useReducedMotion();
+  // Register the scroll target only once the <section> actually mounts. This
+  // component early-returns null when there are no services, so a plain ref
+  // would be handed to useScroll before its element exists → framer-motion's
+  // "Target ref is defined but not hydrated" warning. A callback ref + state
+  // means useScroll only gets a target after the element is in the DOM.
   const sectionRef = useRef(null);
-  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
+  const [scrollTarget, setScrollTarget] = useState(null);
+  const setSectionNode = (node) => {
+    sectionRef.current = node;
+    if (node) setScrollTarget(sectionRef);
+  };
+  const { scrollYProgress } = useScroll({
+    target: scrollTarget ?? undefined,
+    offset: ["start end", "end start"],
+    layoutEffect: false,
+  });
   const blobA = useTransform(scrollYProgress, [0,1], reduced ? [0,0] : [0,-70]);
   const blobB = useTransform(scrollYProgress, [0,1], reduced ? [0,0] : [0, 90]);
 
@@ -1275,7 +1335,7 @@ function ServicesGrid({ onServiceClick, cmsServices, gridHeader }) {
   if (services.length === 0) return null;
 
   return (
-    <section ref={sectionRef} className="relative overflow-x-clip bg-white py-16 sm:py-20 lg:py-24">
+    <section ref={setSectionNode} className="relative overflow-x-clip bg-white py-16 sm:py-20 lg:py-24">
 
       {/* Subtle background texture */}
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,#F4F8FF_0%,#FFFFFF_22%,#FFFFFF_78%,#F8FBFF_100%)]" />

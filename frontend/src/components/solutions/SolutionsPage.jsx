@@ -632,7 +632,6 @@ function StatsSection() {
 
 function IntegrationCard({ card, i, reduced, accent }) {
   const { language } = useLanguage();
-  const [open, setOpen] = useState(false);
   const title = t(card, "title", language);
   const description = t(card, "description", language);
   const points = Array.isArray(card.points)
@@ -651,48 +650,36 @@ function IntegrationCard({ card, i, reduced, accent }) {
       transition={{ duration: 0.5, ease, delay: i * 0.06 }}
       className="group relative flex min-h-[220px] flex-col overflow-hidden rounded-[18px] bg-slate-800 sm:min-h-[260px]"
     >
-      <button
-        type="button"
-        onClick={() => hasDetails && setOpen((v) => !v)}
-        aria-expanded={open}
-        className="absolute inset-0 z-30 h-full w-full cursor-pointer"
-        aria-label={title}
-      />
       {card.image ? (
         <Image src={card.image} alt={title || ""} fill className="object-cover transition duration-700 group-hover:scale-105" sizes="(min-width: 640px) 25vw, 50vw" />
       ) : null}
       <div className={`absolute inset-0 bg-gradient-to-b ${card.gradient || ""}`} />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
-      <div className="pointer-events-none relative z-20 flex flex-1 flex-col justify-end gap-2 p-4 sm:p-5">
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10" />
+      {/* Details are always visible (no hover/click needed). */}
+      <div className="relative z-20 flex flex-1 flex-col justify-end gap-2 p-4 sm:p-5">
         {title ? (
           <h3 className="text-[0.9rem] font-semibold leading-tight tracking-[-0.02em] text-white [overflow-wrap:anywhere] sm:text-[1rem]">
             {title}
           </h3>
         ) : null}
         {hasDetails ? (
-          <div
-            className={`grid transition-all duration-500 ${
-              open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0 group-hover:grid-rows-[1fr] group-hover:opacity-100"
-            }`}
-          >
-            <div className="min-h-0 overflow-hidden">
-              {description ? (
-                <RichText
-                  text={description}
-                  className="block text-[0.75rem] leading-relaxed text-white/85 [overflow-wrap:anywhere]"
-                />
-              ) : null}
-              {points.length > 0 ? (
-                <ul className="mt-2 space-y-1.5">
-                  {points.map((point, pi) => (
-                    <li key={pi} className="flex items-start gap-2 text-[0.72rem] leading-snug text-white/85 [overflow-wrap:anywhere]">
-                      <Check className="mt-0.5 h-3 w-3 shrink-0" style={{ color: accent }} strokeWidth={3} aria-hidden />
-                      <span className="whitespace-pre-line">{point}</span>
-                    </li>
-                  ))}
-                </ul>
-              ) : null}
-            </div>
+          <div>
+            {description ? (
+              <RichText
+                text={description}
+                className="block text-[0.75rem] leading-relaxed text-white/85 [overflow-wrap:anywhere]"
+              />
+            ) : null}
+            {points.length > 0 ? (
+              <ul className="mt-2 space-y-1.5">
+                {points.map((point, pi) => (
+                  <li key={pi} className="flex items-start gap-2 text-[0.72rem] leading-snug text-white/85 [overflow-wrap:anywhere]">
+                    <Check className="mt-0.5 h-3 w-3 shrink-0" style={{ color: accent }} strokeWidth={3} aria-hidden />
+                    <span className="whitespace-pre-line">{point}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
           </div>
         ) : null}
       </div>
@@ -1221,28 +1208,29 @@ function FeatureHighlightsSection() {
       {!deploymentEmpty ? (
         <section className="bg-white py-16 sm:py-20 lg:py-24">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            {/* Full-width centered header (matches the other sections) */}
+            {depHeading || depGradient || depSubtitle ? (
+              <div dir={language === "ar" ? "rtl" : "ltr"} className="mx-auto mb-14 max-w-3xl text-center">
+                {depHeading || depGradient ? (
+                  <h2 className="text-[clamp(3rem,5.5vw,5rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]">
+                    {depHeading}
+                    {depGradient ? (
+                      <>
+                        {depHeading ? " " : null}
+                        <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">{depGradient}</span>
+                      </>
+                    ) : null}
+                  </h2>
+                ) : null}
+                {depSubtitle ? (
+                  <p className="mt-4 whitespace-pre-line text-[clamp(1.1rem,1.6vw,1.35rem)] font-medium leading-[1.3] tracking-[-0.02em] text-slate-600 [overflow-wrap:anywhere]">
+                    {depSubtitle}
+                  </p>
+                ) : null}
+              </div>
+            ) : null}
             <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
               <motion.div initial={reduced ? false : { opacity: 0, x: -28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }}>
-                {depHeading || depGradient || depSubtitle ? (
-                  <div dir={language === "ar" ? "rtl" : "ltr"} className="mx-auto max-w-2xl text-center">
-                    {depHeading || depGradient ? (
-                      <h2 className="text-[clamp(3rem,5.5vw,5rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]">
-                        {depHeading}
-                        {depGradient ? (
-                          <>
-                            {depHeading ? " " : null}
-                            <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">{depGradient}</span>
-                          </>
-                        ) : null}
-                      </h2>
-                    ) : null}
-                    {depSubtitle ? (
-                      <p className="mt-5 whitespace-pre-line text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem] [overflow-wrap:anywhere]">
-                        {depSubtitle}
-                      </p>
-                    ) : null}
-                  </div>
-                ) : null}
                 {steps.length > 0 ? (
                   <div dir={language === "ar" ? "rtl" : "ltr"} className="mt-10 space-y-5">
                     {steps.map((step, i) => {
