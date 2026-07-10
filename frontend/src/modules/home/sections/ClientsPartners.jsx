@@ -47,7 +47,7 @@ export default function ClientsPartners() {
   return (
     <section className="py-10 sm:py-12 md:py-14 bg-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="rounded-3xl  p-5 sm:p-7 md:p-8">
+        <div className="rounded-3xl p-5 sm:p-7 md:p-8">
           <div className="flex justify-center">
             <div className="flex flex-col items-center text-center">
               {/* <div className="flex w-full justify-center">
@@ -87,24 +87,28 @@ export default function ClientsPartners() {
             </div>
           </div>
           {/* ========================= from right to left to right =============================== */}
-          <div className="relative mt-8 overflow-hidden py-4">
+          {/* overflow-x-hidden (not overflow-hidden) so card top/bottom borders
+              aren't clipped — fixes the "broken border" look. */}
+          <div className="relative mt-8 overflow-x-hidden py-5">
             <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-white via-white/90 to-transparent sm:w-24" />
             <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-white via-white/90 to-transparent sm:w-24" />
 
-            <div className="clients-ticker flex w-max items-center gap-5 sm:gap-7">
+            <div className="clients-ticker flex w-max items-stretch gap-5 sm:gap-7">
               {hasLogos
                 ? // Duplicate the list so the -50% loop is seamless (no jump /
-                  // clipped card borders mid-scroll).
+                  // clipped card borders mid-scroll). Each card auto-sizes to its
+                  // logo: fixed height, width fits the image (no distortion, no
+                  // forced min/max that leaves empty space).
                   [...cp.logos, ...cp.logos].map((logo, index) => (
                     <div
                       key={`${logo.image}-${index}`}
-                      className="flex shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-4 sm:px-6 sm:py-5"
+                      className="flex h-[72px] shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white px-6 sm:h-[84px] sm:px-7"
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={logo.image}
                         alt={logo.alt || "Client logo"}
-                        className="h-12 w-auto min-w-[64px] max-w-[220px] object-contain sm:h-14"
+                        className="h-9 w-auto max-w-[180px] object-contain sm:h-11"
                       />
                     </div>
                   ))
