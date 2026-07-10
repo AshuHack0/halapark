@@ -201,13 +201,20 @@ export default function AppServiceTabs() {
   if (content?.enabled === false) return null;
   if (!resolved || !hasTabs) return null;
 
+  // Per-tab pills — trimmed so whitespace-only test values never render empty.
+  const cardKicker = (t(activeService, "cardKicker", language) || "").trim();
+  const tabCta = (t(activeService, "cta", language) || "").trim();
+
   const featureChips = (
     language === "ar" ? content.ar?.featureChips : content.featureChips
   );
+  // Trim chips and drop any blank/whitespace-only entries so no empty pill renders.
   const chips = Array.isArray(featureChips)
-    ? featureChips.filter((c) => typeof c === "string" && c.trim())
+    ? featureChips
+        .filter((c) => typeof c === "string" && c.trim())
+        .map((c) => c.trim())
     : [];
-  const ctaLabel = t(content, "ctaLabel", language);
+  const ctaLabel = (t(content, "ctaLabel", language) || "").trim();
 
   const titleMotion = prefersReducedMotion
     ? {}
@@ -301,21 +308,23 @@ export default function AppServiceTabs() {
             ) : null}
 
 
-            <div className="mt-5 flex flex-wrap items-center gap-3">
-              {t(activeService, "cardKicker", language) ? (
-                <span className="inline-flex items-center rounded-full border border-[#D7E7FF] bg-[#F3F8FF] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#0F4B86] [overflow-wrap:anywhere]">
-                  {t(activeService, "cardKicker", language)}
-                </span>
-              ) : null}
-              {t(activeService, "cta", language) ? (
-                <button
-                  type="button"
-                  className="inline-flex items-center rounded-full border border-[#CFE3FF] bg-white px-3 py-1 text-xs font-semibold text-[#0F62C7] transition-colors duration-200 hover:bg-[#F5F9FF] [overflow-wrap:anywhere]"
-                >
-                  {t(activeService, "cta", language)}
-                </button>
-              ) : null}
-            </div>
+            {cardKicker || tabCta ? (
+              <div className="mt-5 flex flex-wrap items-center gap-3">
+                {cardKicker ? (
+                  <span className="inline-flex items-center rounded-full border border-[#D7E7FF] bg-[#F3F8FF] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#0F4B86] [overflow-wrap:anywhere]">
+                    {cardKicker}
+                  </span>
+                ) : null}
+                {tabCta ? (
+                  <button
+                    type="button"
+                    className="inline-flex items-center rounded-full border border-[#CFE3FF] bg-white px-3 py-1 text-xs font-semibold text-[#0F62C7] transition-colors duration-200 hover:bg-[#F5F9FF] [overflow-wrap:anywhere]"
+                  >
+                    {tabCta}
+                  </button>
+                ) : null}
+              </div>
+            ) : null}
 
             {chips.length ? (
               <div className="mt-4 flex flex-wrap gap-2">

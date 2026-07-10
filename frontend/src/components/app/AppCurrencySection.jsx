@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { fetchPage } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
+import RichText from "@/components/common/RichText";
 
 // Name → lucide icon map for CMS-driven card features. `iconImage` (a URL)
 // always overrides the mapped icon. No hardcoded text lives here.
@@ -21,6 +22,7 @@ const ICON_MAP = {
   WalletCards,
   ParkingCircle,
   MapPinned,
+  ShieldCheck,
 };
 
 function CardIcon({ item }) {
@@ -213,7 +215,6 @@ export default function AppCurrencySection() {
   const dir = language === "ar" ? "rtl" : "ltr";
 
   const title = t(content, "title", language);
-  const subtitle = t(content, "subtitle", language);
   const description = t(content, "description", language);
   const image = (content.image || "").trim();
 
@@ -238,8 +239,7 @@ export default function AppCurrencySection() {
   const showTopUp = topUpLabel.trim() !== "" && topUpSteps.length > 0;
 
   // Hide the whole section when it carries no real content.
-  const hasText =
-    title.trim() !== "" || subtitle.trim() !== "" || description.trim() !== "";
+  const hasText = title.trim() !== "" || description.trim() !== "";
   if (!hasText && cardFeatures.length === 0 && image === "") return null;
 
   return (
@@ -265,36 +265,17 @@ export default function AppCurrencySection() {
             className="relative z-20 flex flex-col"
             dir={dir}
           >
-            <div className="flex items-center gap-3">
-              <Image
-                src="/logo-blue-11.svg"
-                alt="HalaPark"
-                width={132}
-                height={38}
-                className="h-8 w-auto"
-              />
-              <span className="hidden h-8 w-px bg-[#D8E6F7] sm:block" />
-              <span className="hidden text-xs font-semibold uppercase tracking-[0.16em] text-[#8A94A6] sm:inline">
-                Payments
-              </span>
-            </div>
-
-            {subtitle ? (
-              <p className="mt-8 inline-flex w-fit rounded-full border border-[#D7E7FF] bg-white px-4 py-1.5 text-[12px] font-semibold uppercase tracking-[0.14em] text-[#0088FF] shadow-[0_8px_22px_rgba(15,23,42,0.04)] [overflow-wrap:anywhere]">
-                {subtitle}
-              </p>
-            ) : null}
-
             {title ? (
-              <h2 className="mt-5 max-w-[590px] text-[clamp(2.25rem,5.6vw,4.25rem)] font-semibold leading-[1.03] tracking-tight text-[#050A13] lg:leading-[0.99] [overflow-wrap:anywhere]">
+              <h2 className="max-w-[590px] text-[clamp(2.25rem,5.6vw,4.25rem)] font-semibold leading-[1.03] tracking-tight text-[#050A13] lg:leading-[0.99] [overflow-wrap:anywhere]">
                 {title}
               </h2>
             ) : null}
 
             {description ? (
-              <p className="mt-5 max-w-[500px] whitespace-pre-line text-base font-light leading-7 text-[#667085] sm:text-[17px] [overflow-wrap:anywhere]">
-                {description}
-              </p>
+              <RichText
+                text={description}
+                className="mt-5 block max-w-[500px] text-base font-light leading-7 text-[#667085] sm:text-[17px] [overflow-wrap:anywhere]"
+              />
             ) : null}
 
             {showTopUp ? (
@@ -312,7 +293,15 @@ export default function AppCurrencySection() {
             ) : null}
 
             {cardFeatures.length > 0 ? (
-              <div className="mt-8 grid gap-3 sm:grid-cols-3 lg:mt-auto lg:max-w-[610px]">
+              <div
+                className={`mt-8 grid gap-3 lg:mt-auto lg:max-w-[610px] ${
+                  cardFeatures.length === 1
+                    ? "sm:grid-cols-1"
+                    : cardFeatures.length === 2
+                      ? "sm:grid-cols-2"
+                      : "sm:grid-cols-3"
+                }`}
+              >
                 {cardFeatures.map((item, index) => (
                   <div
                     key={index}
@@ -325,10 +314,14 @@ export default function AppCurrencySection() {
                       <span className="font-semibold">
                         {t(item, "title", language)}
                       </span>
-                      <br />
-                      <span className="text-[#667085]">
-                        {t(item, "subtitle", language)}
-                      </span>
+                      {t(item, "subtitle", language).trim() ? (
+                        <>
+                          <br />
+                          <span className="text-[#667085]">
+                            {t(item, "subtitle", language)}
+                          </span>
+                        </>
+                      ) : null}
                     </p>
                   </div>
                 ))}
