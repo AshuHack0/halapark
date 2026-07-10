@@ -3,6 +3,7 @@
 import { ArrowUpRight } from "lucide-react";
 
 import { useLanguage, t } from "@/context/LanguageContext";
+import RichText from "@/components/common/RichText";
 
 import { ICON_BY_KEY } from "./contactData";
 
@@ -42,9 +43,7 @@ function ContactDetailItem({ detail }) {
           </p>
           <div className="mt-2 break-words">{value}</div>
           {description ? (
-            <p className="mt-2 text-sm leading-6 text-slate-600 [overflow-wrap:anywhere]">
-              {description}
-            </p>
+            <RichText text={description} className="mt-2 text-sm leading-6 text-slate-600 [overflow-wrap:anywhere] block" />
           ) : null}
         </div>
       </div>
@@ -91,9 +90,7 @@ export default function ContactInfoPanel({ details }) {
           </h2>
         ) : null}
         {intro ? (
-          <p className="mt-4 text-base leading-7 text-slate-600 [overflow-wrap:anywhere]">
-            {intro}
-          </p>
+          <RichText text={intro} className="mt-4 text-base leading-7 text-slate-600 [overflow-wrap:anywhere] block" />
         ) : null}
       </div>
 

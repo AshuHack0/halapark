@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { fetchHomeSection } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
+import RichText from "@/components/common/RichText";
 
 import { Monitor, Radar, SmartphoneNfc, Workflow } from "lucide-react";
 import styles from "./SolutionIntegration.module.css";
@@ -276,9 +277,7 @@ function SolutionCard({ id, title, description, iconImage }) {
       >
         {title}
       </h3>
-      <p className="mt-3 text-[13px] font-normal leading-[1.35] text-[#8B919C] sm:text-[14px] lg:text-[15px] [overflow-wrap:anywhere]">
-        {description}
-      </p>
+      <RichText text={description} className="mt-3 text-[13px] font-normal leading-[1.35] text-[#8B919C] sm:text-[14px] lg:text-[15px] [overflow-wrap:anywhere] block" />
     </article>
   );
 }

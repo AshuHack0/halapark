@@ -6,6 +6,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { fetchPage } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
+import RichText from "@/components/common/RichText";
 
 const NAVY = "#050A13";
 const ACCENT = "#0088FF";
@@ -169,9 +170,10 @@ function FeatureRow({ feature, fallbackIcon, title, description }) {
           </p>
         ) : null}
         {description ? (
-          <p className="mt-1 text-[13px] leading-6 text-[#5C667A] [overflow-wrap:anywhere]">
-            {description}
-          </p>
+          <RichText
+            text={description}
+            className="mt-1 block text-[13px] leading-6 text-[#5C667A] [overflow-wrap:anywhere]"
+          />
         ) : null}
       </div>
     </li>
@@ -426,9 +428,10 @@ export default function AppPlatformSection() {
                 ) : null}
 
                 {description ? (
-                  <p className="mt-3 whitespace-pre-line text-[14px] leading-6 text-[#5C667A] [overflow-wrap:anywhere]">
-                    {description}
-                  </p>
+                  <RichText
+                    text={description}
+                    className="mt-3 text-[14px] leading-6 text-[#5C667A] [overflow-wrap:anywhere] block"
+                  />
                 ) : null}
 
                 {appFeatures.length > 0 ? (

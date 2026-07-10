@@ -7,6 +7,7 @@ import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { ArrowRight, TrendingUp, Check, Gauge } from "lucide-react";
 import { fetchBusinessSection } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
+import RichText from "@/components/common/RichText";
 import { GetProposalModal, ConsultationModal } from "./BusinessLeadModals";
 
 const ease = [0.22, 1, 0.36, 1];
@@ -214,13 +215,20 @@ export default function BusinessHero() {
     .map((d) => (typeof d === "string" ? { img: d, label: "" } : d))
     .filter((d) => d && (d.img || "").trim());
 
-  // Checklist items from CMS (parallel ar.features in Arabic; blank when missing).
-  const features =
+  // Checklist items — strictly from CMS (parallel ar.features in Arabic; blank
+  // when missing). No hardcoded fallback: the DB is the single source of truth.
+  const features = (
     language === "ar"
       ? (Array.isArray(hero.ar?.features) ? hero.ar.features : [])
-      : (Array.isArray(hero.features) && hero.features.length
-          ? hero.features
-          : ["Maximize parking revenue", "Automate day-to-day operations", "Seamless smart mobility experience"]);
+      : (Array.isArray(hero.features) ? hero.features : [])
+  ).filter((f) => typeof f === "string" && f.trim());
+
+  // CTA buttons — fully CMS-driven, no default labels. Each button shows only
+  // when the admin (a) hasn't disabled it AND (b) has provided a label.
+  const proposalLabel = t(hero, "ctaPrimary", language).trim();
+  const consultLabel = t(hero, "ctaSecondary", language).trim();
+  const showProposal = hero?.showProposal !== false && proposalLabel !== "";
+  const showConsult = hero?.showConsultation !== false && consultLabel !== "";
 
   // Admin "Show this section on the website" toggle.
   if (hero?.enabled === false) return null;
@@ -253,9 +261,10 @@ export default function BusinessHero() {
               {t(hero, "title", language)}
             </h1>
 
-            <p className="mt-6 max-w-[470px] text-[0.95rem] leading-[1.75] text-slate-500">
-              {t(hero, "description", language)}
-            </p>
+            <RichText
+              text={t(hero, "description", language)}
+              className="mt-6 block max-w-[470px] text-[0.95rem] leading-[1.75] text-slate-500"
+            />
 
             <ul className="mt-7 space-y-2.5">
               {features.map((f, i) => (
@@ -274,25 +283,31 @@ export default function BusinessHero() {
               ))}
             </ul>
 
-            <div className="mt-9 flex flex-wrap items-center gap-3">
-              <button
-                type="button"
-                onClick={() => setProposalOpen(true)}
-                className="group inline-flex items-center gap-2.5 rounded-full bg-[#0088FF] px-7 py-3.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,136,255,0.32)] transition hover:brightness-110"
-              >
-                {t(hero, "ctaPrimary", language) || (language === "ar" ? "" : "Get Proposal")}
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 transition-transform duration-200 group-hover:translate-x-0.5">
-                  <ArrowRight className="h-3.5 w-3.5" aria-hidden />
-                </span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setConsultOpen(true)}
-                className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-7 py-3.5 text-sm font-semibold text-slate-700 shadow-[0_2px_12px_rgba(6,6,22,0.07)] transition hover:border-[#0088FF]/50 hover:text-[#0088FF]"
-              >
-                {t(hero, "ctaSecondary", language) || (language === "ar" ? "" : "Book a Free Consultation")}
-              </button>
-            </div>
+            {showProposal || showConsult ? (
+              <div className="mt-9 flex flex-wrap items-center gap-3">
+                {showProposal ? (
+                  <button
+                    type="button"
+                    onClick={() => setProposalOpen(true)}
+                    className="group inline-flex items-center gap-2.5 rounded-full bg-[#0088FF] px-7 py-3.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,136,255,0.32)] transition hover:brightness-110"
+                  >
+                    {proposalLabel}
+                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 transition-transform duration-200 group-hover:translate-x-0.5">
+                      <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+                    </span>
+                  </button>
+                ) : null}
+                {showConsult ? (
+                  <button
+                    type="button"
+                    onClick={() => setConsultOpen(true)}
+                    className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-7 py-3.5 text-sm font-semibold text-slate-700 shadow-[0_2px_12px_rgba(6,6,22,0.07)] transition hover:border-[#0088FF]/50 hover:text-[#0088FF]"
+                  >
+                    {consultLabel}
+                  </button>
+                ) : null}
+              </div>
+            ) : null}
           </motion.div>
 
           {/* RIGHT — growth panel */}

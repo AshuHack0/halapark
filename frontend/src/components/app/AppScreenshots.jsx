@@ -6,6 +6,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { CalendarCheck, Check, MapPin, Send, WalletCards } from "lucide-react";
 import { fetchPage } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
+import RichText from "@/components/common/RichText";
 
 const phoneFrameSrc = "/mobileframe.png";
 
@@ -219,9 +220,10 @@ export default function AppScreenshots() {
             )}
 
             {description ? (
-              <p className="mx-auto mt-5 max-w-[520px] text-sm font-light leading-6 text-[#8A94A6] sm:text-[15px] [overflow-wrap:anywhere]">
-                {description}
-              </p>
+              <RichText
+                text={description}
+                className="mx-auto mt-5 max-w-[520px] text-sm font-light leading-6 text-[#8A94A6] sm:text-[15px] [overflow-wrap:anywhere] block"
+              />
             ) : null}
           </motion.div>
         )}

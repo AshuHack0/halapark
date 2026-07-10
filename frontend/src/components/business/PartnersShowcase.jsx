@@ -7,6 +7,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { fetchBusinessSection } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
+import RichText from "@/components/common/RichText";
 
 const ease = [0.22, 1, 0.36, 1];
 
@@ -91,7 +92,7 @@ export default function PartnersShowcase() {
               <h3 className="text-3xl sm:text-4xl font-bold text-[#050A13] mb-6 [overflow-wrap:anywhere]">{subheading}</h3>
             ) : null}
             {description ? (
-              <p className="text-base leading-7 text-slate-600 mb-8 [overflow-wrap:anywhere] whitespace-pre-line">{description}</p>
+              <RichText text={description} className="text-base leading-7 text-slate-600 mb-8 [overflow-wrap:anywhere] block" />
             ) : null}
 
             {stats.length > 0 ? (
@@ -128,27 +129,49 @@ export default function PartnersShowcase() {
   );
 }
 
+// A single partner logo card (shared by the marquee and the static layouts).
+function PartnerCard({ p, language }) {
+  return (
+    <div className="flex w-[200px] shrink-0 items-center gap-3 rounded-[16px] border border-[#E7EAF0] bg-white px-4 py-3.5 shadow-sm hover:shadow-md transition">
+      {p.logo ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={p.logo} alt={p.name || ""} className="h-10 w-10 shrink-0 rounded-[10px] object-contain" />
+      ) : (
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] text-[13px] font-bold text-white" style={{ background: p.color || "#0088FF" }}>
+          {p.initials}
+        </span>
+      )}
+      <div className="min-w-0">
+        <p className="truncate text-[0.82rem] font-semibold text-[#050A13]">{t(p, "name", language)}</p>
+        <p className="text-[0.72rem] text-slate-400">{t(p, "industry", language)}</p>
+      </div>
+    </div>
+  );
+}
+
 // ─── Marquee row for the carousel ──────────────────────────────────────────────
+// Only scrolls when there are enough partners to fill the width. With just a
+// few, it would leave a big empty gap and cluster left — so instead we center
+// them statically (no animation, no clipping).
 function MarqueeRow({ partners, reverse = false, language }) {
+  // Rough threshold: a 200px card + gap needs ~5 to span a typical row.
+  const MIN_TO_SCROLL = 5;
+  if (partners.length < MIN_TO_SCROLL) {
+    return (
+      <div className="flex flex-wrap justify-center gap-4">
+        {partners.map((p, i) => (
+          <PartnerCard key={`${p.name}-${i}`} p={p} language={language} />
+        ))}
+      </div>
+    );
+  }
+
   const doubled = [...partners, ...partners];
   return (
     <div className="relative overflow-hidden">
       <div className={`flex gap-4 ${reverse ? "animate-marquee-reverse" : "animate-marquee"}`} style={{ width: "max-content" }}>
         {doubled.map((p, i) => (
-          <div key={`${p.name}-${i}`} className="flex w-[200px] shrink-0 items-center gap-3 rounded-[16px] border border-[#E7EAF0] bg-white px-4 py-3.5 shadow-sm hover:shadow-md transition">
-            {p.logo ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={p.logo} alt={p.name || ""} className="h-10 w-10 shrink-0 rounded-[10px] object-contain" />
-            ) : (
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] text-[13px] font-bold text-white" style={{ background: p.color || "#0088FF" }}>
-                {p.initials}
-              </span>
-            )}
-            <div className="min-w-0">
-              <p className="truncate text-[0.82rem] font-semibold text-[#050A13]">{t(p, "name", language)}</p>
-              <p className="text-[0.72rem] text-slate-400">{t(p, "industry", language)}</p>
-            </div>
-          </div>
+          <PartnerCard key={`${p.name}-${i}`} p={p} language={language} />
         ))}
       </div>
       <style>{`
@@ -208,20 +231,9 @@ export function PartnerCarousel() {
                 {row2.length > 0 ? <MarqueeRow partners={row2} reverse language={language} /> : null}
               </div>
             ) : (
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="flex flex-wrap justify-center gap-3">
                 {all.map((p, i) => (
-                  <div key={`${p.name}-${i}`} className="flex items-center gap-3 rounded-[16px] border border-[#E7EAF0] bg-white px-4 py-3.5 shadow-sm">
-                    {p.logo ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={p.logo} alt={p.name || ""} className="h-10 w-10 shrink-0 rounded-[10px] object-contain" />
-                    ) : (
-                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] text-[13px] font-bold text-white" style={{ background: p.color || "#0088FF" }}>{p.initials}</span>
-                    )}
-                    <div className="min-w-0">
-                      <p className="truncate text-[0.82rem] font-semibold text-[#050A13]">{t(p, "name", language)}</p>
-                      <p className="text-[0.72rem] text-slate-400">{t(p, "industry", language)}</p>
-                    </div>
-                  </div>
+                  <PartnerCard key={`${p.name}-${i}`} p={p} language={language} />
                 ))}
               </div>
             )
@@ -271,7 +283,7 @@ export function PartnerCTA() {
               <h3 className="max-w-[580px] text-[clamp(1.6rem,3vw,2.4rem)] font-semibold leading-[1.1] tracking-[-0.04em] text-white [overflow-wrap:anywhere]">{title}</h3>
             ) : null}
             {description ? (
-              <p className="mx-auto mt-3 max-w-[500px] text-[0.88rem] leading-6 text-white/60 sm:text-[0.94rem] [overflow-wrap:anywhere] whitespace-pre-line">{description}</p>
+              <RichText text={description} className="mx-auto mt-3 max-w-[500px] text-[0.88rem] leading-6 text-white/60 sm:text-[0.94rem] [overflow-wrap:anywhere] block" />
             ) : null}
             {label ? (
               <Link

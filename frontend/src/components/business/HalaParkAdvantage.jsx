@@ -5,6 +5,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { Network, Smartphone, Cpu, BarChart3 } from "lucide-react";
 import { fetchBusinessSection } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
+import RichText from "@/components/common/RichText";
 
 const ease = [0.22, 1, 0.36, 1];
 
@@ -72,9 +73,10 @@ export default function HalaParkAdvantage() {
                 <h3 className="mt-5 text-[1rem] font-semibold leading-tight tracking-[-0.02em] text-[#050A13] sm:text-[1.05rem]">
                   {t(item, "title", language)}
                 </h3>
-                <p className="mt-3 text-[0.82rem] leading-6 text-slate-500 sm:text-[0.88rem]">
-                  {t(item, "description", language)}
-                </p>
+                <RichText
+                  text={t(item, "description", language)}
+                  className="mt-3 block text-[0.82rem] leading-6 text-slate-500 sm:text-[0.88rem]"
+                />
               </motion.div>
             );
           })}

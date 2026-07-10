@@ -23,6 +23,7 @@ import {
 import { allServicesData, serviceNames } from "./allServicesData";
 import { fetchPage } from "@/lib/cms";
 import { useLanguage, t, ui } from "@/context/LanguageContext";
+import RichText from "@/components/common/RichText";
 // import GoodLookingServiceHero from "./GoodLookingServiceHero"; // OLD dark hero (looked like home page) — replaced by the light HeroSection below
 
 /* ─── Springs & easing ─── */
@@ -140,9 +141,7 @@ function ServiceModal({ service, onClose }) {
             <h2 className="text-[1.15rem] font-semibold leading-snug tracking-[-0.03em] text-[#050A13] sm:text-[1.85rem]">
               {t(service, "name", language)}
             </h2>
-            <p className="mt-2 text-[0.8rem] leading-6 text-slate-500 sm:mt-3 sm:text-[0.94rem] sm:leading-7">
-              {t(service, "fullDesc", language)}
-            </p>
+            <RichText text={t(service, "fullDesc", language)} className="mt-2 text-[0.8rem] leading-6 text-slate-500 sm:mt-3 sm:text-[0.94rem] sm:leading-7 block" />
 
             {service.whatsIncluded?.length > 0 && (
               <div className="mt-4 sm:mt-6">
@@ -189,9 +188,7 @@ function ServiceModal({ service, onClose }) {
                           {cat.title}
                         </p>
                         {cat.description ? (
-                          <p className="mt-1.5 text-[0.78rem] leading-5 text-slate-600 sm:text-[0.84rem] sm:leading-6">
-                            {cat.description}
-                          </p>
+                          <RichText text={cat.description} className="mt-1.5 text-[0.78rem] leading-5 text-slate-600 sm:text-[0.84rem] sm:leading-6 block" />
                         ) : null}
                       </li>
                     ))}
@@ -497,7 +494,7 @@ function QuoteModal({ isOpen, onClose, quoteForm }) {
                   <Check className="h-7 w-7 text-[#0088FF] sm:h-8 sm:w-8" />
                 </div>
                 <h2 className="mt-4 text-xl font-semibold tracking-[-0.04em] text-[#050A13] sm:mt-5 sm:text-2xl [overflow-wrap:anywhere]">{qSuccessTitle}</h2>
-                <p className="mt-2 text-[0.82rem] leading-6 text-slate-500 sm:mt-3 sm:text-sm sm:leading-7 [overflow-wrap:anywhere]">{qSuccessMessage}</p>
+                <RichText text={qSuccessMessage} className="mt-2 text-[0.82rem] leading-6 text-slate-500 sm:mt-3 sm:text-sm sm:leading-7 [overflow-wrap:anywhere] block" />
                 <button type="button" onClick={handleClose}
                   className="mt-5 inline-flex items-center justify-center rounded-full bg-[#0088FF] px-7 py-2.5 text-sm font-semibold text-white transition hover:brightness-95 sm:mt-6 sm:py-3"
                 >Close</button>
@@ -739,9 +736,7 @@ function ServiceCard({ service, index, onClick, category }) {
               <ArrowUpRight className="h-3.5 w-3.5 transition-colors duration-200 group-hover/card:[color:var(--hover-bg)]" />
             </span>
           </div>
-          <p className="mt-1.5 line-clamp-3 text-[0.775rem] leading-5 text-slate-500">
-            {t(service, "fullDesc", language)}
-          </p>
+          <RichText text={t(service, "fullDesc", language)} className="mt-1.5 line-clamp-3 text-[0.775rem] leading-5 text-slate-500 block" />
 
           {/* Read more row */}
           <div
@@ -1316,9 +1311,7 @@ function ServicesGrid({ onServiceClick, cmsServices, gridHeader }) {
             <p className="mt-3 max-w-[480px] text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-[#050A13] [overflow-wrap:anywhere]">
               {t(gridHeader, "subtitle", language)}
             </p>
-            <p className="mt-3 max-w-[480px] text-[0.88rem] leading-6 text-slate-500 [overflow-wrap:anywhere]">
-              {t(gridHeader, "description", language)}
-            </p>
+            <RichText text={t(gridHeader, "description", language)} className="mt-3 max-w-[480px] text-[0.88rem] leading-6 text-slate-500 [overflow-wrap:anywhere] block" />
           </div>
 
           {/* Right — live count */}
@@ -1546,9 +1539,7 @@ function PartnersSection({ partners }) {
           <p className="mt-3 max-w-[460px] text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-[#050A13] [overflow-wrap:anywhere]">
             {subtitle}
           </p>
-          <p className="mt-3 max-w-[460px] text-[0.88rem] leading-6 text-slate-500 [overflow-wrap:anywhere]">
-            {description}
-          </p>
+          <RichText text={description} className="mt-3 max-w-[460px] text-[0.88rem] leading-6 text-slate-500 [overflow-wrap:anywhere] block" />
         </motion.div>
 
         {/* ── Stats strip ── */}

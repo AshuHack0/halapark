@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 import JobApplicationModal from "./JobApplicationModal";
 import { useLanguage, t } from "@/context/LanguageContext";
+import RichText from "@/components/common/RichText";
 
 const ease = [0.22, 1, 0.36, 1];
 
@@ -258,9 +259,7 @@ function CareersHero({ hero }) {
             ) : null}
 
             {hasText(description) ? (
-              <p className="mt-5 max-w-[470px] text-[0.95rem] leading-[1.75] text-slate-500 [overflow-wrap:anywhere]">
-                {description}
-              </p>
+              <RichText text={description} className="mt-5 max-w-[470px] text-[0.95rem] leading-[1.75] text-slate-500 [overflow-wrap:anywhere] block" />
             ) : null}
 
             {hasText(primaryCta) || hasText(secondaryCta) ? (
@@ -339,7 +338,7 @@ function BuildingSmarterMobility({ building }) {
             {paragraphs.length > 0 ? (
               <div className="mt-8 space-y-5 text-[0.94rem] leading-7 text-slate-500 sm:text-base">
                 {paragraphs.map((text, i) => (
-                  <p key={`${text.slice(0, 40)}-${i}`} className="[overflow-wrap:anywhere]">{text}</p>
+                  <RichText key={`${text.slice(0, 40)}-${i}`} text={text} className="[overflow-wrap:anywhere] block" />
                 ))}
               </div>
             ) : null}
@@ -417,9 +416,7 @@ function OpportunitiesSection({ opportunities, header }) {
                     </h3>
                   ) : null}
                   {hasText(itemDescription) ? (
-                    <p className="mt-3 text-[0.9rem] leading-6 text-slate-500 [overflow-wrap:anywhere]">
-                      {itemDescription}
-                    </p>
+                    <RichText text={itemDescription} className="mt-3 text-[0.9rem] leading-6 text-slate-500 [overflow-wrap:anywhere] block" />
                   ) : null}
                 </motion.article>
               );
@@ -535,7 +532,7 @@ function JobDetailModal({ job, onClose, onApply }) {
                   {fullDescription}
                 </p>
               ) : hasText(description) ? (
-                <p className="text-[0.92rem] leading-7 text-slate-600 [overflow-wrap:anywhere]">{description}</p>
+                <RichText text={description} className="text-[0.92rem] leading-7 text-slate-600 [overflow-wrap:anywhere] block" />
               ) : null}
             </div>
 
@@ -640,9 +637,7 @@ function JobOpenings({ openPositions }) {
                     </p>
                   ) : null}
                   {hasText(jt(post, "description", language)) ? (
-                    <p className="mt-4 line-clamp-3 text-[0.88rem] leading-6 text-slate-500 [overflow-wrap:anywhere] sm:text-[0.94rem]">
-                      {jt(post, "description", language)}
-                    </p>
+                    <RichText text={jt(post, "description", language)} className="mt-4 line-clamp-3 text-[0.88rem] leading-6 text-slate-500 [overflow-wrap:anywhere] sm:text-[0.94rem] block" />
                   ) : null}
 
                   <div className="mt-5 flex items-center justify-between gap-3 border-t border-slate-100 pt-4">
@@ -712,9 +707,7 @@ function WhyJoinUs({ whyJoin }) {
                 <h3 className="text-lg font-semibold text-[#050A13] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
                   {ct("oneTeam", language)}
                 </h3>
-                <p className="mt-3 text-[0.93rem] leading-7 text-slate-500 [overflow-wrap:anywhere]">
-                  {bodyParagraph}
-                </p>
+                <RichText text={bodyParagraph} className="mt-3 text-[0.93rem] leading-7 text-slate-500 [overflow-wrap:anywhere] block" />
               </div>
             ) : null}
           </motion.div>
@@ -812,9 +805,7 @@ function CareersCTA({ cta, heroImage, hasOpenPositions }) {
               </p>
             ) : null}
             {hasText(description) ? (
-              <p className="mt-5 max-w-[620px] text-[0.88rem] leading-6 text-white/70 [overflow-wrap:anywhere] sm:text-[0.94rem]">
-                {description}
-              </p>
+              <RichText text={description} className="mt-5 max-w-[620px] text-[0.88rem] leading-6 text-white/70 [overflow-wrap:anywhere] sm:text-[0.94rem] block" />
             ) : null}
             {hasText(primaryCtaText) || showSecondary ? (
               <div className="mt-8 flex flex-wrap items-center justify-center gap-3">

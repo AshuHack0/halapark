@@ -4,6 +4,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { fetchBusinessSection } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
+import RichText from "@/components/common/RichText";
 
 const ease = [0.22, 1, 0.36, 1];
 
@@ -60,9 +61,7 @@ export default function BuiltForEverySpace() {
             ) : null}
           </h2>
           {description ? (
-            <p className="mx-auto mt-5 max-w-[650px] text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem] [overflow-wrap:anywhere] whitespace-pre-line">
-              {description}
-            </p>
+            <RichText text={description} className="mx-auto mt-5 max-w-[650px] text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem] [overflow-wrap:anywhere] block" />
           ) : null}
         </motion.div>
       </div>

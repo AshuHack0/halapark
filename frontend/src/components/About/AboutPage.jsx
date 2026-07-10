@@ -10,6 +10,7 @@ import {
   Target, Eye, Globe, Users, TrendingUp, Sparkles,
 } from "lucide-react";
 import { useLanguage, t } from "@/context/LanguageContext";
+import RichText from "@/components/common/RichText";
 
 const ease = [0.22, 1, 0.36, 1];
 
@@ -204,9 +205,10 @@ function AboutHero({ hero }) {
             ) : null}
 
             {hasText(hero?.description) ? (
-              <p className="mt-5 max-w-[470px] text-[0.95rem] leading-[1.75] text-slate-500 [overflow-wrap:anywhere]">
-                {t(hero, "description", language)}
-              </p>
+              <RichText
+                text={t(hero, "description", language)}
+                className="mt-5 max-w-[470px] text-[0.95rem] leading-[1.75] text-slate-500 [overflow-wrap:anywhere] block"
+              />
             ) : null}
 
             <div className="mt-9 flex flex-wrap items-center gap-3">
@@ -338,7 +340,7 @@ function OurMission({ mission }) {
             {paragraphs.length > 0 ? (
               <div className="space-y-5 text-[0.93rem] leading-7 text-slate-500">
                 {paragraphs.map((para, i) => (
-                  <p key={`${i}-${para.slice(0, 48)}`} className="[overflow-wrap:anywhere]">{para}</p>
+                  <RichText key={`${i}-${para.slice(0, 48)}`} text={para} className="[overflow-wrap:anywhere] block" />
                 ))}
               </div>
             ) : null}
@@ -422,7 +424,7 @@ function OurVision({ vision }) {
             {paragraphs.length > 0 ? (
               <div className="space-y-4 text-[0.93rem] leading-7 text-slate-500">
                 {paragraphs.map((para, i) => (
-                  <p key={`${i}-${para.slice(0, 48)}`} className="[overflow-wrap:anywhere]">{para}</p>
+                  <RichText key={`${i}-${para.slice(0, 48)}`} text={para} className="[overflow-wrap:anywhere] block" />
                 ))}
               </div>
             ) : null}
@@ -510,7 +512,7 @@ function OurStory({ story }) {
             {paragraphs.length > 0 ? (
               <div className="space-y-5 text-[0.93rem] leading-7 text-slate-500">
                 {paragraphs.map((para, i) => (
-                  <p key={`${i}-${para.slice(0, 48)}`} className="[overflow-wrap:anywhere]">{para}</p>
+                  <RichText key={`${i}-${para.slice(0, 48)}`} text={para} className="[overflow-wrap:anywhere] block" />
                 ))}
               </div>
             ) : null}
@@ -569,7 +571,7 @@ function WhatWeDo({ whatWeDo }) {
               </p>
             ) : null}
             {hasText(whatWeDo?.intro) ? (
-              <p className="text-[0.93rem] leading-7 text-slate-500 [overflow-wrap:anywhere]">{t(whatWeDo, "intro", language)}</p>
+              <RichText text={t(whatWeDo, "intro", language)} className="text-[0.93rem] leading-7 text-slate-500 [overflow-wrap:anywhere] block" />
             ) : null}
             {whatWeDo?.image ? (
             <div className="relative mt-8 h-48 w-full overflow-hidden rounded-[18px]">
@@ -646,7 +648,7 @@ function TechnologyInnovation({ technology }) {
               </p>
             ) : null}
             {hasText(technology?.body) ? (
-              <p className="text-[0.93rem] leading-7 text-slate-500 [overflow-wrap:anywhere]">{t(technology, "body", language)}</p>
+              <RichText text={t(technology, "body", language)} className="text-[0.93rem] leading-7 text-slate-500 [overflow-wrap:anywhere] block" />
             ) : null}
             {/* Extra feature cards — not in content doc
             <div className="mt-8 grid grid-cols-2 gap-3">
@@ -1323,9 +1325,10 @@ function FinalCTA({ cta }) {
               </h2>
             ) : null}
             {hasText(cta?.description) ? (
-              <p className="mx-auto mt-5 max-w-2xl text-sm leading-7 text-white/75 sm:text-base [overflow-wrap:anywhere]">
-                {t(cta, "description", language)}
-              </p>
+              <RichText
+                text={t(cta, "description", language)}
+                className="mx-auto mt-5 max-w-2xl text-sm leading-7 text-white/75 sm:text-base [overflow-wrap:anywhere] block"
+              />
             ) : null}
             {hasPrimary || hasSecondary ? (
               <div className="mt-8 flex flex-wrap items-center justify-center gap-3">

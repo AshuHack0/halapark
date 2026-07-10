@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 import { fetchPage } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
+import RichText from "@/components/common/RichText";
 
 // Fixed FAQ-page chrome — inline EN/AR. Only functional labels live here; the
 // heading/subtitle/search placeholder come from the CMS (sections.searchHeader).
@@ -338,7 +339,7 @@ export default function FAQCategorySection({ categories = [] }) {
                     >
                       <div className="px-4 pb-4 sm:px-6 sm:pb-5">
                         {item.answer && (
-                          <p className="text-[0.88rem] leading-6 text-slate-500">{t(item, "answer", language)}</p>
+                          <RichText text={t(item, "answer", language)} className="text-[0.88rem] leading-6 text-slate-500 block" />
                         )}
                         {(() => {
                           const videos = collectVideos(item);

@@ -6,6 +6,7 @@ import { ClipboardCheck, PhoneCall, Rocket, Wrench } from "lucide-react";
 import { useEffect, useState } from "react";
 import { fetchBusinessContent } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
+import RichText from "@/components/common/RichText";
 
 const STEP_ICONS = [PhoneCall, ClipboardCheck, Wrench, Rocket];
 
@@ -56,9 +57,7 @@ export default function BusinessHowToGetStarted() {
             </h2>
 
             {t(content, "description", language) ? (
-              <p className="mt-4 text-base leading-7 text-slate-600 [overflow-wrap:anywhere]">
-                {t(content, "description", language)}
-              </p>
+              <RichText text={t(content, "description", language)} className="mt-4 text-base leading-7 text-slate-600 [overflow-wrap:anywhere] block" />
             ) : null}
 
             <Link href="/contact">
@@ -104,9 +103,7 @@ export default function BusinessHowToGetStarted() {
                         {t(step, "title", language)}
                       </h3>
                       {t(step, "description", language) ? (
-                        <p className="mt-2 max-w-[34rem] text-base leading-7 text-slate-600 [overflow-wrap:anywhere]">
-                          {t(step, "description", language)}
-                        </p>
+                        <RichText text={t(step, "description", language)} className="mt-2 max-w-[34rem] text-base leading-7 text-slate-600 [overflow-wrap:anywhere] block" />
                       ) : null}
                     </div>
                   </motion.div>

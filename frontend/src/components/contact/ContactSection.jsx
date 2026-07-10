@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 import { useLanguage, t } from "@/context/LanguageContext";
 import { fetchPage } from "@/lib/cms";
+import RichText from "@/components/common/RichText";
 
 import ContactFormPanel from "./ContactFormPanel";
 import ContactInfoPanel from "./ContactInfoPanel";
@@ -54,9 +55,7 @@ export default function ContactSection() {
               </h1>
             ) : null}
             {subtitle ? (
-              <p className="mt-5 text-lg leading-8 text-slate-600 sm:text-xl [overflow-wrap:anywhere]">
-                {subtitle}
-              </p>
+              <RichText text={subtitle} className="mt-5 text-lg leading-8 text-slate-600 sm:text-xl [overflow-wrap:anywhere] block" />
             ) : null}
           </div>
         ) : null}

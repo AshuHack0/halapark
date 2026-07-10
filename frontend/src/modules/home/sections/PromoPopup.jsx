@@ -8,6 +8,7 @@ import { SiInstagram, SiFacebook, SiTiktok, SiX, SiYoutube, SiWhatsapp, SiSnapch
 import { SlSocialLinkedin } from "react-icons/sl";
 import { fetchPage } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
+import RichText from "@/components/common/RichText";
 
 const ease = [0.22, 1, 0.36, 1];
 
@@ -234,12 +235,12 @@ export default function PromoPopup() {
                   </motion.h2>
                 ) : null}
                 {description ? (
-                  <motion.p
+                  <motion.div
                     variants={item}
-                    className="order-last mt-6 whitespace-pre-line text-sm leading-7 text-slate-400 sm:text-[0.95rem] [overflow-wrap:anywhere]"
+                    className="order-last mt-6 text-sm leading-7 text-slate-400 sm:text-[0.95rem] [overflow-wrap:anywhere]"
                   >
-                    {description}
-                  </motion.p>
+                    <RichText text={description} />
+                  </motion.div>
                 ) : null}
                 {ctaLabel && ctaHref ? (
                   <motion.div variants={item} className="mt-7 w-full">

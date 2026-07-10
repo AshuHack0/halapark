@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { fetchPage } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
+import RichText from "@/components/common/RichText";
 
 // CMS-only hero: the DB is the single source of truth (seeded). No hardcoded
 // fallbacks — anything deleted from the database simply doesn't render.
@@ -71,9 +72,7 @@ export default function FAQHeroSection() {
                 </h1>
               ) : null}
               {description ? (
-                <p className="mt-4 max-w-md text-sm leading-relaxed text-white/75 sm:text-base [overflow-wrap:anywhere]">
-                  {description}
-                </p>
+                <RichText text={description} className="mt-4 max-w-md text-sm leading-relaxed text-white/75 sm:text-base [overflow-wrap:anywhere] block" />
               ) : null}
             </div>
           </div>

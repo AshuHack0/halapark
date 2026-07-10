@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { CalendarCheck2, CarFront, CircleParking, Search } from "lucide-react";
 import { fetchHomeSection } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
+import RichText from "@/components/common/RichText";
 
 const steps = [
   {
@@ -137,9 +138,7 @@ export default function HowItWorksDemoSection() {
                           <h3 className="text-[1.08rem] font-bold leading-tight text-[#182238] sm:text-[1.18rem]">
                             {t(step, "title", language)}
                           </h3>
-                          <p className="mt-1 max-w-[260px] text-[0.84rem] font-medium leading-snug text-[#6C7587] sm:text-[0.92rem]">
-                            {t(step, "description", language)}
-                          </p>
+                          <RichText text={t(step, "description", language)} className="mt-1 max-w-[260px] text-[0.84rem] font-medium leading-snug text-[#6C7587] sm:text-[0.92rem] block" />
                         </div>
                       </article>
                     );

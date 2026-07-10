@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import { fetchBusinessSection } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
+import RichText from "@/components/common/RichText";
 
 const ease = [0.22, 1, 0.36, 1];
 
@@ -161,9 +162,7 @@ export default function WhyChooseHalaPark() {
                       <h3 className="text-xl font-semibold text-[#050A13] mb-3 [overflow-wrap:anywhere]">
                         {t(item, "title", language)}
                       </h3>
-                      <p className="text-sm leading-6 text-slate-600 [overflow-wrap:anywhere] whitespace-pre-line">
-                        {t(item, "description", language)}
-                      </p>
+                      <RichText text={t(item, "description", language)} className="text-sm leading-6 text-slate-600 [overflow-wrap:anywhere] block" />
                     </div>
                   </div>
                 </div>

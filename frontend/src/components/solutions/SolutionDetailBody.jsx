@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Check, ChevronRight, ShieldCheck, AlertTriangle, Lightbulb } from "lucide-react";
 import { useLanguage, t } from "@/context/LanguageContext";
+import RichText from "@/components/common/RichText";
 
 /**
  * Client body for a solution detail page (new standardized template).
@@ -308,7 +309,7 @@ export default function SolutionDetailBody({ detail, heroImage, relatedList = []
                         <h3 className="mt-4 text-[1.02rem] font-semibold leading-tight text-white [overflow-wrap:anywhere]">{s.title}</h3>
                       ) : null}
                       {s.description ? (
-                        <p className="mt-2 text-[0.88rem] leading-7 text-white/65 [overflow-wrap:anywhere]">{s.description}</p>
+                        <RichText text={s.description} className="mt-2 text-[0.88rem] leading-7 text-white/65 [overflow-wrap:anywhere] block" />
                       ) : null}
                     </div>
                   );

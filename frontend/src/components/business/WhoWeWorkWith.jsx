@@ -7,6 +7,7 @@ import { useState, useRef, useEffect } from "react";
 import { ChevronLeft, ChevronRight, ArrowRight, Sparkles } from "lucide-react";
 import { fetchBusinessSection } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
+import RichText from "@/components/common/RichText";
 
 const ease = [0.22, 1, 0.36, 1];
 
@@ -261,7 +262,7 @@ export default function WhoWeWorkWith() {
               variants={itemVariants}
               className="text-base leading-7 text-slate-600 mb-8"
             >
-              {t(activePartner, "description", language)}
+              <RichText text={t(activePartner, "description", language)} />
             </motion.p>
 
             {/* Benefits List */}

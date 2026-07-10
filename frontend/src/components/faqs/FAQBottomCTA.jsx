@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowRight, MessageCircle } from "lucide-react";
 import { fetchPage } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
+import RichText from "@/components/common/RichText";
 
 // CMS-only section (sections.bottomCta): the DB is the single source of truth.
 // No hardcoded fallbacks — anything deleted from the database simply doesn't render.
@@ -57,9 +58,7 @@ export default function FAQBottomCTA() {
                   </h2>
                 ) : null}
                 {description ? (
-                  <p className="mt-2 max-w-[480px] text-[0.88rem] leading-6 text-white/75 [overflow-wrap:anywhere]">
-                    {description}
-                  </p>
+                  <RichText text={description} className="mt-2 max-w-[480px] text-[0.88rem] leading-6 text-white/75 [overflow-wrap:anywhere] block" />
                 ) : null}
               </div>
             ) : null}

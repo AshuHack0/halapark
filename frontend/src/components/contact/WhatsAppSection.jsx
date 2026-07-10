@@ -3,6 +3,7 @@
 import { MessageCircleMore } from "lucide-react";
 
 import { useLanguage, t } from "@/context/LanguageContext";
+import RichText from "@/components/common/RichText";
 
 // CMS-only: the DB is the source of truth. Deleted content is not rendered;
 // the whole section hides when it has no heading/body/button.
@@ -36,9 +37,7 @@ export default function WhatsAppSection({ whatsappCta }) {
             </h2>
           ) : null}
           {body ? (
-            <p className="mt-4 text-base leading-7 text-slate-600 [overflow-wrap:anywhere]">
-              {body}
-            </p>
+            <RichText text={body} className="mt-4 text-base leading-7 text-slate-600 [overflow-wrap:anywhere] block" />
           ) : null}
         </div>
 

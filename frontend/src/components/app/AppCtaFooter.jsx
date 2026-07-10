@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { fetchPage } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
+import RichText from "@/components/common/RichText";
 
 // App-page CTA footer band. CMS shape (page "app" → sections.ctaFooter):
 //   { heading, description, stores: [{ key, label, icon, href }], ar: { heading, description } }
@@ -54,9 +55,10 @@ export default function AppCtaFooter() {
             ) : null}
 
             {description.trim() ? (
-              <p className="mx-auto mt-5 max-w-2xl whitespace-pre-line text-sm leading-7 text-slate-300 sm:text-base [overflow-wrap:anywhere]">
-                {description}
-              </p>
+              <RichText
+                text={description}
+                className="mx-auto mt-5 max-w-2xl text-sm leading-7 text-slate-300 sm:text-base [overflow-wrap:anywhere] block"
+              />
             ) : null}
 
             {stores.length > 0 ? (

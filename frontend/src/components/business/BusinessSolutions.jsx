@@ -7,6 +7,7 @@ import { ArrowRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { fetchBusinessContent } from "@/lib/cms";
 import { useLanguage, t, ui } from "@/context/LanguageContext";
+import RichText from "@/components/common/RichText";
 
 const ease = [0.22, 1, 0.36, 1];
 
@@ -68,13 +69,9 @@ export default function BusinessSolutions() {
                 ) : null}
               </h2>
 
-              <p className="text-base leading-7 text-slate-600 mb-4 [overflow-wrap:anywhere]">
-                {t(header, "description", language)}
-              </p>
+              <RichText text={t(header, "description", language)} className="text-base leading-7 text-slate-600 mb-4 [overflow-wrap:anywhere] block" />
 
-              <p className="text-sm leading-6 text-slate-500 mb-8 [overflow-wrap:anywhere]">
-                {t(header, "description2", language)}
-              </p>
+              <RichText text={t(header, "description2", language)} className="text-sm leading-6 text-slate-500 mb-8 [overflow-wrap:anywhere] block" />
 
               {/* CTA Button — link is admin-configurable (defaults to /solutions) */}
               {t(header, "ctaLabel", language) || (language !== "ar") ? (
@@ -163,9 +160,7 @@ export default function BusinessSolutions() {
                   <h3 className="text-sm sm:text-base font-bold leading-tight tracking-[-0.02em] text-[#050A13] group-hover:text-[#0088FF] transition">
                     {t(card, "title", language)}
                   </h3>
-                  <p className="mt-3 text-xs sm:text-sm leading-5 text-slate-600 [overflow-wrap:anywhere] whitespace-pre-line">
-                    {t(card, "description", language)}
-                  </p>
+                  <RichText text={t(card, "description", language)} className="mt-3 text-xs sm:text-sm leading-5 text-slate-600 [overflow-wrap:anywhere] block" />
 
                   {/* Bottom Accent Line — uses the card's accent color */}
                   <motion.div

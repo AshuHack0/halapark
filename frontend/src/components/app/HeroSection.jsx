@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { fetchPage } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
+import RichText from "@/components/common/RichText";
 import {
   ArrowRight,
   Car,
@@ -367,9 +368,10 @@ export default function HeroSection() {
           ) : null}
 
           {description ? (
-            <p className="mt-5 max-w-[460px] text-base font-light leading-7 text-[#4F5B6F] sm:text-[17px] [overflow-wrap:anywhere]">
-              {description}
-            </p>
+            <RichText
+              text={description}
+              className="mt-5 max-w-[460px] text-base font-light leading-7 text-[#4F5B6F] sm:text-[17px] [overflow-wrap:anywhere] block"
+            />
           ) : null}
 
           {ctaLabel ? (

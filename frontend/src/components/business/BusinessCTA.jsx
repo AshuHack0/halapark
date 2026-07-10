@@ -7,6 +7,7 @@ import { ArrowRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { fetchBusinessContent } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
+import RichText from "@/components/common/RichText";
 
 const ease = [0.22, 1, 0.36, 1];
 
@@ -82,9 +83,7 @@ export default function BusinessCTA() {
                   </>
                 ) : null}
               </h2>
-              <p className="mt-1.5 text-[0.82rem] leading-5 text-white/60 sm:text-[0.88rem] [overflow-wrap:anywhere]">
-                {t(cta, "description", language)}
-              </p>
+              <RichText text={t(cta, "description", language)} className="mt-1.5 text-[0.82rem] leading-5 text-white/60 sm:text-[0.88rem] [overflow-wrap:anywhere] block" />
             </div>
             <Link
               href={cta.ctaLink}

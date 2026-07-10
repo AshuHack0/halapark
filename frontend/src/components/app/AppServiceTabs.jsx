@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { fetchPage } from "@/lib/cms";
 import { useLanguage, t, ui } from "@/context/LanguageContext";
+import RichText from "@/components/common/RichText";
 
 const AUTO_STEP_INTERVAL_MS = 2400;
 const LAST_STEP_TICK_HOLD_MS = 260;
@@ -292,13 +293,12 @@ export default function AppServiceTabs() {
             </motion.h3>
 
             {t(activeService, "description", language) ? (
-              <motion.p
-                key={`desc-${activeService.key}`}
-                {...titleMotion}
-                className="mt-5 whitespace-pre-line text-[16px] leading-[1.7] text-[#667085] sm:text-[17px] [overflow-wrap:anywhere]"
-              >
-                {t(activeService, "description", language)}
-              </motion.p>
+              <motion.div key={`desc-${activeService.key}`} {...titleMotion}>
+                <RichText
+                  text={t(activeService, "description", language)}
+                  className="mt-5 text-[16px] leading-[1.7] text-[#667085] sm:text-[17px] [overflow-wrap:anywhere] block"
+                />
+              </motion.div>
             ) : null}
 
             {t(activeService, "builtFor", language) ? (

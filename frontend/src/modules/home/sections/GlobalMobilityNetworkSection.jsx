@@ -396,9 +396,9 @@ export default function GlobalMobilityNetworkSection() {
                         </>
                       ) : null}
                     </h3>
-                    <p className="mt-2 max-w-[300px] text-sm leading-relaxed text-slate-600 [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
-                      {t(content, "panelBody", language)}
-                    </p>
+                    <span dir={language === "ar" ? "rtl" : "ltr"} className="block">
+                      <RichText text={t(content, "panelBody", language)} className="mt-2 max-w-[300px] text-sm leading-relaxed text-slate-600 [overflow-wrap:anywhere] block" />
+                    </span>
 
                     {caps.length > 0 ? (
                       <ul className="mt-3 space-y-2.5">
@@ -419,9 +419,7 @@ export default function GlobalMobilityNetworkSection() {
                                 {t(item, "title", language)}
                               </p>
                             </div>
-                            <p className="mt-1 max-w-[290px] text-[0.92rem] leading-relaxed text-slate-600">
-                              {t(item, "description", language)}
-                            </p>
+                            <RichText text={t(item, "description", language)} className="mt-1 max-w-[290px] text-[0.92rem] leading-relaxed text-slate-600 block" />
                           </li>
                         ))}
                       </ul>

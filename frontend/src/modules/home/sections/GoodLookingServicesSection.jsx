@@ -7,6 +7,7 @@ import { ArrowUpRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { fetchHomeSection } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
+import RichText from "@/components/common/RichText";
 
 // Map a CMS service (from the Services page) to the card shape this section uses.
 function toCard(svc) {
@@ -104,10 +105,8 @@ function ServiceCard({ service, index, cardRef, isActive, language }) {
               <h3 className="mt-2 text-[1.35rem] font-medium tracking-tight text-slate-950 sm:text-[1.6rem]">
                 {t(service, "name", language)}
               </h3>
-              <p className="mt-3 text-sm leading-6 text-slate-600 [overflow-wrap:anywhere] whitespace-pre-line">
-                {/* Right card shows Description 2; falls back to Description 1. */}
-                {t(service, "description2", language) || t(service, "summary", language)}
-              </p>
+              {/* Right card shows Description 2; falls back to Description 1. */}
+              <RichText text={t(service, "description2", language) || t(service, "summary", language)} className="mt-3 text-sm leading-6 text-slate-600 [overflow-wrap:anywhere] block" />
             </div>
 
             <span className="mt-1 inline-flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full border border-slate-200 bg-[#fbfdff] text-slate-900 shadow-[0_4px_14px_rgba(6,6,22,0.06)] transition-transform duration-300 ease-out group-hover:rotate-12">
@@ -295,10 +294,8 @@ export default function GoodLookingServicesSection() {
               <h2 className="mt-3 text-[clamp(2rem,3.25vw,3rem)] font-semibold leading-[1.04] tracking-[-0.045em] text-[#050A13]">
                 {t(activeService, "name", language)}
               </h2>
-              <p className="mt-3 max-w-[650px] text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem] [overflow-wrap:anywhere] whitespace-pre-line">
-                {/* Left side shows Description 1 (the longer text). */}
-                {t(activeService, "summary", language)}
-              </p>
+              {/* Left side shows Description 1 (the longer text). */}
+              <RichText text={t(activeService, "summary", language)} className="mt-3 max-w-[650px] text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem] [overflow-wrap:anywhere] block" />
               {/* <div className="mt-5 flex flex-wrap gap-2.5">
                 {activeHighlights.map((highlight) => (
                   <span

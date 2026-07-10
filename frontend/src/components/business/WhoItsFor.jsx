@@ -12,6 +12,7 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { fetchBusinessContent } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
+import RichText from "@/components/common/RichText";
 
 const SEGMENT_ICONS = [
   Building2,
@@ -123,9 +124,7 @@ export default function BusinessWhoItsFor() {
             className="order-first rounded-[28px] border border-slate-200 bg-[linear-gradient(145deg,#ffffff_0%,#f8fbff_100%)] p-7 shadow-[0_14px_36px_rgba(15,23,42,0.05)] md:p-8 xl:order-none xl:col-span-6 xl:min-h-[220px]"
           >
             <div className="flex h-full flex-col justify-between gap-8">
-              <p className="max-w-2xl text-lg leading-8 text-[#2A3347] max-sm:text-base [overflow-wrap:anywhere]">
-                {t(content, "description", language)}
-              </p>
+              <RichText text={t(content, "description", language)} className="max-w-2xl text-lg leading-8 text-[#2A3347] max-sm:text-base [overflow-wrap:anywhere] block" />
 
               <div className="flex flex-wrap gap-3">
                 {segments.slice(0, 3).map((segment) => (

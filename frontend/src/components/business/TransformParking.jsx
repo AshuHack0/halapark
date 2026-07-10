@@ -6,6 +6,7 @@ import { ArrowRight, Check } from "lucide-react";
 import { useEffect, useState } from "react";
 import { fetchBusinessSection } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
+import RichText from "@/components/common/RichText";
 
 const ease = [0.22, 1, 0.36, 1];
 
@@ -76,9 +77,7 @@ export default function TransformParking() {
               </span>
             ) : null}
           </h2>
-          <p className="mx-auto mt-5 max-w-[650px] whitespace-pre-line text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem]">
-            {t(transformData, "description", language)}
-          </p>
+          <RichText text={t(transformData, "description", language)} className="mx-auto mt-5 max-w-[650px] text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem] block" />
         </motion.div>
 
         {/* Two partner cards */}
@@ -102,9 +101,7 @@ export default function TransformParking() {
             <p className="mt-2 text-[0.94rem] font-medium text-[#050A13]">
               {t(transformData, "parkingPartnerSubtitle", language)}
             </p>
-            <p className="mt-4 whitespace-pre-line text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem]">
-              {t(transformData, "parkingPartnerDescription", language)}
-            </p>
+            <RichText text={t(transformData, "parkingPartnerDescription", language)} className="mt-4 text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem] block" />
 
             <p className="mt-8 text-[0.78rem] font-bold uppercase tracking-[0.16em] text-[#0088FF]">What You Get</p>
             <ul className="mt-4 grid gap-2 sm:grid-cols-2">
@@ -155,12 +152,8 @@ export default function TransformParking() {
             <p className="mt-2 text-[0.94rem] font-medium text-white/80">
               {t(transformData, "servicePartnerSubtitle", language)}
             </p>
-            <p className="mt-4 whitespace-pre-line text-[0.88rem] leading-6 text-white/55 sm:text-[0.94rem]">
-              {t(transformData, "servicePartnerDescription1", language)}
-            </p>
-            <p className="mt-3 whitespace-pre-line text-[0.88rem] leading-6 text-white/55 sm:text-[0.94rem]">
-              {t(transformData, "servicePartnerDescription2", language)}
-            </p>
+            <RichText text={t(transformData, "servicePartnerDescription1", language)} className="mt-4 text-[0.88rem] leading-6 text-white/55 sm:text-[0.94rem] block" />
+            <RichText text={t(transformData, "servicePartnerDescription2", language)} className="mt-3 text-[0.88rem] leading-6 text-white/55 sm:text-[0.94rem] block" />
 
             <p className="mt-8 text-[0.78rem] font-bold uppercase tracking-[0.16em] text-[#5BC4FF]">Partnership Opportunities</p>
             <ul className="mt-4 grid gap-2 sm:grid-cols-2">

@@ -168,9 +168,10 @@ function TopUpModal({ isOpen, onClose, title, steps, dir }) {
                       </p>
                     ) : null}
                     {step.description ? (
-                      <p className="mt-1 whitespace-pre-line text-sm leading-6 text-[#667085] [overflow-wrap:anywhere]">
-                        {step.description}
-                      </p>
+                      <RichText
+                        text={step.description}
+                        className="mt-1 text-sm leading-6 text-[#667085] [overflow-wrap:anywhere] block"
+                      />
                     ) : null}
                   </div>
                 </li>

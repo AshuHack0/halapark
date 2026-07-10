@@ -451,9 +451,7 @@ export default function WhoWeAre() {
                             <h3 className="text-base font-semibold text-[#050A13] sm:text-[17px]">
                               {t(item, "title", language)}
                             </h3>
-                            <p className="mt-1.5 text-sm leading-relaxed text-slate-600 sm:text-[15px]">
-                              {t(item, "description", language)}
-            </p>
+                            <RichText text={t(item, "description", language)} className="mt-1.5 text-sm leading-relaxed text-slate-600 sm:text-[15px] block" />
           </div>
                         </div>
                       </div>

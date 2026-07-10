@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { fetchBusinessContent } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
+import RichText from "@/components/common/RichText";
 
 const valuePropImages = [
   "/hf_20260327_074228_600dfc1a-c1a5-43ad-99e3-3e4d48603f22-removebg-preview.png",
@@ -100,9 +101,7 @@ export default function BusinessValueProps() {
           <h2 className="text-3xl max-sm:text-2xl font-bold text-slate-900 [overflow-wrap:anywhere]">
             {t(content, "heading", language)}
           </h2>
-          <p className="mt-4 text-lg max-sm:text-base leading-relaxed text-[#5E6578] [overflow-wrap:anywhere]">
-            {t(content, "description", language)}
-          </p>
+          <RichText text={t(content, "description", language)} className="mt-4 text-lg max-sm:text-base leading-relaxed text-[#5E6578] [overflow-wrap:anywhere] block" />
         </motion.div>
 
         <div className="grid gap-4 md:grid-cols-3 lg:gap-4">
@@ -175,16 +174,15 @@ export default function BusinessValueProps() {
                     >
                       {t(item, "title", language)}
                     </h3>
-                    <p
+                    <RichText
+                      text={t(item, "description", language)}
                       className={[
-                        "mt-4 text-base max-sm:text-sm leading-7 [overflow-wrap:anywhere]",
+                        "mt-4 text-base max-sm:text-sm leading-7 [overflow-wrap:anywhere] block",
                         item.theme === "dark"
                           ? "text-white/72"
                           : "text-slate-700/80",
                       ].join(" ")}
-                    >
-                      {t(item, "description", language)}
-                    </p>
+                    />
                   </div>
 
                   <div className="mt-auto flex justify-center px-2 pt-10">

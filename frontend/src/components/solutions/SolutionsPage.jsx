@@ -6,6 +6,7 @@ import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { fetchPage } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
+import RichText from "@/components/common/RichText";
 import {
   ArrowRight,
   Check,
@@ -415,9 +416,10 @@ function GlobalExpansionSection() {
               </p>
             ) : null}
             {description ? (
-              <p className="mt-5 whitespace-pre-line text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem] [overflow-wrap:anywhere]">
-                {description}
-              </p>
+              <RichText
+                text={description}
+                className="mt-5 block text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem] [overflow-wrap:anywhere]"
+              />
             ) : null}
 
             {items.length > 0 ? (
@@ -492,7 +494,7 @@ function SolutionCard({ card, i, reduced }) {
       <div className="flex items-start justify-between gap-4 p-5">
         <div className="flex-1">
           <h3 className="text-[1rem] font-semibold leading-tight tracking-[-0.02em] text-[#050A13] sm:text-[1.05rem]">{t(card, "title", language)}</h3>
-          <p className="mt-2 line-clamp-3 text-[0.82rem] leading-6 text-slate-500 sm:text-[0.88rem]">{t(card, "description", language)}</p>
+          <RichText text={t(card, "description", language)} className="mt-2 line-clamp-3 text-[0.82rem] leading-6 text-slate-500 sm:text-[0.88rem] block" />
         </div>
         {clickable ? (
           <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EEF6FF] text-[#0088FF] transition group-hover:bg-[#0088FF] group-hover:text-white">
@@ -675,9 +677,10 @@ function IntegrationCard({ card, i, reduced, accent }) {
           >
             <div className="min-h-0 overflow-hidden">
               {description ? (
-                <p className="whitespace-pre-line text-[0.75rem] leading-relaxed text-white/85 [overflow-wrap:anywhere]">
-                  {description}
-                </p>
+                <RichText
+                  text={description}
+                  className="block text-[0.75rem] leading-relaxed text-white/85 [overflow-wrap:anywhere]"
+                />
               ) : null}
               {points.length > 0 ? (
                 <ul className="mt-2 space-y-1.5">
@@ -1250,7 +1253,7 @@ function FeatureHighlightsSection() {
                           <span className="text-[1.6rem] font-bold leading-none tracking-[-0.04em] text-[#0088FF]/30">{step.step || String(i + 1).padStart(2, "0")}</span>
                           <div>
                             {stepTitle ? <h3 className="font-semibold text-[#050A13] [overflow-wrap:anywhere]">{stepTitle}</h3> : null}
-                            {stepDesc ? <p className="mt-1 whitespace-pre-line text-[0.88rem] leading-6 text-slate-600 [overflow-wrap:anywhere]">{stepDesc}</p> : null}
+                            {stepDesc ? <RichText text={stepDesc} className="mt-1 block text-[0.88rem] leading-6 text-slate-600 [overflow-wrap:anywhere]" /> : null}
                           </div>
                         </motion.div>
                       );
@@ -1495,9 +1498,10 @@ function NewFinalCTA() {
               </p>
             ) : null}
             {description ? (
-              <p className="mt-3 max-w-[560px] whitespace-pre-line text-[0.82rem] leading-6 text-white/55 sm:text-[0.88rem] [overflow-wrap:anywhere]">
-                {description}
-              </p>
+              <RichText
+                text={description}
+                className="mt-3 max-w-[560px] block text-[0.82rem] leading-6 text-white/55 sm:text-[0.88rem] [overflow-wrap:anywhere]"
+              />
             ) : null}
             {hasButtons ? (
               <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
