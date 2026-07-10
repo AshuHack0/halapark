@@ -85,9 +85,13 @@ export default function SolutionDetailBody({ detail, heroImage, relatedList = []
     .map((slug) => {
       const match = relatedList.find((d) => d.slug === slug);
       if (!match) return null;
-      // Strict Arabic: in AR use the Arabic title only (blank if missing), never
-      // the English fallback. In EN use the English title.
-      const label = isAr ? (match.ar?.title || "") : (match.title || match.slug);
+      // A related item is a NAVIGATION LINK, not prose — so it must never vanish
+      // just because an Arabic title is missing. Prefer the Arabic title in AR,
+      // then fall back to the English title / slug so every related service the
+      // admin picked always shows (this fixes "only 2 appear in Arabic").
+      const label = isAr
+        ? (match.ar?.title || match.title || match.slug)
+        : (match.title || match.slug);
       if (!label) return null;
       // Image priority: card image (CMS source of truth) → detail image. No
       // fallback — if there's no real image, the card renders without an image.

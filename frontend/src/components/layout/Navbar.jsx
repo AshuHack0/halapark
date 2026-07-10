@@ -156,12 +156,16 @@ export default function Navbar() {
   // labelled/grouped structure is derived at render time so it follows the
   // active language. Empty when the admin has no solutions.
   const [solutionsData, setSolutionsData] = useState(null);
+  // Slugs that have a real detail page — nav links only point to live pages.
+  const [solutionDetailSlugs, setSolutionDetailSlugs] = useState(() => new Set());
   // Site logo from global Settings (falls back to the bundled asset).
   const [logo, setLogo] = useState({ image: "/logo-blue-11.svg", alt: "HalaPark" });
 
   useEffect(() => {
     fetchPage("solutions").then((page) => {
       setSolutionsData(page?.sections?.solutions ?? null);
+      const details = Array.isArray(page?.sections?.details) ? page.sections.details : [];
+      setSolutionDetailSlugs(new Set(details.map((d) => (d?.slug || "").trim()).filter(Boolean)));
     });
     fetchPage("settings").then((page) => {
       const l = page?.sections?.logo;
@@ -175,7 +179,11 @@ export default function Navbar() {
   // `solutions.ar.groups` entry by index, falling back to the English name.
   const solutionGroups = (() => {
     const sol = solutionsData;
-    const cards = Array.isArray(sol?.cards) ? sol.cards.filter((c) => c && c.slug) : [];
+    // Only cards whose slug resolves to a real detail page — a nav link must
+    // never lead to a 404. A card with no detail yet simply isn't listed.
+    const cards = Array.isArray(sol?.cards)
+      ? sol.cards.filter((c) => c && c.slug && solutionDetailSlugs.has((c.slug || "").trim()))
+      : [];
     if (cards.length === 0) return [];
 
     const enGroups = Array.isArray(sol?.groups) ? [...sol.groups] : [];
@@ -354,8 +362,18 @@ export default function Navbar() {
                 {navLinks.map((link) => {
                   const isActive = isLinkActive(link.href);
 
-                  if (link.hasDropdown) {
-                    const dd = dropdownConfig[link.hasDropdown];
+                  // A dropdown with no items (e.g. no solutions added yet) should
+                  // NOT show an empty popup — it becomes a plain link that goes
+                  // straight to the section page.
+                  const ddCfg = link.hasDropdown ? dropdownConfig[link.hasDropdown] : null;
+                  const ddHasItems = ddCfg
+                    ? (ddCfg.groups
+                        ? ddCfg.groups.length > 0
+                        : (ddCfg.links?.length ?? 0) > 0)
+                    : false;
+
+                  if (link.hasDropdown && ddHasItems) {
+                    const dd = ddCfg;
 
                     return (
                       <div
@@ -611,8 +629,16 @@ export default function Navbar() {
             {navLinks.map((link) => {
               const isActive = isLinkActive(link.href);
 
-              if (link.hasDropdown) {
-                const dd = dropdownConfig[link.hasDropdown];
+              // Empty dropdown (no solutions/services) → plain link, no popup.
+              const ddCfg = link.hasDropdown ? dropdownConfig[link.hasDropdown] : null;
+              const ddHasItems = ddCfg
+                ? (ddCfg.groups
+                    ? ddCfg.groups.length > 0
+                    : (ddCfg.links?.length ?? 0) > 0)
+                : false;
+
+              if (link.hasDropdown && ddHasItems) {
+                const dd = ddCfg;
 
                 return (
                   <div key={link.key} className="rounded-lg">

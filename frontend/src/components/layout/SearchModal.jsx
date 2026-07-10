@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { Search, X, ArrowRight, MapPin, Layers, Zap, Car } from "lucide-react";
+import { fetchPage } from "@/lib/cms";
 
 // ─── Static search index ────────────────────────────────────────────────────
 const SEARCH_INDEX = [
@@ -30,29 +31,9 @@ const SEARCH_INDEX = [
   { type: "Service", label: "Air Tyre Service",                   href: "/services?open=Air%20Tyre%20Service",        keywords: "air tyre tires inflation service" },
   { type: "Service", label: "Battery Replacement Service",        href: "/services?open=Battery%20Replacement%20Service", keywords: "battery replacement jump start car" },
 
-  // Solutions — each links to its own detail page (/solutions/<slug>)
-  { type: "Solution", label: "Smart Ecosystem Integration",            href: "/solutions/smart-ecosystem-integration",            keywords: "smart ecosystem integration hikvision dahua security platform" },
-  { type: "Solution", label: "Seamless Integrations",                  href: "/solutions/seamless-integrations",                  keywords: "seamless integrations connected infrastructure unified anpr" },
-  { type: "Solution", label: "AI-Powered ANPR Parking Management",     href: "/solutions/ai-powered-anpr-parking-management",     keywords: "anpr ai gate access ticketless barrier qr rfid" },
-  { type: "Solution", label: "Smart Mobility Payments Platform",       href: "/solutions/smart-mobility-payments-platform",       keywords: "payments wallet qr pos cashless mobility" },
-  { type: "Solution", label: "Smart Slot Reservation",                 href: "/solutions/smart-slot-reservation",                 keywords: "slot reservation booking reserve availability" },
-  { type: "Solution", label: "Parking Guidance System",               href: "/solutions/parking-guidance-system",                keywords: "parking guidance display wayfinding navigation occupancy" },
-  { type: "Solution", label: "Parking Access Control Solutions",       href: "/solutions/parking-access-control-solutions",       keywords: "access control enforcement ecam view360 monitoring" },
-  { type: "Solution", label: "On-Street Parking",                      href: "/solutions/on-street-parking",                      keywords: "on street curbside municipality smart city" },
-  { type: "Solution", label: "Multi-Location Parking Control Platform", href: "/solutions/multi-location-parking-control-platform", keywords: "multi location centralized control multiple sites platform" },
-  { type: "Solution", label: "Hotel & Restaurant Parking Solutions",   href: "/solutions/hotel-restaurant-parking-solutions",     keywords: "hotel restaurant hospitality visitor registration" },
-  { type: "Solution", label: "Private Property Parking Solutions",     href: "/solutions/private-property-parking-solutions",     keywords: "private property residential real estate tenant" },
-  { type: "Solution", label: "Worship Center Parking Solution",        href: "/solutions/worship-center-parking-solution",        keywords: "worship mosque church temple parking" },
-  { type: "Solution", label: "Commercial Parking",                     href: "/solutions/commercial-parking",                     keywords: "commercial office retail mixed use parking" },
-  { type: "Solution", label: "Retail & Shopping Center Parking",       href: "/solutions/retail-shopping-center-parking-solution", keywords: "retail shopping mall center parking shopper" },
-  { type: "Solution", label: "Event Parking Solution",                 href: "/solutions/event-parking-solution",                 keywords: "event concert exhibition venue parking" },
-  { type: "Solution", label: "Space Sharing",                          href: "/solutions/space-sharing",                          keywords: "space sharing monetize revenue underutilized" },
-  { type: "Solution", label: "Government Facilities Parking",          href: "/solutions/government-facilities-parking-solution", keywords: "government public sector facility secure parking" },
-  { type: "Solution", label: "Smart Healthcare Parking System",        href: "/solutions/smart-healthcare-parking-system",        keywords: "hospital healthcare patient emergency ambulance parking" },
-  { type: "Solution", label: "University Parking Management Solution",  href: "/solutions/university-parking-management-solution", keywords: "university campus student staff parking" },
-  { type: "Solution", label: "Airport Parking Management Solution",    href: "/solutions/airport-parking-management-solution",    keywords: "airport travel short long stay vip parking" },
-  { type: "Solution", label: "EV Charging Integration",                href: "/solutions/ev-charging-integration",                keywords: "ev charging integration electric vehicle energy" },
-  { type: "Solution", label: "Fleet Parking Integration",              href: "/solutions/fleet-parking-integration",              keywords: "fleet corporate logistics commercial vehicle parking" },
+  // Solutions are NOT hardcoded here — they're loaded live from the CMS at
+  // runtime (see SOLUTIONS fetch below) so search never shows deleted/static
+  // solutions or 404 links.
 
   // Locations
   { type: "Location", label: "Dubai Media City — HQ",       href: "/contact",  keywords: "dubai media city concord tower hq headquarters" },
@@ -94,9 +75,9 @@ function score(item, query) {
   return 0;
 }
 
-function search(query) {
+function search(query, index) {
   if (!query.trim()) return [];
-  return SEARCH_INDEX
+  return index
     .map((item) => ({ ...item, _score: score(item, query) }))
     .filter((item) => item._score > 0)
     .sort((a, b) => b._score - a._score)
@@ -108,7 +89,35 @@ export default function SearchModal({ isOpen, onClose }) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
+  // Live CMS solutions — no hardcoded solution list. Only solutions with a real
+  // detail page are searchable, so search never leads to a 404 or static page.
+  const [cmsSolutions, setCmsSolutions] = useState([]);
   const inputRef = useRef(null);
+
+  // Load solutions from the CMS once (when the modal first opens).
+  useEffect(() => {
+    if (!isOpen) return;
+    let active = true;
+    fetchPage("solutions").then((page) => {
+      if (!active) return;
+      const s = page?.sections?.solutions ?? {};
+      const detailSlugs = new Set(
+        (Array.isArray(page?.sections?.details) ? page.sections.details : [])
+          .map((d) => (d?.slug || "").trim())
+          .filter(Boolean),
+      );
+      const cards = Array.isArray(s.cards) ? s.cards : [];
+      const items = cards
+        .map((c) => ({ slug: (c?.slug || "").trim(), label: (c?.title || "").trim(), keywords: (c?.description || "").trim() }))
+        .filter((c) => c.slug && c.label && detailSlugs.has(c.slug))
+        .map((c) => ({ type: "Solution", label: c.label, href: `/solutions/${c.slug}`, keywords: `${c.label} ${c.keywords}`.toLowerCase() }));
+      setCmsSolutions(items);
+    });
+    return () => { active = false; };
+  }, [isOpen]);
+
+  // Full searchable index = static pages/services/locations + live solutions.
+  const searchIndex = useMemo(() => [...SEARCH_INDEX, ...cmsSolutions], [cmsSolutions]);
 
   // Focus input when opened
   useEffect(() => {
@@ -138,7 +147,7 @@ export default function SearchModal({ isOpen, onClose }) {
   function handleQuery(e) {
     const q = e.target.value;
     setQuery(q);
-    const res = search(q);
+    const res = search(q, searchIndex);
     setResults(res);
     setActiveIndex(0);
   }

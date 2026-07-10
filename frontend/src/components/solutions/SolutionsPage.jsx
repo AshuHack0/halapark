@@ -473,14 +473,19 @@ function GlobalExpansionSection() {
 // A card links to its detail page ONLY when it has a real detail page — i.e. a
 // non-blank slug (the admin backfills the slug when a detail is created, so a
 // card with no detail page has no slug). No /contact fallback.
-function solutionCardHref(card) {
+// A card links to its detail page ONLY when its slug resolves to real content
+// (`detailSlugs`). This guarantees a click always lands on a live page instead
+// of 404-ing on a card whose detail hasn't been created yet.
+function solutionCardHref(card, detailSlugs) {
   const slug = typeof card?.slug === "string" ? card.slug.trim() : "";
-  return slug ? `/solutions/${slug}` : null;
+  if (!slug) return null;
+  if (detailSlugs && !detailSlugs.has(slug)) return null;
+  return `/solutions/${slug}`;
 }
 
-function SolutionCard({ card, i, reduced }) {
+function SolutionCard({ card, i, reduced, detailSlugs }) {
   const { language } = useLanguage();
-  const href = solutionCardHref(card);
+  const href = solutionCardHref(card, detailSlugs);
   const clickable = Boolean(href);
 
   // Inner card content is identical whether or not it's clickable; only the
@@ -530,6 +535,9 @@ function StatsSection() {
   const [sol, setSol] = useState({});
   const [solutionItems, setSolutionItems] = useState([]);
   const [groupOrder, setGroupOrder] = useState([]);
+  // Slugs that actually have a detail page — a card only links when its slug
+  // resolves to real content (otherwise the link would 404).
+  const [detailSlugs, setDetailSlugs] = useState(() => new Set());
 
   useEffect(() => {
     fetchPage("solutions").then((data) => {
@@ -539,6 +547,8 @@ function StatsSection() {
         if (Array.isArray(s.cards)) setSolutionItems(s.cards);
         if (Array.isArray(s.groups) && s.groups.length > 0) setGroupOrder(s.groups);
       }
+      const details = Array.isArray(data?.sections?.details) ? data.sections.details : [];
+      setDetailSlugs(new Set(details.map((d) => (d?.slug || "").trim()).filter(Boolean)));
     });
   }, []);
 
@@ -546,10 +556,12 @@ function StatsSection() {
   const gradient = t(sol, "headingGradient", language)?.trim() || "";
   const subtitle = t(sol, "subtitle", language);
 
-  // Categories (groups) are the source of truth and drive what shows. A solution
-  // only appears if it belongs to an EXISTING category — so deleting a category
-  // removes its solutions, and deleting every category hides the whole section.
-  // Only cards with a real slug count (cleared/blank cards never render).
+  // Categories order the display, but a card must ALWAYS map somewhere so it can
+  // never silently disappear after saving. Cards whose group matches a category
+  // show under it; cards with no group (or a group that no longer matches a
+  // category — e.g. it was renamed/deleted) fall into a generic "Solutions"
+  // group so they still render and remain clickable. Only cards with a real slug
+  // count (cleared/blank cards never render).
   const validCards = solutionItems.filter((c) => c && c.slug);
   const categories = Array.isArray(groupOrder) ? groupOrder.filter(Boolean) : [];
   const grouped = categories
@@ -558,6 +570,16 @@ function StatsSection() {
       items: validCards.filter((c) => (c.group || "") === g),
     }))
     .filter((g) => g.items.length > 0);
+  // Anything not matched by a category (blank/orphaned group) → generic bucket.
+  const ungroupedCards = validCards.filter(
+    (c) => !categories.includes(c.group || ""),
+  );
+  if (ungroupedCards.length > 0) {
+    grouped.push({
+      group: language === "ar" ? "الحلول" : "Solutions",
+      items: ungroupedCards,
+    });
+  }
 
   // Hide the whole Solutions section when there are no categories with
   // solutions to show — a heading alone (with no solutions) is not rendered.
@@ -616,7 +638,7 @@ function StatsSection() {
                 </div>
                 <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
                   {g.items.map((card, i) => (
-                    <SolutionCard key={card.slug || card.title} card={card} i={i} reduced={reduced} />
+                    <SolutionCard key={card.slug || card.title} card={card} i={i} reduced={reduced} detailSlugs={detailSlugs} />
                   ))}
                 </div>
               </div>
