@@ -252,16 +252,25 @@ function IntegrationDiagram() {
   );
 }
 
-function SolutionCard({ id, title, description }) {
+function SolutionCard({ id, title, description, iconImage }) {
   return (
     <article
       className={`${styles.solutionCard} h-full w-full rounded-[24px] border border-[#E7EAF0] bg-white p-5 sm:p-6`}
     >
-      <SolutionIcon
-        id={id}
-        className={`${styles.cardIcon} h-[34px] w-[34px] sm:h-[38px] sm:w-[38px]`}
-        imageClassName={styles.cardIconImage}
-      />
+      {iconImage ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={iconImage}
+          alt=""
+          className={`${styles.cardIcon} h-[34px] w-[34px] object-contain sm:h-[38px] sm:w-[38px]`}
+        />
+      ) : (
+        <SolutionIcon
+          id={id}
+          className={`${styles.cardIcon} h-[34px] w-[34px] sm:h-[38px] sm:w-[38px]`}
+          imageClassName={styles.cardIconImage}
+        />
+      )}
       <h3
         className={`${styles.cardTitle} mt-3 text-[17px] font-medium leading-[1.14] tracking-[-0.04em] text-[#050A13] sm:text-[19px] lg:text-[20px] [overflow-wrap:anywhere]`}
       >
@@ -281,6 +290,7 @@ function SolutionCardsCarousel({ cards, language }) {
       ? cards.map((c, i) => ({
           ...c,
           id: c.id || solutionCards[i]?.id || "barrier",
+          iconImage: (c.iconImage || "").trim(),
           title: t(c, "title", language),
           description: t(c, "description", language),
         }))
@@ -352,17 +362,17 @@ export default function SolutionIntegration() {
             hardware, software, and operations into one unified platform.
           </h2>
         </div> */}
-        <div className="mx-auto max-w-[980px] text-center">
+        <div className="w-full text-center">
           <h2
             id="ai-powered-parking-service-title"
-            className="mx-auto mt-4 max-w-[940px] text-[clamp(2.65rem,4.5vw,4rem)] font-semibold uppercase leading-[1.01] tracking-[-0.06em] text-[#050A13]"
+            className="mx-auto w-full text-[clamp(2.65rem,4.5vw,4rem)] font-semibold uppercase leading-[1.01] tracking-[-0.06em] text-[#050A13] [text-wrap:balance] [overflow-wrap:anywhere]"
           >
             {t(si, "heading", language)}{" "}
             <span className="bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">
               {t(si, "headingGradient", language)}
             </span>
           </h2>
-          <p className="mx-auto mt-3 max-w-[650px] text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem]">
+          <p className="mx-auto mt-3 max-w-[720px] text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem] [overflow-wrap:anywhere]">
             {t(si, "subtitle", language)}
           </p>
         </div>

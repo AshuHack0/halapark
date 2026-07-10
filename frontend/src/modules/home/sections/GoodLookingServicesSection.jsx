@@ -63,25 +63,35 @@ function ServiceCard({ service, index, cardRef, isActive, language }) {
         aria-label={`Open services page`}
       >
         <div className="relative h-[190px] w-full bg-[#d2dae2] sm:h-[230px] lg:h-[260px]">
-          {service.mediaType === "video" && service.mediaSrc ? (
-            <video
-              src={service.mediaSrc}
-              autoPlay={!prefersReducedMotion}
-              loop
-              muted
-              playsInline
-              preload="metadata"
-              className="h-full w-full object-cover"
-            />
-          ) : service.mediaSrc ? (
-            <Image
-              src={service.mediaSrc}
-              alt={service.name}
-              fill
-              sizes="(min-width: 1024px) 50vw, 100vw"
-              className="object-cover object-center"
-            />
-          ) : null}
+          {/* Scroll focus effect: the in-focus service's media is sharp; others
+              blur + dim. Reduced-motion users always see it sharp. */}
+          <div
+            className={`absolute inset-0 transition-[filter,opacity,transform] duration-500 ease-out ${
+              prefersReducedMotion || isActive
+                ? "opacity-100 blur-0 scale-100"
+                : "opacity-70 blur-[6px] scale-[1.02]"
+            }`}
+          >
+            {service.mediaType === "video" && service.mediaSrc ? (
+              <video
+                src={service.mediaSrc}
+                autoPlay={!prefersReducedMotion}
+                loop
+                muted
+                playsInline
+                preload="metadata"
+                className="h-full w-full object-cover"
+              />
+            ) : service.mediaSrc ? (
+              <Image
+                src={service.mediaSrc}
+                alt={service.name}
+                fill
+                sizes="(min-width: 1024px) 50vw, 100vw"
+                className="object-cover object-center"
+              />
+            ) : null}
+          </div>
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.72)_0%,rgba(255,255,255,0)_55%)] opacity-70" />
         </div>
 
@@ -208,7 +218,9 @@ export default function GoodLookingServicesSection() {
       scrollTarget.removeEventListener("scroll", requestUpdate);
       window.removeEventListener("resize", requestUpdate);
     };
-  }, []);
+    // Re-run once the cards have loaded so the initial focus is measured
+    // against real DOM nodes (they mount async after the CMS fetch).
+  }, [featuredServices.length]);
 
   const activeService = featuredServices[activeServiceIndex] ?? featuredServices[0] ?? {};
   const activeHighlights = Array.isArray(activeService?.highlights)
