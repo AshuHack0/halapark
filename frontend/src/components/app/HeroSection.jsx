@@ -311,7 +311,6 @@ export default function HeroSection() {
   // Admin can hide the section via the "Show this section" toggle.
   if (content?.enabled === false) return null;
 
-  const image = (content.image || "").trim();
   const phoneImage = (content.phoneImage || "").trim();
   const stats = Array.isArray(content.stats) ? content.stats : [];
   const cards = Array.isArray(content.cards) ? content.cards : [];
@@ -332,7 +331,7 @@ export default function HeroSection() {
     (content.subtitle || "").trim() ||
     (content.eyebrow || "").trim();
   const hasContent =
-    hasText || image || phoneImage || stats.length > 0 || cards.length > 0;
+    hasText || phoneImage || stats.length > 0 || cards.length > 0;
   if (!hasContent) return null;
 
   const dir = language === "ar" ? "rtl" : "ltr";
@@ -404,33 +403,6 @@ export default function HeroSection() {
           transition={{ duration: 0.7, ease: "easeOut", delay: 0.08 }}
           className="relative z-10 flex min-h-[430px] items-center justify-center lg:min-h-[570px]"
         >
-          {image ? (
-            <motion.div
-              aria-hidden="true"
-              animate={
-                prefersReducedMotion ? undefined : { scale: [1, 1.025, 1] }
-              }
-              transition={{
-                duration: 10,
-                repeat: Number.POSITIVE_INFINITY,
-                ease: "easeInOut",
-              }}
-              className="pointer-events-none absolute bottom-[-20%] left-[-10%] right-[-10%] top-[-12%] z-0 opacity-75 sm:bottom-[-36%] sm:left-[-24%] sm:right-[-18%] sm:top-[-18%] lg:bottom-[-42%] lg:left-[-20%] lg:right-[-18%] lg:top-[-22%]"
-            >
-              <div className="absolute inset-x-[9%] bottom-[18%] z-0 h-[24%] rounded-full bg-[#0F172A]/20 blur-[42px] sm:inset-x-[12%] sm:bottom-[16%] lg:bottom-[14%] lg:blur-[56px]" />
-              <Image
-                src={image}
-                alt=""
-                fill
-                sizes="(min-width: 1024px) 1240px, 155vw"
-                className="relative z-10 object-cover object-center drop-shadow-[0_34px_48px_rgba(15,23,42,0.22)]"
-                priority
-              />
-              <div className="absolute bottom-0 left-0 top-0 z-20 w-[34%] bg-[linear-gradient(90deg,#F8FBFF_0%,rgba(248,251,255,0.88)_32%,rgba(248,251,255,0.38)_68%,rgba(248,251,255,0)_100%)] blur-[0.2px] sm:w-[30%] lg:w-[28%]" />
-              <div className="absolute bottom-[12%] left-[6%] top-[12%] z-20 w-[18%] rounded-full bg-[#0F172A]/10 blur-[34px] sm:left-[5%] lg:left-[4%]" />
-            </motion.div>
-          ) : null}
-
           <FloatingCards
             cards={cards}
             language={language}
