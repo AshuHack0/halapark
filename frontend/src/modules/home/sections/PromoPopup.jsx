@@ -162,10 +162,14 @@ export default function PromoPopup() {
             transition={{ duration: 0.3 }}
           />
 
-          {/* Split card: media left, content right (stacks on mobile). */}
+          {/* Split card: media left, content right (stacks on mobile). Capped to
+              the viewport; the media column sizes itself to the artwork's own
+              aspect ratio (no dead side gaps), so the card width is dynamic. */}
           <motion.div
-            className={`relative z-[1] grid w-full max-w-3xl overflow-hidden rounded-[28px] bg-white shadow-[0_40px_120px_rgba(2,6,23,0.45)] ${
-              hasMedia ? "sm:grid-cols-2" : "sm:grid-cols-1"
+            className={`relative z-[1] flex max-h-[calc(100dvh-2rem)] w-full flex-col overflow-hidden rounded-[28px] bg-white shadow-[0_40px_120px_rgba(2,6,23,0.45)] ${
+              hasMedia
+                ? "max-w-3xl sm:w-fit sm:max-w-[min(92vw,70rem)] sm:flex-row"
+                : "max-w-xl"
             }`}
             dir={dir}
             initial={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.92, y: 24 }}
@@ -183,9 +187,19 @@ export default function PromoPopup() {
               <X className="h-5 w-5" aria-hidden="true" />
             </button>
 
-            {/* Media panel (left) — subtle Ken-Burns zoom */}
+            {/* Media panel (left) — sized BY the artwork: the media renders at
+                its natural aspect ratio (full artwork visible, never cropped)
+                and the panel hugs its width, so there are no dead side gaps.
+                A blurred self-backdrop covers any vertical remainder when the
+                text column is taller than the artwork. */}
             {hasMedia ? (
-              <div className="relative min-h-[240px] w-full overflow-hidden bg-slate-100 sm:min-h-[440px]">
+              <div className="relative w-full shrink-0 overflow-hidden bg-slate-100 sm:flex sm:w-auto sm:items-center sm:justify-center">
+                <img
+                  src={image || undefined}
+                  alt=""
+                  aria-hidden="true"
+                  className={`absolute inset-0 h-full w-full scale-110 object-cover blur-xl ${image ? "opacity-60" : "opacity-0"}`}
+                />
                 {mediaType === "video" ? (
                   <video
                     src={video}
@@ -195,14 +209,14 @@ export default function PromoPopup() {
                     loop
                     playsInline
                     preload="auto"
-                    className="absolute inset-0 h-full w-full object-cover"
+                    className="relative block max-h-[42dvh] w-full object-contain sm:h-[min(76dvh,600px)] sm:max-h-none sm:w-auto sm:max-w-[48vw]"
                   />
                 ) : (
                   <motion.img
                     src={image}
                     alt={(heading || "Promotion").replace(/\{\{|\}\}/g, "")}
-                    className="absolute inset-0 h-full w-full object-cover"
-                    initial={reduced ? false : { scale: 1.08 }}
+                    className="relative block max-h-[42dvh] w-full object-contain sm:h-[min(76dvh,600px)] sm:max-h-none sm:w-auto sm:max-w-[48vw]"
+                    initial={reduced ? false : { scale: 1.04 }}
                     animate={{ scale: 1 }}
                     transition={{ duration: 8, ease: "easeOut" }}
                   />
@@ -213,7 +227,9 @@ export default function PromoPopup() {
             {/* Content panel (right) — staggered reveal */}
             {hasText ? (
               <motion.div
-                className="flex flex-col items-center justify-center px-7 py-10 text-center sm:px-10 sm:py-12"
+                className={`flex max-h-full flex-col items-center justify-center overflow-y-auto px-7 py-10 text-center sm:px-10 sm:py-12 ${
+                  hasMedia ? "sm:w-[380px] md:w-[420px] sm:shrink-0" : "w-full"
+                }`}
                 variants={container}
                 initial="hidden"
                 animate="visible"
