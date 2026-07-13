@@ -681,11 +681,12 @@ function ServiceCard({ service, index, onClick, category }) {
       transition={{ duration: 0.52, ease, delay: col * 0.06 }}
       whileHover={reduced ? undefined : { y: -8, scale: 1.02, transition: springSoft }}
       style={{ transformPerspective: 1200 }}
-      className="group/card relative cursor-pointer"
+      className="group/card relative h-full cursor-pointer"
       onClick={() => onClick(service)}
     >
-      {/* Card shell */}
-      <div className="relative overflow-hidden rounded-[20px] border border-white/80 bg-white shadow-[0_1px_3px_rgba(6,6,22,0.06),0_8px_32px_-8px_rgba(0,136,255,0.08)] transition-shadow duration-300 group-hover/card:shadow-[0_4px_8px_rgba(6,6,22,0.06),0_20px_48px_-8px_rgba(0,136,255,0.18)]">
+      {/* Card shell — full height + column layout so every card in a row is
+          the same height regardless of content length. */}
+      <div className="relative flex h-full flex-col overflow-hidden rounded-[20px] border border-white/80 bg-white shadow-[0_1px_3px_rgba(6,6,22,0.06),0_8px_32px_-8px_rgba(0,136,255,0.08)] transition-shadow duration-300 group-hover/card:shadow-[0_4px_8px_rgba(6,6,22,0.06),0_20px_48px_-8px_rgba(0,136,255,0.18)]">
 
         {/* Shimmer sweep */}
         {!reduced && (
@@ -696,22 +697,23 @@ function ServiceCard({ service, index, onClick, category }) {
         <div className="pointer-events-none absolute inset-0 rounded-[20px] opacity-0 transition-opacity duration-500 group-hover/card:opacity-100"
           style={{ background: `radial-gradient(circle at 50% 0%, ${cat.color}14, transparent 68%)` }} />
 
-        {/* Media */}
-        <div className="relative h-[185px] w-full overflow-hidden bg-[#d2dae2]">
-          {service.mediaType === "video" ? (
+        {/* Media — only rendered with a real source; a missing/cleared image
+            shows the neutral block instead of the browser's broken-image alt. */}
+        <div className="relative h-[185px] w-full shrink-0 overflow-hidden bg-[#d2dae2]">
+          {service.mediaType === "video" && service.mediaSrc ? (
             <video
               src={service.mediaSrc}
               autoPlay={!reduced}
               loop muted playsInline preload="metadata"
               className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover/card:scale-[1.07]"
             />
-          ) : (
+          ) : service.mediaSrc ? (
             <img
               src={service.mediaSrc}
               alt={service.name}
               className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover/card:scale-[1.07]"
             />
-          )}
+          ) : null}
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
 
           {/* Number badge — bottom-left of media */}
@@ -723,10 +725,12 @@ function ServiceCard({ service, index, onClick, category }) {
 
         </div>
 
-        {/* Body */}
-        <div className="px-4 pb-5 pt-3.5">
+        {/* Body — flex column so the footer row pins to the bottom and all
+            cards align. NOTE: no `block` on the clamped text — display:block
+            overrides the -webkit-box display that line-clamp needs. */}
+        <div className="flex flex-1 flex-col px-4 pb-5 pt-3.5">
           <div className="flex items-start justify-between gap-2">
-            <h3 className="text-[0.95rem] font-semibold leading-snug tracking-[-0.02em] text-[#050A13]">
+            <h3 className="text-[0.95rem] font-semibold leading-snug tracking-[-0.02em] text-[#050A13] [overflow-wrap:anywhere]">
               {t(service, "name", language)}
             </h3>
             <span
@@ -736,11 +740,11 @@ function ServiceCard({ service, index, onClick, category }) {
               <ArrowUpRight className="h-3.5 w-3.5 transition-colors duration-200 group-hover/card:[color:var(--hover-bg)] rtl:-scale-x-100" />
             </span>
           </div>
-          <RichText text={t(service, "fullDesc", language)} className="mt-1.5 line-clamp-3 text-[0.775rem] leading-5 text-slate-500 block" />
+          <RichText text={t(service, "fullDesc", language)} className="mt-1.5 line-clamp-3 text-[0.775rem] leading-5 text-slate-500 [overflow-wrap:anywhere]" />
 
-          {/* Read more row */}
+          {/* Read more row — pinned to the card bottom */}
           <div
-            className="mt-3.5 flex items-center justify-between border-t border-slate-50 pt-3"
+            className="mt-auto flex items-center justify-between border-t border-slate-50 pt-3"
           >
             <span className="flex items-center gap-1 text-[11px] font-semibold transition-all duration-200 opacity-0 translate-x-0 group-hover/card:opacity-100 group-hover/card:translate-x-0.5 rtl:group-hover/card:-translate-x-0.5"
               style={{ color: cat.color }}>
@@ -752,7 +756,7 @@ function ServiceCard({ service, index, onClick, category }) {
                 Packages
               </span>
             )}
-            {service.subCategories && !service.packages && (
+            {service.subCategories?.length > 0 && !service.packages && (
               <span className="rounded-full border px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide"
                 style={{ borderColor: `${cat.color}33`, color: cat.color, background: cat.bg }}>
                 {service.subCategories.length} Types
