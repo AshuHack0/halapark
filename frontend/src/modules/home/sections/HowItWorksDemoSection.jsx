@@ -46,7 +46,7 @@ export default function HowItWorksDemoSection() {
         (Array.isArray(d.steps) ? d.steps : [])
           .map((c, i) => ({
             ...(steps[i] ?? {}),
-            id: steps[i]?.id ?? i + 1,
+            id: steps[i]?.id ?? String(i + 1).padStart(2, "0"),
             title: c?.title ?? "",
             description: c?.description ?? "",
             ar: c?.ar,
@@ -107,7 +107,9 @@ export default function HowItWorksDemoSection() {
 
                 <div className="space-y-3.5 sm:space-y-4">
                   {stepItems.map((step) => {
-                    const Icon = step.icon;
+                    // CMS can hold more steps than the hardcoded icon list —
+                    // fall back to a generic icon so extra steps never crash.
+                    const Icon = step.icon ?? CircleParking;
                     const AccentIcon = step.accent;
 
                     return (

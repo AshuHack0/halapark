@@ -270,17 +270,17 @@ export default function WhyHalapark() {
       <div className="mx-auto mt-10 max-w-7xl px-4 sm:px-6 lg:px-8 lg:mt-12">
         <div className="lg:hidden">
           <div className="mt-10 grid gap-6">
-            {visibleWhyItems.map((item) => {
+            {visibleWhyItems.map((item, index) => {
               const Icon = whyIcons[item.icon] ?? Gauge;
 
               return (
                 <article
-                  key={item.id}
+                  key={item.id ?? index}
                   className="rounded-[2rem] border border-slate-200 bg-white p-4 shadow-[0_20px_48px_rgba(15,23,42,0.08)]"
                 >
                   <div className="flex items-center justify-between gap-4">
                     <div className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold tracking-[0.28em] text-slate-500">
-                      {item.id}
+                      {item.id ?? String(index + 1).padStart(2, "0")}
                     </div>
 
                     <div className="inline-flex h-11 w-11 items-center justify-center rounded-[1.2rem] bg-slate-950 text-white">
@@ -345,7 +345,7 @@ export default function WhyHalapark() {
 
                       return (
                         <motion.div
-                          key={item.id}
+                          key={item.id ?? index}
                           transition={{ duration: 0.35, ease: "easeOut" }}
                           className="relative min-h-[5.4rem] ps-10 pe-3 py-3"
                         >
@@ -414,7 +414,7 @@ export default function WhyHalapark() {
 
                     return (
                       <motion.div
-                        key={item.id}
+                        key={item.id ?? index}
                         className="absolute inset-0"
                         style={{
                           zIndex: isActive ? 20 : 12 - Math.min(distance, 6),
