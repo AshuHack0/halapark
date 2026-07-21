@@ -197,8 +197,11 @@ function FloatingCard({ card, language }) {
   const Icon = CARD_ICONS[card.icon];
   // Custom uploaded icon image overrides the built-in named icon.
   const iconImage = (card.iconImage || "").trim();
-  const timer = (card.timer ?? "").toString().trim();
-  const amount = (card.amount ?? "").toString().trim();
+  // Timer/amount are usually language-neutral (times, prices) — AR reuses the
+  // EN value when no Arabic variant is entered.
+  const isAr = language === "ar";
+  const timer = ((isAr ? card.ar?.timer || card.timer : card.timer) ?? "").toString().trim();
+  const amount = ((isAr ? card.ar?.amount || card.amount : card.amount) ?? "").toString().trim();
   const buttonLabel = t(card, "buttonLabel", language);
 
   return (
@@ -248,6 +251,26 @@ function FloatingCard({ card, language }) {
           {buttonLabel}
         </button>
       ) : null}
+    </div>
+  );
+}
+
+// Phones (< lg) can't fit the absolute-positioned floating cards around the
+// phone frame, so they render as a swipeable row under it instead of vanishing.
+function MobileFloatingCards({ cards, language }) {
+  const visible = (Array.isArray(cards) ? cards : [])
+    .filter((c) => (t(c, "title", language) || "").trim())
+    .slice(0, CARD_SLOTS.length);
+
+  if (visible.length === 0) return null;
+
+  return (
+    <div className="flex w-full max-w-full gap-3 overflow-x-auto pb-2 lg:hidden [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      {visible.map((card, index) => (
+        <div key={`${t(card, "title", language)}-${index}`} className="shrink-0">
+          <FloatingCard card={card} language={language} />
+        </div>
+      ))}
     </div>
   );
 }
@@ -332,6 +355,7 @@ export default function HeroSection() {
 
   const eyebrow = t(content, "eyebrow", language);
   const title = t(content, "title", language);
+  const titleGradient = t(content, "titleGradient", language);
   const subtitle = t(content, "subtitle", language);
   const description = t(content, "description", language);
   const ctaLabel = t(content, "ctaLabel", language);
@@ -369,9 +393,14 @@ export default function HeroSection() {
             </p>
           ) : null}
 
-          {title ? (
-            <h1 className="max-w-[580px] text-[clamp(2.7rem,6vw,4.9rem)] font-semibold leading-[0.98] tracking-tight text-[#050A13] [overflow-wrap:anywhere]">
+          {title || titleGradient ? (
+            <h1 className="max-w-[580px] text-[clamp(2.7rem,6vw,4.9rem)] font-semibold leading-[1.04] tracking-tight text-[#050A13] [overflow-wrap:anywhere]">
               {title}
+              {titleGradient ? (
+                <span className="block bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">
+                  {titleGradient}
+                </span>
+              ) : null}
             </h1>
           ) : null}
 
@@ -417,7 +446,7 @@ export default function HeroSection() {
           initial={prefersReducedMotion ? false : { opacity: 0, x: 32 }}
           animate={prefersReducedMotion ? undefined : { opacity: 1, x: 0 }}
           transition={{ duration: 0.7, ease: "easeOut", delay: 0.08 }}
-          className="relative z-10 flex min-h-[430px] items-center justify-center lg:min-h-[570px]"
+          className="relative z-10 flex min-h-[430px] flex-col items-center justify-center gap-5 lg:min-h-[570px]"
         >
           <FloatingCards
             cards={cards}
@@ -425,6 +454,7 @@ export default function HeroSection() {
             prefersReducedMotion={prefersReducedMotion}
           />
           <HeroPhone phoneImage={phoneImage} />
+          <MobileFloatingCards cards={cards} language={language} />
         </motion.div>
 
         <StatStrip stats={stats} language={language} />
