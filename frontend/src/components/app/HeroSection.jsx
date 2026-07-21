@@ -64,6 +64,8 @@ function StatStrip({ stats, language }) {
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:divide-x sm:divide-[#E4EAF2] rtl:sm:divide-x-reverse">
         {visible.map((item, index) => {
           const Icon = STAT_ICONS[item.icon];
+          // Custom uploaded icon image overrides the built-in named icon.
+          const iconImage = (item.iconImage || "").trim();
           const isStars = item.showStars === true;
           const value = (item.value ?? "").toString();
           const suffix = (item.suffix ?? "").toString();
@@ -74,7 +76,12 @@ function StatStrip({ stats, language }) {
               key={`${value}-${label}-${index}`}
               className="flex items-center gap-3 sm:px-3 first:sm:pl-0 last:sm:pr-0"
             >
-              {Icon ? (
+              {iconImage ? (
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#EAF3FF]">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={iconImage} alt="" className="h-5 w-5 object-contain" />
+                </span>
+              ) : Icon ? (
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#EAF3FF] text-[#0088FF]">
                   <Icon
                     aria-hidden="true"
@@ -188,6 +195,8 @@ function FloatingCard({ card, language }) {
   const title = t(card, "title", language);
   const subtitle = t(card, "subtitle", language);
   const Icon = CARD_ICONS[card.icon];
+  // Custom uploaded icon image overrides the built-in named icon.
+  const iconImage = (card.iconImage || "").trim();
   const timer = (card.timer ?? "").toString().trim();
   const amount = (card.amount ?? "").toString().trim();
   const buttonLabel = t(card, "buttonLabel", language);
@@ -195,7 +204,12 @@ function FloatingCard({ card, language }) {
   return (
     <div className="w-[168px] rounded-2xl bg-white p-3 shadow-[0_14px_34px_rgba(15,23,42,0.13)]">
       <div className="flex items-center gap-2.5">
-        {Icon ? (
+        {iconImage ? (
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#0088FF]">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={iconImage} alt="" className="h-5 w-5 object-contain" />
+          </span>
+        ) : Icon ? (
           <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#0088FF] text-white">
             <Icon aria-hidden="true" className="h-5 w-5" />
           </span>
