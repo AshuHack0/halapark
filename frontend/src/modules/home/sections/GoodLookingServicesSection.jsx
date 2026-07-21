@@ -74,7 +74,7 @@ function ServiceCard({ service, index, cardRef, isActive, language }) {
             }`}
           >
             {service.mediaType === "video" && service.mediaSrc ? (
-              <video
+              <video onContextMenu={(e) => e.preventDefault()}
                 src={service.mediaSrc}
                 autoPlay={!prefersReducedMotion}
                 loop
@@ -98,15 +98,16 @@ function ServiceCard({ service, index, cardRef, isActive, language }) {
 
         <div className="px-6 pb-7 pt-6 sm:px-7 sm:pb-8">
           <div className="flex items-start justify-between gap-4">
-            <div>
+            <div className="min-w-0">
               <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
-                Service 0{index + 1}
+                Service {String(index + 1).padStart(2, "0")}
               </p>
-              <h3 className="mt-2 text-[1.35rem] font-medium tracking-tight text-slate-950 sm:text-[1.6rem]">
+              <h3 className="mt-2 text-[1.35rem] font-medium tracking-tight text-slate-950 sm:text-[1.6rem] [overflow-wrap:anywhere]">
                 {t(service, "name", language)}
               </h3>
-              {/* Right card shows Description 2; falls back to Description 1. */}
-              <RichText text={t(service, "description2", language) || t(service, "summary", language)} className="mt-3 text-sm leading-6 text-slate-600 [overflow-wrap:anywhere] block" />
+              {/* Right card shows Description 2; falls back to Description 1.
+                  line-clamp keeps over-long admin text from stretching the card. */}
+              <RichText text={t(service, "description2", language) || t(service, "summary", language)} className="mt-3 text-sm leading-6 text-slate-600 line-clamp-4 [overflow-wrap:anywhere]" />
             </div>
 
             <span className="mt-1 inline-flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full border border-slate-200 bg-[#fbfdff] text-slate-900 shadow-[0_4px_14px_rgba(6,6,22,0.06)] transition-transform duration-300 ease-out group-hover:rotate-12">
@@ -280,7 +281,7 @@ export default function GoodLookingServicesSection() {
                 })}
           >
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 sm:text-sm">
-              Service 0{activeServiceIndex + 1}
+              Service {String(activeServiceIndex + 1).padStart(2, "0")}
             </p>
             <motion.div
               key={activeService.slug}
@@ -291,7 +292,7 @@ export default function GoodLookingServicesSection() {
               {/* <p className="mt-5 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
                 Service 0{activeServiceIndex + 1}
               </p> */}
-              <h2 className="mt-3 text-[clamp(2rem,3.25vw,3rem)] font-semibold leading-[1.04] tracking-[-0.045em] text-[#050A13]">
+              <h2 className="mt-3 text-[clamp(2rem,3.25vw,3rem)] font-semibold leading-[1.04] tracking-[-0.045em] text-[#050A13] [overflow-wrap:anywhere]">
                 {t(activeService, "name", language)}
               </h2>
               {/* Left side shows Description 1 (the longer text). */}

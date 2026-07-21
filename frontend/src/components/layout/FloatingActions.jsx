@@ -42,6 +42,19 @@ const STORE_ICONS = {
   huawei: AppGalleryIcon,
 };
 
+// Brand names shown in the download menu when the admin left the label blank.
+// Brand names are language-neutral, so no AR variant is needed.
+const STORE_LABELS = {
+  appstore: "App Store",
+  apple: "App Store",
+  ios: "App Store",
+  playstore: "Google Play",
+  google: "Google Play",
+  android: "Google Play",
+  appgallery: "AppGallery",
+  huawei: "AppGallery",
+};
+
 const DownloadAppIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <rect x="5" y="2.5" width="14" height="19" rx="3" />
@@ -68,7 +81,9 @@ const PayIcon = () => (
 function FloatingIconButton({ href, label, className, children, prominent = false, animationClass = "", external = false, onClick }) {
   return (
     <div className={`group relative ${animationClass}`}>
-      <span dir="auto" className="pointer-events-none absolute right-[calc(100%+0.65rem)] top-1/2 -translate-y-1/2 whitespace-nowrap rounded-full bg-[#0B1220] px-3 py-1.5 text-xs font-semibold tracking-[0.02em] text-white opacity-0 shadow-[0_12px_28px_rgba(2,6,23,0.3)] transition-all duration-200 group-hover:opacity-100 group-hover:-translate-x-0.5 group-focus-within:opacity-100">
+      {/* end-* keeps the tooltip on the screen side of the button in both
+          directions: left of the button in LTR, right of it in RTL. */}
+      <span dir="auto" className="pointer-events-none absolute end-[calc(100%+0.65rem)] top-1/2 -translate-y-1/2 whitespace-nowrap rounded-full bg-[#0B1220] px-3 py-1.5 text-xs font-semibold tracking-[0.02em] text-white opacity-0 shadow-[0_12px_28px_rgba(2,6,23,0.3)] transition-all duration-200 group-hover:opacity-100 group-hover:-translate-x-0.5 rtl:group-hover:translate-x-0.5 group-focus-within:opacity-100">
         {label}
       </span>
       {prominent ? (
@@ -92,12 +107,23 @@ export default function FloatingActions() {
   // Everything is CMS-driven (settings.floatingApp) — no hardcoded links.
   //   floatingApp: { whatsapp, pay: { href }, stores: [{ key, label, href }] }
   const [cfg, setCfg] = useState(null);
+  // One "Download App" button opens a menu listing all configured stores.
+  const [storesOpen, setStoresOpen] = useState(false);
 
   useEffect(() => {
     fetchPage("settings").then((page) => {
       setCfg(page?.sections?.floatingApp ?? {});
     });
   }, []);
+
+  useEffect(() => {
+    if (!storesOpen) return;
+    const fn = (e) => {
+      if (e.key === "Escape") setStoresOpen(false);
+    };
+    window.addEventListener("keydown", fn);
+    return () => window.removeEventListener("keydown", fn);
+  }, [storesOpen]);
 
   if (!cfg) return null;
 
@@ -136,6 +162,7 @@ export default function FloatingActions() {
           <FloatingIconButton
             href={payHref}
             label={ui("pay", language)}
+            external
             animationClass="motion-safe:animate-[floatButton_4.4s_ease-in-out_infinite]"
             className="border-[#D9E3F0] bg-white text-slate-900 shadow-[0_10px_22px_rgba(15,23,42,0.12)] hover:border-[#BDD8FB] hover:text-[#0078E0] hover:shadow-[0_14px_28px_rgba(0,136,255,0.18)]"
           >
@@ -143,28 +170,73 @@ export default function FloatingActions() {
           </FloatingIconButton>
         ) : null}
 
-        {/* One prominent button per store, each redirecting to its own link. */}
-        {stores.map((store, i) => {
-          const Icon = STORE_ICONS[store.key] || DownloadAppIcon;
-          return (
-            <FloatingIconButton
-              key={store.key || store.href || i}
-              href={store.href}
-              label={store.label || ui("downloadApp", language)}
-              prominent
-              external
-              animationClass="motion-safe:animate-[floatButton_3.6s_ease-in-out_infinite,softPulse_2.4s_ease-in-out_infinite]"
-              className="border-[#0088FF] bg-[linear-gradient(165deg,#0A97FF_0%,#0088FF_50%,#006FD2_100%)] text-white shadow-[0_16px_34px_rgba(0,136,255,0.45)] hover:shadow-[0_20px_42px_rgba(0,136,255,0.52)] active:scale-[0.98]"
+        {/* One prominent "Download App" button — opens a menu with all stores. */}
+        {stores.length > 0 ? (
+          <div className="group relative motion-safe:animate-[floatButton_3.6s_ease-in-out_infinite,softPulse_2.4s_ease-in-out_infinite]">
+            {storesOpen ? (
+              <>
+                {/* Invisible click-away backdrop */}
+                <button
+                  type="button"
+                  aria-label="Close download menu"
+                  onClick={() => setStoresOpen(false)}
+                  className="fixed inset-0 cursor-default"
+                />
+                <div
+                  role="menu"
+                  className="absolute bottom-[calc(100%+0.6rem)] end-0 w-60 rounded-2xl border border-slate-100 bg-white p-1.5 shadow-[0_18px_44px_rgba(2,6,23,0.2)]"
+                >
+                  {stores.map((store, i) => {
+                    const Icon = STORE_ICONS[store.key] || DownloadAppIcon;
+                    return (
+                      <a
+                        key={store.key || store.href || i}
+                        role="menuitem"
+                        href={store.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={() => setStoresOpen(false)}
+                        className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-800 transition hover:bg-[#EEF6FF] hover:text-[#0078E0]"
+                      >
+                        <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[linear-gradient(165deg,#0A97FF_0%,#0088FF_50%,#006FD2_100%)] text-white">
+                          {store.iconImage ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={store.iconImage} alt="" className="h-5 w-5 object-contain" />
+                          ) : (
+                            <Icon />
+                          )}
+                        </span>
+                        <span className="truncate" dir="auto">
+                          {store.label || STORE_LABELS[store.key] || ui("downloadApp", language)}
+                        </span>
+                      </a>
+                    );
+                  })}
+                </div>
+              </>
+            ) : (
+              <span
+                dir="auto"
+                className="pointer-events-none absolute end-[calc(100%+0.65rem)] top-1/2 -translate-y-1/2 whitespace-nowrap rounded-full bg-[#0B1220] px-3 py-1.5 text-xs font-semibold tracking-[0.02em] text-white opacity-0 shadow-[0_12px_28px_rgba(2,6,23,0.3)] transition-all duration-200 group-hover:opacity-100 group-hover:-translate-x-0.5 rtl:group-hover:translate-x-0.5 group-focus-within:opacity-100"
+              >
+                {ui("downloadApp", language)}
+              </span>
+            )}
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 rounded-full bg-[#0088FF]/35 blur-[14px] transition duration-300 group-hover:bg-[#0088FF]/45"
+            />
+            <button
+              type="button"
+              aria-label={ui("downloadApp", language)}
+              aria-expanded={storesOpen}
+              onClick={() => setStoresOpen((v) => !v)}
+              className="relative inline-flex h-12 w-12 items-center justify-center rounded-full border border-[#0088FF] bg-[linear-gradient(165deg,#0A97FF_0%,#0088FF_50%,#006FD2_100%)] text-white shadow-[0_16px_34px_rgba(0,136,255,0.45)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_20px_42px_rgba(0,136,255,0.52)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0088FF]/45 focus-visible:ring-offset-2 focus-visible:ring-offset-white active:scale-[0.98]"
             >
-              {store.iconImage ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={store.iconImage} alt="" className="h-6 w-6 object-contain" />
-              ) : (
-                <Icon />
-              )}
-            </FloatingIconButton>
-          );
-        })}
+              <DownloadAppIcon />
+            </button>
+          </div>
+        ) : null}
       </div>
       <style jsx>{`
         @keyframes floatButton {

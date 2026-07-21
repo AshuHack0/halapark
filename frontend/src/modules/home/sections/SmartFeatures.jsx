@@ -225,7 +225,7 @@ export default function SmartFeatures() {
                 }}
               >
                 <div className="h-[330px] sm:h-[300px] md:h-[320px] lg:h-[370px] rounded-xl sm:rounded-2xl overflow-hidden relative">
-                  <video
+                  <video onContextMenu={(e) => e.preventDefault()}
                     src={f.video}
                     className="w-full h-full object-cover"
                     autoPlay

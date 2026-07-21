@@ -360,6 +360,9 @@ export default function FAQCategorySection({ categories = [] }) {
                                     <video
                                       src={fileSrc}
                                       controls
+                                      controlsList="nodownload"
+                                      disablePictureInPicture
+                                      onContextMenu={(e) => e.preventDefault()}
                                       preload="metadata"
                                       playsInline
                                       className="aspect-video w-full"

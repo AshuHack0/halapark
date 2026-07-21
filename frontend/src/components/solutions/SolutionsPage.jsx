@@ -309,7 +309,7 @@ function OldNewHero() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="relative overflow-hidden rounded-[24px] bg-[#06111f] text-white">
           <div className="absolute inset-0">
-            <video
+            <video onContextMenu={(e) => e.preventDefault()}
               ref={videoRef}
               src="/Halapark Hero Page-Ai.mp4"
               poster="/hf_20260327_061900_db12a62e-2867-44b6-83f0-ea7f1a5442ef.png"

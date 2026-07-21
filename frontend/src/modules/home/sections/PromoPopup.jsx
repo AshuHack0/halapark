@@ -201,7 +201,7 @@ export default function PromoPopup() {
                   className={`absolute inset-0 h-full w-full scale-110 object-cover blur-xl ${image ? "opacity-60" : "opacity-0"}`}
                 />
                 {mediaType === "video" ? (
-                  <video
+                  <video onContextMenu={(e) => e.preventDefault()}
                     src={video}
                     poster={image || undefined}
                     muted

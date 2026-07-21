@@ -92,7 +92,7 @@ function StoreBadge({
       ) : null}
 
       <div className="min-w-0 text-start leading-none">
-        <p className="text-[8px] font-normal text-[#0F172A] sm:text-[9.2px]">
+        <p className="truncate text-[8px] font-normal text-[#0F172A] sm:text-[9.2px]">
           {eyebrow}
         </p>
         <p className="mt-1.5 truncate text-[13px] font-medium tracking-[-0.03em] text-[#050A13] sm:mt-2 sm:text-[16.6px]">

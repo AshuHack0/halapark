@@ -67,21 +67,18 @@ export default function ClientsPartners() {
                 Trusted Across Properties, Retail Spaces, and Enterprise
                 Networks
               </h2> */}
-              <div className="mx-auto max-w-[980px] text-center">
-                {/* <p className="text-[13px] font-medium uppercase tracking-[0.08em] text-[#0088FF] sm:text-[14px]">
-                Clients We've Partnered With
-                </p> */}
-
+              <div className="mx-auto w-full text-center">
+                {/* Same pattern as the other home sections: heading on one
+                    line, the second part on its own line with the gradient. */}
                 <h2
                   id="clients-partners-title"
-                  className="mx-auto mt-4 max-w-[940px] text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]"
+                  className="mx-auto w-full text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.08] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]"
                 >
-                  {t(cp, "heading", language)}
+                  <span className="block">{t(cp, "heading", language)}</span>
                   {t(cp, "headingEnd", language) ? (
-                    <>
-                      {cp.headingBr ? <br /> : " "}
+                    <span className="block bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">
                       {t(cp, "headingEnd", language)}
-                    </>
+                    </span>
                   ) : null}
                 </h2>
               </div>
@@ -90,7 +87,7 @@ export default function ClientsPartners() {
           {/* ========================= from right to left to right =============================== */}
           {/* overflow-x-hidden (not overflow-hidden) so card top/bottom borders
               aren't clipped — fixes the "broken border" look. */}
-          <div className="relative mt-8 overflow-x-hidden py-5">
+          <div className="relative mt-6 overflow-x-hidden py-5">
             <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-white via-white/90 to-transparent sm:w-24" />
             <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-white via-white/90 to-transparent sm:w-24" />
 
@@ -103,13 +100,17 @@ export default function ClientsPartners() {
                   [...cp.logos, ...cp.logos].map((logo, index) => (
                     <div
                       key={`${logo.image}-${index}`}
-                      className="flex h-[72px] shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white px-6 sm:h-[84px] sm:px-7"
+                      className="flex h-[80px] shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white px-6 sm:h-[96px] sm:px-7"
                     >
+                      {/* Card hugs the logo: fixed strip height, width follows
+                          the image's own aspect (object-contain never distorts).
+                          title= shows the admin's Alt text on hover. */}
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={logo.image}
                         alt={logo.alt || "Client logo"}
-                        className="h-9 w-auto max-w-[180px] object-contain sm:h-11"
+                        title={logo.alt || undefined}
+                        className="h-12 w-auto max-w-[240px] object-contain sm:h-14"
                       />
                     </div>
                   ))

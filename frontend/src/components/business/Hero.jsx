@@ -372,7 +372,7 @@ export function BusinessHeroOld() {
         <div className="relative overflow-hidden rounded-[24px] bg-[#06111f] text-white">
           <div className="absolute inset-0">
             {isVideo ? (
-              <video
+              <video onContextMenu={(e) => e.preventDefault()}
                 ref={videoRef}
                 src={hero.image}
                 muted

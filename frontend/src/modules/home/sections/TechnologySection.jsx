@@ -169,15 +169,19 @@ export default function TechnologySection() {
           {/* <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-[56px] font-semibold text-gray-900 mb-3 sm:mb-4 tracking-tight">
             Redefining Luxury Parking Management
           </h2> */}
-          <div className="mx-auto max-w-[980px] text-center">
+          <div className="mx-auto w-full text-center">
+            {/* Centered across the full width: heading on one line, the
+                gradient part always on its own second line. */}
             <h2
-              id="ai-powered-parking-service-title"
-              className="mx-auto mt-4 max-w-[940px] text-[clamp(2.65rem,4.5vw,4rem)] font-semibold uppercase leading-[1.01] tracking-[-0.06em] text-[#050A13]"
+              id="technology-section-title"
+              className="mx-auto mt-4 w-full text-[clamp(2.65rem,4.5vw,4rem)] font-semibold uppercase leading-[1.08] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]"
             >
-              {t(tech, "heading", language)}{" "}
-              <span className="bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">
-                {t(tech, "headingGradient", language)}
-              </span>
+              <span className="block">{t(tech, "heading", language)}</span>
+              {t(tech, "headingGradient", language) ? (
+                <span className="block bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">
+                  {t(tech, "headingGradient", language)}
+                </span>
+              ) : null}
             </h2>
             <p className="mx-auto mt-3 max-w-[650px] text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem]">
               {t(tech, "subtitle", language)}

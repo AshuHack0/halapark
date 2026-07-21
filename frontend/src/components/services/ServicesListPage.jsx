@@ -100,7 +100,7 @@ function ServiceModal({ service, onClose }) {
           {/* Media */}
           <div className="relative h-36 w-full shrink-0 overflow-hidden bg-[#d2dae2] sm:h-48">
             {service.mediaType === "video" ? (
-              <video
+              <video onContextMenu={(e) => e.preventDefault()}
                 src={service.mediaSrc}
                 autoPlay={!reduced}
                 loop
@@ -763,7 +763,7 @@ function ServiceCard({ service, index, onClick, category }) {
             shows the neutral block instead of the browser's broken-image alt. */}
         <div className="relative h-[185px] w-full shrink-0 overflow-hidden bg-[#d2dae2]">
           {service.mediaType === "video" && service.mediaSrc ? (
-            <video
+            <video onContextMenu={(e) => e.preventDefault()}
               src={service.mediaSrc}
               autoPlay={!reduced}
               loop muted playsInline preload="metadata"

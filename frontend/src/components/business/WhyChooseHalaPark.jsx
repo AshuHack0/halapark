@@ -93,14 +93,35 @@ export default function WhyChooseHalaPark() {
           transition={{ duration: 0.65, ease }}
           className="mb-12"
         >
-          {/* Heading on one line; the gradient accent drops to a second line. */}
+          {/* If the accent word already appears inside the heading, paint it
+              gradient in place (no duplicate second line); otherwise the accent
+              drops to its own line. Long headings wrap instead of clipping. */}
           <h2 className="text-4xl sm:text-5xl font-bold tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
-            <span className="block whitespace-nowrap">{headingText}</span>
-            {gradientText ? (
-              <span className="block whitespace-nowrap bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">
-                {gradientText}
-              </span>
-            ) : null}
+            {(() => {
+              const gradientCls = "bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent";
+              const idx = gradientText
+                ? headingText.toLowerCase().indexOf(gradientText.toLowerCase())
+                : -1;
+              if (idx >= 0) {
+                return (
+                  <>
+                    {headingText.slice(0, idx)}
+                    <span className={gradientCls}>
+                      {headingText.slice(idx, idx + gradientText.length)}
+                    </span>
+                    {headingText.slice(idx + gradientText.length)}
+                  </>
+                );
+              }
+              return (
+                <>
+                  <span className="block">{headingText}</span>
+                  {gradientText ? (
+                    <span className={`block ${gradientCls}`}>{gradientText}</span>
+                  ) : null}
+                </>
+              );
+            })()}
           </h2>
         </motion.div>
 
@@ -129,8 +150,10 @@ export default function WhyChooseHalaPark() {
                 transition={{ duration: 0.5, ease, delay: i * 0.08 }}
                 className="flex-shrink-0 w-full sm:w-[500px] lg:w-[550px] rounded-[24px] overflow-hidden bg-white shadow-[0_4px_24px_rgba(6,6,22,0.06)] hover:shadow-[0_16px_40px_rgba(0,136,255,0.10)] transition"
               >
-                {/* Card Layout: Image Left + Text Right */}
-                <div className="flex h-80">
+                {/* Card Layout: Image Left + Text Right. min-height (not fixed
+                    height) so long descriptions grow the card instead of being
+                    clipped at the bottom on narrow screens. */}
+                <div className="flex min-h-[20rem]">
                   {/* Left: uploaded image OR color gradient */}
                   <div
                     className="w-2/5 flex items-center justify-center relative overflow-hidden"

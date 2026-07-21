@@ -117,7 +117,7 @@ export default function EnterpriseSolutions() {
               <div className="bg-[#f3f4f6]  rounded-lg border border-gray-200 p-3 sm:p-4 md:p-5 lg:p-7 px-2 sm:px-4 md:px-6 lg:px-10 transition-colors duration-400 ease-in-out hover:shadow-lg">
                 {/* Map Image */}
                 <div className="w-full h-20 sm:h-48 md:h-52 lg:h-56 rounded-xl sm:rounded-2xl overflow-hidden mb-4 sm:mb-5 md:mb-6">
-                  <video
+                  <video onContextMenu={(e) => e.preventDefault()}
                     autoPlay
                     loop
                     muted
@@ -152,7 +152,7 @@ export default function EnterpriseSolutions() {
             <div className="w-[calc(50%-0.25rem)] sm:w-[calc(50%-0.375rem)] md:w-[calc(50%-0.5rem)] lg:w-full lg:max-w-4xl mx-auto transform transition-all duration-400 ease-in-out hover:scale-105 group">
               <div className="bg-[#f3f4f6] rounded-lg border border-gray-200 p-3 sm:p-4 md:p-5 lg:p-7 px-2 sm:px-4 md:px-6 lg:px-10 transition-colors duration-400 ease-in-out hover:shadow-lg">
                 <div className="w-full h-20 sm:h-48 md:h-52 lg:h-56 rounded-xl sm:rounded-2xl overflow-hidden mb-4 sm:mb-5 md:mb-6">
-                  <video
+                  <video onContextMenu={(e) => e.preventDefault()}
                     autoPlay
                     loop
                     muted
@@ -191,7 +191,7 @@ export default function EnterpriseSolutions() {
               <div className="bg-[#f3f4f6] rounded-lg border border-gray-200 p-3 sm:p-4 md:p-5 lg:p-6 hover:shadow-lg">
                 {/* Map Image */}
                 <div className="w-full h-20 sm:h-48 md:h-52 lg:h-56 rounded-xl sm:rounded-2xl overflow-hidden mb-4 sm:mb-5 md:mb-6">
-                  <video
+                  <video onContextMenu={(e) => e.preventDefault()}
                     autoPlay
                     loop
                     muted
@@ -226,7 +226,7 @@ export default function EnterpriseSolutions() {
             <div className="w-[calc(50%-0.25rem)] sm:w-[calc(50%-0.375rem)] md:w-[calc(50%-0.5rem)] lg:w-[37.5%] transform transition-all duration-400 ease-in-out hover:scale-105 group">
               <div className="bg-[#f3f4f6] rounded-lg border border-gray-200 p-3 sm:p-4 md:p-5 lg:p-6 hover:shadow-lg">
                 <div className="w-full h-20 sm:h-48 md:h-52 lg:h-56 rounded-xl sm:rounded-2xl overflow-hidden mb-4 sm:mb-5 md:mb-6">
-                  <video
+                  <video onContextMenu={(e) => e.preventDefault()}
                     autoPlay
                     loop
                     muted
@@ -264,7 +264,7 @@ export default function EnterpriseSolutions() {
             {/* Card 1 - Barrier Free Parking */}
             <div className="bg-[#f3f4f6] rounded-lg border border-gray-200 p-3 sm:p-4 md:p-5 lg:p-7 px-2 sm:px-4 md:px-6 lg:px-10 transform transition-all duration-400 ease-in-out hover:scale-105 group hover:shadow-lg">
               <div className="w-full h-20 sm:h-48 md:h-52 lg:h-56 rounded-xl sm:rounded-2xl overflow-hidden mb-4 sm:mb-5 md:mb-6">
-                <video
+                <video onContextMenu={(e) => e.preventDefault()}
                   autoPlay
                   loop
                   muted

@@ -127,7 +127,7 @@ export default function Testimonials() {
                       <div className="relative w-full min-h-115 sm:min-h-130 flex items-center justify-center p-0 overflow-hidden bg-amber-600">
                         {/* Video */}
                         {isPlaying && (
-                          <video
+                          <video onContextMenu={(e) => e.preventDefault()}
                             src="./8170425-uhd_1440_2560_25fps.mp4"
                             className="w-full h-full object-cover rounded-3xl"
                             autoPlay

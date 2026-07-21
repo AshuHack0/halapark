@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { fetchHomeSection } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
@@ -253,11 +254,9 @@ function IntegrationDiagram() {
   );
 }
 
-function SolutionCard({ id, title, description, iconImage }) {
-  return (
-    <article
-      className={`${styles.solutionCard} h-full w-full rounded-[24px] border border-[#E7EAF0] bg-white p-5 sm:p-6`}
-    >
+function SolutionCard({ id, title, description, iconImage, href }) {
+  const inner = (
+    <>
       {iconImage ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
@@ -277,9 +276,28 @@ function SolutionCard({ id, title, description, iconImage }) {
       >
         {title}
       </h3>
-      <RichText text={description} className="mt-3 text-[13px] font-normal leading-[1.35] text-[#8B919C] sm:text-[14px] lg:text-[15px] [overflow-wrap:anywhere] block" />
-    </article>
+      {/* line-clamp keeps over-long admin text from stretching every card in
+          the marquee row (they all share the tallest card's height). */}
+      <RichText text={description} className="mt-3 text-[13px] font-normal leading-[1.35] text-[#8B919C] sm:text-[14px] lg:text-[15px] line-clamp-5 [overflow-wrap:anywhere]" />
+    </>
   );
+
+  const cardClass = `${styles.solutionCard} block h-full w-full rounded-[24px] border border-[#E7EAF0] bg-white p-5 sm:p-6`;
+
+  // Admin-supplied link makes the whole card clickable (internal or external).
+  const link = (href || "").trim();
+  if (link) {
+    return (
+      <Link
+        href={link}
+        {...(/^https?:\/\//.test(link) ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+        className={`${cardClass} transition duration-300 hover:-translate-y-0.5 hover:border-[#0088FF]/50 hover:shadow-[0_14px_30px_rgba(0,136,255,0.12)]`}
+      >
+        {inner}
+      </Link>
+    );
+  }
+  return <article className={cardClass}>{inner}</article>;
 }
 
 function SolutionCardsCarousel({ cards, language }) {
@@ -362,14 +380,18 @@ export default function SolutionIntegration() {
           </h2>
         </div> */}
         <div className="w-full text-center">
+          {/* Centered across the full width: heading on one line, the gradient
+              part always on its own second line. */}
           <h2
-            id="ai-powered-parking-service-title"
-            className="mx-auto w-full text-[clamp(2.65rem,4.5vw,4rem)] font-semibold uppercase leading-[1.01] tracking-[-0.06em] text-[#050A13] [text-wrap:balance] [overflow-wrap:anywhere]"
+            id="solution-integration-title"
+            className="mx-auto w-full text-[clamp(2.65rem,4.5vw,4rem)] font-semibold uppercase leading-[1.08] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]"
           >
-            {t(si, "heading", language)}{" "}
-            <span className="bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">
-              {t(si, "headingGradient", language)}
-            </span>
+            <span className="block">{t(si, "heading", language)}</span>
+            {t(si, "headingGradient", language) ? (
+              <span className="block bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">
+                {t(si, "headingGradient", language)}
+              </span>
+            ) : null}
           </h2>
           <p className="mx-auto mt-3 max-w-[720px] text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem] [overflow-wrap:anywhere]">
             {t(si, "subtitle", language)}

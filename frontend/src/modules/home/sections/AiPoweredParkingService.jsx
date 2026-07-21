@@ -221,13 +221,15 @@ export default function AiPoweredParkingService() {
             .map((c, i) => {
               const base = serviceAudienceCards[i] ?? {};
               return {
-                // UI-only props (link, image positioning, colors) from the base.
+                // UI-only props (image positioning, colors) from the base.
                 ...base,
                 // Text strictly from the CMS — cleared text stays cleared.
                 title: c?.title ?? "",
                 ctaLabel: c?.ctaLabel ?? "",
                 audienceTag: c?.audienceTag ?? "",
                 description: c?.description ?? "",
+                // Button link from the admin panel; base href only as fallback.
+                href: (c?.href ?? "").trim() || base.href || "/contact",
                 imageSrc: c?.imageSrc || base.imageSrc,
                 ar: c?.ar,
               };

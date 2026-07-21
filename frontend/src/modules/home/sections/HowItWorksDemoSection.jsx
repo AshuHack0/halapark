@@ -78,16 +78,20 @@ export default function HowItWorksDemoSection() {
             {/* <p className="mx-auto inline-flex items-center rounded-full border border-[#7AB9FF]/45 bg-white/85 px-4 py-1.5 text-[12px] font-semibold uppercase tracking-[0.14em] text-[#0078E0] sm:text-[13px]">
               HOW IT WORKS
             </p> */}
+            {/* Heading on its own line; the gradient part sits on a second line
+                below it (never flowing into / overlapping the heading text). */}
             <h2
               id="how-it-works-title"
-              className="mx-auto mt-4 max-w-[940px] text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13]"
+              className="mx-auto mt-4 max-w-[940px] text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.08] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]"
             >
-              {t(content, "heading", language)}{" "}
-              <span className="bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">
-                {t(content, "headingGradient", language)}
-              </span>{" "}
+              <span className="block">{t(content, "heading", language)}</span>
+              {t(content, "headingGradient", language) ? (
+                <span className="block bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">
+                  {t(content, "headingGradient", language)}
+                </span>
+              ) : null}
             </h2>
-            <p className="mx-auto mt-3 max-w-[650px] text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem]">
+            <p className="mx-auto mt-3 max-w-[650px] text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem] [overflow-wrap:anywhere]">
               {t(content, "subtitle", language)}
             </p>
           </div>
@@ -137,10 +141,11 @@ export default function HowItWorksDemoSection() {
                           />
                         </div>
                         <div className="min-w-0">
-                          <h3 className="text-[1.08rem] font-bold leading-tight text-[#182238] sm:text-[1.18rem]">
+                          <h3 className="text-[1.08rem] font-bold leading-tight text-[#182238] sm:text-[1.18rem] [overflow-wrap:anywhere]">
                             {t(step, "title", language)}
                           </h3>
-                          <RichText text={t(step, "description", language)} className="mt-1 max-w-[260px] text-[0.84rem] font-medium leading-snug text-[#6C7587] sm:text-[0.92rem] block" />
+                          {/* line-clamp keeps over-long admin text from stretching the card. */}
+                          <RichText text={t(step, "description", language)} className="mt-1 max-w-[260px] text-[0.84rem] font-medium leading-snug text-[#6C7587] sm:text-[0.92rem] line-clamp-3 [overflow-wrap:anywhere]" />
                         </div>
                       </article>
                     );
@@ -178,6 +183,9 @@ export default function HowItWorksDemoSection() {
                     loop
                     playsInline
                     controls
+                    controlsList="nodownload"
+                    disablePictureInPicture
+                    onContextMenu={(e) => e.preventDefault()}
                   />
                 </div>
               </div>

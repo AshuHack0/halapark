@@ -68,7 +68,7 @@ function HeroBackgroundMedia({ slide, isActive, onVideoEnd }) {
 
   if (mediaType === "video" && slide.video) {
     return (
-      <video
+      <video onContextMenu={(e) => e.preventDefault()}
         ref={videoRef}
         src={slide.video}
         poster={imageSrc || undefined}
