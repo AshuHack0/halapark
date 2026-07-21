@@ -193,7 +193,7 @@ export default function PromoPopup() {
                 A blurred self-backdrop covers any vertical remainder when the
                 text column is taller than the artwork. */}
             {hasMedia ? (
-              <div className="relative w-full shrink-0 overflow-hidden bg-slate-100 sm:flex sm:w-auto sm:items-center sm:justify-center">
+              <div className="relative w-full shrink-0 overflow-hidden bg-slate-100 sm:flex sm:w-auto sm:min-w-0 sm:shrink sm:items-center sm:justify-center">
                 <img
                   src={image || undefined}
                   alt=""
@@ -209,13 +209,13 @@ export default function PromoPopup() {
                     loop
                     playsInline
                     preload="auto"
-                    className="relative block max-h-[42dvh] w-full object-contain sm:h-[min(76dvh,600px)] sm:max-h-none sm:w-auto sm:max-w-[48vw]"
+                    className="relative block max-h-[42dvh] w-full object-contain sm:h-auto sm:max-h-[min(76dvh,600px)] sm:w-auto sm:max-w-full"
                   />
                 ) : (
                   <motion.img
                     src={image}
                     alt={(heading || "Promotion").replace(/\{\{|\}\}/g, "")}
-                    className="relative block max-h-[42dvh] w-full object-contain sm:h-[min(76dvh,600px)] sm:max-h-none sm:w-auto sm:max-w-[48vw]"
+                    className="relative block max-h-[42dvh] w-full object-contain sm:h-auto sm:max-h-[min(76dvh,600px)] sm:w-auto sm:max-w-full"
                     initial={reduced ? false : { scale: 1.04 }}
                     animate={{ scale: 1 }}
                     transition={{ duration: 8, ease: "easeOut" }}
