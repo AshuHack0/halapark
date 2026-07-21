@@ -225,8 +225,12 @@ export default function BusinessHero() {
 
   // CTA buttons — fully CMS-driven, no default labels. Each button shows only
   // when the admin (a) hasn't disabled it AND (b) has provided a label.
+  // A link set in the admin turns the button into a redirect; without a link
+  // it opens its pop-up form (proposal / consultation) as before.
   const proposalLabel = t(hero, "ctaPrimary", language).trim();
   const consultLabel = t(hero, "ctaSecondary", language).trim();
+  const proposalHref = (hero?.ctaPrimaryHref || "").trim();
+  const consultHref = (hero?.ctaSecondaryHref || "").trim();
   const showProposal = hero?.showProposal !== false && proposalLabel !== "";
   const showConsult = hero?.showConsultation !== false && consultLabel !== "";
 
@@ -257,8 +261,13 @@ export default function BusinessHero() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.65, ease }}
           >
-            <h1 className="max-w-[600px] text-[clamp(2.4rem,4.8vw,4.2rem)] font-semibold leading-[1.02] tracking-[-0.055em] text-[#050A13]">
+            <h1 className="max-w-[600px] text-[clamp(2.4rem,4.8vw,4.2rem)] font-semibold leading-[1.06] tracking-[-0.055em] text-[#050A13] [overflow-wrap:anywhere]">
               {t(hero, "title", language)}
+              {t(hero, "titleGradient", language) ? (
+                <span className="block bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">
+                  {t(hero, "titleGradient", language)}
+                </span>
+              ) : null}
             </h1>
 
             <RichText
@@ -286,25 +295,48 @@ export default function BusinessHero() {
             {showProposal || showConsult ? (
               <div className="mt-9 flex flex-wrap items-center gap-3">
                 {showProposal ? (
-                  <button
-                    type="button"
-                    onClick={() => setProposalOpen(true)}
-                    className="group inline-flex items-center gap-2.5 rounded-full bg-[#0088FF] px-7 py-3.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,136,255,0.32)] transition hover:brightness-110"
-                  >
-                    {proposalLabel}
-                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 transition-transform duration-200 group-hover:translate-x-0.5">
-                      <ArrowRight className="h-3.5 w-3.5 rtl:rotate-180" aria-hidden />
-                    </span>
-                  </button>
+                  proposalHref ? (
+                    <Link
+                      href={proposalHref}
+                      {...(/^https?:\/\//.test(proposalHref) ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                      className="group inline-flex items-center gap-2.5 rounded-full bg-[#0088FF] px-7 py-3.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,136,255,0.32)] transition hover:brightness-110"
+                    >
+                      {proposalLabel}
+                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 transition-transform duration-200 group-hover:translate-x-0.5">
+                        <ArrowRight className="h-3.5 w-3.5 rtl:rotate-180" aria-hidden />
+                      </span>
+                    </Link>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setProposalOpen(true)}
+                      className="group inline-flex items-center gap-2.5 rounded-full bg-[#0088FF] px-7 py-3.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,136,255,0.32)] transition hover:brightness-110"
+                    >
+                      {proposalLabel}
+                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 transition-transform duration-200 group-hover:translate-x-0.5">
+                        <ArrowRight className="h-3.5 w-3.5 rtl:rotate-180" aria-hidden />
+                      </span>
+                    </button>
+                  )
                 ) : null}
                 {showConsult ? (
-                  <button
-                    type="button"
-                    onClick={() => setConsultOpen(true)}
-                    className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-7 py-3.5 text-sm font-semibold text-slate-700 shadow-[0_2px_12px_rgba(6,6,22,0.07)] transition hover:border-[#0088FF]/50 hover:text-[#0088FF]"
-                  >
-                    {consultLabel}
-                  </button>
+                  consultHref ? (
+                    <Link
+                      href={consultHref}
+                      {...(/^https?:\/\//.test(consultHref) ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                      className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-7 py-3.5 text-sm font-semibold text-slate-700 shadow-[0_2px_12px_rgba(6,6,22,0.07)] transition hover:border-[#0088FF]/50 hover:text-[#0088FF]"
+                    >
+                      {consultLabel}
+                    </Link>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setConsultOpen(true)}
+                      className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-7 py-3.5 text-sm font-semibold text-slate-700 shadow-[0_2px_12px_rgba(6,6,22,0.07)] transition hover:border-[#0088FF]/50 hover:text-[#0088FF]"
+                    >
+                      {consultLabel}
+                    </button>
+                  )
                 ) : null}
               </div>
             ) : null}

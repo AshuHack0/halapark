@@ -216,6 +216,7 @@ export default function AppCurrencySection() {
   const dir = language === "ar" ? "rtl" : "ltr";
 
   const title = t(content, "title", language);
+  const subtitle = t(content, "subtitle", language);
   const description = t(content, "description", language);
   const image = (content.image || "").trim();
 
@@ -240,7 +241,8 @@ export default function AppCurrencySection() {
   const showTopUp = topUpLabel.trim() !== "" && topUpSteps.length > 0;
 
   // Hide the whole section when it carries no real content.
-  const hasText = title.trim() !== "" || description.trim() !== "";
+  const hasText =
+    title.trim() !== "" || subtitle.trim() !== "" || description.trim() !== "";
   if (!hasText && cardFeatures.length === 0 && image === "") return null;
 
   return (
@@ -266,9 +268,14 @@ export default function AppCurrencySection() {
             className="relative z-20 flex flex-col"
             dir={dir}
           >
-            {title ? (
+            {title || subtitle ? (
               <h2 className="max-w-[590px] text-[clamp(2.25rem,5.6vw,4.25rem)] font-semibold leading-[1.03] tracking-tight text-[#050A13] lg:leading-[0.99] [overflow-wrap:anywhere]">
                 {title}
+                {subtitle ? (
+                  <span className="block bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">
+                    {subtitle}
+                  </span>
+                ) : null}
               </h2>
             ) : null}
 
