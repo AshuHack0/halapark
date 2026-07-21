@@ -50,7 +50,7 @@ export default function HomePage() {
       <ClientsPartners />
       <GlobalMobilityNetworkSection />
       {/* <SmartFeatures /> */}
-      {/* <SupportContactCTA /> */}
+      <SupportContactCTA />
       <HalaParkInAction />
     </div>
   );

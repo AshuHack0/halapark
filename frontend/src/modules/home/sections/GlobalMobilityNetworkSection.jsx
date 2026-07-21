@@ -288,15 +288,14 @@ export default function GlobalMobilityNetworkSection() {
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="relative overflow-hidden rounded-[24px] border border-[#D8E7F8] bg-white shadow-[0_20px_56px_rgba(15,23,42,0.08)]">
           <div className="relative z-10 text-center">
-            <h2 className="mx-auto pt-5 text-[clamp(2.65rem,4.5vw,4rem)] font-semibold uppercase leading-[1.01] tracking-[-0.06em] text-[#050A13] sm:pt-6 [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
-              {heading}
+            {/* Centered across the full width: heading on one line, the
+                gradient part always on its own second line. */}
+            <h2 className="mx-auto w-full pt-5 text-[clamp(2.65rem,4.5vw,4rem)] font-semibold uppercase leading-[1.08] tracking-[-0.06em] text-[#050A13] sm:pt-6 [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
+              <span className="block">{heading}</span>
               {headingGradient ? (
-                <>
-                  {" "}
-                  <span className="bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">
-                    {headingGradient}
-                  </span>
-                </>
+                <span className="block bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">
+                  {headingGradient}
+                </span>
               ) : null}
             </h2>
             <p className="mx-auto mt-3 max-w-[650px] px-4 text-[0.88rem] leading-6 text-slate-800 sm:text-[0.94rem] text-bold [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>

@@ -145,6 +145,8 @@ export default function HalaParkInAction({ cmsKey = "halaParkInAction", pageSlug
         enabled: d.enabled,
         title: d.heading || d.title || "",
         subtitle: d.subtitle || "",
+        // Right-side preview image — admin upload overrides the built-in art.
+        image: (d.image || "").trim(),
         // Only store links with real text count — a cleared item must not
         // render an empty icon/badge shell.
         storeLinks: (Array.isArray(d.storeLinks) ? d.storeLinks : []).filter(
@@ -242,7 +244,7 @@ export default function HalaParkInAction({ cmsKey = "halaParkInAction", pageSlug
                   className="relative h-full w-full"
                 >
                   <Image
-                    src="/UI/hf_20260401_051940_148a185a-d002-45bf-87b7-80e45dd5de5e 1.png"
+                    src={copy.image || "/UI/hf_20260401_051940_148a185a-d002-45bf-87b7-80e45dd5de5e 1.png"}
                     alt="HalaPark mobile app preview"
                     width={2352}
                     height={1236}
