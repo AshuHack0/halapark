@@ -235,7 +235,11 @@ function PhonePreview({ screen, alt = "HalaPark app screen" }) {
   );
 }
 
-function WebsitePreview() {
+function WebsitePreview({ screen }) {
+  // Admin-uploaded website screenshot replaces the built-in mock login screen
+  // inside the browser frame (the frame itself is decorative chrome).
+  const src = (screen || "").trim();
+
   return (
     <div className="relative w-full max-w-[430px]">
       <div className="absolute -right-5 top-5 h-44 w-44 rounded-full bg-[#EAF3FF] blur-[2px]" />
@@ -255,6 +259,17 @@ function WebsitePreview() {
             <span className="h-2 w-8 rounded-full bg-[#D8E6F7]" />
           </div>
 
+          {src ? (
+            <div className="relative min-h-[300px] overflow-hidden">
+              <Image
+                src={src}
+                alt="HalaPark website preview"
+                fill
+                sizes="(min-width: 640px) 430px, 90vw"
+                className="object-cover object-top"
+              />
+            </div>
+          ) : (
           <div className="relative min-h-[300px] overflow-hidden bg-[linear-gradient(135deg,#F8FBFF_0%,#EAF3FF_58%,#DCEBFF_100%)] px-5 py-5">
 
             <div className="relative mx-auto flex min-h-[260px] w-full max-w-[310px] flex-col items-center justify-center">
@@ -319,6 +334,7 @@ function WebsitePreview() {
               </div>
             </div>
           </div>
+          )}
         </div>
       </div>
 
@@ -572,7 +588,7 @@ export default function AppPlatformSection() {
               </div>
 
               <div className="relative flex min-h-[360px] items-center justify-center sm:min-h-[420px]">
-                <WebsitePreview />
+                <WebsitePreview screen={content.webScreen} />
               </div>
             </div>
           </motion.article>

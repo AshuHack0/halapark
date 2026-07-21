@@ -22,7 +22,7 @@ function PhonePreview({ screen, label }) {
           <div className="absolute left-[4.4%] right-[4.4%] top-[1.2%] bottom-[1.45%] z-10 translate-y-[1px] overflow-hidden rounded-[1.3rem] bg-white sm:rounded-[2.2rem] lg:rounded-[2.7rem]">
             <AnimatePresence mode="wait">
               <motion.div
-                key={screen}
+                key={`${label}-${screen}`}
                 initial={{ opacity: 0, y: 14, scale: 0.985 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -12, scale: 0.985 }}
@@ -217,12 +217,13 @@ export default function AppServiceTabs() {
     : [];
   const ctaLabel = (t(content, "ctaLabel", language) || "").trim();
 
+  // `animate` (not whileInView) so the blur-to-clear reveal reliably replays on
+  // every tab switch — the elements are keyed by tab and remount each time.
   const titleMotion = prefersReducedMotion
     ? {}
     : {
         initial: { opacity: 0, y: 20, filter: "blur(8px)" },
-        whileInView: { opacity: 1, y: 0, filter: "blur(0px)" },
-        viewport: { once: false, amount: 0.4 },
+        animate: { opacity: 1, y: 0, filter: "blur(0px)" },
         transition: { duration: 0.5, ease: "easeOut" },
       };
 

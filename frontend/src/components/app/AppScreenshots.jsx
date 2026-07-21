@@ -230,7 +230,9 @@ export default function AppScreenshots() {
 
         {displaySteps.length > 0 && (
           <div className="mx-auto mt-8 max-w-[1180px] pb-2 sm:mt-9">
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:flex lg:min-w-[930px] lg:items-center lg:justify-center lg:gap-2">
+            {/* No forced min-width — the row centers itself over the phones
+                below regardless of how many steps the admin configured. */}
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:flex lg:items-center lg:justify-center lg:gap-2">
               {displaySteps.map((step, index) => (
                 <div
                   key={index}
