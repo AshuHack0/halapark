@@ -18,7 +18,7 @@ import {
 } from "framer-motion";
 import {
   X, ArrowUpRight, Check, Shield, Camera, BadgeCheck,
-  CreditCard, Lock, ChevronRight, ChevronDown, MapPin, Clock, ParkingCircle, ArrowRight, Zap, Search,
+  CreditCard, Lock, ChevronRight, ChevronDown, MapPin, Clock, ParkingCircle, ArrowRight, Zap, Search, Loader2,
 } from "lucide-react";
 import { allServicesData, serviceNames } from "./allServicesData";
 import { fetchPage } from "@/lib/cms";
@@ -297,7 +297,9 @@ function isAllowedAttachment(file) {
   return ATTACH_ALLOWED_EXTENSIONS.some((ext) => name.endsWith(ext));
 }
 
-function uploadAttachmentToCloudinary(file, sig) {
+// XHR upload with progress reporting — same approach as the job-application
+// resume upload, so the user always sees that something is happening.
+function uploadAttachmentToCloudinary(file, sig, onProgress) {
   return new Promise((resolve, reject) => {
     const fd = new FormData();
     fd.append("file", file);
@@ -305,11 +307,47 @@ function uploadAttachmentToCloudinary(file, sig) {
     fd.append("timestamp", sig.timestamp);
     fd.append("signature", sig.signature);
     fd.append("folder", sig.folder);
-    fetch(`https://api.cloudinary.com/v1_1/${sig.cloudName}/auto/upload`, { method: "POST", body: fd })
-      .then((res) => res.json())
-      .then((data) => (data?.secure_url ? resolve(data.secure_url) : reject(new Error("upload failed"))))
-      .catch(() => reject(new Error("upload failed")));
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", `https://api.cloudinary.com/v1_1/${sig.cloudName}/auto/upload`);
+    xhr.timeout = 120000;
+    xhr.upload.onprogress = (e) => {
+      if (e.lengthComputable && onProgress) onProgress(Math.round((e.loaded / e.total) * 100));
+    };
+    xhr.onload = () => {
+      try {
+        const data = JSON.parse(xhr.responseText);
+        if (xhr.status >= 200 && xhr.status < 300 && data.secure_url) {
+          resolve(data.secure_url);
+        } else {
+          reject(new Error("upload failed"));
+        }
+      } catch {
+        reject(new Error("upload failed"));
+      }
+    };
+    xhr.onerror = () => reject(new Error("upload failed"));
+    xhr.ontimeout = () => reject(new Error("upload timed out"));
+    xhr.send(fd);
   });
+}
+
+// Fetch the signed-upload credentials with a hard timeout so a slow/unreachable
+// backend can never leave the form stuck in "uploading" (submit disabled).
+async function fetchAttachmentSignature() {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 60000);
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/contact/attachment-signature`,
+      { signal: controller.signal },
+    );
+    const sig = await res.json().catch(() => ({}));
+    if (!res.ok || !sig?.signature || !sig?.cloudName) throw new Error("signature");
+    return sig;
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 function QuoteModal({ isOpen, onClose, quoteForm }) {
@@ -322,7 +360,10 @@ function QuoteModal({ isOpen, onClose, quoteForm }) {
   const [serviceOpen, setServiceOpen] = useState(false);
   // Attachments: each item is { name, type, url } once uploaded to Cloudinary.
   const [attachments, setAttachments] = useState([]);
-  const [uploadingCount, setUploadingCount] = useState(0);
+  // { name, progress } while a file is uploading, else null.
+  const [attachUpload, setAttachUpload] = useState(null);
+  const [attachError, setAttachError] = useState("");
+  const uploadingCount = attachUpload ? 1 : 0;
   const recaptchaRef = useRef(null);
 
   // CMS-editable copy (bilingual, with sensible fallbacks so the form still
@@ -368,28 +409,28 @@ function QuoteModal({ isOpen, onClose, quoteForm }) {
     const picked = Array.from(event.target.files ?? []);
     event.target.value = "";
     if (picked.length === 0) return;
-    setFormError("");
+    setAttachError("");
     if (attachments.length + picked.length > ATTACH_MAX_COUNT) {
-      setFormError(`You can attach up to ${ATTACH_MAX_COUNT} files.`);
+      setAttachError(`You can attach up to ${ATTACH_MAX_COUNT} files.`);
       return;
     }
     for (const file of picked) {
-      if (!isAllowedAttachment(file)) { setFormError("Unsupported file type. Use an image or a PDF/DOC/DOCX file."); return; }
-      if (file.size > ATTACH_MAX_BYTES) { setFormError("File is too large (max 10MB)."); return; }
+      if (!isAllowedAttachment(file)) { setAttachError("Unsupported file type. Use an image or a PDF/DOC/DOCX file."); return; }
+      if (file.size > ATTACH_MAX_BYTES) { setAttachError("File is too large (max 10MB)."); return; }
     }
-    setUploadingCount((n) => n + picked.length);
     try {
-      const sigRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/contact/attachment-signature`);
-      const sig = await sigRes.json().catch(() => ({}));
-      if (!sigRes.ok || !sig?.signature || !sig?.cloudName) throw new Error("signature");
+      const sig = await fetchAttachmentSignature();
       for (const file of picked) {
-        const url = await uploadAttachmentToCloudinary(file, sig);
+        setAttachUpload({ name: file.name, progress: 0 });
+        const url = await uploadAttachmentToCloudinary(file, sig, (progress) =>
+          setAttachUpload((prev) => (prev ? { ...prev, progress } : prev)),
+        );
         setAttachments((prev) => [...prev, { name: file.name, type: file.type, url }]);
       }
     } catch {
-      setFormError("Attachment upload failed. Please try again.");
+      setAttachError("Attachment upload failed. Please try again.");
     } finally {
-      setUploadingCount((n) => Math.max(0, n - picked.length));
+      setAttachUpload(null);
     }
   };
 
@@ -410,6 +451,8 @@ function QuoteModal({ isOpen, onClose, quoteForm }) {
     setFormError("");
     setSubmitting(false);
     setAttachments([]);
+    setAttachUpload(null);
+    setAttachError("");
     recaptchaRef.current?.reset();
     onClose();
   };
@@ -613,11 +656,30 @@ function QuoteModal({ isOpen, onClose, quoteForm }) {
                         ))}
                       </ul>
                     ) : null}
-                    {attachments.length < ATTACH_MAX_COUNT ? (
-                      <label className={`inline-flex cursor-pointer items-center gap-2 rounded-lg border border-dashed px-3 py-2 text-xs font-medium transition ${uploadingCount > 0 ? "cursor-not-allowed border-slate-200 text-slate-400" : "border-slate-300 text-slate-600 hover:border-[#0088FF] hover:text-[#0088FF]"}`}>
-                        {uploadingCount > 0 ? "Uploading…" : "Add files"}
-                        <input type="file" multiple accept={ATTACH_ACCEPT} className="hidden" disabled={uploadingCount > 0} onChange={onAttachmentsSelected} />
+                    {attachUpload ? (
+                      <div className="mb-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5">
+                        <div className="flex items-center gap-2 text-xs text-slate-600">
+                          <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin text-[#0088FF]" aria-hidden />
+                          <span className="truncate [overflow-wrap:anywhere]">
+                            Uploading — {attachUpload.name} ({attachUpload.progress}%)
+                          </span>
+                        </div>
+                        <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-slate-200">
+                          <div
+                            className="h-full rounded-full bg-[#0088FF] transition-[width] duration-200"
+                            style={{ width: `${attachUpload.progress}%` }}
+                          />
+                        </div>
+                      </div>
+                    ) : null}
+                    {attachments.length < ATTACH_MAX_COUNT && !attachUpload ? (
+                      <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-dashed border-slate-300 px-3 py-2 text-xs font-medium text-slate-600 transition hover:border-[#0088FF] hover:text-[#0088FF]">
+                        Add files
+                        <input type="file" multiple accept={ATTACH_ACCEPT} className="hidden" onChange={onAttachmentsSelected} />
                       </label>
+                    ) : null}
+                    {attachError ? (
+                      <p className="mt-1.5 text-xs text-red-600" role="alert">{attachError}</p>
                     ) : null}
                     <p className="mt-1 text-[10px] text-slate-400">Images or documents (PDF, DOC). Up to 5 files, 10MB each.</p>
                   </div>
