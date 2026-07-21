@@ -60,7 +60,7 @@ function StatStrip({ stats, language }) {
   if (visible.length === 0) return null;
 
   return (
-    <div className="mt-7 w-full max-w-[620px] rounded-[24px] bg-white/92 px-4 py-3.5 shadow-[0_14px_38px_rgba(15,23,42,0.08)] backdrop-blur sm:px-5 lg:absolute lg:bottom-8 lg:left-8 lg:z-[99] lg:mt-0 rtl:lg:left-auto rtl:lg:right-8">
+    <div className="mt-7 w-full max-w-[620px] rounded-[24px] bg-white/92 px-4 py-3.5 shadow-[0_14px_38px_rgba(15,23,42,0.08)] backdrop-blur sm:px-5 lg:absolute lg:bottom-8 lg:left-8 lg:mt-0 rtl:lg:left-auto rtl:lg:right-8">
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:divide-x sm:divide-[#E4EAF2] rtl:sm:divide-x-reverse">
         {visible.map((item, index) => {
           const Icon = STAT_ICONS[item.icon];
