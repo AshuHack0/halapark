@@ -13,6 +13,7 @@ export default function BlackBanner() {
     fetchHomeSection("blackBanner").then((data) => {
       if (data && typeof data === "object") {
         setFeatureCard({
+          enabled: data.enabled,
           ar: data.ar,
           title: data.title || "",
           description: data.description || "",

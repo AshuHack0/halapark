@@ -13,6 +13,7 @@ export default function ClientsPartners() {
     fetchHomeSection("clientsPartners").then((d) => {
       if (d && typeof d === "object") {
         setCp({
+          enabled: d.enabled,
           ar: d.ar,
           heading: d.heading || "",
           headingEnd: d.headingEnd || "",

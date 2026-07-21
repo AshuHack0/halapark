@@ -239,6 +239,7 @@ export default function AiPoweredParkingService() {
             ),
         );
         setCopy({
+          enabled: d.enabled,
           heading: d.heading ?? "",
           headingGradient: d.headingGradient ?? "",
           description: d.description ?? "",
