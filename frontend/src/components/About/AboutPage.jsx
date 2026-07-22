@@ -16,14 +16,44 @@ const ease = [0.22, 1, 0.36, 1];
 
 // ─── Hero (light split layout) ──────────────────────────────────────────────────
 
-// About layout: a single image shown at a time inside a tall rounded-rectangle
-// "frame", with each image SLIDING in horizontally (swipe transition) and a
-// thumbnail rail + step counter. Rectangular — distinct from the card-deck
-// (Business), mosaic (Careers), single card (Services) and dashboard (Solutions).
+// About layout: a fanned FRONT/BACK card deck — the front card cycles to the
+// back on a timer, so every added image gets its own card in the stack (like
+// the Business hero), plus a thumbnail rail + step counter.
 
 const hasText = (value) => typeof value === "string" && value.trim().length > 0;
 
-function AboutVisual({ slides, language, reduced }) {
+// A slide's media may be an image OR a video file (same admin field).
+const isVideoSrc = (src = "") => /\.(mp4|webm|mov|m4v)(\?|#|$)/i.test(src);
+
+function SlideMedia({ src, alt, sizes, priority = false }) {
+  if (isVideoSrc(src)) {
+    return (
+      <video
+        src={src}
+        muted
+        autoPlay
+        loop
+        playsInline
+        preload="metadata"
+        onContextMenu={(e) => e.preventDefault()}
+        className="absolute inset-0 h-full w-full object-cover object-center"
+      />
+    );
+  }
+  return (
+    <Image src={src} alt={alt} fill sizes={sizes} className="object-cover object-center" priority={priority} />
+  );
+}
+
+// Per-depth transforms for the fanned deck (0 = front card).
+const DECK_DEPTHS = [
+  { x: 0, y: 0, rotate: 0, scale: 1, opacity: 1 },
+  { x: 30, y: 16, rotate: 5, scale: 0.95, opacity: 0.9 },
+  { x: -26, y: 26, rotate: -6, scale: 0.9, opacity: 0.7 },
+  { x: 4, y: 34, rotate: 2, scale: 0.86, opacity: 0.5 },
+];
+
+function AboutVisual({ slides, language, reduced, hero }) {
   const [active, setActive] = useState(0);
   const count = slides.length;
 
@@ -39,73 +69,70 @@ function AboutVisual({ slides, language, reduced }) {
   const current = slides[index];
   const currentLabel = language === "ar" ? (current.ar?.label ?? "") : (current.label ?? "");
 
+  // Floating badges — CMS-driven; each hides entirely when its text is blank.
+  const badge1Title = t(hero, "badge1Title", language);
+  const badge1Subtitle = t(hero, "badge1Subtitle", language);
+  const badge2Value = t(hero, "badge2Value", language);
+  const badge2Label = t(hero, "badge2Label", language);
+
   return (
     <div className="relative flex items-center justify-center">
       {/* Glow halo */}
       <div className="pointer-events-none absolute left-1/2 top-1/2 h-[380px] w-[380px] -translate-x-1/2 -translate-y-1/2 rounded-[60px] bg-[radial-gradient(circle,rgba(0,136,255,0.16),rgba(37,99,235,0.05)_58%,transparent_76%)] blur-2xl lg:h-[500px] lg:w-[500px]" />
 
-      {/* Offset accent frame behind (gives depth) */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute z-10 h-[330px] w-[270px] translate-x-5 translate-y-5 rounded-[34px] border-2 border-[#0088FF]/25 sm:h-[390px] sm:w-[310px] lg:h-[450px] lg:w-[360px]"
-      />
-
-      {/* ── Single framed image, slide transition ── */}
+      {/* ── Fanned deck: one card per slide, front cycles to the back ── */}
       <motion.div
         animate={reduced ? undefined : { y: [0, -10, 0] }}
         transition={{ duration: 6.5, repeat: Infinity, ease: "easeInOut" }}
-        className="relative z-20 h-[330px] w-[270px] overflow-hidden rounded-[34px] border-[6px] border-white shadow-[0_34px_80px_rgba(15,23,42,0.24)] sm:h-[390px] sm:w-[310px] lg:h-[450px] lg:w-[360px]"
+        className="relative z-20 h-[330px] w-[270px] sm:h-[390px] sm:w-[310px] lg:h-[450px] lg:w-[360px]"
       >
-        <AnimatePresence mode="popLayout" initial={false}>
-          <motion.div
-            key={index}
-            initial={reduced ? false : { x: "100%" }}
-            animate={reduced ? { opacity: 1 } : { x: 0 }}
-            exit={reduced ? undefined : { x: "-100%" }}
-            transition={{ duration: 0.7, ease }}
-            className="absolute inset-0"
-          >
-            <Image
-              src={current.img}
-              alt={currentLabel}
-              fill
-              sizes="(min-width: 1024px) 360px, (min-width: 640px) 310px, 270px"
-              className="object-cover object-center"
-              priority
-            />
-          </motion.div>
-        </AnimatePresence>
+        {slides.map((slide, i) => {
+          const depth = (i - index + count) % count;
+          const d = DECK_DEPTHS[Math.min(depth, DECK_DEPTHS.length - 1)];
+          const isFront = depth === 0;
+          const label = language === "ar" ? (slide.ar?.label ?? "") : (slide.label ?? "");
+          return (
+            <motion.div
+              key={`${slide.img}-${i}`}
+              animate={reduced ? { opacity: isFront ? 1 : 0 } : d}
+              transition={{ duration: 0.7, ease }}
+              style={{ zIndex: 40 - depth }}
+              className="absolute inset-0 overflow-hidden rounded-[34px] border-[6px] border-white shadow-[0_34px_80px_rgba(15,23,42,0.24)]"
+            >
+              <SlideMedia
+                src={slide.img}
+                alt={label}
+                sizes="(min-width: 1024px) 360px, (min-width: 640px) 310px, 270px"
+                priority={isFront}
+              />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#050A13]/72 via-[#050A13]/8 to-[#050A13]/6" />
 
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#050A13]/72 via-[#050A13]/8 to-[#050A13]/6" />
+              {isFront ? (
+                <>
+                  {/* Step counter — top-right */}
+                  <div className="absolute right-4 top-4 z-10 rounded-full bg-black/35 px-2.5 py-1 text-[10px] font-bold text-white backdrop-blur-sm">
+                    {String(index + 1).padStart(2, "0")} / {String(count).padStart(2, "0")}
+                  </div>
 
-        {/* Step counter — top-right */}
-        <div className="absolute right-4 top-4 z-10 rounded-full bg-black/35 px-2.5 py-1 text-[10px] font-bold text-white backdrop-blur-sm">
-          {String(index + 1).padStart(2, "0")} / {String(count).padStart(2, "0")}
-        </div>
-
-        {/* Caption */}
-        <div className="absolute inset-x-0 bottom-0 p-6" dir={language === "ar" ? "rtl" : "ltr"}>
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-white backdrop-blur-sm">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#5BE49B] animate-pulse" /> About HalaPark
-          </span>
-          {hasText(currentLabel) ? (
-            <AnimatePresence mode="wait">
-              <motion.p
-                key={`${index}-${currentLabel}`}
-                initial={reduced ? false : { opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={reduced ? undefined : { opacity: 0, y: -6 }}
-                transition={{ duration: 0.4 }}
-                className="mt-2 text-[1.25rem] font-semibold leading-tight tracking-[-0.03em] text-white [overflow-wrap:anywhere]"
-              >
-                {currentLabel}
-              </motion.p>
-            </AnimatePresence>
-          ) : null}
-        </div>
+                  {/* Caption */}
+                  <div className="absolute inset-x-0 bottom-0 p-6" dir={language === "ar" ? "rtl" : "ltr"}>
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-white backdrop-blur-sm">
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#5BE49B] animate-pulse" /> About HalaPark
+                    </span>
+                    {hasText(label) ? (
+                      <p className="mt-2 text-[1.25rem] font-semibold leading-tight tracking-[-0.03em] text-white [overflow-wrap:anywhere]">
+                        {label}
+                      </p>
+                    ) : null}
+                  </div>
+                </>
+              ) : null}
+            </motion.div>
+          );
+        })}
       </motion.div>
 
-      {/* Thumbnail rail — single-image selector */}
+      {/* Thumbnail rail — jumps the deck to a slide */}
       <div className="absolute -bottom-3 left-1/2 z-40 flex -translate-x-1/2 gap-2">
         {slides.map((s, i) => (
           <button
@@ -119,43 +146,58 @@ function AboutVisual({ slides, language, reduced }) {
                 : "border-white/70 opacity-60 hover:opacity-100"
             }`}
           >
-            <Image src={s.img} alt="" fill sizes="40px" className="object-cover object-center" />
+            {isVideoSrc(s.img) ? (
+              <video src={s.img} muted preload="metadata" playsInline className="absolute inset-0 h-full w-full object-cover object-center" />
+            ) : (
+              <Image src={s.img} alt="" fill sizes="40px" className="object-cover object-center" />
+            )}
           </button>
         ))}
       </div>
 
-      {/* Floating stat ribbon — UAE-Born (top-left) */}
-      <motion.div
-        initial={reduced ? false : { opacity: 0, y: -14, rotate: -5 }}
-        animate={reduced ? undefined : { opacity: 1, y: 0, rotate: -5 }}
-        transition={{ duration: 0.6, ease, delay: 0.5 }}
-        className="absolute left-[-8%] top-2 z-40 hidden sm:block lg:left-[-16%] lg:top-4"
-      >
-        <div className="flex items-center gap-3 rounded-2xl border border-white/80 bg-white px-4 py-3 shadow-[0_18px_46px_rgba(15,23,42,0.18)]">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#0088FF] to-[#2563EB] text-white shadow-[0_4px_10px_rgba(0,136,255,0.35)]">
-            <Sparkles className="h-5 w-5" aria-hidden />
-          </span>
-          <div>
-            <p className="text-[1.05rem] font-bold leading-none tracking-[-0.03em] text-[#050A13]">UAE-Born</p>
-            <p className="mt-1 text-[10px] font-medium text-slate-400">Local expertise</p>
+      {/* Floating stat ribbon (top-left) — CMS-driven, hidden when blank */}
+      {hasText(badge1Title) || hasText(badge1Subtitle) ? (
+        <motion.div
+          initial={reduced ? false : { opacity: 0, y: -14, rotate: -5 }}
+          animate={reduced ? undefined : { opacity: 1, y: 0, rotate: -5 }}
+          transition={{ duration: 0.6, ease, delay: 0.5 }}
+          className="absolute left-[-8%] top-2 z-40 hidden sm:block lg:left-[-16%] lg:top-4"
+        >
+          <div className="flex items-center gap-3 rounded-2xl border border-white/80 bg-white px-4 py-3 shadow-[0_18px_46px_rgba(15,23,42,0.18)]">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#0088FF] to-[#2563EB] text-white shadow-[0_4px_10px_rgba(0,136,255,0.35)]">
+              <Sparkles className="h-5 w-5" aria-hidden />
+            </span>
+            <div dir={language === "ar" ? "rtl" : "ltr"}>
+              {hasText(badge1Title) ? (
+                <p className="text-[1.05rem] font-bold leading-none tracking-[-0.03em] text-[#050A13] [overflow-wrap:anywhere]">{badge1Title}</p>
+              ) : null}
+              {hasText(badge1Subtitle) ? (
+                <p className="mt-1 text-[10px] font-medium text-slate-400 [overflow-wrap:anywhere]">{badge1Subtitle}</p>
+              ) : null}
+            </div>
           </div>
-        </div>
-      </motion.div>
+        </motion.div>
+      ) : null}
 
-      {/* Floating mini chip — trusted (bottom-right) */}
-      <motion.div
-        initial={reduced ? false : { opacity: 0, x: 14, rotate: 5 }}
-        animate={reduced ? undefined : { opacity: 1, x: 0, rotate: 5 }}
-        transition={{ duration: 0.6, ease, delay: 0.6 }}
-        className="absolute bottom-[14%] right-[-6%] z-40 hidden sm:block lg:right-[-14%]"
-      >
-        <div className="flex items-center gap-2 rounded-full border border-white/80 bg-white px-3 py-2 shadow-[0_14px_36px_rgba(15,23,42,0.14)]">
-          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[rgba(22,179,100,0.12)]">
-            <Check className="h-3 w-3 text-[#16B364]" strokeWidth={3} aria-hidden />
-          </span>
-          <p className="text-[10px] font-semibold text-[#050A13]"><span className="text-[#0088FF]">10K+</span> happy drivers</p>
-        </div>
-      </motion.div>
+      {/* Floating mini chip (bottom-right) — CMS-driven, hidden when blank */}
+      {hasText(badge2Value) || hasText(badge2Label) ? (
+        <motion.div
+          initial={reduced ? false : { opacity: 0, x: 14, rotate: 5 }}
+          animate={reduced ? undefined : { opacity: 1, x: 0, rotate: 5 }}
+          transition={{ duration: 0.6, ease, delay: 0.6 }}
+          className="absolute bottom-[14%] right-[-6%] z-40 hidden sm:block lg:right-[-14%]"
+        >
+          <div className="flex items-center gap-2 rounded-full border border-white/80 bg-white px-3 py-2 shadow-[0_14px_36px_rgba(15,23,42,0.14)]">
+            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[rgba(22,179,100,0.12)]">
+              <Check className="h-3 w-3 text-[#16B364]" strokeWidth={3} aria-hidden />
+            </span>
+            <p className="text-[10px] font-semibold text-[#050A13] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
+              {hasText(badge2Value) ? <span className="text-[#0088FF]">{badge2Value} </span> : null}
+              {badge2Label}
+            </p>
+          </div>
+        </motion.div>
+      ) : null}
     </div>
   );
 }
@@ -242,7 +284,7 @@ function AboutHero({ hero }) {
               transition={{ duration: 0.75, ease, delay: 0.1 }}
               className="relative mt-16 flex min-h-[420px] items-center justify-center lg:mt-0 lg:min-h-[560px]"
             >
-              <AboutVisual slides={heroSlides} language={language} reduced={reduced} />
+              <AboutVisual slides={heroSlides} language={language} reduced={reduced} hero={hero} />
             </motion.div>
           ) : null}
         </div>
@@ -559,7 +601,9 @@ function WhatWeDo({ whatWeDo }) {
     <section className="bg-[#F4F8FF] py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid items-start gap-10 lg:grid-cols-[0.7fr_1.3fr] lg:gap-16">
-          <motion.div initial={reduced ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }} className="lg:sticky lg:top-24" dir={language === "ar" ? "rtl" : "ltr"}>
+          {/* Static column — no sticky: the client reported the pinned panel
+              "moving while scrolling", so the section now scrolls as one. */}
+          <motion.div initial={reduced ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }} dir={language === "ar" ? "rtl" : "ltr"}>
             {hasText(whatWeDo?.title) ? (
               <h2 className="mb-3 text-[clamp(2.2rem,3.5vw,3rem)] font-semibold leading-[1.06] tracking-[-0.05em] text-[#050A13] [overflow-wrap:anywhere]">
                 {t(whatWeDo, "title", language)}

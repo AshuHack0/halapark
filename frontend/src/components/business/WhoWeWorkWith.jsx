@@ -360,18 +360,30 @@ export default function WhoWeWorkWith() {
               className="absolute inset-0 bg-gradient-to-t from-[#050A13]/30 via-transparent to-transparent"
             />
 
-            {/* Animated Corner Accent */}
-            <motion.div
-              animate={{
-                boxShadow: [
-                  "0 0 20px rgba(0, 136, 255, 0.3)",
-                  "0 0 40px rgba(0, 136, 255, 0.5)",
-                  "0 0 20px rgba(0, 136, 255, 0.3)",
-                ],
-              }}
-              transition={{ duration: 3, repeat: Infinity }}
-              className="absolute top-4 right-4 w-20 h-20 border-2 border-[#0088FF]/30 rounded-[16px] pointer-events-none"
-            />
+            {/* Corner badge — shows the partner's uploaded icon (from the
+                admin "Icon" field). Hidden entirely when no icon is set, so
+                no empty box ever renders over the photo. */}
+            {activePartner.icon ? (
+              <motion.div
+                animate={{
+                  boxShadow: [
+                    "0 0 20px rgba(0, 136, 255, 0.3)",
+                    "0 0 40px rgba(0, 136, 255, 0.5)",
+                    "0 0 20px rgba(0, 136, 255, 0.3)",
+                  ],
+                }}
+                transition={{ duration: 3, repeat: Infinity }}
+                className="absolute top-4 right-4 flex h-20 w-20 items-center justify-center rounded-[16px] border-2 border-[#0088FF]/30 bg-white/85 p-3 backdrop-blur-sm pointer-events-none"
+              >
+                <Image
+                  src={activePartner.icon}
+                  alt=""
+                  width={56}
+                  height={56}
+                  className="h-full w-full object-contain"
+                />
+              </motion.div>
+            ) : null}
           </motion.div>
           ) : null}
         </motion.div>
