@@ -181,7 +181,12 @@ function CareersVisual({ hero, reduced }) {
         >
           <div className="flex items-center gap-2.5 rounded-2xl border border-white/80 bg-white px-3 py-2.5 shadow-[0_16px_40px_rgba(15,23,42,0.15)]">
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#0088FF] to-[#2563EB] text-white shadow-[0_4px_10px_rgba(0,136,255,0.35)]">
-              <Briefcase className="h-4.5 w-4.5" aria-hidden />
+              {hasText(badges?.hiringIconImage) ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={badges.hiringIconImage} alt="" className="h-5 w-5 object-contain" />
+              ) : (
+                <Briefcase className="h-4.5 w-4.5" aria-hidden />
+              )}
             </span>
             <div>
               <p className="text-[11px] font-semibold text-[#050A13] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>{hiringTitle}</p>
@@ -204,7 +209,12 @@ function CareersVisual({ hero, reduced }) {
           <div className="w-[150px] rounded-2xl border border-white/80 bg-white p-3 shadow-[0_16px_40px_rgba(15,23,42,0.15)]">
             {hasText(cultureTag) ? (
               <div className="flex items-center gap-1.5">
-                <Sparkles className="h-3.5 w-3.5 text-[#0088FF]" aria-hidden />
+                {hasText(badges?.cultureIconImage) ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={badges.cultureIconImage} alt="" className="h-3.5 w-3.5 object-contain" />
+                ) : (
+                  <Sparkles className="h-3.5 w-3.5 text-[#0088FF]" aria-hidden />
+                )}
                 <p className="text-[11px] font-semibold text-[#050A13] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>{cultureTag}</p>
               </div>
             ) : null}
@@ -252,9 +262,14 @@ function CareersHero({ hero }) {
             transition={{ duration: 0.65, ease }}
             dir={language === "ar" ? "rtl" : "ltr"}
           >
-            {hasText(title) ? (
-              <h1 className="max-w-[600px] text-[clamp(2.4rem,4.8vw,4.2rem)] font-semibold leading-[1.02] tracking-[-0.055em] text-[#050A13] [overflow-wrap:anywhere]">
+            {hasText(title) || hasText(t(hero, "titleGradient", language)) ? (
+              <h1 className="max-w-[600px] text-[clamp(2.4rem,4.8vw,4.2rem)] font-semibold leading-[1.06] tracking-[-0.055em] text-[#050A13] [overflow-wrap:anywhere]">
                 {title}
+                {hasText(t(hero, "titleGradient", language)) ? (
+                  <span className="block bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">
+                    {t(hero, "titleGradient", language)}
+                  </span>
+                ) : null}
               </h1>
             ) : null}
 
@@ -266,7 +281,7 @@ function CareersHero({ hero }) {
               <div className="mt-9 flex flex-wrap items-center gap-3">
                 {hasText(primaryCta) ? (
                   <Link
-                    href="#open-positions"
+                    href={(hero?.primaryCtaLink || "").trim() || "#open-positions"}
                     className="group inline-flex items-center gap-2.5 rounded-full bg-[#0088FF] px-7 py-3.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,136,255,0.32)] transition hover:brightness-110"
                   >
                     {primaryCta}
@@ -277,7 +292,7 @@ function CareersHero({ hero }) {
                 ) : null}
                 {hasText(secondaryCta) ? (
                   <Link
-                    href="/contact"
+                    href={(hero?.secondaryCtaLink || "").trim() || "/contact"}
                     className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-7 py-3.5 text-sm font-semibold text-slate-700 shadow-[0_2px_12px_rgba(6,6,22,0.07)] transition hover:border-[#0088FF]/50 hover:text-[#0088FF]"
                   >
                     {secondaryCta}
@@ -325,7 +340,7 @@ function BuildingSmarterMobility({ building }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.65, ease }}
           >
-            {hasText(title) ? (
+            {hasText(title) || hasText(t(building, "titleGradient", language)) ? (
               <h2 className="text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-[1.08] tracking-[-0.05em] text-[#050A13] [overflow-wrap:anywhere]">
                 {titleLines.map((line, i) => (
                   <span key={`${line}-${i}`}>
@@ -333,6 +348,11 @@ function BuildingSmarterMobility({ building }) {
                     {line}
                   </span>
                 ))}
+                {hasText(t(building, "titleGradient", language)) ? (
+                  <span className="block bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">
+                    {t(building, "titleGradient", language)}
+                  </span>
+                ) : null}
               </h2>
             ) : null}
             {paragraphs.length > 0 ? (
@@ -375,6 +395,11 @@ function OpportunitiesSection({ opportunities, header }) {
           >
             <h2 className="text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-[1.08] tracking-[-0.05em] text-[#050A13] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
               {heading}
+              {hasText(t(header, "headingGradient", language)) ? (
+                <span className="block bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">
+                  {t(header, "headingGradient", language)}
+                </span>
+              ) : null}
             </h2>
           </motion.div>
         ) : null}
@@ -604,7 +629,15 @@ function JobOpenings({ openPositions }) {
           ) : null}
 
           {posts.length > 0 ? (
-            <div className="mx-auto grid max-w-5xl gap-5 sm:grid-cols-2">
+            /* A single open position centers itself instead of hugging the
+               left column of the two-column grid. */
+            <div
+              className={
+                posts.length === 1
+                  ? "mx-auto grid max-w-xl gap-5"
+                  : "mx-auto grid max-w-5xl gap-5 sm:grid-cols-2"
+              }
+            >
               {posts.map((post, i) => (
                 <motion.article
                   key={`${post.title}-${i}`}
