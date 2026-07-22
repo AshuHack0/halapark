@@ -176,7 +176,9 @@ export default function WhoWeWorkWith() {
             <div
               ref={scrollRef}
               onScroll={checkScroll}
-              className="flex gap-3 overflow-x-auto scroll-smooth scrollbar-hide pb-3 px-2"
+              className={`flex gap-3 overflow-x-auto scroll-smooth scrollbar-hide pb-3 px-2 ${
+                hasOverflow ? "" : "justify-center"
+              }`}
             >
               {partners.map((partner, i) => (
                 <motion.button
@@ -201,9 +203,14 @@ export default function WhoWeWorkWith() {
               ))}
             </div>
 
-            {/* Gradient fade effect on sides */}
-            <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white to-transparent pointer-events-none" />
-            <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white to-transparent pointer-events-none" />
+            {/* Gradient fade effect on sides — only while the tabs overflow,
+                so a short tab row is never visually clipped. */}
+            {hasOverflow ? (
+              <>
+                <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white to-transparent pointer-events-none" />
+                <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white to-transparent pointer-events-none" />
+              </>
+            ) : null}
           </div>
 
           {/* Right Arrow — only shown when the tabs actually overflow */}
@@ -227,7 +234,9 @@ export default function WhoWeWorkWith() {
           initial={{ opacity: 0, x: direction === 1 ? 100 : -100 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, ease }}
-          className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center"
+          className={`grid grid-cols-1 gap-8 lg:gap-16 items-center ${
+            activePartner.image ? "lg:grid-cols-2" : ""
+          }`}
         >
           {/* Left: Title, Description & Benefits */}
           <motion.div
@@ -326,25 +335,22 @@ export default function WhoWeWorkWith() {
             )}
           </motion.div>
 
-          {/* Right: Image with Enhanced Effects */}
+          {/* Right: Image with Enhanced Effects — hidden entirely when the
+              partner has no image (no empty frame shell). */}
+          {activePartner.image ? (
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, ease, delay: 0.1 }}
             className="relative h-80 sm:h-96 lg:h-[480px] rounded-[32px] overflow-hidden shadow-[0_20px_80px_rgba(0,136,255,0.2)] border border-[#E7EAF0]"
           >
-            {activePartner.image ? (
-              <Image
-                src={activePartner.image}
-                alt={activePartner.title || ""}
-                fill
-                className="object-cover"
-                priority
-              />
-            ) : (
-              // No hardcoded fallback — neutral placeholder when a partner has no image.
-              <div className="absolute inset-0 bg-gradient-to-br from-[#EEF6FF] to-[#DCEBFF]" />
-            )}
+            <Image
+              src={activePartner.image}
+              alt={activePartner.title || ""}
+              fill
+              className="object-cover"
+              priority
+            />
 
             {/* Gradient Overlays */}
             <motion.div
@@ -367,6 +373,7 @@ export default function WhoWeWorkWith() {
               className="absolute top-4 right-4 w-20 h-20 border-2 border-[#0088FF]/30 rounded-[16px] pointer-events-none"
             />
           </motion.div>
+          ) : null}
         </motion.div>
 
         {/* Progress Indicator */}

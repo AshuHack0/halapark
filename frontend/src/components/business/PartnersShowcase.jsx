@@ -79,10 +79,11 @@ export default function PartnersShowcase() {
             className={image ? "" : "lg:col-span-2"}
           >
             {heading || t(showcase, "headingGradient", language) ? (
+              /* Heading on one line; the gradient part on its own second line. */
               <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight tracking-[-0.06em] text-[#050A13] mb-4 [overflow-wrap:anywhere]">
-                {heading}{" "}
+                <span className="block">{heading}</span>
                 {t(showcase, "headingGradient", language) ? (
-                  <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">
+                  <span className="block bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">
                     {t(showcase, "headingGradient", language)}
                   </span>
                 ) : null}
@@ -134,8 +135,12 @@ function PartnerCard({ p, language }) {
   return (
     <div className="flex w-[200px] shrink-0 items-center gap-3 rounded-[16px] border border-[#E7EAF0] bg-white px-4 py-3.5 shadow-sm hover:shadow-md transition">
       {p.logo ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={p.logo} alt={p.name || ""} className="h-10 w-10 shrink-0 rounded-[10px] object-contain" />
+        // Identical tile for every logo (fixed box + padding + neutral bg) so
+        // mixed-size uploads all display at consistent dimensions.
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-[10px] border border-[#EEF2F7] bg-[#F8FAFC] p-1">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={p.logo} alt={p.name || ""} className="h-full w-full object-contain" />
+        </span>
       ) : (
         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] text-[13px] font-bold text-white" style={{ background: p.color || "#0088FF" }}>
           {p.initials}
@@ -256,6 +261,7 @@ export function PartnerCTA() {
 
   const image = (cta.image || "").trim();
   const title = (t(cta, "title", language) || "").trim();
+  const titleGradient = (t(cta, "titleGradient", language) || "").trim();
   const description = (t(cta, "description", language) || "").trim();
   const label = (t(showcase, "ctaSectionLabel", language) || "").trim();
   const link = (showcase.ctaSectionLink || "").trim();
@@ -279,8 +285,15 @@ export function PartnerCTA() {
             </div>
           ) : null}
           <div className="relative z-10 flex flex-col items-center px-6 py-12 text-center sm:px-10 sm:py-14">
-            {title ? (
-              <h3 className="max-w-[580px] text-[clamp(1.6rem,3vw,2.4rem)] font-semibold leading-[1.1] tracking-[-0.04em] text-white [overflow-wrap:anywhere]">{title}</h3>
+            {title || titleGradient ? (
+              <h3 className="max-w-[580px] text-[clamp(1.6rem,3vw,2.4rem)] font-semibold leading-[1.15] tracking-[-0.04em] text-white [overflow-wrap:anywhere]">
+                {title}
+                {titleGradient ? (
+                  <span className="block bg-gradient-to-r from-[#3AADFF] to-[#0088FF] bg-clip-text text-transparent">
+                    {titleGradient}
+                  </span>
+                ) : null}
+              </h3>
             ) : null}
             {description ? (
               <RichText text={description} className="mx-auto mt-3 max-w-[500px] text-[0.88rem] leading-6 text-white/60 sm:text-[0.94rem] [overflow-wrap:anywhere] block" />

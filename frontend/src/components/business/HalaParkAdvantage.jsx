@@ -58,6 +58,8 @@ export default function HalaParkAdvantage() {
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {(advantages || []).map((item, i) => {
             const Icon = ICON_MAP[item.title] || Network;
+            // Admin-uploaded icon image overrides the built-in named icon.
+            const iconImage = (item.iconImage || "").trim();
             return (
               <motion.div
                 key={item.title}
@@ -68,7 +70,12 @@ export default function HalaParkAdvantage() {
                 className="group rounded-[22px] border border-[#E7EAF0] bg-white p-6 shadow-[0_4px_24px_rgba(6,6,22,0.06)] transition hover:-translate-y-1 hover:border-[rgba(0,136,255,0.2)] hover:shadow-[0_16px_40px_rgba(0,136,255,0.10)]"
               >
                 <div className="flex h-12 w-12 items-center justify-center rounded-[14px] bg-[#EEF6FF] transition duration-300 group-hover:bg-[#0088FF]">
-                  <Icon className="h-5 w-5 text-[#0088FF] transition duration-300 group-hover:text-white" strokeWidth={1.7} aria-hidden />
+                  {iconImage ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={iconImage} alt="" className="h-6 w-6 object-contain" />
+                  ) : (
+                    <Icon className="h-5 w-5 text-[#0088FF] transition duration-300 group-hover:text-white" strokeWidth={1.7} aria-hidden />
+                  )}
                 </div>
                 <h3 className="mt-5 text-[1rem] font-semibold leading-tight tracking-[-0.02em] text-[#050A13] sm:text-[1.05rem]">
                   {t(item, "title", language)}
