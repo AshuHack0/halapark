@@ -64,11 +64,15 @@ export default function FAQHeroSection() {
           <div className="relative flex min-h-[320px] w-full flex-col justify-center px-8 py-14 sm:px-12 md:min-h-[380px] lg:px-20">
             <div className="relative z-10 w-full max-w-xl">
               {title ? (
-                <h1 className="text-4xl font-semibold leading-[1.05] tracking-[-0.04em] text-white sm:text-5xl md:text-6xl [overflow-wrap:anywhere]">
-                  {firstPart}{" "}
-                  <span className="bg-gradient-to-r from-[#3AADFF] to-[#0088FF] bg-clip-text text-transparent">
-                    {secondPart}
-                  </span>
+                /* First part on one line; the gradient part on its own second
+                   line, matching the sitewide heading pattern. */
+                <h1 className="text-4xl font-semibold leading-[1.1] tracking-[-0.04em] text-white sm:text-5xl md:text-6xl [overflow-wrap:anywhere]">
+                  <span className="block">{firstPart}</span>
+                  {secondPart ? (
+                    <span className="block bg-gradient-to-r from-[#3AADFF] to-[#0088FF] bg-clip-text text-transparent">
+                      {secondPart}
+                    </span>
+                  ) : null}
                 </h1>
               ) : null}
               {description ? (
