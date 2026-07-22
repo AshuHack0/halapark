@@ -1703,21 +1703,28 @@ function PartnersSection({ partners }) {
         </div>
       </div>
 
-      {/* ── Bottom CTA line ── */}
-      <motion.div
-        initial={reduced ? false : { opacity: 0, y: 16 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.5 }}
-        transition={{ duration: 0.55, ease, delay: 0.2 }}
-        className="relative z-10 mt-12 text-center"
-      >
-        <p className="text-[0.82rem] text-slate-400">
-          Want to become a partner?{" "}
-          <Link href="/contact" className="font-semibold text-[#0088FF] underline-offset-2 hover:underline">
-            Get in touch →
-          </Link>
-        </p>
-      </motion.div>
+      {/* ── Bottom CTA line — CMS-driven (hidden when cleared in admin) ── */}
+      {(t(partners, "ctaText", language) || "").trim() || (t(partners, "ctaLabel", language) || "").trim() ? (
+        <motion.div
+          initial={reduced ? false : { opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.5 }}
+          transition={{ duration: 0.55, ease, delay: 0.2 }}
+          className="relative z-10 mt-12 text-center"
+        >
+          <p className="text-[0.82rem] text-slate-400 [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
+            {t(partners, "ctaText", language)}{" "}
+            {(t(partners, "ctaLabel", language) || "").trim() ? (
+              <Link
+                href={(partners?.ctaLink || "").trim() || "/contact"}
+                className="font-semibold text-[#0088FF] underline-offset-2 hover:underline"
+              >
+                {t(partners, "ctaLabel", language)} <span aria-hidden className="inline-block rtl:rotate-180">→</span>
+              </Link>
+            ) : null}
+          </p>
+        </motion.div>
+      ) : null}
 
       <style>{`
         .partners-row1 { animation: partners-left 36s linear infinite; }
