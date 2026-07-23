@@ -188,9 +188,11 @@ export default function Navbar() {
 
     const enGroups = Array.isArray(sol?.groups) ? [...sol.groups] : [];
     const arGroups = Array.isArray(sol?.ar?.groups) ? sol.ar.groups : [];
+    // Trim-insensitive: a stray space in either name must not split a group.
+    const norm = (g) => (g || "").trim();
     const order = [...enGroups];
     cards.forEach((c) => {
-      if (c.group && !order.includes(c.group)) order.push(c.group);
+      if (norm(c.group) && !order.some((g) => norm(g) === norm(c.group))) order.push(c.group);
     });
 
     // Translate a group name: in AR, use the parallel ar.groups entry (by the
@@ -210,12 +212,12 @@ export default function Navbar() {
       .map((g) => ({
         group: groupLabel(g),
         links: cards
-          .filter((c) => (c.group || "") === g)
+          .filter((c) => norm(c.group) === norm(g))
           .map((c) => ({ href: `/solutions/${c.slug}`, label: cardLabel(c) })),
       }))
       .filter((g) => g.links.length > 0);
 
-    const ungrouped = cards.filter((c) => !c.group);
+    const ungrouped = cards.filter((c) => !norm(c.group));
     if (ungrouped.length > 0) {
       grouped.push({
         group: language === "ar" ? "الحلول" : "Solutions",

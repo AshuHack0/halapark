@@ -580,16 +580,20 @@ function StatsSection() {
   // group so they still render and remain clickable. Only cards with a real slug
   // count (cleared/blank cards never render).
   const validCards = solutionItems.filter((c) => c && c.slug);
+  // Trim-insensitive matching so a stray space typed in either the category
+  // name or the card's group can never silently ungroup a card.
   const categories = Array.isArray(groupOrder) ? groupOrder.filter(Boolean) : [];
+  const catKeys = categories.map((g) => (g || "").trim());
+  const cardGroup = (c) => (c.group || "").trim();
   const grouped = categories
-    .map((g) => ({
+    .map((g, gi) => ({
       group: g,
-      items: validCards.filter((c) => (c.group || "") === g),
+      items: validCards.filter((c) => cardGroup(c) === catKeys[gi]),
     }))
     .filter((g) => g.items.length > 0);
   // Anything not matched by a category (blank/orphaned group) → generic bucket.
   const ungroupedCards = validCards.filter(
-    (c) => !categories.includes(c.group || ""),
+    (c) => !catKeys.includes(cardGroup(c)),
   );
   if (ungroupedCards.length > 0) {
     grouped.push({
