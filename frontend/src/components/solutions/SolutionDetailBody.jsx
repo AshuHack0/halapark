@@ -81,10 +81,18 @@ export default function SolutionDetailBody({ detail, heroImage, relatedList = []
   const relatedHeading = tx("relatedHeading") || (isAr ? "" : "Other Related Services");
   // Resolve related slugs → { slug, label, image } using the live details list
   // (label) and the cards list (canonical image, like the hero).
+  // Only related items that are LIVE solutions (a current card exists for the
+  // slug) render — orphaned/seeded detail pages never appear as related links.
+  const liveSlugs = new Set(
+    (Array.isArray(relatedCards) ? relatedCards : [])
+      .map((c) => (c?.slug || "").trim())
+      .filter(Boolean),
+  );
   const related = (Array.isArray(detail.relatedServices) ? detail.relatedServices : [])
     .map((slug) => {
       const match = relatedList.find((d) => d.slug === slug);
       if (!match) return null;
+      if (liveSlugs.size > 0 && !liveSlugs.has((slug || "").trim())) return null;
       // A related item is a NAVIGATION LINK, not prose — so it must never vanish
       // just because an Arabic title is missing. Prefer the Arabic title in AR,
       // then fall back to the English title / slug so every related service the

@@ -599,6 +599,9 @@ function StatsSection() {
     grouped.push({
       group: language === "ar" ? "الحلول" : "Solutions",
       items: ungroupedCards,
+      // With no categories defined at all, the fallback bucket renders as a
+      // plain grid — no invented "Solutions" category heading.
+      hideHeading: catKeys.length === 0,
     });
   }
 
@@ -647,7 +650,9 @@ function StatsSection() {
           <div className="space-y-14">
             {grouped.map((g) => (
               <div key={g.group}>
-                {/* Category heading */}
+                {/* Category heading (omitted for the fallback bucket when the
+                    admin has no categories at all) */}
+                {!g.hideHeading ? (
                 <div className="mb-6 flex items-center gap-4">
                   <h3 className="text-[clamp(1.3rem,2.4vw,1.9rem)] font-semibold tracking-[-0.03em] text-[#050A13] [overflow-wrap:anywhere]">
                     {g.group}
@@ -657,6 +662,7 @@ function StatsSection() {
                     {g.items.length}
                   </span>
                 </div>
+                ) : null}
                 <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
                   {g.items.map((card, i) => (
                     <SolutionCard key={card.slug || card.title} card={card} i={i} reduced={reduced} detailSlugs={detailSlugs} />
