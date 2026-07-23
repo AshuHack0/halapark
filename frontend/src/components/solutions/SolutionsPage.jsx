@@ -1283,10 +1283,23 @@ function FeatureHighlightsSection() {
                     {steps.map((step, i) => {
                       const stepTitle = t(step, "title", language);
                       const stepDesc = t(step, "description", language);
+                      const stepLabel = (step.step || "").trim() || String(i + 1).padStart(2, "0");
+                      // Short values ("01") render as the big number; longer
+                      // text labels get a FIXED-width column so the right-hand
+                      // text starts at the same position on every row.
+                      const numeric = stepLabel.length <= 4;
                       return (
-                        <motion.div key={`${stepTitle}-${i}`} initial={reduced ? false : { opacity: 0, x: -16 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, ease, delay: i * 0.1 }} className="flex gap-5 rounded-2xl border border-slate-100 bg-[#F4F8FF] p-5">
-                          <span className="text-[1.6rem] font-bold leading-none tracking-[-0.04em] text-[#0088FF]/30">{step.step || String(i + 1).padStart(2, "0")}</span>
-                          <div>
+                        <motion.div key={`${stepTitle}-${i}`} initial={reduced ? false : { opacity: 0, x: -16 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, ease, delay: i * 0.1 }} className="flex items-start gap-5 rounded-2xl border border-slate-100 bg-[#F4F8FF] p-5">
+                          <span
+                            className={
+                              numeric
+                                ? "shrink-0 pt-0.5 text-[1.6rem] font-bold leading-none tracking-[-0.04em] text-[#0088FF]"
+                                : "w-32 shrink-0 pt-0.5 text-[1rem] font-bold leading-snug tracking-[-0.02em] text-[#0078E0] [overflow-wrap:anywhere] sm:w-40"
+                            }
+                          >
+                            {stepLabel}
+                          </span>
+                          <div className="min-w-0 flex-1">
                             {stepTitle ? <h3 className="font-semibold text-[#050A13] [overflow-wrap:anywhere]">{stepTitle}</h3> : null}
                             {stepDesc ? <RichText text={stepDesc} className="mt-1 block text-[0.88rem] leading-6 text-slate-600 [overflow-wrap:anywhere]" /> : null}
                           </div>
@@ -1304,7 +1317,11 @@ function FeatureHighlightsSection() {
                     <div className="absolute inset-0 bg-gradient-to-tr from-[#06111f]/90 via-[#06111f]/70 to-[#06111f]/40" />
                   </div>
                 ) : null}
+                {/* Center overlay (pin + brand + caption) — hidden entirely
+                    when all its text fields are cleared, so an uploaded poster
+                    with its own artwork/text isn't overprinted. */}
                 <div dir={language === "ar" ? "rtl" : "ltr"} className="relative z-10 flex h-[280px] items-center justify-center sm:h-[320px]">
+                  {depBrand || depPanelTitle || depPanelAccent ? (
                   <div className="text-center">
                     <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-[18px] bg-[#0088FF] shadow-[0_0_40px_rgba(0,136,255,0.45)]">
                       <Image src="/Layer_1.svg" alt={depBrand || "HalaPark"} width={32} height={40} className="h-9 w-auto" />
@@ -1320,6 +1337,7 @@ function FeatureHighlightsSection() {
                       </p>
                     ) : null}
                   </div>
+                  ) : null}
                 </div>
               </motion.div>
             </div>
@@ -1348,7 +1366,12 @@ function WhyHalaparkSection() {
   if (why?.enabled === false) return null;
   if (!why) return null;
 
-  const points = Array.isArray(why.points) ? why.points : [];
+  // Points — strict Arabic via a parallel `ar.points` array by index; blank
+  // entries in the current language are hidden.
+  const points = (Array.isArray(why.points) ? why.points : [])
+    .map((pt, i) => (language === "ar" ? why.ar?.points?.[i] ?? "" : pt ?? ""))
+    .map((s) => (typeof s === "string" ? s.trim() : ""))
+    .filter((s) => s !== "");
 
   const heading = t(why, "heading", language) || "";
   const gradient = t(why, "headingGradient", language)?.trim() || "";
@@ -1390,7 +1413,7 @@ function WhyHalaparkSection() {
                   <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#0088FF]">
                     <Check className="h-3.5 w-3.5 text-white" strokeWidth={3} aria-hidden />
                   </span>
-                  <span className="text-[0.94rem] font-medium text-[#050A13]">{point}</span>
+                  <span className="text-[0.94rem] font-medium text-[#050A13] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>{point}</span>
                 </motion.li>
               ))}
             </ul>

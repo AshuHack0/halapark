@@ -34,7 +34,12 @@ function ContactDetailItem({ detail }) {
     <li className="rounded-[28px] border border-slate-200 bg-white/90 p-5 shadow-[0_18px_50px_rgba(15,23,42,0.06)]">
       <div className="flex items-start gap-4">
         <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[rgba(0,136,255,0.08)] text-[#0088FF]">
-          <Icon className="h-5 w-5" />
+          {detail.iconImage ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={detail.iconImage} alt="" className="h-6 w-6 object-contain" />
+          ) : (
+            <Icon className="h-5 w-5" />
+          )}
         </div>
 
         <div className="min-w-0">
@@ -67,6 +72,8 @@ export default function ContactInfoPanel({ details }) {
       description: item.description,
       descriptionAr: item.ar?.description,
       icon: ICON_BY_KEY[item.key] || ICON_BY_KEY.address,
+      // Admin-uploaded icon image overrides the built-in key-based icon.
+      iconImage: (item.iconImage || "").trim(),
     }));
 
   const eyebrow = t(details, "eyebrow", language);
