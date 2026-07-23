@@ -138,7 +138,7 @@ function SolutionsControlPanel({ reduced, showcase, language }) {
         initial={reduced ? false : { opacity: 0, y: -14, rotate: -5 }}
         animate={reduced ? undefined : { opacity: 1, y: 0, rotate: -5 }}
         transition={{ duration: 0.6, ease, delay: 0.55 }}
-        className="absolute left-[-8%] rtl:left-auto rtl:right-[-8%] top-[6%] z-40 hidden sm:block lg:left-[-16%] rtl:lg:left-auto rtl:lg:right-[-16%]"
+        className="pointer-events-none absolute left-[-8%] rtl:left-auto rtl:right-[-8%] top-[6%] z-40 hidden sm:block lg:left-[-16%] rtl:lg:left-auto rtl:lg:right-[-16%]"
       >
         <div className="flex items-center gap-2.5 rounded-2xl border border-white/80 bg-white px-3 py-2.5 shadow-[0_16px_40px_rgba(15,23,42,0.15)]">
           <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#0088FF] to-[#2563EB] text-white">
@@ -156,7 +156,7 @@ function SolutionsControlPanel({ reduced, showcase, language }) {
         initial={reduced ? false : { opacity: 0, x: 16, rotate: 5 }}
         animate={reduced ? undefined : { opacity: 1, x: 0, rotate: 5 }}
         transition={{ duration: 0.6, ease, delay: 0.65 }}
-        className="absolute bottom-[6%] right-[-8%] rtl:right-auto rtl:left-[-8%] z-40 hidden sm:block lg:right-[-14%] rtl:lg:right-auto rtl:lg:left-[-14%]"
+        className="pointer-events-none absolute bottom-[6%] right-[-8%] rtl:right-auto rtl:left-[-8%] z-40 hidden sm:block lg:right-[-14%] rtl:lg:right-auto rtl:lg:left-[-14%]"
       >
         <div className="w-[150px] rounded-2xl border border-white/80 bg-white p-3 shadow-[0_16px_40px_rgba(15,23,42,0.15)]">
           <div className="flex items-center gap-1.5">
@@ -261,18 +261,35 @@ function NewHero() {
                   </span>
                 </Link>
               ) : null}
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  document
-                    .getElementById("solutions-grid")
-                    ?.scrollIntoView({ behavior: "smooth", block: "start" });
-                }}
-                className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-7 py-3.5 text-sm font-semibold text-slate-700 shadow-[0_2px_12px_rgba(6,6,22,0.07)] transition hover:border-[#0088FF]/50 hover:text-[#0088FF]"
-              >
-                Explore Our Parking Solutions
-              </button>
+              {/* Secondary button — label/link from admin. With a link set it
+                  redirects; otherwise it scrolls to the solutions grid. */}
+              {(() => {
+                const label =
+                  (t(hero, "secondaryCtaLabel", language) || "").trim() ||
+                  (language === "ar" ? "" : "Explore Our Parking Solutions");
+                if (!label) return null;
+                const link = (hero.secondaryCtaLink || "").trim();
+                const cls =
+                  "inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-7 py-3.5 text-sm font-semibold text-slate-700 shadow-[0_2px_12px_rgba(6,6,22,0.07)] transition hover:border-[#0088FF]/50 hover:text-[#0088FF]";
+                return link ? (
+                  <Link href={link} className={cls}>
+                    {label}
+                  </Link>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      document
+                        .getElementById("solutions-grid")
+                        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+                    }}
+                    className={cls}
+                  >
+                    {label}
+                  </button>
+                );
+              })()}
             </div>
           </motion.div>
 
@@ -830,15 +847,17 @@ function TrustedBySection() {
     .map((s) => (typeof s === "string" ? s.trim() : ""))
     .filter((s) => s !== "");
 
-  // Whole section hides when there is nothing at all to show.
-  if (trust?.enabled === false) return null;
-  if (resolved && !heading && !gradient && !subtitle && keyPoints.length === 0 && !image) {
-    return null;
-  }
+  // The Smart Cities (trust) block and the Seamless Integrations block hide
+  // INDEPENDENTLY — disabling/clearing one must never take the other down.
+  const trustVisible =
+    trust?.enabled !== false &&
+    Boolean(heading || gradient || subtitle || keyPoints.length > 0 || image);
+  if (resolved && !trustVisible && !smHasContent) return null;
 
   return (
     <>
       {/* Built for Smart Cities */}
+      {trustVisible ? (
       <section className="bg-[#F4F8FF] py-16 sm:py-20 lg:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
@@ -951,6 +970,7 @@ function TrustedBySection() {
           </div>
         </div>
       </section>
+      ) : null}
 
       {/* Seamless Integrations (CMS-driven — hidden when nothing to show) */}
       {resolved && smHasContent ? (
@@ -1147,8 +1167,11 @@ function FeatureHighlightsSection() {
   // Whole block hides only when BOTH sub-sections are empty/off.
   if (resolved && featuresEmpty && deploymentEmpty) return null;
 
-  // Duplicate the industries so the marquee loops seamlessly.
-  const marquee = industries.length > 0 ? [...industries, ...industries] : [];
+  // The marquee needs the list doubled to loop seamlessly — but only when
+  // there are enough items to fill the row. With just a few, doubling shows
+  // visible duplicates (2 entered → 4 on screen), so render them statically.
+  const industriesLoop = industries.length >= 5;
+  const marquee = industriesLoop ? [...industries, ...industries] : industries;
 
   return (
     <>
@@ -1165,13 +1188,11 @@ function FeatureHighlightsSection() {
             {featHeading || featGradient || featSubtitle ? (
               <div dir={language === "ar" ? "rtl" : "ltr"} className="mx-auto mb-12 max-w-4xl text-center">
                 {featHeading || featGradient ? (
-                  <h2 className="text-[clamp(3rem,5.5vw,5rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-white [overflow-wrap:anywhere]">
-                    {featHeading}
+                  /* Heading on one line; gradient part on its own second line. */
+                  <h2 className="text-[clamp(3rem,5.5vw,5rem)] font-semibold leading-[1.08] tracking-[-0.06em] text-white [overflow-wrap:anywhere]">
+                    <span className="block">{featHeading}</span>
                     {featGradient ? (
-                      <>
-                        {featHeading ? " " : null}
-                        <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">{featGradient}</span>
-                      </>
+                      <span className="block bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">{featGradient}</span>
                     ) : null}
                   </h2>
                 ) : null}
@@ -1185,7 +1206,11 @@ function FeatureHighlightsSection() {
 
             {industries.length > 0 ? (
               <div
-                className="w-full overflow-x-hidden [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)] [-webkit-mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]"
+                className={`w-full overflow-x-hidden ${
+                  industriesLoop
+                    ? "[mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)] [-webkit-mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]"
+                    : ""
+                }`}
                 aria-label="High-demand environments, scrolling"
               >
                 <style>{`
@@ -1197,7 +1222,7 @@ function FeatureHighlightsSection() {
                   .industries-marquee:hover { animation-play-state: paused; }
                   @media (prefers-reduced-motion: reduce) { .industries-marquee { animation: none; } }
                 `}</style>
-                <div className="flex w-max gap-3 industries-marquee sm:gap-4">
+                <div className={`flex gap-3 sm:gap-4 ${industriesLoop ? "w-max industries-marquee" : "w-full flex-wrap justify-center"}`}>
                   {marquee.map((item, i) => {
                     const iconImage =
                       typeof item.raw?.iconImage === "string" ? item.raw.iconImage.trim() : "";
