@@ -588,46 +588,11 @@ export default function Navbar() {
 
         {/* Mobile Dropdown */}
         <div
-          className={`lg:hidden overflow-hidden ${
-            menuOpen ? "max-h-[80vh] opacity-100" : "max-h-0 opacity-0"
+          className={`lg:hidden overflow-hidden transition-[max-height,opacity] duration-300 ease-out ${
+            menuOpen ? "max-h-[85dvh] opacity-100" : "max-h-0 opacity-0"
           }`}
         >
-          <div className="bg-white border-t border-gray-100 px-4 pb-4 pt-2 space-y-1">
-            <div className="flex items-center justify-between rounded-lg border border-[#CFE2FA] bg-[rgba(0,136,255,0.04)] px-3 py-2.5">
-              <span className="text-sm font-medium text-slate-700">{copy.language}</span>
-              <div className="inline-flex items-center rounded-full border border-[#CFE2FA] bg-white p-1">
-                <button
-                  type="button"
-                  onClick={() => handleLanguageChange("en")}
-                  className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
-                    language === "en"
-                      ? "bg-[#0088FF] text-white shadow-[0_8px_18px_rgba(0,136,255,0.28)]"
-                      : "text-slate-700 hover:text-[#0078E0]"
-                  }`}
-                >
-                  EN
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleLanguageChange("ar")}
-                  className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
-                    language === "ar"
-                      ? "bg-[#0088FF] text-white shadow-[0_8px_18px_rgba(0,136,255,0.28)]"
-                      : "text-slate-700 hover:text-[#0078E0]"
-                  }`}
-                >
-                  AR
-                </button>
-              </div>
-            </div>
-            <button
-              type="button"
-              onClick={() => { setMenuOpen(false); setSearchOpen(true); }}
-              className="w-full flex items-center gap-2 px-3 py-3 text-[1.03rem] font-medium text-gray-700 hover:text-[#0088FF] hover:bg-[rgba(0,136,255,0.08)] rounded-lg"
-            >
-              <SearchIcon />
-              {copy.search}
-            </button>
+          <div className="max-h-[85dvh] space-y-1 overflow-y-auto overscroll-contain rounded-b-[20px] border-t border-gray-100 bg-white px-4 pb-6 pt-3 shadow-[0_28px_48px_rgba(15,23,42,0.14)]">
             {navLinks.map((link) => {
               const isActive = isLinkActive(link.href);
 
@@ -647,13 +612,20 @@ export default function Navbar() {
                     <button
                       type="button"
                       onClick={() => setMobileServicesOpen((v) => !v)}
-                      className={`flex w-full items-center justify-between rounded-lg px-3 py-3 text-[1.03rem] font-medium transition ${
+                      className={`flex w-full items-center justify-between rounded-xl px-3.5 py-3 text-[1rem] font-medium transition ${
                         isActive || mobileServicesOpen
-                          ? "bg-[rgba(0,136,255,0.12)] text-[#0078E0]"
-                          : "text-gray-700 hover:text-[#0088FF] hover:bg-[rgba(0,136,255,0.08)]"
+                          ? "bg-[rgba(0,136,255,0.1)] text-[#0078E0]"
+                          : "text-gray-700 hover:text-[#0088FF] hover:bg-[rgba(0,136,255,0.06)]"
                       }`}
                     >
-                      <span>{copy.nav[link.key]}</span>
+                      <span className="flex items-center gap-3">
+                        <span
+                          className={`h-1.5 w-1.5 shrink-0 rounded-full transition ${
+                            isActive || mobileServicesOpen ? "bg-[#0088FF]" : "bg-slate-200"
+                          }`}
+                        />
+                        {copy.nav[link.key]}
+                      </span>
                       <ChevronDownIcon open={mobileServicesOpen} />
                     </button>
                     <div
@@ -743,24 +715,72 @@ export default function Navbar() {
                   key={link.key}
                   href={resolveLinkHref(link.href)}
                   onClick={() => setMenuOpen(false)}
-                  className={`flex items-center rounded-lg px-3 py-3 text-[1.03rem] font-medium transition ${
+                  className={`group/mrow flex items-center justify-between rounded-xl px-3.5 py-3 text-[1rem] font-medium transition ${
                     isActive
-                      ? "bg-[rgba(0,136,255,0.12)] text-[#0078E0]"
-                      : "text-gray-700 hover:text-[#0088FF] hover:bg-[rgba(0,136,255,0.08)]"
+                      ? "bg-[rgba(0,136,255,0.1)] text-[#0078E0]"
+                      : "text-gray-700 hover:text-[#0088FF] hover:bg-[rgba(0,136,255,0.06)]"
                   }`}
                 >
-                  {copy.nav[link.key]}
+                  <span className="flex items-center gap-3">
+                    {/* Active accent dot keeps the current page obvious */}
+                    <span
+                      className={`h-1.5 w-1.5 shrink-0 rounded-full transition ${
+                        isActive ? "bg-[#0088FF]" : "bg-slate-200 group-hover/mrow:bg-[#0088FF]/50"
+                      }`}
+                    />
+                    {copy.nav[link.key]}
+                  </span>
+                  <span className="shrink-0 text-slate-300 transition group-hover/mrow:text-[#0088FF] rtl:rotate-180">
+                    <ArrowRightIcon />
+                  </span>
                 </Link>
               );
             })}
 
-            {/* Get In Touch — also available inside the opened menu */}
+            {/* Utilities: search + language, tucked below the nav links */}
+            <div className="!mt-3 flex items-center gap-2 border-t border-slate-100 pt-3">
+              <button
+                type="button"
+                onClick={() => { setMenuOpen(false); setSearchOpen(true); }}
+                className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-[#0088FF]/40 hover:text-[#0088FF]"
+              >
+                <SearchIcon />
+                {copy.search}
+              </button>
+              <div className="inline-flex items-center rounded-xl border border-slate-200 bg-slate-50 p-1">
+                <button
+                  type="button"
+                  onClick={() => handleLanguageChange("en")}
+                  className={`rounded-lg px-3.5 py-1.5 text-sm font-semibold transition ${
+                    language === "en"
+                      ? "bg-[#0088FF] text-white shadow-[0_6px_14px_rgba(0,136,255,0.28)]"
+                      : "text-slate-600 hover:text-[#0078E0]"
+                  }`}
+                >
+                  EN
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleLanguageChange("ar")}
+                  className={`rounded-lg px-3.5 py-1.5 text-sm font-semibold transition ${
+                    language === "ar"
+                      ? "bg-[#0088FF] text-white shadow-[0_6px_14px_rgba(0,136,255,0.28)]"
+                      : "text-slate-600 hover:text-[#0078E0]"
+                  }`}
+                >
+                  AR
+                </button>
+              </div>
+            </div>
+
+            {/* Get In Touch — primary action pinned at the bottom */}
             <Link
               href="/contact"
               onClick={() => setMenuOpen(false)}
-              className="mt-2 flex items-center justify-center rounded-full bg-[#0088FF] px-5 py-3 text-[1.03rem] font-semibold text-white shadow-sm transition hover:brightness-95"
+              className="!mt-3 flex items-center justify-center gap-2 rounded-xl bg-[#0088FF] px-5 py-3.5 text-[1rem] font-semibold text-white shadow-[0_10px_24px_rgba(0,136,255,0.3)] transition hover:brightness-95 active:scale-[0.99]"
             >
               {copy.cta}
+              <span className="rtl:rotate-180"><ArrowRightIcon /></span>
             </Link>
           </div>
         </div>
