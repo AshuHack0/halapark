@@ -753,6 +753,15 @@ export default function Navbar() {
                 </Link>
               );
             })}
+
+            {/* Get In Touch — also available inside the opened menu */}
+            <Link
+              href="/contact"
+              onClick={() => setMenuOpen(false)}
+              className="mt-2 flex items-center justify-center rounded-full bg-[#0088FF] px-5 py-3 text-[1.03rem] font-semibold text-white shadow-sm transition hover:brightness-95"
+            >
+              {copy.cta}
+            </Link>
           </div>
         </div>
       </nav>

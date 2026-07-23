@@ -186,7 +186,13 @@ export default function ContactFormPanel({ form }) {
     const { name, value } = event.target;
     setFormError("");
     setIsSubmitted(false);
-    setFormData((current) => ({ ...current, [name]: value }));
+    // Phone: digits, +, spaces, hyphens, parentheses only — letters are
+    // rejected as they're typed. A "+" is kept only at the very start.
+    const next =
+      name === "phone"
+        ? value.replace(/[^\d+\s\-().]/g, "").replace(/(?!^)\+/g, "")
+        : value;
+    setFormData((current) => ({ ...current, [name]: next }));
   };
 
   const handleFilesSelected = async (event) => {
