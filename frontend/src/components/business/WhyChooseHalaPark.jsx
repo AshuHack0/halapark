@@ -139,7 +139,7 @@ export default function WhyChooseHalaPark() {
           <div
             ref={scrollRef}
             onScroll={checkScroll}
-            className="flex gap-5 overflow-x-auto scroll-smooth scrollbar-hide pb-4"
+            className="flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-smooth scrollbar-hide pb-4"
           >
             {validReasons.map((item, i) => {
               // Left panel: an uploaded image if present, else a gradient built
@@ -156,15 +156,19 @@ export default function WhyChooseHalaPark() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.1 }}
                 transition={{ duration: 0.5, ease, delay: i * 0.08 }}
-                className="flex-shrink-0 w-full sm:w-[500px] lg:w-[550px] rounded-[24px] overflow-hidden bg-white shadow-[0_4px_24px_rgba(6,6,22,0.06)] hover:shadow-[0_16px_40px_rgba(0,136,255,0.10)] transition"
+                // Exact per-breakpoint widths (1 card on phones, 2 from tablet
+                // up) + snap alignment, so swipes/arrows always settle on whole
+                // cards — nothing renders half-cropped at the edges.
+                className="flex-shrink-0 snap-center w-full md:w-[calc(50%-10px)] rounded-[24px] overflow-hidden bg-white shadow-[0_4px_24px_rgba(6,6,22,0.06)] hover:shadow-[0_16px_40px_rgba(0,136,255,0.10)] transition"
               >
                 {/* Card Layout: Image Left + Text Right. min-height (not fixed
                     height) so long descriptions grow the card instead of being
                     clipped at the bottom on narrow screens. */}
-                <div className="flex min-h-[20rem]">
+                {/* Stacked (image over text) on phones; side-by-side from sm up. */}
+                <div className="flex flex-col sm:flex-row sm:min-h-[20rem]">
                   {/* Left: uploaded image OR color gradient */}
                   <div
-                    className="w-2/5 flex items-center justify-center relative overflow-hidden"
+                    className="relative flex h-44 w-full shrink-0 items-center justify-center overflow-hidden sm:h-auto sm:w-2/5"
                     style={img ? undefined : { background: `linear-gradient(135deg, ${from}, ${to})` }}
                   >
                     {img ? (
@@ -188,7 +192,7 @@ export default function WhyChooseHalaPark() {
                   </div>
 
                   {/* Right: Text Content */}
-                  <div className="w-3/5 p-6 sm:p-8 flex flex-col justify-between">
+                  <div className="w-full sm:w-3/5 p-6 sm:p-8 flex flex-col justify-between">
                     <div>
                       <h3 className="text-xl font-semibold text-[#050A13] mb-3 [overflow-wrap:anywhere]">
                         {t(item, "title", language)}
