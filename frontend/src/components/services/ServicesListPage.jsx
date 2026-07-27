@@ -350,7 +350,7 @@ async function fetchAttachmentSignature() {
   }
 }
 
-function QuoteModal({ isOpen, onClose, quoteForm }) {
+function QuoteModal({ isOpen, onClose, quoteForm, services }) {
   const { language } = useLanguage();
   const [form, setForm] = useState(BLANK_FORM);
   const [done, setDone] = useState(false);
@@ -374,7 +374,16 @@ function QuoteModal({ isOpen, onClose, quoteForm }) {
   const qSuccessTitle = t(quoteForm, "successTitle", language) || (language === "ar" ? "تم استلام الطلب!" : "Request Received!");
   const qSuccessMessage = t(quoteForm, "successMessage", language) || (language === "ar" ? "سيراجع فريقنا طلبك ويتواصل معك خلال 24 ساعة." : "Our team will review your request and get back to you within 24 hours.");
 
-  const filteredServices = serviceNames.filter((s) =>
+  // Service options come from the backend services list (the same services the
+  // admin manages on this page) — language-aware. The static list is only a
+  // fallback while the CMS response hasn't arrived yet.
+  const cmsServiceNames = Array.isArray(services)
+    ? services
+        .map((s) => ((language === "ar" ? s?.ar?.name || s?.name : s?.name) || "").trim())
+        .filter(Boolean)
+    : null;
+  const serviceOptions = cmsServiceNames ?? serviceNames;
+  const filteredServices = serviceOptions.filter((s) =>
     s.toLowerCase().includes(serviceSearch.toLowerCase())
   );
 
@@ -602,7 +611,9 @@ function QuoteModal({ isOpen, onClose, quoteForm }) {
                             autoFocus
                             className="w-full rounded-t-lg border-b border-slate-200 px-3 py-2 text-sm outline-none focus:ring-0 sm:px-4 sm:py-2.5"
                           />
-                          <ul className="max-h-48 overflow-y-auto">
+                          {/* data-lenis-prevent + overscroll-contain: wheel/touch
+                              over the list scrolls the LIST, not the page. */}
+                          <ul data-lenis-prevent className="max-h-48 overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch]">
                             {filteredServices.length === 0 ? (
                               <li className="px-3 py-2 text-sm text-slate-400 sm:px-4">No services found</li>
                             ) : (
@@ -1941,7 +1952,7 @@ export default function ServicesListPage() {
   return (
     <>
       <ServiceModal service={selectedService} onClose={() => setSelectedService(null)} />
-      <QuoteModal   isOpen={quoteOpen}        onClose={() => setQuoteOpen(false)} quoteForm={cms?.quoteForm} />
+      <QuoteModal   isOpen={quoteOpen}        onClose={() => setQuoteOpen(false)} quoteForm={cms?.quoteForm} services={cms?.services} />
 
       <main>
         {/* OLD hero (dark, mirrored the home page — client disliked it):
