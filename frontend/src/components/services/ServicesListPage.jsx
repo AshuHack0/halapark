@@ -1628,13 +1628,16 @@ function PartnersSection({ partners }) {
   // CMS-only partner list — no hardcoded fallback. A partner counts only when it
   // has a logo or a name, so cleared rows don't render ghost cards.
   const cmsList = Array.isArray(partners?.partners) ? partners.partners.filter((p) => p && (p.name || p.logo)) : [];
+  // The two-row marquee needs the lists doubled (and row2 backfilled) to loop
+  // seamlessly — but with only a few partners that shows visible duplicates
+  // (1 added → several on screen). Below the threshold, render each partner
+  // exactly ONCE in a single static centered row.
+  const marquee = cmsList.length >= 5;
   const mid = Math.ceil(cmsList.length / 2);
-  const base1 = cmsList.slice(0, mid);
-  // Second marquee row: the remainder, or a copy of the first when there's only
-  // enough for one row (keeps the two-row marquee visually balanced).
-  const base2 = cmsList.slice(mid).length > 0 ? cmsList.slice(mid) : base1;
-  const row1 = [...base1, ...base1];
-  const row2 = [...base2, ...base2];
+  const base1 = marquee ? cmsList.slice(0, mid) : cmsList;
+  const base2 = marquee ? (cmsList.slice(mid).length > 0 ? cmsList.slice(mid) : base1) : [];
+  const row1 = marquee ? [...base1, ...base1] : base1;
+  const row2 = marquee ? [...base2, ...base2] : [];
   const heading = (t(partners, "heading", language) || "").trim();
   const headingGradient = (t(partners, "headingGradient", language) || "").trim();
   const subtitle = (t(partners, "subtitle", language) || "").trim();
@@ -1695,23 +1698,29 @@ function PartnersSection({ partners }) {
         </motion.div> */}
       </div>
 
-      {/* ── Row 1 — scrolls left ── */}
+      {/* ── Row 1 — scrolls left (static centered row when few partners) ── */}
       <div className="relative overflow-hidden pb-3">
-        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-28 bg-gradient-to-r from-white to-transparent sm:w-40" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-28 bg-gradient-to-l from-white to-transparent sm:w-40" />
-        <div className={`flex w-max items-center gap-3 ${!reduced ? "partners-row1" : ""}`}>
+        {marquee ? (
+          <>
+            <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-28 bg-gradient-to-r from-white to-transparent sm:w-40" />
+            <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-28 bg-gradient-to-l from-white to-transparent sm:w-40" />
+          </>
+        ) : null}
+        <div className={marquee ? `flex w-max items-center gap-3 ${!reduced ? "partners-row1" : ""}` : "flex flex-wrap items-center justify-center gap-3 px-4"}>
           {row1.map((p, i) => <PartnerCard key={`r1-${p.name}-${i}`} partner={p} />)}
         </div>
       </div>
 
-      {/* ── Row 2 — scrolls right ── */}
-      <div className="relative mt-3 overflow-hidden">
-        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-28 bg-gradient-to-r from-white to-transparent sm:w-40" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-28 bg-gradient-to-l from-white to-transparent sm:w-40" />
-        <div className={`flex w-max items-center gap-3 ${!reduced ? "partners-row2" : ""}`}>
-          {row2.map((p, i) => <PartnerCard key={`r2-${p.name}-${i}`} partner={p} />)}
+      {/* ── Row 2 — scrolls right (omitted when few partners) ── */}
+      {row2.length > 0 ? (
+        <div className="relative mt-3 overflow-hidden">
+          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-28 bg-gradient-to-r from-white to-transparent sm:w-40" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-28 bg-gradient-to-l from-white to-transparent sm:w-40" />
+          <div className={`flex w-max items-center gap-3 ${!reduced ? "partners-row2" : ""}`}>
+            {row2.map((p, i) => <PartnerCard key={`r2-${p.name}-${i}`} partner={p} />)}
+          </div>
         </div>
-      </div>
+      ) : null}
 
       {/* ── Bottom CTA line — CMS-driven (hidden when cleared in admin) ── */}
       {(t(partners, "ctaText", language) || "").trim() || (t(partners, "ctaLabel", language) || "").trim() ? (
@@ -1835,9 +1844,14 @@ function TrustSection({ trust }) {
               {/* Hover glow */}
               <div className="pointer-events-none absolute inset-0 rounded-[20px] bg-[radial-gradient(circle_at_50%_0%,rgba(0,136,255,0.07),transparent_65%)] opacity-0 transition-opacity duration-300 group-hover/trust:opacity-100" />
 
-              {/* Icon circle */}
+              {/* Icon circle — admin-uploaded icon image overrides the built-in */}
               <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-[rgba(0,136,255,0.08)] shadow-[0_4px_14px_rgba(0,136,255,0.12)] transition-all duration-300 group-hover/trust:bg-[rgba(0,136,255,0.14)]">
-                <Icon className="h-6 w-6 text-[#0088FF]" aria-hidden />
+                {(item.iconImage || "").trim() ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={item.iconImage} alt="" className="h-7 w-7 object-contain" />
+                ) : (
+                  <Icon className="h-6 w-6 text-[#0088FF]" aria-hidden />
+                )}
               </div>
 
               {/* Label */}
