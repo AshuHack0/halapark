@@ -47,14 +47,21 @@ export default function HalaParkAdvantage() {
           transition={{ duration: 0.65, ease }}
           className="mx-auto mb-12 w-full text-center"
         >
-          {/* Sitewide heading scale (max 4rem) so "… Advantage" fits on ONE
-              line on desktop instead of wrapping by default. */}
-          <h2 className="text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.05] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
-            {t(header, "heading", language) || (language === "ar" ? "" : "The HalaPark")}{" "}
-            <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">
-              {t(header, "headingGradient", language) || (language === "ar" ? "" : "Advantage")}
-            </span>
-          </h2>
+          {/* Heading on one line; the gradient word always on its own second
+              line. STRICTLY from the CMS — no hardcoded fallback text; empty
+              fields render nothing. */}
+          {(t(header, "heading", language) || "").trim() || (t(header, "headingGradient", language) || "").trim() ? (
+            <h2 className="text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.08] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
+              {(t(header, "heading", language) || "").trim() ? (
+                <span className="block">{t(header, "heading", language)}</span>
+              ) : null}
+              {(t(header, "headingGradient", language) || "").trim() ? (
+                <span className="block bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">
+                  {t(header, "headingGradient", language)}
+                </span>
+              ) : null}
+            </h2>
+          ) : null}
         </motion.div>
 
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">

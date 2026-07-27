@@ -161,7 +161,7 @@ function AboutVisual({ slides, language, reduced, hero }) {
           initial={reduced ? false : { opacity: 0, y: -14, rotate: -5 }}
           animate={reduced ? undefined : { opacity: 1, y: 0, rotate: -5 }}
           transition={{ duration: 0.6, ease, delay: 0.5 }}
-          className="absolute left-[-8%] top-2 z-40 hidden sm:block lg:left-[-16%] lg:top-4"
+          className="absolute left-0 -top-4 z-40 scale-90 sm:left-[-8%] sm:top-2 sm:scale-100 lg:left-[-16%] lg:top-4"
         >
           <div className="flex items-center gap-3 rounded-2xl border border-white/80 bg-white px-4 py-3 shadow-[0_18px_46px_rgba(15,23,42,0.18)]">
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#0088FF] to-[#2563EB] text-white shadow-[0_4px_10px_rgba(0,136,255,0.35)]">
@@ -185,7 +185,7 @@ function AboutVisual({ slides, language, reduced, hero }) {
           initial={reduced ? false : { opacity: 0, x: 14, rotate: 5 }}
           animate={reduced ? undefined : { opacity: 1, x: 0, rotate: 5 }}
           transition={{ duration: 0.6, ease, delay: 0.6 }}
-          className="absolute bottom-[14%] right-[-6%] z-40 hidden sm:block lg:right-[-14%]"
+          className="absolute bottom-[10%] right-0 z-40 scale-90 sm:bottom-[14%] sm:right-[-6%] sm:scale-100 lg:right-[-14%]"
         >
           <div className="flex items-center gap-2 rounded-full border border-white/80 bg-white px-3 py-2 shadow-[0_14px_36px_rgba(15,23,42,0.14)]">
             <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[rgba(22,179,100,0.12)]">

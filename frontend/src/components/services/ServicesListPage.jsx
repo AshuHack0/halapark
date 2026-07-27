@@ -1206,18 +1206,28 @@ function HeroSection({ onGetQuote, hero }) {
             {/* Service chip tags — hidden entirely when the admin adds none */}
             {SERVICE_CHIPS.length > 0 ? (
             <motion.div {...fadeUp} className="mt-6 flex flex-wrap gap-2">
-              {SERVICE_CHIPS.map((chip, i) => (
-                <span
-                  key={chip}
-                  className={`rounded-full px-3 py-1 text-[11px] font-semibold tracking-wide transition ${
-                    i === SERVICE_CHIPS.length - 1
-                      ? "bg-[#0088FF] text-white shadow-[0_4px_12px_rgba(0,136,255,0.28)]"
-                      : "border border-slate-200/80 bg-white/80 text-slate-600 shadow-[0_1px_6px_rgba(6,6,22,0.06)]"
-                  }`}
-                >
-                  {chip}
-                </span>
-              ))}
+              {SERVICE_CHIPS.map((chip, i) => {
+                const isLast = i === SERVICE_CHIPS.length - 1;
+                const cls = `rounded-full px-3 py-1 text-[11px] font-semibold tracking-wide transition ${
+                  isLast
+                    ? "bg-[#0088FF] text-white shadow-[0_4px_12px_rgba(0,136,255,0.28)]"
+                    : "border border-slate-200/80 bg-white/80 text-slate-600 shadow-[0_1px_6px_rgba(6,6,22,0.06)]"
+                }`;
+                // The "+N more" pill becomes a link when the admin sets one.
+                const moreLink = (hero?.chipsMoreLink || "").trim();
+                if (Boolean(moreChip) && isLast && moreLink) {
+                  return (
+                    <Link key={chip} href={moreLink} className={`${cls} hover:-translate-y-0.5 hover:brightness-110`}>
+                      {chip}
+                    </Link>
+                  );
+                }
+                return (
+                  <span key={chip} className={cls}>
+                    {chip}
+                  </span>
+                );
+              })}
             </motion.div>
             ) : null}
 
