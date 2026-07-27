@@ -31,9 +31,17 @@ export default function WhyChooseHalaPark() {
 
   function checkScroll() {
     if (scrollRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
-      setCanScrollLeft(scrollLeft > 0);
-      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
+      const el = scrollRef.current;
+      const { scrollLeft, scrollWidth, clientWidth } = el;
+      const max = scrollWidth - clientWidth;
+      // In RTL (Arabic) browsers report scrollLeft as 0 → -max, so normalize
+      // to "distance scrolled from the start edge" before deciding the arrows.
+      const isRtl = getComputedStyle(el).direction === "rtl";
+      const fromStart = isRtl ? -scrollLeft : scrollLeft;
+      // The arrows are PHYSICAL (left arrow always moves the strip left), so
+      // map: in RTL the start edge is the right side.
+      setCanScrollLeft(isRtl ? fromStart < max - 10 : fromStart > 0);
+      setCanScrollRight(isRtl ? fromStart > 0 : fromStart < max - 10);
       // Whether the cards overflow the viewport (i.e. arrows are useful at all).
       setHasOverflow(scrollWidth > clientWidth + 10);
     }

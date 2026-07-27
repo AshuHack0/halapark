@@ -27,9 +27,15 @@ export default function WhoWeWorkWith() {
   // Declared before the effects that call it so it is defined at call time.
   function checkScroll() {
     if (scrollRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
-      setCanScrollLeft(scrollLeft > 0);
-      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
+      const el = scrollRef.current;
+      const { scrollLeft, scrollWidth, clientWidth } = el;
+      const max = scrollWidth - clientWidth;
+      // In RTL (Arabic) browsers report scrollLeft as 0 → -max, so normalize
+      // to "distance scrolled from the start edge" before deciding the arrows.
+      const isRtl = getComputedStyle(el).direction === "rtl";
+      const fromStart = isRtl ? -scrollLeft : scrollLeft;
+      setCanScrollLeft(isRtl ? fromStart < max - 10 : fromStart > 0);
+      setCanScrollRight(isRtl ? fromStart > 0 : fromStart < max - 10);
       setHasOverflow(scrollWidth > clientWidth + 10);
     }
   }
