@@ -1556,15 +1556,14 @@ function NewFinalCTA() {
 
           <motion.div dir={language === "ar" ? "rtl" : "ltr"} initial={reduced ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.65, ease }} className="relative z-10 flex flex-col items-center px-6 py-12 text-center sm:px-10 sm:py-14 lg:py-16">
             {heading || gradient ? (
-              <h2 className="max-w-[720px] text-[clamp(2.65rem,4.5vw,4.2rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-white [overflow-wrap:anywhere]">
-                {heading}
+              /* Heading on one line; the gradient part always on its own
+                 second line, per the sitewide pattern. */
+              <h2 className="max-w-[720px] text-[clamp(2.65rem,4.5vw,4.2rem)] font-semibold leading-[1.08] tracking-[-0.06em] text-white [overflow-wrap:anywhere]">
+                {heading ? <span className="block">{heading}</span> : null}
                 {gradient ? (
-                  <>
-                    {heading ? " " : null}
-                    <span className="bg-gradient-to-r from-[#3AADFF] to-[#0088FF] bg-clip-text text-transparent">
-                      {gradient}
-                    </span>
-                  </>
+                  <span className="block bg-gradient-to-r from-[#3AADFF] to-[#0088FF] bg-clip-text text-transparent">
+                    {gradient}
+                  </span>
                 ) : null}
               </h2>
             ) : null}
