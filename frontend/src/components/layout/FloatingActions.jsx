@@ -42,17 +42,17 @@ const STORE_ICONS = {
   huawei: AppGalleryIcon,
 };
 
-// Brand names shown in the download menu when the admin left the label blank.
-// Brand names are language-neutral, so no AR variant is needed.
+// Brand names shown in the download menu when the admin left the label blank
+// (with the common Arabic transliterations for AR mode).
 const STORE_LABELS = {
-  appstore: "App Store",
-  apple: "App Store",
-  ios: "App Store",
-  playstore: "Google Play",
-  google: "Google Play",
-  android: "Google Play",
-  appgallery: "AppGallery",
-  huawei: "AppGallery",
+  appstore: { en: "App Store", ar: "آب ستور" },
+  apple: { en: "App Store", ar: "آب ستور" },
+  ios: { en: "App Store", ar: "آب ستور" },
+  playstore: { en: "Google Play", ar: "جوجل بلاي" },
+  google: { en: "Google Play", ar: "جوجل بلاي" },
+  android: { en: "Google Play", ar: "جوجل بلاي" },
+  appgallery: { en: "AppGallery", ar: "آب جاليري" },
+  huawei: { en: "AppGallery", ar: "آب جاليري" },
 };
 
 const DownloadAppIcon = () => (
@@ -135,6 +135,7 @@ export default function FloatingActions() {
     .map((s) => ({
       key: String(s?.key || "").trim().toLowerCase(),
       label: (s?.label || "").trim(),
+      labelAr: (s?.ar?.label || "").trim(),
       href: (s?.href || "").trim(),
       iconImage: (s?.iconImage || "").trim(),
     }))
@@ -144,7 +145,9 @@ export default function FloatingActions() {
   if (!whatsapp && !payHref && stores.length === 0) return null;
 
   return (
-    <div className="fixed bottom-5 end-4 z-[60] sm:bottom-6 sm:end-6">
+    // Hidden while the mobile nav menu is open (body gets .nav-menu-open) so
+    // the buttons never overlap the menu on short screens.
+    <div className="fixed bottom-5 end-4 z-[60] sm:bottom-6 sm:end-6 [.nav-menu-open_&]:hidden">
       <div className="flex flex-col items-end gap-2.5">
         {whatsapp ? (
           <FloatingIconButton
@@ -207,7 +210,9 @@ export default function FloatingActions() {
                           )}
                         </span>
                         <span className="truncate" dir="auto">
-                          {store.label || STORE_LABELS[store.key] || ui("downloadApp", language)}
+                          {(language === "ar" ? store.labelAr || store.label : store.label) ||
+                            STORE_LABELS[store.key]?.[language === "ar" ? "ar" : "en"] ||
+                            ui("downloadApp", language)}
                         </span>
                       </a>
                     );

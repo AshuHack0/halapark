@@ -147,6 +147,13 @@ export default function Navbar() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+
+  // Flag the open mobile menu on <body> so overlays that live outside the
+  // navbar (e.g. the floating action buttons) can hide and not overlap it.
+  useEffect(() => {
+    document.body.classList.toggle("nav-menu-open", menuOpen);
+    return () => document.body.classList.remove("nav-menu-open");
+  }, [menuOpen]);
   const [servicesOpen, setServicesOpen] = useState(false);
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   // Which solutions group is expanded in the dropdown (desktop hover, mobile tap).
