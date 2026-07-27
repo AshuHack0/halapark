@@ -23,7 +23,7 @@ import RichText from "@/components/common/RichText";
  * slugs into clickable links. `heroImage` is the per-solution image from the CMS
  * card (source of truth), falling back to the detail's own image.
  */
-export default function SolutionDetailBody({ detail, heroImage, relatedList = [], relatedCards = [] }) {
+export default function SolutionDetailBody({ detail, heroImage, relatedList = [], relatedCards = [], advantages = null }) {
   const { language } = useLanguage();
   const isAr = language === "ar";
   const dir = isAr ? "rtl" : "ltr";
@@ -337,6 +337,47 @@ export default function SolutionDetailBody({ detail, heroImage, relatedList = []
           </div>
         </section>
       ) : null}
+
+      {/* ── 6.5 Advantages of Our Solutions (shared across all detail pages,
+             managed once in Admin → Solutions → Advantages) ──────────────── */}
+      {(() => {
+        const advHeading = isAr ? advantages?.ar?.heading || "" : advantages?.heading || "";
+        const advItems = (Array.isArray(advantages?.items) ? advantages.items : [])
+          .map((it) => ({
+            title: ((isAr ? it?.ar?.title : it?.title) || "").trim(),
+            description: ((isAr ? it?.ar?.description : it?.description) || "").trim(),
+          }))
+          .filter((it) => it.title || it.description);
+        if (!advHeading.trim() && advItems.length === 0) return null;
+        return (
+          <section className="bg-[#F4F8FF] py-14 sm:py-16 lg:py-20" dir={isAr ? "rtl" : "ltr"}>
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+              {advHeading.trim() ? (
+                <h2 className="mb-10 text-center text-[clamp(1.8rem,3vw,2.6rem)] font-semibold tracking-[-0.04em] text-[#050A13] [overflow-wrap:anywhere]">
+                  {advHeading}
+                </h2>
+              ) : null}
+              {advItems.length > 0 ? (
+                <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                  {advItems.map((it, i) => (
+                    <div key={`${it.title}-${i}`} className="rounded-[20px] border border-slate-100 bg-white p-6 shadow-[0_2px_14px_rgba(6,6,22,0.05)] transition hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(0,136,255,0.1)]">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#0088FF]/10 text-sm font-bold text-[#0088FF]">
+                        {i + 1}
+                      </span>
+                      {it.title ? (
+                        <h3 className="mt-4 text-[1rem] font-semibold leading-tight text-[#050A13] [overflow-wrap:anywhere]">{it.title}</h3>
+                      ) : null}
+                      {it.description ? (
+                        <p className="mt-2 text-[0.85rem] leading-6 text-slate-500 [overflow-wrap:anywhere]">{it.description}</p>
+                      ) : null}
+                    </div>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          </section>
+        );
+      })()}
 
       {/* ── 7. Other Related Services ─────────────────────────────────── */}
       {related.length > 0 ? (
