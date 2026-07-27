@@ -45,9 +45,11 @@ export default function HalaParkAdvantage() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.65, ease }}
-          className="mx-auto mb-12 max-w-[980px] text-center"
+          className="mx-auto mb-12 w-full text-center"
         >
-          <h2 className="text-[clamp(3rem,5.5vw,5rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
+          {/* Sitewide heading scale (max 4rem) so "… Advantage" fits on ONE
+              line on desktop instead of wrapping by default. */}
+          <h2 className="text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.05] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
             {t(header, "heading", language) || (language === "ar" ? "" : "The HalaPark")}{" "}
             <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">
               {t(header, "headingGradient", language) || (language === "ar" ? "" : "Advantage")}
