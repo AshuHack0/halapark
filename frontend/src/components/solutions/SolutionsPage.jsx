@@ -510,8 +510,12 @@ function SolutionCard({ card, i, reduced, detailSlugs }) {
   const inner = (
     <>
       <div className="relative h-48 w-full overflow-hidden bg-slate-100">
-        <Image src={card.image} alt={card.title} fill className="object-cover transition duration-500 group-hover:scale-105" sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#050A13]/40 to-transparent" />
+        {(card.image || "").trim() ? (
+          <>
+            <Image src={card.image} alt={card.title} fill className="object-cover transition duration-500 group-hover:scale-105" sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#050A13]/40 to-transparent" />
+          </>
+        ) : null}
       </div>
       <div className="flex items-start justify-between gap-4 p-5">
         <div className="flex-1">
@@ -579,7 +583,11 @@ function StatsSection() {
   // category — e.g. it was renamed/deleted) fall into a generic "Solutions"
   // group so they still render and remain clickable. Only cards with a real slug
   // count (cleared/blank cards never render).
-  const validCards = solutionItems.filter((c) => c && c.slug);
+  // A card renders when it has a slug OR at least a title — a card whose
+  // detail page (slug) doesn't exist yet still SHOWS, just not clickable.
+  const validCards = solutionItems.filter(
+    (c) => c && (((c.slug || "").trim()) || ((c.title || "").trim())),
+  );
   // Trim-insensitive matching so a stray space typed in either the category
   // name or the card's group can never silently ungroup a card.
   const categories = Array.isArray(groupOrder) ? groupOrder.filter(Boolean) : [];
