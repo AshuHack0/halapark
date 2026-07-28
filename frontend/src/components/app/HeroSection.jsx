@@ -60,7 +60,7 @@ function StatStrip({ stats, language }) {
   if (visible.length === 0) return null;
 
   return (
-    <div className="mt-7 w-full max-w-[620px] rounded-[24px] bg-white/92 px-4 py-3.5 shadow-[0_14px_38px_rgba(15,23,42,0.08)] backdrop-blur sm:px-5 lg:absolute lg:bottom-8 lg:left-8 lg:mt-0 rtl:lg:left-auto rtl:lg:right-8">
+    <div className="mt-7 w-full min-w-0 max-w-[620px] rounded-[24px] bg-white/92 px-4 py-3.5 shadow-[0_14px_38px_rgba(15,23,42,0.08)] backdrop-blur sm:px-5 lg:absolute lg:bottom-8 lg:left-8 lg:mt-0 rtl:lg:left-auto rtl:lg:right-8">
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:divide-x sm:divide-[#E4EAF2] rtl:sm:divide-x-reverse">
         {visible.map((item, index) => {
           const Icon = STAT_ICONS[item.icon];
@@ -379,7 +379,10 @@ export default function HeroSection() {
     <section className="relative overflow-x-hidden bg-[linear-gradient(118deg,#FFFFFF_0%,#F8FBFF_42%,#EAF3FF_100%)] lg:overflow-visible">
       <CityBackdrop />
 
-      <div className="relative mx-auto grid min-h-screen max-w-7xl items-center gap-8 px-4 pb-8 pt-10 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8 lg:pb-28 lg:pt-12">
+      {/* grid-cols-1 + min-w-0 children: the mobile track is clamped to the
+          viewport so wide content (cards row, stats) can never push the layout
+          past the right edge on small phones. */}
+      <div className="relative mx-auto grid min-h-screen max-w-7xl grid-cols-1 items-center gap-8 px-4 pb-8 pt-10 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8 lg:pb-28 lg:pt-12">
         <motion.div
           dir={dir}
           initial={prefersReducedMotion ? false : { opacity: 0, x: -24 }}
@@ -446,7 +449,7 @@ export default function HeroSection() {
           initial={prefersReducedMotion ? false : { opacity: 0, x: 32 }}
           animate={prefersReducedMotion ? undefined : { opacity: 1, x: 0 }}
           transition={{ duration: 0.7, ease: "easeOut", delay: 0.08 }}
-          className="relative z-10 flex min-h-[430px] flex-col items-center justify-center gap-5 lg:min-h-[570px]"
+          className="relative z-10 flex min-h-[430px] w-full min-w-0 flex-col items-center justify-center gap-5 lg:min-h-[570px]"
         >
           <FloatingCards
             cards={cards}
