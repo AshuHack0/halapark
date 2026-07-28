@@ -301,22 +301,30 @@ function SolutionCard({ id, title, description, iconImage, href }) {
 }
 
 function SolutionCardsCarousel({ cards, language }) {
-  // Use CMS cards when present; keep the icon by matching id/index to defaults.
-  const source =
-    Array.isArray(cards) && cards.length > 0
-      ? cards.map((c, i) => ({
-          ...c,
-          id: c.id || solutionCards[i]?.id || "barrier",
-          iconImage: (c.iconImage || "").trim(),
-          title: t(c, "title", language),
-          description: t(c, "description", language),
-        }))
-      : solutionCards;
-  const loop = [...source, ...source];
+  // STRICTLY CMS cards — no hardcoded fallback; deleting them all hides the
+  // carousel. Icons keep matching id/index against the built-in set.
+  const source = (Array.isArray(cards) ? cards : [])
+    .map((c, i) => ({
+      ...c,
+      id: c.id || solutionCards[i]?.id || "barrier",
+      iconImage: (c.iconImage || "").trim(),
+      title: t(c, "title", language),
+      description: t(c, "description", language),
+    }))
+    .filter((c) => (c.title || "").trim() || (c.description || "").trim());
+  if (source.length === 0) return null;
+  // Marquee needs the list doubled to loop seamlessly — with only a few cards
+  // that shows duplicates, so render them statically centered instead.
+  const marquee = source.length >= 5;
+  const loop = marquee ? [...source, ...source] : source;
 
   return (
     <div
-      className="mx-auto mt-10 w-full overflow-x-hidden pb-2 lg:mt-12 [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)] [-webkit-mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]"
+      className={`mx-auto mt-10 w-full overflow-x-hidden pb-2 lg:mt-12 ${
+        marquee
+          ? "[mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)] [-webkit-mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]"
+          : ""
+      }`}
       aria-label="Solution integrations, scrolling"
     >
       <style>{`
@@ -337,7 +345,7 @@ function SolutionCardsCarousel({ cards, language }) {
           }
         }
       `}</style>
-      <div className="flex w-max gap-4 sm:gap-5 md:gap-6 solution-cards-marquee">
+      <div className={marquee ? "flex w-max gap-4 sm:gap-5 md:gap-6 solution-cards-marquee" : "flex flex-wrap justify-center gap-4 sm:gap-5 md:gap-6"}>
         {loop.map((card, index) => (
           <div
             key={`${card.id}-${index}`}
