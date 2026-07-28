@@ -167,6 +167,7 @@ export default function Navbar() {
   const [solutionDetailSlugs, setSolutionDetailSlugs] = useState(() => new Set());
   // Site logo from global Settings (falls back to the bundled asset).
   const [logo, setLogo] = useState({ image: "/logo-blue-11.svg", alt: "HalaPark" });
+  const [navbarCfg, setNavbarCfg] = useState(null);
 
   useEffect(() => {
     fetchPage("solutions").then((page) => {
@@ -177,9 +178,17 @@ export default function Navbar() {
     fetchPage("settings").then((page) => {
       const l = page?.sections?.logo;
       if (l?.image) setLogo({ image: l.image, alt: l.alt || "HalaPark" });
+      setNavbarCfg(page?.sections?.navbar ?? null);
     });
   }, []);
   const { language, setLanguage, isArabic } = useLanguage();
+
+  // Navbar CTA ("Get In Touch") — label + link editable from admin Settings;
+  // built-in labels remain the default until the admin overrides them.
+  const ctaLabel =
+    ((language === "ar" ? navbarCfg?.ar?.ctaLabel : navbarCfg?.ctaLabel) || "").trim() ||
+    UI_TEXT[language].cta;
+  const ctaHref = (navbarCfg?.ctaLink || "").trim() || "/contact";
 
   // Build the dropdown groups in the active language. Card label → Arabic
   // `ar.name`/`ar.title` in AR (blank when missing). Group name → the parallel
@@ -558,10 +567,10 @@ export default function Navbar() {
                 </button>
               </div>
               <Link
-                href="/contact"
+                href={ctaHref}
                 className="inline-flex items-center justify-center bg-[#0088FF] hover:brightness-95 active:bg-[#0088FF] text-white text-sm font-semibold px-5 py-2.5 rounded-full shadow-sm hover:shadow-md"
               >
-                {copy.cta}
+                {ctaLabel}
               </Link>
               <button
                 type="button"
@@ -576,10 +585,10 @@ export default function Navbar() {
             {/* Mobile: compact CTA + Hamburger */}
             <div className="flex lg:hidden items-center gap-2">
               <Link
-                href="/contact"
+                href={ctaHref}
                 className="inline-flex items-center gap-1.5 bg-[#0088FF] hover:brightness-95 text-white text-sm font-semibold px-4 py-2 rounded-full"
               >
-                {copy.cta}
+                {ctaLabel}
               </Link>
               <button
                 onClick={() => setMenuOpen((v) => !v)}
@@ -782,11 +791,11 @@ export default function Navbar() {
 
             {/* Get In Touch — primary action pinned at the bottom */}
             <Link
-              href="/contact"
+              href={ctaHref}
               onClick={() => setMenuOpen(false)}
               className="!mt-3 flex items-center justify-center gap-2 rounded-xl bg-[#0088FF] px-5 py-3.5 text-[1rem] font-semibold text-white shadow-[0_10px_24px_rgba(0,136,255,0.3)] transition hover:brightness-95 active:scale-[0.99]"
             >
-              {copy.cta}
+              {ctaLabel}
               <span className="rtl:rotate-180"><ArrowRightIcon /></span>
             </Link>
           </div>
