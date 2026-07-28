@@ -20,6 +20,8 @@ function toCard(svc) {
     description2: svc.description2 || "",
     mediaType: svc.mediaType,
     mediaSrc: svc.mediaSrc,
+    // Admin-set card link (where the card/arrow navigates); /services default.
+    href: (svc.href || "").trim(),
     ar: svc.ar,
   };
 }
@@ -58,11 +60,14 @@ function ServiceCard({ service, index, cardRef, isActive, language }) {
           : ""
       }`}
     >
-      <Link
-        href="/services"
-        className="block overflow-hidden rounded-[22px] bg-[#fbfdff] shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_1px_4px_rgba(6,6,22,0.1),0_10px_24px_-6px_rgba(6,6,22,0.14)] transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-1 sm:rounded-[26px] lg:rounded-[30px] focus-visible:outline-none focus-visible:shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_1px_4px_rgba(6,6,22,0.1),0_10px_24px_-6px_rgba(6,6,22,0.14),0_0_34px_rgba(0,136,255,0.42)]"
-        aria-label={`Open services page`}
-      >
+      {(() => {
+        // Card is a link ONLY when the admin set one — no default. Without a
+        // link the card renders static (and the arrow is hidden below).
+        const href = (service.href || "").trim();
+        const shellCls =
+          "block overflow-hidden rounded-[22px] bg-[#fbfdff] shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_1px_4px_rgba(6,6,22,0.1),0_10px_24px_-6px_rgba(6,6,22,0.14)] transition-[transform,box-shadow] duration-300 ease-out sm:rounded-[26px] lg:rounded-[30px]";
+        const inner = (
+        <>
         <div className="relative h-[190px] w-full bg-[#d2dae2] sm:h-[230px] lg:h-[260px]">
           {/* Scroll focus effect: the in-focus service's media is sharp; others
               blur + dim. Reduced-motion users always see it sharp. */}
@@ -110,14 +115,31 @@ function ServiceCard({ service, index, cardRef, isActive, language }) {
               <RichText text={t(service, "description2", language) || t(service, "summary", language)} className="mt-3 text-sm leading-6 text-slate-600 line-clamp-4 [overflow-wrap:anywhere]" />
             </div>
 
-            <span className="mt-1 inline-flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full border border-slate-200 bg-[#fbfdff] text-slate-900 shadow-[0_4px_14px_rgba(6,6,22,0.06)] transition-transform duration-300 ease-out group-hover:rotate-12">
-              <ArrowUpRight className="h-5 w-5" aria-hidden="true" />
-            </span>
+            {href ? (
+              <span className="mt-1 inline-flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full border border-slate-200 bg-[#fbfdff] text-slate-900 shadow-[0_4px_14px_rgba(6,6,22,0.06)] transition-transform duration-300 ease-out group-hover:rotate-12 rtl:group-hover:-rotate-12">
+                {/* Mirrored in RTL so it points up-LEFT (the reading direction) */}
+                <ArrowUpRight className="h-5 w-5 rtl:-scale-x-100" aria-hidden="true" />
+              </span>
+            ) : null}
           </div>
 
-          
+
         </div>
-      </Link>
+        </>
+        );
+
+        return href ? (
+          <Link
+            href={href}
+            className={`${shellCls} hover:-translate-y-1 focus-visible:outline-none focus-visible:shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_1px_4px_rgba(6,6,22,0.1),0_10px_24px_-6px_rgba(6,6,22,0.14),0_0_34px_rgba(0,136,255,0.42)]`}
+            aria-label={`Open ${service.name || "services"}`}
+          >
+            {inner}
+          </Link>
+        ) : (
+          <div className={`${shellCls} cursor-default`}>{inner}</div>
+        );
+      })()}
     </motion.article>
   );
 }

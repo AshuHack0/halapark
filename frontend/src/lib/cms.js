@@ -250,3 +250,22 @@ export async function fetchSolutionDetail(slug) {
   const details = await fetchSolutionDetails();
   return getSolutionDetailBySlug(slug, details);
 }
+
+// ─── Services: per-service detail pages ───────────────────────────────────────
+// Detail content lives under the "services" page as `sections.serviceDetails`
+// (array, keyed by slug). CMS-only — no hardcoded defaults: deleting a service's
+// detail page makes /services/<slug> 404 and the card falls back to the popup.
+
+export async function fetchServiceDetails() {
+  const page = await fetchPage("services");
+  const details = page?.sections?.serviceDetails;
+  cmsLog("fetchServiceDetails", { count: Array.isArray(details) ? details.length : 0 });
+  return Array.isArray(details) ? details : [];
+}
+
+// The services list (cards shown in the grid) with their CMS-managed media.
+export async function fetchServices() {
+  const page = await fetchPage("services");
+  const services = page?.sections?.services;
+  return Array.isArray(services) ? services : [];
+}

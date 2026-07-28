@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useLayoutEffect, useEffect, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import { createPortal } from "react-dom";
 import ReCAPTCHA from "react-google-recaptcha";
 import { RECAPTCHA_SITE_KEY } from "@/config/recaptcha.site";
@@ -1924,30 +1925,58 @@ function LongTermCTA({ onGetQuote, cta }) {
 /* ═════════════════════════ MAIN PAGE ════════════════════════════════ */
 
 export default function ServicesListPage() {
+  const router = useRouter();
   const [selectedService, setSelectedService] = useState(null);
   const [quoteOpen, setQuoteOpen]             = useState(false);
   const [cms, setCms] = useState(null);
 
+  // Slugs that have their own detail page at /services/<slug> (stored under
+  // sections.serviceDetails). A clicked card NAVIGATES there when its slug is
+  // in this set; otherwise it falls back to the existing popup modal.
+  const detailSlugs = useMemo(() => {
+    const details = Array.isArray(cms?.serviceDetails) ? cms.serviceDetails : [];
+    return new Set(details.map((d) => (d?.slug || "").trim()).filter(Boolean));
+  }, [cms]);
+
+  // Card click: detail page when one exists, popup otherwise (graceful fallback).
+  const handleServiceClick = (service) => {
+    const slug = (service?.slug || "").trim();
+    if (slug && detailSlugs.has(slug)) {
+      router.push(`/services/${slug}`);
+      return;
+    }
+    setSelectedService(service);
+  };
+
   // Pull the Services page CMS content (hero + section text). Falls back to the
-  // hardcoded defaults when a field is empty/unavailable.
+  // hardcoded defaults when a field is empty/unavailable. The ?open=<slug>
+  // deep-link is resolved HERE (after the CMS answers) so it can prefer the
+  // service's detail page when one exists, and only then fall back to the popup.
   useEffect(() => {
     fetchPage("services").then((page) => {
-      if (page?.sections) setCms(page.sections);
-    });
-  }, []);
+      const sections = page?.sections ?? null;
+      if (sections) setCms(sections);
 
-  // Auto-open service modal when ?open=<slug> is in the URL.
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const slug = params.get("open");
-    if (!slug) return;
-    const service = allServicesData.find((s) => s.slug === slug);
-    if (service) setSelectedService(service);
-    // Remove the query param from the URL without a page reload.
-    const url = new URL(window.location.href);
-    url.searchParams.delete("open");
-    window.history.replaceState({}, "", url.toString());
-  }, []);
+      const params = new URLSearchParams(window.location.search);
+      const slug = params.get("open");
+      if (!slug) return;
+      // Remove the query param from the URL without a page reload.
+      const url = new URL(window.location.href);
+      url.searchParams.delete("open");
+      window.history.replaceState({}, "", url.toString());
+
+      const details = Array.isArray(sections?.serviceDetails) ? sections.serviceDetails : [];
+      if (details.some((d) => (d?.slug || "").trim() === slug)) {
+        router.push(`/services/${slug}`);
+        return;
+      }
+      const cmsServices = Array.isArray(sections?.services) ? sections.services : [];
+      const service =
+        cmsServices.find((s) => s?.slug === slug) ||
+        allServicesData.find((s) => s.slug === slug);
+      if (service) setSelectedService(service);
+    });
+  }, [router]);
 
   return (
     <>
@@ -1963,7 +1992,7 @@ export default function ServicesListPage() {
           <HeroSection    onGetQuote={() => setQuoteOpen(true)} hero={cms?.hero} />
         )}
         {cms?.servicesGridHeader?.enabled !== false && (
-          <ServicesGrid   onServiceClick={setSelectedService} cmsServices={cms?.services} gridHeader={cms?.servicesGridHeader} />
+          <ServicesGrid   onServiceClick={handleServiceClick} cmsServices={cms?.services} gridHeader={cms?.servicesGridHeader} />
         )}
         {cms?.partnersSection?.enabled !== false && (
           <PartnersSection partners={cms?.partnersSection} />
