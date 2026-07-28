@@ -739,7 +739,7 @@ const CAT_META = {
   care:    { label: "Vehicle Care", color: "#0088FF", bg: "rgba(0,136,255,0.12)" },
 };
 
-function ServiceCard({ service, index, onClick, category }) {
+function ServiceCard({ service, index, onClick, category, clickable = false }) {
   const reduced = useReducedMotion();
   const { language } = useLanguage();
   const col = index % 4;
@@ -755,8 +755,8 @@ function ServiceCard({ service, index, onClick, category }) {
       transition={{ duration: 0.52, ease, delay: col * 0.06 }}
       whileHover={reduced ? undefined : { y: -8, scale: 1.02, transition: springSoft }}
       style={{ transformPerspective: 1200 }}
-      className="group/card relative h-full cursor-pointer"
-      onClick={() => onClick(service)}
+      className={`group/card relative h-full ${clickable ? "cursor-pointer" : "cursor-default"}`}
+      onClick={clickable ? () => onClick(service) : undefined}
     >
       {/* Card shell — full height + column layout so every card in a row is
           the same height regardless of content length. */}
@@ -1354,7 +1354,7 @@ const FILTERS = [
   { id: "care",    label: "Vehicle Care",   labelAr: "العناية بالمركبة", emoji: "🔧" },
 ];
 
-function ServicesGrid({ onServiceClick, cmsServices, gridHeader }) {
+function ServicesGrid({ onServiceClick, cmsServices, gridHeader, detailSlugs }) {
   const { language } = useLanguage();
   const [activeFilter, setActiveFilter] = useState("all");
   const reduced  = useReducedMotion();
@@ -1536,6 +1536,9 @@ function ServicesGrid({ onServiceClick, cmsServices, gridHeader }) {
                 index={index}
                 onClick={onServiceClick}
                 category={service._category}
+                // Clickable ONLY when this service has its own detail page —
+                // same rule as the Solutions grid (no popup, no dead clicks).
+                clickable={Boolean(detailSlugs?.has((service.slug || "").trim()))}
               />
             ))}
           </AnimatePresence>
@@ -1931,21 +1934,19 @@ export default function ServicesListPage() {
   const [cms, setCms] = useState(null);
 
   // Slugs that have their own detail page at /services/<slug> (stored under
-  // sections.serviceDetails). A clicked card NAVIGATES there when its slug is
-  // in this set; otherwise it falls back to the existing popup modal.
+  // sections.serviceDetails). Same rule as the Solutions page: a card NAVIGATES
+  // to its detail page when one exists, and does NOTHING otherwise — the old
+  // popup is retired for grid cards (no dead clicks, no popup).
   const detailSlugs = useMemo(() => {
     const details = Array.isArray(cms?.serviceDetails) ? cms.serviceDetails : [];
     return new Set(details.map((d) => (d?.slug || "").trim()).filter(Boolean));
   }, [cms]);
 
-  // Card click: detail page when one exists, popup otherwise (graceful fallback).
   const handleServiceClick = (service) => {
     const slug = (service?.slug || "").trim();
     if (slug && detailSlugs.has(slug)) {
       router.push(`/services/${slug}`);
-      return;
     }
-    setSelectedService(service);
   };
 
   // Pull the Services page CMS content (hero + section text). Falls back to the
@@ -1965,16 +1966,12 @@ export default function ServicesListPage() {
       url.searchParams.delete("open");
       window.history.replaceState({}, "", url.toString());
 
+      // ?open=<slug> goes to the service's detail page when one exists;
+      // otherwise it's ignored (no popup — same rule as the Solutions page).
       const details = Array.isArray(sections?.serviceDetails) ? sections.serviceDetails : [];
       if (details.some((d) => (d?.slug || "").trim() === slug)) {
         router.push(`/services/${slug}`);
-        return;
       }
-      const cmsServices = Array.isArray(sections?.services) ? sections.services : [];
-      const service =
-        cmsServices.find((s) => s?.slug === slug) ||
-        allServicesData.find((s) => s.slug === slug);
-      if (service) setSelectedService(service);
     });
   }, [router]);
 
@@ -1992,7 +1989,7 @@ export default function ServicesListPage() {
           <HeroSection    onGetQuote={() => setQuoteOpen(true)} hero={cms?.hero} />
         )}
         {cms?.servicesGridHeader?.enabled !== false && (
-          <ServicesGrid   onServiceClick={handleServiceClick} cmsServices={cms?.services} gridHeader={cms?.servicesGridHeader} />
+          <ServicesGrid   onServiceClick={handleServiceClick} cmsServices={cms?.services} gridHeader={cms?.servicesGridHeader} detailSlugs={detailSlugs} />
         )}
         {cms?.partnersSection?.enabled !== false && (
           <PartnersSection partners={cms?.partnersSection} />
