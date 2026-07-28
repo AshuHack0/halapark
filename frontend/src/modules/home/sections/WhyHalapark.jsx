@@ -306,7 +306,7 @@ export default function WhyHalapark() {
                     </span>
                   </p>
                   <Link
-                    href="/contact"
+                    href={(item.href || "").trim() || "/contact"}
                     className="mt-4 inline-flex items-center text-sm font-semibold text-slate-400 transition-colors hover:text-[#0088FF]"
                   >
                     {ui("learnMore", language)}
@@ -362,7 +362,21 @@ export default function WhyHalapark() {
                             }}
                           />
 
-                          <div className="mt-1.5 max-w-[31rem]">
+                          <div className="mt-1.5 flex max-w-[31rem] items-start gap-3">
+                            {/* Item icon (admin-selected; uploaded image overrides) */}
+                            <span
+                              className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-colors duration-300 ${
+                                isActive ? "bg-slate-950 text-white" : "bg-slate-100 text-slate-500"
+                              }`}
+                            >
+                              {item.iconImage ? (
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img src={item.iconImage} alt="" className="h-5 w-5 object-contain" />
+                              ) : (
+                                <Icon className="h-5 w-5" aria-hidden="true" />
+                              )}
+                            </span>
+                            <div className="min-w-0">
                             <h3
                               className={`text-[1.05rem] font-semibold leading-6 tracking-[-0.015em] ${
                                 isActive
@@ -386,7 +400,7 @@ export default function WhyHalapark() {
                               {t(item, "subtitle", language) || t(item, "copy", language)}
                             </p>
                             <Link
-                              href="/contact"
+                              href={(item.href || "").trim() || "/contact"}
                               className={`mt-3 inline-flex items-center text-sm font-semibold transition-all duration-200 ${
                                 isActive
                                   ? "translate-y-0 opacity-100 text-slate-400 hover:text-[#0088FF]"
@@ -395,6 +409,7 @@ export default function WhyHalapark() {
                             >
                               {ui("learnMore", language)}
                             </Link>
+                            </div>
                           </div>
                         </motion.div>
                       );
