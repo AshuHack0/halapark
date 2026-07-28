@@ -264,13 +264,21 @@ function MobileFloatingCards({ cards, language }) {
 
   if (visible.length === 0) return null;
 
+  // Two-per-row grid below the phone — everything visible at once, no
+  // horizontal scrolling. An odd last card spans the full row.
   return (
-    <div className="flex w-full max-w-full gap-3 overflow-x-auto pb-2 lg:hidden [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-      {visible.map((card, index) => (
-        <div key={`${t(card, "title", language)}-${index}`} className="shrink-0">
-          <FloatingCard card={card} language={language} />
-        </div>
-      ))}
+    <div className="grid w-full grid-cols-2 gap-3 pb-2 lg:hidden">
+      {visible.map((card, index) => {
+        const spanFull = visible.length % 2 === 1 && index === visible.length - 1;
+        return (
+          <div
+            key={`${t(card, "title", language)}-${index}`}
+            className={`${spanFull ? "col-span-2" : ""} [&>div]:!w-full`}
+          >
+            <FloatingCard card={card} language={language} />
+          </div>
+        );
+      })}
     </div>
   );
 }
