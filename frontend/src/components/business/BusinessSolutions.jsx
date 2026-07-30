@@ -162,6 +162,17 @@ export default function BusinessSolutions() {
                   </h3>
                   <RichText text={t(card, "description", language)} className="mt-3 text-xs sm:text-sm leading-5 text-slate-600 [overflow-wrap:anywhere] block" />
 
+                  {/* Learn More — only when the admin set a card link */}
+                  {href ? (
+                    <span
+                      className="mt-4 inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold transition group-hover:gap-2.5"
+                      style={{ color: accent }}
+                    >
+                      {ui("learnMore", language)}
+                      <ArrowRight className="h-3.5 w-3.5 rtl:rotate-180" />
+                    </span>
+                  ) : null}
+
                   {/* Bottom Accent Line — uses the card's accent color */}
                   <motion.div
                     initial={{ width: 0 }}
