@@ -100,7 +100,7 @@ export default function ClientsPartners() {
                   [...cp.logos, ...cp.logos].map((logo, index) => (
                     <div
                       key={`${logo.image}-${index}`}
-                      className="flex h-[80px] shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-3 sm:h-[96px] sm:px-5"
+                      className="flex h-[80px] shrink-0 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-white sm:h-[96px]"
                     >
                       {/* Card hugs the logo: the image stretches to the full
                           card height and its width follows the image's own
