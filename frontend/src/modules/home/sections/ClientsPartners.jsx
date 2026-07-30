@@ -100,17 +100,19 @@ export default function ClientsPartners() {
                   [...cp.logos, ...cp.logos].map((logo, index) => (
                     <div
                       key={`${logo.image}-${index}`}
-                      className="flex h-[80px] shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white px-6 sm:h-[96px] sm:px-7"
+                      className="flex h-[80px] shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-3 sm:h-[96px] sm:px-5"
                     >
-                      {/* Card hugs the logo: fixed strip height, width follows
-                          the image's own aspect (object-contain never distorts).
+                      {/* Card hugs the logo: the image stretches to the full
+                          card height and its width follows the image's own
+                          aspect (object-contain never distorts), so the card
+                          auto-sizes to the logo with no dead space.
                           title= shows the admin's Alt text on hover. */}
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={logo.image}
                         alt={logo.alt || "Client logo"}
                         title={logo.alt || undefined}
-                        className="h-12 w-auto max-w-[240px] object-contain sm:h-14"
+                        className="h-full w-auto max-w-[260px] object-contain"
                       />
                     </div>
                   ))
