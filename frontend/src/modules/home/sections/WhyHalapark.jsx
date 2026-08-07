@@ -263,13 +263,13 @@ export default function WhyHalapark() {
   }
 
   return (
-    <section className="bg-white py-10 sm:py-12 lg:py-16">
+    <section className="bg-white py-10 sm:py-12 lg:py-14">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionIntro heading={t(content, "heading", language)} subtitle={t(content, "subtitle", language)} />
       </div>
-      <div className="mx-auto mt-10 max-w-7xl px-4 sm:px-6 lg:px-8 lg:mt-12">
+      <div className="mx-auto mt-6 max-w-7xl px-4 sm:px-6 lg:px-8 lg:mt-8">
         <div className="lg:hidden">
-          <div className="mt-10 grid gap-6">
+          <div className="mt-6 grid gap-6">
             {visibleWhyItems.map((item, index) => {
               const Icon = whyIcons[item.icon] ?? Gauge;
 
@@ -283,10 +283,14 @@ export default function WhyHalapark() {
                       {item.id ?? String(index + 1).padStart(2, "0")}
                     </div>
 
-                    <div className="inline-flex h-11 w-11 items-center justify-center rounded-[1.2rem] bg-gradient-to-br from-[#0088FF] to-[#1AB2FF] text-white shadow-[0_8px_18px_rgba(0,136,255,0.28)]">
+                    <div
+                      className={`inline-flex h-11 w-11 items-center justify-center overflow-hidden rounded-[1.2rem] ${
+                        item.iconImage ? "" : "bg-gradient-to-br from-[#0088FF] to-[#1AB2FF] text-white shadow-[0_8px_18px_rgba(0,136,255,0.28)]"
+                      }`}
+                    >
                       {item.iconImage ? (
                         // eslint-disable-next-line @next/next/no-img-element
-                        <img src={item.iconImage} alt="" className="h-6 w-6 object-contain" />
+                        <img src={item.iconImage} alt="" className="h-9 w-9 rounded-xl object-cover" />
                       ) : (
                         <Icon className="h-5 w-5" aria-hidden="true" />
                       )}
@@ -327,7 +331,7 @@ export default function WhyHalapark() {
               <div className="max-w-[33rem]">
                 {/* <SectionIntro /> */}
 
-                <div className="relative mt-10">
+                <div className="relative mt-6">
                   <div className="absolute start-[0.4rem] top-6 bottom-6 w-px bg-slate-200" />
                   <div className="absolute start-[0.35rem] top-6 bottom-6 w-[3px] overflow-hidden rounded-full">
                     <div
@@ -365,13 +369,19 @@ export default function WhyHalapark() {
                           <div className="mt-1.5 flex max-w-[31rem] items-start gap-3">
                             {/* Item icon (admin-selected; uploaded image overrides) */}
                             <span
-                              className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-colors duration-300 ${
-                                isActive ? "bg-gradient-to-br from-[#0088FF] to-[#1AB2FF] text-white shadow-[0_8px_18px_rgba(0,136,255,0.28)]" : "bg-slate-100 text-slate-500"
+                              className={`inline-flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl transition-all duration-300 ${
+                                item.iconImage
+                                  ? isActive
+                                    ? ""
+                                    : "opacity-60 saturate-0"
+                                  : isActive
+                                    ? "bg-gradient-to-br from-[#0088FF] to-[#1AB2FF] text-white shadow-[0_8px_18px_rgba(0,136,255,0.28)]"
+                                    : "bg-slate-100 text-slate-500"
                               }`}
                             >
                               {item.iconImage ? (
                                 // eslint-disable-next-line @next/next/no-img-element
-                                <img src={item.iconImage} alt="" className="h-5 w-5 object-contain" />
+                                <img src={item.iconImage} alt="" className="h-8 w-8 rounded-lg object-cover" />
                               ) : (
                                 <Icon className="h-5 w-5" aria-hidden="true" />
                               )}
