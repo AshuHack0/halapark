@@ -283,7 +283,7 @@ export default function WhyHalapark() {
                       {item.id ?? String(index + 1).padStart(2, "0")}
                     </div>
 
-                    <div className="inline-flex h-11 w-11 items-center justify-center rounded-[1.2rem] bg-slate-950 text-white">
+                    <div className="inline-flex h-11 w-11 items-center justify-center rounded-[1.2rem] bg-gradient-to-br from-[#0088FF] to-[#1AB2FF] text-white shadow-[0_8px_18px_rgba(0,136,255,0.28)]">
                       {item.iconImage ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={item.iconImage} alt="" className="h-6 w-6 object-contain" />
@@ -332,7 +332,7 @@ export default function WhyHalapark() {
                   <div className="absolute start-[0.35rem] top-6 bottom-6 w-[3px] overflow-hidden rounded-full">
                     <div
                       ref={lineFillRef}
-                      className="absolute inset-0 origin-top rounded-full bg-slate-950"
+                      className="absolute inset-0 origin-top rounded-full bg-[#0088FF]"
                       style={{ transform: "scaleY(0)" }}
                     />
                   </div>
@@ -353,9 +353,9 @@ export default function WhyHalapark() {
                             className="absolute start-0 top-5 inline-flex h-[15px] w-[15px] rounded-full border-2 bg-white"
                             style={{
                               borderColor:
-                                isActive || isComplete ? "#0f172a" : "#cbd5e1",
+                                isActive || isComplete ? "#0088FF" : "#cbd5e1",
                               backgroundColor:
-                                isActive || isComplete ? "#0f172a" : "#ffffff",
+                                isActive || isComplete ? "#0088FF" : "#ffffff",
                               boxShadow: isActive
                                 ? `0 0 0 8px ${item.accent}1a`
                                 : "none",
@@ -366,7 +366,7 @@ export default function WhyHalapark() {
                             {/* Item icon (admin-selected; uploaded image overrides) */}
                             <span
                               className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-colors duration-300 ${
-                                isActive ? "bg-slate-950 text-white" : "bg-slate-100 text-slate-500"
+                                isActive ? "bg-gradient-to-br from-[#0088FF] to-[#1AB2FF] text-white shadow-[0_8px_18px_rgba(0,136,255,0.28)]" : "bg-slate-100 text-slate-500"
                               }`}
                             >
                               {item.iconImage ? (
