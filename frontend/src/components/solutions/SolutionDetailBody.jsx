@@ -362,18 +362,14 @@ export default function SolutionDetailBody({ detail, heroImage, relatedList = []
                 <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                   {advItems.map((it, i) => (
                     <div key={`${it.title}-${i}`} className="flex flex-col items-center rounded-[20px] border border-slate-100 bg-white p-6 text-center shadow-[0_2px_14px_rgba(6,6,22,0.05)] transition hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(0,136,255,0.1)]">
-                      {/* Icon → Title → Description, all centered. Uploaded icon
-                          replaces the numbered badge; number stays until one is set. */}
+                      {/* Icon → Title → Description, all centered. Icon only
+                          renders when one is uploaded in admin — no fallback. */}
                       {it.iconImage ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={it.iconImage} alt="" className="h-12 w-12 rounded-xl object-contain" />
-                      ) : (
-                        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#0088FF]/10 text-base font-bold text-[#0088FF]">
-                          {i + 1}
-                        </span>
-                      )}
+                      ) : null}
                       {it.title ? (
-                        <h3 className="mt-4 text-[1rem] font-semibold leading-tight text-[#050A13] [overflow-wrap:anywhere]">{it.title}</h3>
+                        <h3 className={`${it.iconImage ? "mt-4" : ""} text-[1rem] font-semibold leading-tight text-[#050A13] [overflow-wrap:anywhere]`}>{it.title}</h3>
                       ) : null}
                       {it.description ? (
                         <p className="mt-2 text-[0.85rem] leading-6 text-slate-500 [overflow-wrap:anywhere]">{it.description}</p>
