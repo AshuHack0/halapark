@@ -361,7 +361,7 @@ export default function SolutionDetailBody({ detail, heroImage, relatedList = []
               {advItems.length > 0 ? (
                 <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                   {advItems.map((it, i) => (
-                    <div key={`${it.title}-${i}`} className="flex flex-col items-center rounded-[20px] border border-slate-100 bg-white p-6 text-center shadow-[0_2px_14px_rgba(6,6,22,0.05)] transition hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(0,136,255,0.1)]">
+                    <div key={`${it.title}-${i}`} className="flex flex-col items-center p-4 text-center sm:p-6">
                       {/* Icon → Title → Description, all centered. Icon only
                           renders when one is uploaded in admin — no fallback. */}
                       {it.iconImage ? (
