@@ -25,7 +25,7 @@ import RichText from "@/components/common/RichText";
  * and its image comes from that service's media (image type only). `heroImage`
  * is the per-service image resolved by the route (service media → detail image).
  */
-export default function ServiceDetailBody({ detail, heroImage, service = null, relatedList = [], relatedServices = [] }) {
+export default function ServiceDetailBody({ detail, heroImage, relatedList = [], relatedServices = [] }) {
   const { language } = useLanguage();
   const isAr = language === "ar";
   const dir = isAr ? "rtl" : "ltr";
@@ -79,19 +79,6 @@ export default function ServiceDetailBody({ detail, heroImage, service = null, r
   const howHeading = tx("howItWorksHeading") || (isAr ? "" : "How It Works");
   const steps = objList("steps");
   const howBody = paras("howItWorksBody");
-
-  // "What's Included" comes from the service CARD (managed under CMS →
-  // Services), not the detail record — the same data the old popup showed.
-  // Strict Arabic: AR reads the parallel ar.whatsIncluded[index]; a missing
-  // AR entry hides that item. No label / no items → section hidden.
-  const includedLabel = service ? t(service, "includedLabel", language) || "" : "";
-  const includedItems = (Array.isArray(service?.whatsIncluded) ? service.whatsIncluded : [])
-    .map((item, i) =>
-      isAr
-        ? (Array.isArray(service?.ar?.whatsIncluded) ? service.ar.whatsIncluded[i] : "") || ""
-        : item,
-    )
-    .filter((s) => typeof s === "string" && s.trim());
 
   const relatedHeading = tx("relatedHeading") || (isAr ? "" : "Other Related Services");
   // Resolve related slugs → { slug, label, image } using the live details list
@@ -314,32 +301,6 @@ export default function ServiceDetailBody({ detail, heroImage, service = null, r
                 );
               })}
             </div>
-          </div>
-        </section>
-      ) : null}
-
-      {/* ── 5.5 What's Included ────────────────────────────────────────── */}
-      {includedItems.length > 0 ? (
-        <section className="bg-[#F4F8FF] py-14 sm:py-16 lg:py-20">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            {includedLabel ? (
-              <h2 className="mb-10 text-center text-[clamp(1.8rem,3vw,2.6rem)] font-semibold tracking-[-0.04em] text-[#050A13] [overflow-wrap:anywhere]">
-                {includedLabel}
-              </h2>
-            ) : null}
-            <ul className="mx-auto grid max-w-4xl gap-3 sm:grid-cols-2 sm:gap-4">
-              {includedItems.map((text, i) => (
-                <li
-                  key={`${i}-${text}`}
-                  className="flex items-start gap-3 rounded-2xl border border-[rgba(0,136,255,0.12)] bg-white p-4 sm:p-5"
-                >
-                  <span className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-[rgba(0,136,255,0.1)]">
-                    <Check className="h-3 w-3 text-[#0088FF]" strokeWidth={3} aria-hidden />
-                  </span>
-                  <span className="text-[0.88rem] leading-6 text-slate-700 [overflow-wrap:anywhere]">{text}</span>
-                </li>
-              ))}
-            </ul>
           </div>
         </section>
       ) : null}

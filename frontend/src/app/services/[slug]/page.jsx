@@ -54,7 +54,6 @@ export default async function ServiceDetailPage({ params }) {
     <ServiceDetailBody
       detail={detail}
       heroImage={heroImage}
-      service={service || null}
       relatedList={details}
       relatedServices={services}
     />
