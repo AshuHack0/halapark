@@ -28,6 +28,7 @@ import {
   Zap,
 } from "lucide-react";
 import JobApplicationModal from "./JobApplicationModal";
+import GeneralApplicationModal from "./GeneralApplicationModal";
 import { useLanguage, t } from "@/context/LanguageContext";
 import RichText from "@/components/common/RichText";
 
@@ -780,7 +781,9 @@ function WhyJoinUs({ whyJoin }) {
 function CareersCTA({ cta, heroImage, hasOpenPositions }) {
   const reduced = useReducedMotion();
   const { language } = useLanguage();
-  const primaryHref = cta?.primaryCtaLink || "/contact";
+  // The primary "Join Our Team" button opens the general application form
+  // modal (client request) instead of navigating away.
+  const [applyOpen, setApplyOpen] = useState(false);
   const secondaryHref = cta?.secondaryCtaLink || "#open-positions";
   const SecondaryTag = secondaryHref.startsWith("#") ? "a" : Link;
 
@@ -843,12 +846,13 @@ function CareersCTA({ cta, heroImage, hasOpenPositions }) {
             {hasText(primaryCtaText) || showSecondary ? (
               <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
                 {hasText(primaryCtaText) ? (
-                  <Link
-                    href={primaryHref}
+                  <button
+                    type="button"
+                    onClick={() => setApplyOpen(true)}
                     className="inline-flex items-center gap-2 rounded-full bg-[#0088FF] px-10 py-3.5 text-sm font-semibold text-white shadow-[0_8px_28px_rgba(0,136,255,0.45)] transition hover:brightness-110"
                   >
                     {primaryCtaText} <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
-                  </Link>
+                  </button>
                 ) : null}
                 {showSecondary ? (
                   <SecondaryTag
@@ -863,6 +867,8 @@ function CareersCTA({ cta, heroImage, hasOpenPositions }) {
           </motion.div>
         </div>
       </div>
+
+      <GeneralApplicationModal isOpen={applyOpen} onClose={() => setApplyOpen(false)} />
     </section>
   );
 }

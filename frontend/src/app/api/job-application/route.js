@@ -26,8 +26,14 @@ export async function POST(request) {
     return Response.json({ error: "Captcha is required." }, { status: 400 });
   }
 
-  if (!fullName?.trim() || !email?.trim() || !phone?.trim() || !jobTitle?.trim()) {
+  // Phone is required for per-job applications but not for the general
+  // "Join Our Team" form (its spec collects CV + name + email + birth date).
+  const isGeneral = jobTitle?.trim() === "General Application";
+  if (!fullName?.trim() || !email?.trim() || !jobTitle?.trim() || (!isGeneral && !phone?.trim())) {
     return Response.json({ error: "Missing required fields." }, { status: 400 });
+  }
+  if (isGeneral && !body.resumeUrl?.trim()) {
+    return Response.json({ error: "CV upload is required." }, { status: 400 });
   }
 
   const verifyRes = await fetch("https://www.google.com/recaptcha/api/siteverify", {
@@ -62,6 +68,8 @@ export async function POST(request) {
         message: body.message,
         linkedIn: body.linkedIn,
         resumeUrl: body.resumeUrl,
+        birthDate: body.birthDate,
+        hearAbout: body.hearAbout,
         source: "careers",
       }),
     });
