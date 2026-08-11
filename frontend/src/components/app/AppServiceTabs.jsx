@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { fetchPage } from "@/lib/cms";
@@ -216,6 +217,7 @@ export default function AppServiceTabs() {
         .map((c) => c.trim())
     : [];
   const ctaLabel = (t(content, "ctaLabel", language) || "").trim();
+  const ctaLink = (content?.ctaLink || "").trim();
 
   // `animate` (not whileInView) so the blur-to-clear reveal reliably replays on
   // every tab switch — the elements are keyed by tab and remount each time.
@@ -341,15 +343,34 @@ export default function AppServiceTabs() {
             ) : null}
 
             {ctaLabel ? (
-              <button
-                type="button"
-                className="mt-6 inline-flex items-center gap-3 rounded-xl bg-[#1F6BFF] px-5 py-3 text-sm font-semibold text-white shadow-[0_14px_28px_rgba(31,107,255,0.28)] transition-colors duration-200 hover:bg-[#0F62C7] [overflow-wrap:anywhere]"
-              >
-                {ctaLabel}
-                <span aria-hidden className="text-base leading-none rtl:rotate-180">
-                  →
-                </span>
-              </button>
+              // Navigates when a CTA link is set in admin; otherwise stays a
+              // static button (unchanged previous behavior).
+              (() => {
+                const ctaCls =
+                  "mt-6 inline-flex items-center gap-3 rounded-xl bg-[#1F6BFF] px-5 py-3 text-sm font-semibold text-white shadow-[0_14px_28px_rgba(31,107,255,0.28)] transition-colors duration-200 hover:bg-[#0F62C7] [overflow-wrap:anywhere]";
+                const inner = (
+                  <>
+                    {ctaLabel}
+                    <span aria-hidden className="text-base leading-none rtl:rotate-180">
+                      →
+                    </span>
+                  </>
+                );
+                return ctaLink ? (
+                  <Link
+                    href={ctaLink}
+                    target={/^https?:\/\//.test(ctaLink) ? "_blank" : undefined}
+                    rel={/^https?:\/\//.test(ctaLink) ? "noopener noreferrer" : undefined}
+                    className={ctaCls}
+                  >
+                    {inner}
+                  </Link>
+                ) : (
+                  <button type="button" className={ctaCls}>
+                    {inner}
+                  </button>
+                );
+              })()
             ) : null}
             <div className="mt-8 rounded-[36px] border border-[#E5E7EB] bg-[linear-gradient(180deg,#FFFFFF_0%,#F8FAFC_100%)] p-4  sm:p-5">
               <div className="flex gap-3">
