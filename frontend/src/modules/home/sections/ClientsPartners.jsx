@@ -100,19 +100,19 @@ export default function ClientsPartners() {
                   [...cp.logos, ...cp.logos].map((logo, index) => (
                     <div
                       key={`${logo.image}-${index}`}
-                      className="flex h-[80px] shrink-0 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-white sm:h-[96px]"
+                      className="flex h-[80px] w-[180px] shrink-0 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-white p-2 sm:h-[96px] sm:w-[210px]"
                     >
-                      {/* Card hugs the logo: the image stretches to the full
-                          card height and its width follows the image's own
-                          aspect (object-contain never distorts), so the card
-                          auto-sizes to the logo with no dead space.
+                      {/* Every card is the SAME fixed size; the logo fills the
+                          whole tile (h-full w-full) and object-contain scales it
+                          up to fit edge-to-edge without distorting or cropping.
+                          Minimal padding so there's no dead space.
                           title= shows the admin's Alt text on hover. */}
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={logo.image}
                         alt={logo.alt || "Client logo"}
                         title={logo.alt || undefined}
-                        className="h-full w-auto max-w-[260px] object-contain"
+                        className="h-full w-full object-contain"
                       />
                     </div>
                   ))
@@ -159,7 +159,18 @@ export default function ClientsPartners() {
 
       <style jsx>{`
         .clients-ticker {
-          animation: clients-ticker-scroll 24s linear infinite;
+          animation: clients-ticker-scroll 45s linear infinite;
+        }
+
+        /* Ease off when the user hovers, so a logo can be read. */
+        .clients-ticker:hover {
+          animation-play-state: paused;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .clients-ticker {
+            animation-duration: 90s;
+          }
         }
 
         @keyframes clients-ticker-scroll {
