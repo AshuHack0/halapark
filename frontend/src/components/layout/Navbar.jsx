@@ -251,8 +251,16 @@ export default function Navbar() {
   // A dropdown nav item can be of type "services" or "solutions". Services uses a
   // flat `links` list; solutions uses grouped `groups`.
   const dropdownConfig = {
-    services: { viewAllHref: "/services", viewAllLabel: "View All Services", links: serviceLinks },
-    solutions: { viewAllHref: "/solutions", viewAllLabel: "View All Solutions", groups: solutionGroups },
+    services: {
+      viewAllHref: "/services",
+      viewAllLabel: isArabic ? "عرض كل الخدمات" : "View All Services",
+      links: serviceLinks,
+    },
+    solutions: {
+      viewAllHref: "/solutions",
+      viewAllLabel: isArabic ? "عرض كل الحلول" : "View All Solutions",
+      groups: solutionGroups,
+    },
   };
 
   useEffect(() => {
