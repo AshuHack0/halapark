@@ -5,66 +5,82 @@ import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { Search, X, ArrowRight, MapPin, Layers, Zap, Car } from "lucide-react";
 import { fetchPage } from "@/lib/cms";
+import { useLanguage } from "@/context/LanguageContext";
 
 // ─── Static search index ────────────────────────────────────────────────────
+// `ar` is the Arabic display label; search matches against label + ar + keywords
+// in BOTH languages so Arabic queries work everywhere.
 const SEARCH_INDEX = [
   // Pages
-  { type: "Page", label: "Home",              href: "/",           keywords: "home landing parking halapark" },
-  { type: "Page", label: "Services",          href: "/services",   keywords: "services parking solutions features" },
-  { type: "Page", label: "Solutions",         href: "/solutions",  keywords: "solutions enterprise smart city integration" },
-  { type: "Page", label: "Business",          href: "/business",   keywords: "business partner operator property owner" },
-  { type: "Page", label: "About Us",          href: "/about",      keywords: "about halapark company history team" },
-  { type: "Page", label: "Careers",           href: "/careers",    keywords: "careers jobs hiring valet operator" },
-  { type: "Page", label: "FAQs",             href: "/faqs",       keywords: "faq questions help support answers" },
-  { type: "Page", label: "Contact",           href: "/contact",    keywords: "contact us get in touch support" },
-  { type: "Page", label: "App",               href: "/app",        keywords: "app download mobile ios android" },
+  { type: "Page", label: "Home",     ar: "الرئيسية",        href: "/",          keywords: "home landing parking halapark" },
+  { type: "Page", label: "Services", ar: "الخدمات",         href: "/services",  keywords: "services parking solutions features" },
+  { type: "Page", label: "Solutions", ar: "الحلول",         href: "/solutions", keywords: "solutions enterprise smart city integration" },
+  { type: "Page", label: "Business", ar: "الأعمال",         href: "/business",  keywords: "business partner operator property owner" },
+  { type: "Page", label: "About Us", ar: "من نحن",          href: "/about",     keywords: "about halapark company history team" },
+  { type: "Page", label: "Careers",  ar: "الوظائف",         href: "/careers",   keywords: "careers jobs hiring valet operator" },
+  { type: "Page", label: "FAQs",     ar: "الأسئلة الشائعة", href: "/faqs",      keywords: "faq questions help support answers" },
+  { type: "Page", label: "Contact",  ar: "اتصل بنا",        href: "/contact",   keywords: "contact us get in touch support" },
+  { type: "Page", label: "App",      ar: "التطبيق",         href: "/app",       keywords: "app download mobile ios android" },
 
   // Services
-  { type: "Service", label: "Smart Public Parking",                href: "/services?open=smart-public-parking",       keywords: "smart public parking book reserve digital cashless" },
-  { type: "Service", label: "Private Parking Rental",             href: "/services?open=private-parking-rental",     keywords: "private rental monthly lease tenant" },
-  { type: "Service", label: "EV Charging",                        href: "/services?open=ev-charging",                keywords: "ev electric vehicle charging station" },
-  { type: "Service", label: "Valet On Demand",                    href: "/services?open=valet-on-demand",            keywords: "valet on demand premium drop off" },
-  { type: "Service", label: "Barrier-Free Parking",               href: "/services?open=barrier-free-parking",       keywords: "barrier free anpr automatic entry exit" },
-  { type: "Service", label: "Parking Management",                 href: "/services?open=parking-management",         keywords: "parking management operator dashboard analytics" },
-  { type: "Service", label: "Airport Services",                   href: "/services?open=Airport%20Services",          keywords: "airport parking terminal transfer" },
-  { type: "Service", label: "Car Wash Services",                  href: "/services?open=Car%20Wash%20Services%20(Interior%20%26%20Exterior)", keywords: "car wash clean interior exterior detailing" },
-  { type: "Service", label: "Air Tyre Service",                   href: "/services?open=Air%20Tyre%20Service",        keywords: "air tyre tires inflation service" },
-  { type: "Service", label: "Battery Replacement Service",        href: "/services?open=Battery%20Replacement%20Service", keywords: "battery replacement jump start car" },
+  { type: "Service", label: "Smart Public Parking",         ar: "مواقف عامة ذكية",              href: "/services?open=smart-public-parking",   keywords: "smart public parking book reserve digital cashless" },
+  { type: "Service", label: "Private Parking Rental",       ar: "تأجير مواقف خاصة",             href: "/services?open=private-parking-rental", keywords: "private rental monthly lease tenant" },
+  { type: "Service", label: "EV Charging",                  ar: "شحن السيارات الكهربائية",      href: "/services?open=ev-charging",            keywords: "ev electric vehicle charging station" },
+  { type: "Service", label: "Valet On Demand",              ar: "خدمة صف السيارات عند الطلب",   href: "/services?open=valet-on-demand",        keywords: "valet on demand premium drop off" },
+  { type: "Service", label: "Barrier-Free Parking",         ar: "مواقف بدون حواجز",             href: "/services?open=barrier-free-parking",   keywords: "barrier free anpr automatic entry exit" },
+  { type: "Service", label: "Parking Management",           ar: "إدارة المواقف",                href: "/services?open=parking-management",     keywords: "parking management operator dashboard analytics" },
+  { type: "Service", label: "Airport Services",             ar: "خدمات المطار",                 href: "/services?open=Airport%20Services",     keywords: "airport parking terminal transfer" },
+  { type: "Service", label: "Car Wash Services",            ar: "خدمات غسيل السيارات",          href: "/services?open=Car%20Wash%20Services%20(Interior%20%26%20Exterior)", keywords: "car wash clean interior exterior detailing" },
+  { type: "Service", label: "Air Tyre Service",             ar: "خدمة نفخ الإطارات",            href: "/services?open=Air%20Tyre%20Service",   keywords: "air tyre tires inflation service" },
+  { type: "Service", label: "Battery Replacement Service",  ar: "خدمة استبدال البطارية",        href: "/services?open=Battery%20Replacement%20Service", keywords: "battery replacement jump start car" },
 
   // Solutions are NOT hardcoded here — they're loaded live from the CMS at
   // runtime (see SOLUTIONS fetch below) so search never shows deleted/static
   // solutions or 404 links.
 
   // Locations
-  { type: "Location", label: "Dubai Media City — HQ",       href: "/contact",  keywords: "dubai media city concord tower hq headquarters" },
-  { type: "Location", label: "Business Bay",                 href: "/contact",  keywords: "business bay dubai tower" },
-  { type: "Location", label: "Dubai Mall",                   href: "/contact",  keywords: "dubai mall parking downtown" },
-  { type: "Location", label: "DIFC — Gate District",         href: "/contact",  keywords: "difc gate district financial centre dubai" },
-  { type: "Location", label: "Dubai Marina",                 href: "/contact",  keywords: "dubai marina deck parking" },
-  { type: "Location", label: "JBR Beachfront",               href: "/contact",  keywords: "jbr jumeirah beach residence beachfront" },
-  { type: "Location", label: "Mall of the Emirates",         href: "/contact",  keywords: "mall of the emirates moe dubai" },
-  { type: "Location", label: "Deira City Centre",            href: "/contact",  keywords: "deira city centre dubai" },
-  { type: "Location", label: "DXB Airport",                  href: "/contact",  keywords: "dubai international airport dxb terminal" },
-  { type: "Location", label: "Palm Jumeirah",                href: "/contact",  keywords: "palm jumeirah crescent dubai" },
-  { type: "Location", label: "Abu Dhabi",                    href: "/contact",  keywords: "abu dhabi uae capital parking" },
-  { type: "Location", label: "Sharjah",                      href: "/contact",  keywords: "sharjah uae parking public" },
-  { type: "Location", label: "Ajman",                        href: "/contact",  keywords: "ajman uae parking" },
+  { type: "Location", label: "Dubai Media City — HQ", ar: "مدينة دبي للإعلام — المقر الرئيسي", href: "/contact", keywords: "dubai media city concord tower hq headquarters" },
+  { type: "Location", label: "Business Bay",          ar: "الخليج التجاري",       href: "/contact", keywords: "business bay dubai tower" },
+  { type: "Location", label: "Dubai Mall",            ar: "دبي مول",              href: "/contact", keywords: "dubai mall parking downtown" },
+  { type: "Location", label: "DIFC — Gate District",  ar: "مركز دبي المالي العالمي", href: "/contact", keywords: "difc gate district financial centre dubai" },
+  { type: "Location", label: "Dubai Marina",          ar: "دبي مارينا",           href: "/contact", keywords: "dubai marina deck parking" },
+  { type: "Location", label: "JBR Beachfront",        ar: "شاطئ جي بي آر",        href: "/contact", keywords: "jbr jumeirah beach residence beachfront" },
+  { type: "Location", label: "Mall of the Emirates",  ar: "مول الإمارات",         href: "/contact", keywords: "mall of the emirates moe dubai" },
+  { type: "Location", label: "Deira City Centre",     ar: "ديرة سيتي سنتر",       href: "/contact", keywords: "deira city centre dubai" },
+  { type: "Location", label: "DXB Airport",           ar: "مطار دبي الدولي",      href: "/contact", keywords: "dubai international airport dxb terminal" },
+  { type: "Location", label: "Palm Jumeirah",         ar: "نخلة جميرا",           href: "/contact", keywords: "palm jumeirah crescent dubai" },
+  { type: "Location", label: "Abu Dhabi",             ar: "أبوظبي",               href: "/contact", keywords: "abu dhabi uae capital parking" },
+  { type: "Location", label: "Sharjah",               ar: "الشارقة",              href: "/contact", keywords: "sharjah uae parking public" },
+  { type: "Location", label: "Ajman",                 ar: "عجمان",                href: "/contact", keywords: "ajman uae parking" },
 ];
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 const TYPE_CONFIG = {
-  Page:     { icon: Layers,   color: "text-slate-500",  bg: "bg-slate-100" },
-  Service:  { icon: Car,      color: "text-[#0088FF]",  bg: "bg-[#EEF6FF]" },
-  Solution: { icon: Zap,      color: "text-purple-600", bg: "bg-purple-50" },
-  Location: { icon: MapPin,   color: "text-emerald-600",bg: "bg-emerald-50" },
+  Page:     { icon: Layers,   color: "text-slate-500",  bg: "bg-slate-100",  ar: "صفحة" },
+  Service:  { icon: Car,      color: "text-[#0088FF]",  bg: "bg-[#EEF6FF]",  ar: "خدمة" },
+  Solution: { icon: Zap,      color: "text-purple-600", bg: "bg-purple-50",  ar: "حل" },
+  Location: { icon: MapPin,   color: "text-emerald-600",bg: "bg-emerald-50", ar: "موقع" },
+};
+
+// Modal UI strings (chrome only — item labels come from the index/CMS).
+const UI_TEXT = {
+  placeholder: { en: "Search services, solutions, locations…", ar: "ابحث عن الخدمات والحلول والمواقع…" },
+  popular:     { en: "Popular", ar: "الأكثر بحثًا" },
+  noResults:   { en: "No results for", ar: "لا توجد نتائج عن" },
+  navigate:    { en: "navigate", ar: "تنقّل" },
+  open:        { en: "open", ar: "فتح" },
+  close:       { en: "close", ar: "إغلاق" },
+  brand:       { en: "HalaPark Search", ar: "بحث هالا بارك" },
 };
 
 function score(item, query) {
   const q = query.toLowerCase().trim();
   if (!q) return 0;
-  const label = item.label.toLowerCase();
+  // Match against English label, Arabic label and keywords — so the same index
+  // works for queries typed in either language.
+  const label = `${item.label} ${item.ar ?? ""}`.toLowerCase();
   const keywords = item.keywords.toLowerCase();
-  if (label === q) return 100;
+  if (item.label.toLowerCase() === q || (item.ar ?? "").toLowerCase() === q) return 100;
   if (label.startsWith(q)) return 80;
   if (label.includes(q)) return 60;
   if (keywords.includes(q)) return 40;
@@ -86,6 +102,9 @@ function search(query, index) {
 
 // ─── Component ───────────────────────────────────────────────────────────────
 export default function SearchModal({ isOpen, onClose }) {
+  const { language } = useLanguage();
+  const isAr = language === "ar";
+  const ut = (key) => UI_TEXT[key]?.[isAr ? "ar" : "en"] ?? "";
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -108,9 +127,22 @@ export default function SearchModal({ isOpen, onClose }) {
       );
       const cards = Array.isArray(s.cards) ? s.cards : [];
       const items = cards
-        .map((c) => ({ slug: (c?.slug || "").trim(), label: (c?.title || "").trim(), keywords: (c?.description || "").trim() }))
+        .map((c) => ({
+          slug: (c?.slug || "").trim(),
+          label: (c?.title || "").trim(),
+          // Arabic title for AR display + search (falls back to EN label —
+          // search results are navigation links, never blanked).
+          ar: (c?.ar?.title || "").trim(),
+          keywords: (c?.description || "").trim(),
+        }))
         .filter((c) => c.slug && c.label && detailSlugs.has(c.slug))
-        .map((c) => ({ type: "Solution", label: c.label, href: `/solutions/${c.slug}`, keywords: `${c.label} ${c.keywords}`.toLowerCase() }));
+        .map((c) => ({
+          type: "Solution",
+          label: c.label,
+          ar: c.ar,
+          href: `/solutions/${c.slug}`,
+          keywords: `${c.label} ${c.keywords}`.toLowerCase(),
+        }));
       setCmsSolutions(items);
     });
     return () => { active = false; };
@@ -195,6 +227,7 @@ export default function SearchModal({ isOpen, onClose }) {
             exit={{ opacity: 0, y: -16, scale: 0.98 }}
             transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
             onClick={(e) => e.stopPropagation()}
+            dir={isAr ? "rtl" : "ltr"}
             className="relative z-10 w-full max-w-[620px] overflow-hidden rounded-[20px] bg-white shadow-[0_32px_80px_rgba(2,6,23,0.28),0_4px_16px_rgba(2,6,23,0.1)]"
           >
             {/* Input row */}
@@ -205,7 +238,7 @@ export default function SearchModal({ isOpen, onClose }) {
                 value={query}
                 onChange={handleQuery}
                 onKeyDown={handleKeyDown}
-                placeholder="Search services, solutions, locations…"
+                placeholder={ut("placeholder")}
                 className="flex-1 bg-transparent text-[0.94rem] text-slate-900 placeholder:text-slate-400 outline-none"
               />
               <button
@@ -221,19 +254,23 @@ export default function SearchModal({ isOpen, onClose }) {
             <div className="max-h-[380px] overflow-y-auto overscroll-contain py-2">
               {!query.trim() && (
                 <p className="px-4 pb-1 pt-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">
-                  Popular
+                  {ut("popular")}
                 </p>
               )}
 
               {isEmpty ? (
                 <div className="px-4 py-8 text-center text-sm text-slate-400">
-                  No results for &ldquo;{query}&rdquo;
+                  {ut("noResults")} &ldquo;{query}&rdquo;
                 </div>
               ) : (
                 displayItems.map((item, i) => {
                   const cfg = TYPE_CONFIG[item.type] ?? TYPE_CONFIG.Page;
                   const Icon = cfg.icon;
                   const isActive = query.trim() && i === activeIndex;
+                  // Arabic label with English fallback — results are links,
+                  // an untranslated one must never disappear.
+                  const label = isAr ? (item.ar || item.label) : item.label;
+                  const typeLabel = isAr ? cfg.ar : item.type;
                   return (
                     <Link
                       key={`${item.type}-${item.label}`}
@@ -247,8 +284,8 @@ export default function SearchModal({ isOpen, onClose }) {
                         <Icon className={`h-4 w-4 ${cfg.color}`} strokeWidth={1.8} />
                       </span>
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-[0.88rem] font-medium text-[#050A13]">{item.label}</p>
-                        <p className={`text-[0.72rem] font-semibold uppercase tracking-[0.1em] ${cfg.color}`}>{item.type}</p>
+                        <p className="truncate text-[0.88rem] font-medium text-[#050A13]">{label}</p>
+                        <p className={`text-[0.72rem] font-semibold uppercase tracking-[0.1em] ${cfg.color}`}>{typeLabel}</p>
                       </div>
                       <ArrowRight className="h-3.5 w-3.5 shrink-0 text-slate-300 rtl:rotate-180" />
                     </Link>
@@ -260,11 +297,11 @@ export default function SearchModal({ isOpen, onClose }) {
             {/* Footer hint */}
             <div className="flex items-center justify-between border-t border-slate-100 px-4 py-2.5">
               <div className="flex items-center gap-3 text-[10px] text-slate-400">
-                <span><kbd className="rounded border border-slate-200 px-1.5 py-0.5 font-mono text-[10px]">↑↓</kbd> navigate</span>
-                <span><kbd className="rounded border border-slate-200 px-1.5 py-0.5 font-mono text-[10px]">↵</kbd> open</span>
-                <span><kbd className="rounded border border-slate-200 px-1.5 py-0.5 font-mono text-[10px]">esc</kbd> close</span>
+                <span><kbd className="rounded border border-slate-200 px-1.5 py-0.5 font-mono text-[10px]">↑↓</kbd> {ut("navigate")}</span>
+                <span><kbd className="rounded border border-slate-200 px-1.5 py-0.5 font-mono text-[10px]">↵</kbd> {ut("open")}</span>
+                <span><kbd className="rounded border border-slate-200 px-1.5 py-0.5 font-mono text-[10px]">esc</kbd> {ut("close")}</span>
               </div>
-              <span className="text-[10px] text-slate-300">HalaPark Search</span>
+              <span className="text-[10px] text-slate-300">{ut("brand")}</span>
             </div>
           </motion.div>
         </motion.div>

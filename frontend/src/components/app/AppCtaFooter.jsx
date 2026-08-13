@@ -65,7 +65,12 @@ export default function AppCtaFooter() {
               <div className="mt-9 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
                 {stores.map((store, i) => {
                   const icon = (store.icon ?? "").trim();
-                  const label = (store.label ?? "").trim();
+                  // Store names are brand-like: in Arabic prefer ar.label but
+                  // fall back to the English label (never blank out a brand).
+                  const label =
+                    language === "ar"
+                      ? (store.ar?.label ?? "").trim() || (store.label ?? "").trim()
+                      : (store.label ?? "").trim();
                   return (
                     <a
                       key={store.key || store.href || i}
