@@ -41,6 +41,11 @@ export default function TransformParking() {
   const parkingPartnerCtaLabel = (t(transformData, "parkingPartnerCtaLabel", language) || "").trim();
   const servicePartnerCtaLabel = (t(transformData, "servicePartnerCtaLabel", language) || "").trim();
 
+  // With a background photo the text is confined to the left of the diagonal
+  // (like the reference design) so copy never sits on top of the image.
+  const parkingHasBg = Boolean((transformData.parkingPartnerBgImage || "").trim());
+  const serviceHasBg = Boolean((transformData.servicePartnerBgImage || "").trim());
+
   // Wait for the fetch before rendering so nothing flashes before load.
   if (!resolved) return null;
 
@@ -89,8 +94,43 @@ export default function TransformParking() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, amount: 0.15 }}
             transition={{ duration: 0.65, ease }}
-            className="flex flex-col rounded-[28px] border border-[#E7EAF0] bg-white p-8 shadow-[0_4px_24px_rgba(6,6,22,0.06)] sm:p-10"
+            className={`relative isolate flex flex-col overflow-hidden rounded-[28px] border border-[#E7EAF0] bg-white p-8 shadow-[0_4px_24px_rgba(6,6,22,0.06)] sm:p-10 ${parkingHasBg ? "sm:pe-[36%]" : ""}`}
           >
+            {/* Background photo in a triangular wedge (admin-set); falls back to
+                subtle CSS triangles when no image is uploaded. */}
+            {(transformData.parkingPartnerBgImage || "").trim() ? (
+              <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 hidden sm:block">
+                {/* Chevron accent stripes echoing the photo's diagonal edge */}
+                <div className="absolute inset-y-0 right-0 w-[48%] bg-[#0088FF]/15 [clip-path:polygon(26%_0,100%_0,100%_100%,26%_100%,0_50%)]" />
+                <div className="absolute inset-y-0 right-0 w-[45%] bg-[#1AB2FF]/25 [clip-path:polygon(26%_0,100%_0,100%_100%,26%_100%,0_50%)]" />
+                {/* Photo panel with a left-pointing chevron edge */}
+                <div className="absolute inset-y-0 right-0 w-[42%] overflow-hidden [clip-path:polygon(26%_0,100%_0,100%_100%,26%_100%,0_50%)]">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={transformData.parkingPartnerBgImage}
+                    alt=""
+                    className="h-full w-full object-cover"
+                  />
+                  {/* Soft fade toward the text side so copy stays readable */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/90 via-white/35 to-transparent" />
+                </div>
+              </div>
+            ) : (
+              <>
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute -top-px right-0 -z-10 h-64 w-64 bg-gradient-to-bl from-[#0088FF]/[0.09] to-transparent [clip-path:polygon(100%_0,100%_100%,0_0)]"
+                />
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute right-16 top-0 -z-10 h-40 w-40 bg-gradient-to-bl from-[#1AB2FF]/[0.07] to-transparent [clip-path:polygon(100%_0,100%_100%,0_0)]"
+                />
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute -bottom-px left-0 -z-10 h-48 w-48 bg-gradient-to-tr from-[#0088FF]/[0.06] to-transparent [clip-path:polygon(0_100%,100%_100%,0_0)]"
+                />
+              </>
+            )}
             <div className="mb-2 inline-flex w-fit items-center gap-2 rounded-full bg-[#EEF6FF] px-3 py-1">
               <span className="h-2 w-2 rounded-full bg-[#0088FF]" />
               <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#0088FF]">Parking Partner</span>
@@ -140,8 +180,44 @@ export default function TransformParking() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, amount: 0.15 }}
             transition={{ duration: 0.65, ease, delay: 0.1 }}
-            className="flex flex-col rounded-[28px] bg-[#06111f] p-8 shadow-[0_4px_24px_rgba(6,6,22,0.12)] sm:p-10"
+            className={`relative isolate flex flex-col overflow-hidden rounded-[28px] bg-[#06111f] p-8 shadow-[0_4px_24px_rgba(6,6,22,0.12)] sm:p-10 ${serviceHasBg ? "sm:pe-[36%]" : ""}`}
           >
+            {/* Background photo in a triangular wedge (admin-set); falls back to
+                subtle CSS triangles when no image is uploaded. */}
+            {(transformData.servicePartnerBgImage || "").trim() ? (
+              <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 hidden sm:block">
+                {/* Chevron accent stripes echoing the photo's diagonal edge */}
+                <div className="absolute inset-y-0 right-0 w-[48%] bg-[#0088FF]/30 [clip-path:polygon(26%_0,100%_0,100%_100%,26%_100%,0_50%)]" />
+                <div className="absolute inset-y-0 right-0 w-[45%] bg-[#1AB2FF]/35 [clip-path:polygon(26%_0,100%_0,100%_100%,26%_100%,0_50%)]" />
+                {/* Photo panel with a left-pointing chevron edge */}
+                <div className="absolute inset-y-0 right-0 w-[42%] overflow-hidden [clip-path:polygon(26%_0,100%_0,100%_100%,26%_100%,0_50%)]">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={transformData.servicePartnerBgImage}
+                    alt=""
+                    className="h-full w-full object-cover"
+                  />
+                  {/* Blue tint + fade toward the text side (matches the reference) */}
+                  <div className="absolute inset-0 bg-[#0044AA]/30 mix-blend-multiply" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#06111f]/95 via-[#06111f]/40 to-transparent" />
+                </div>
+              </div>
+            ) : (
+              <>
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute -top-px right-0 -z-10 h-64 w-64 bg-gradient-to-bl from-[#0088FF]/[0.22] to-transparent [clip-path:polygon(100%_0,100%_100%,0_0)]"
+                />
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute right-16 top-0 -z-10 h-40 w-40 bg-gradient-to-bl from-[#5BC4FF]/[0.12] to-transparent [clip-path:polygon(100%_0,100%_100%,0_0)]"
+                />
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute -bottom-px left-0 -z-10 h-48 w-48 bg-gradient-to-tr from-[#1AB2FF]/[0.10] to-transparent [clip-path:polygon(0_100%,100%_100%,0_0)]"
+                />
+              </>
+            )}
             <div className="mb-2 inline-flex w-fit items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1">
               <span className="h-2 w-2 rounded-full bg-[#5BC4FF]" />
               <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/80">Service Partner</span>
