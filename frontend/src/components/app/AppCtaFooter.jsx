@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Download } from "lucide-react";
 import { fetchPage } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
 import RichText from "@/components/common/RichText";
@@ -40,16 +41,36 @@ export default function AppCtaFooter() {
       <div className="mx-auto max-w-7xl">
         <div
           dir={dir}
-          className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[linear-gradient(120deg,#050A13_0%,#0B1220_42%,#0088FF_140%)] px-6 py-12 shadow-[0_28px_64px_rgba(15,23,42,0.28)] sm:px-10 sm:py-16 lg:px-16"
+          className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[linear-gradient(120deg,#050A13_0%,#0B1220_42%,#0088FF_140%)] px-6 py-14 shadow-[0_28px_64px_rgba(15,23,42,0.28)] sm:px-10 sm:py-20 lg:px-16"
         >
+          {/* Decorative layers: blueprint grid + soft glows + top hairline */}
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[#0088FF]/30 blur-[90px] rtl:right-auto rtl:-left-24"
+            className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.045)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.045)_1px,transparent_1px)] bg-[size:44px_44px] [mask-image:radial-gradient(ellipse_75%_70%_at_50%_40%,black,transparent)]"
           />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full bg-[#0088FF]/35 blur-[100px] rtl:right-auto rtl:-left-24"
+          />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -bottom-32 -left-20 h-72 w-72 rounded-full bg-[#1AB2FF]/20 blur-[110px] rtl:left-auto rtl:-right-20"
+          />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#1AB2FF]/60 to-transparent"
+          />
+          {/* Faint parking "P" watermark */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -bottom-10 end-6 select-none text-[16rem] font-bold leading-none tracking-tighter text-white/[0.04] sm:text-[20rem]"
+          >
+            P
+          </div>
 
           <div className="relative mx-auto max-w-3xl text-center">
             {heading.trim() ? (
-              <h2 className="text-3xl font-semibold leading-tight tracking-[-0.03em] text-white sm:text-4xl md:text-[3rem] [overflow-wrap:anywhere]">
+              <h2 className="bg-[linear-gradient(180deg,#FFFFFF_55%,#9CC8F5_100%)] bg-clip-text text-3xl font-semibold leading-tight tracking-[-0.03em] text-transparent sm:text-4xl md:text-[3.2rem] [overflow-wrap:anywhere]">
                 {heading}
               </h2>
             ) : null}
@@ -78,7 +99,7 @@ export default function AppCtaFooter() {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={label || "App store"}
-                      className="inline-flex items-center gap-2.5 rounded-2xl border border-white/15 bg-white/10 px-5 py-3 text-sm font-medium text-white backdrop-blur transition hover:border-[#0088FF]/50 hover:bg-white/15"
+                      className="group inline-flex items-center gap-2.5 rounded-2xl border border-white/15 bg-white/[0.08] px-6 py-3.5 text-sm font-semibold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur transition-all duration-300 hover:-translate-y-0.5 hover:border-[#1AB2FF]/60 hover:bg-white/[0.14] hover:shadow-[0_12px_32px_rgba(0,136,255,0.35),inset_0_1px_0_rgba(255,255,255,0.12)]"
                     >
                       {icon ? (
                         // eslint-disable-next-line @next/next/no-img-element
@@ -87,7 +108,11 @@ export default function AppCtaFooter() {
                           alt={label || "Store"}
                           className="h-6 w-6 shrink-0 object-contain sm:h-7 sm:w-7"
                         />
-                      ) : null}
+                      ) : (
+                        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#0088FF]/25 text-[#7CC4FF] transition-colors group-hover:bg-[#0088FF] group-hover:text-white">
+                          <Download className="h-3.5 w-3.5" strokeWidth={2.2} aria-hidden />
+                        </span>
+                      )}
                       {label ? (
                         <span className="[overflow-wrap:anywhere]">{label}</span>
                       ) : null}

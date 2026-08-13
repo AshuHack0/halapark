@@ -1892,34 +1892,67 @@ function LongTermCTA({ onGetQuote, cta }) {
   const ctaLabel = (t(cta, "ctaLabel", language) || "").trim();
 
   return (
-    <section className="bg-[#F4F8FF] py-16 sm:py-20 lg:py-24">
-      <div className="mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
-        <motion.div
-          initial={reduced ? false : { opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.6, ease }}
-        >
-          <h2 className="text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]">
-            {heading}
-            {headingGradient ? (
-              <>
-                {" "}
-                <span className="bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">{headingGradient}</span>
-              </>
-            ) : null}
-          </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-[#050A13] [overflow-wrap:anywhere]">
-            {subtitle}
-          </p>
-          <button
-            type="button"
-            onClick={onGetQuote}
-            className="mt-8 inline-flex items-center justify-center rounded-full bg-[#0088FF] px-8 py-3.5 text-sm font-semibold text-white transition hover:brightness-110"
+    <section className="bg-white px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+      <div className="mx-auto max-w-7xl">
+        <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[linear-gradient(120deg,#050A13_0%,#0B1220_42%,#0088FF_140%)] px-6 py-14 shadow-[0_28px_64px_rgba(15,23,42,0.28)] sm:px-10 sm:py-20 lg:px-16">
+          {/* Decorative layers: blueprint grid + soft glows + top hairline */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.045)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.045)_1px,transparent_1px)] bg-[size:44px_44px] [mask-image:radial-gradient(ellipse_75%_70%_at_50%_40%,black,transparent)]"
+          />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full bg-[#0088FF]/35 blur-[100px] rtl:right-auto rtl:-left-24"
+          />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -bottom-32 -left-20 h-72 w-72 rounded-full bg-[#1AB2FF]/20 blur-[110px] rtl:left-auto rtl:-right-20"
+          />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#1AB2FF]/60 to-transparent"
+          />
+          {/* Faint parking "P" watermark */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -bottom-10 end-6 select-none text-[16rem] font-bold leading-none tracking-tighter text-white/[0.04] sm:text-[20rem]"
           >
-            {ctaLabel}
-          </button>
-        </motion.div>
+            P
+          </div>
+
+          <motion.div
+            initial={reduced ? false : { opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.6, ease }}
+            className="relative mx-auto max-w-3xl text-center"
+          >
+            <h2 className="text-[clamp(2.4rem,4.2vw,3.6rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-white [overflow-wrap:anywhere]">
+              {heading}
+              {headingGradient ? (
+                <>
+                  {" "}
+                  <span className="block bg-gradient-to-r from-[#4DAAFF] to-[#1AB2FF] bg-clip-text text-transparent">{headingGradient}</span>
+                </>
+              ) : null}
+            </h2>
+            {subtitle ? (
+              <p className="mx-auto mt-5 max-w-2xl text-sm leading-7 text-slate-300 sm:text-base [overflow-wrap:anywhere]">
+                {subtitle}
+              </p>
+            ) : null}
+            {ctaLabel ? (
+              <button
+                type="button"
+                onClick={onGetQuote}
+                className="group mt-9 inline-flex items-center gap-2 rounded-full bg-[#0088FF] px-9 py-4 text-sm font-semibold text-white shadow-[0_14px_36px_rgba(0,136,255,0.45)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#1AB2FF] hover:shadow-[0_18px_44px_rgba(26,178,255,0.5)]"
+              >
+                {ctaLabel}
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5" aria-hidden />
+              </button>
+            ) : null}
+          </motion.div>
+        </div>
       </div>
     </section>
   );
