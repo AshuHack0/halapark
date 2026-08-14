@@ -290,7 +290,7 @@ export default function GlobalMobilityNetworkSection() {
           <div className="relative z-10 text-center">
             {/* Centered across the full width: heading on one line, the
                 gradient part always on its own second line. */}
-            <h2 className="mx-auto w-full pt-5 text-[clamp(2.65rem,4.5vw,4rem)] font-semibold uppercase leading-[1.08] tracking-[-0.06em] text-[#050A13] sm:pt-6 [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
+            <h2 className="mx-auto w-full pt-5 text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.08] tracking-[-0.06em] text-[#050A13] sm:pt-6 [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
               <span className="block">{heading}</span>
               {headingGradient ? (
                 <span className="block bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">
@@ -386,7 +386,7 @@ export default function GlobalMobilityNetworkSection() {
                 ) : null}
                 {hasPanelText ? (
                   <div className="absolute start-0 top-[10%] z-20 w-full max-w-[360px] px-4 sm:max-w-[390px] sm:px-6">
-                    <h3 className="text-[1.45rem] font-semibold uppercase leading-[1.18] tracking-[0.02em] text-[#071221] sm:text-[1.85rem] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
+                    <h3 className="text-[1.45rem] font-semibold leading-[1.18] tracking-[0.02em] text-[#071221] sm:text-[1.85rem] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
                       {t(content, "panelTitle", language)}
                       {t(content, "panelTitleAccent", language) ? (
                         <>
@@ -452,7 +452,7 @@ export default function GlobalMobilityNetworkSection() {
                   <p className="text-[1.55rem] font-semibold leading-none tracking-[-0.02em] text-[#071221]">
                     {t(item, "value", language)}
                   </p>
-                  <p className="mt-1.5 text-[0.76rem] font-medium uppercase tracking-[0.06em] text-slate-500">
+                  <p className="mt-1.5 text-[0.76rem] font-medium tracking-[0.06em] text-slate-500">
                     {t(item, "label", language)}
                   </p>
                 </div>
