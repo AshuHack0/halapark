@@ -376,7 +376,7 @@ export default function GlobalMobilityNetworkSection() {
                         <span className="gm-map-dot" />
                       </div>
                     ))}
-                    <div className="absolute left-[56.1%] top-[58.2%] z-20 -translate-x-1/2 -translate-y-1/2">
+                    <div className="absolute left-[64%] top-[46%] z-20 -translate-x-1/2 -translate-y-1/2">
                       <div className="gm-city-lens">
                         <span className="gm-city-label gm-city-label-main">DUBAI</span>
                         <span className="gm-city-label">ABU DHABI</span>
