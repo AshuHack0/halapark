@@ -50,6 +50,7 @@ export default function HowItWorksDemoSection() {
             title: c?.title ?? "",
             description: c?.description ?? "",
             ar: c?.ar,
+            iconImage: (c?.iconImage ?? "").trim(),
           }))
           .filter(
             (s) => ((s.title ?? "").trim()) || ((s.description ?? "").trim()),
@@ -129,16 +130,27 @@ export default function HowItWorksDemoSection() {
                             aria-hidden="true"
                             className="absolute inset-0 opacity-45 [background-image:linear-gradient(135deg,rgba(0,136,255,0.12)_25%,transparent_25%),linear-gradient(225deg,rgba(0,136,255,0.1)_25%,transparent_25%),linear-gradient(45deg,rgba(0,136,255,0.1)_25%,transparent_25%),linear-gradient(315deg,rgba(0,136,255,0.12)_25%,#F1F7FF_25%)] [background-position:12px_0,12px_0,0_0,0_0] [background-size:24px_24px]"
                           />
-                          {AccentIcon ? (
-                            <AccentIcon
-                              aria-hidden="true"
-                              className="absolute end-4 top-3 h-6 w-6 fill-white stroke-[2.4]"
+                          {step.iconImage ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              src={step.iconImage}
+                              alt=""
+                              className="relative h-9 w-9 object-contain sm:h-10 sm:w-10"
                             />
-                          ) : null}
-                          <Icon
-                            aria-hidden="true"
-                            className="relative h-9 w-9 stroke-[2.7] sm:h-10 sm:w-10"
-                          />
+                          ) : (
+                            <>
+                              {AccentIcon ? (
+                                <AccentIcon
+                                  aria-hidden="true"
+                                  className="absolute end-4 top-3 h-6 w-6 fill-white stroke-[2.4]"
+                                />
+                              ) : null}
+                              <Icon
+                                aria-hidden="true"
+                                className="relative h-9 w-9 stroke-[2.7] sm:h-10 sm:w-10"
+                              />
+                            </>
+                          )}
                         </div>
                         <div className="min-w-0">
                           <h3 className="text-[1.08rem] font-bold leading-tight text-[#182238] sm:text-[1.18rem] [overflow-wrap:anywhere]">
