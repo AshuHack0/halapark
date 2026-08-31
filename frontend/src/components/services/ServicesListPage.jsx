@@ -1604,35 +1604,24 @@ const PARTNER_STATS = [
   { value: "99%",  label: "Client satisfaction"   },
 ];
 
+// Logo-only card — same fixed-size white tile as the Home page's Clients &
+// Partners section; no name/industry label underneath.
 function PartnerCard({ partner }) {
   const { language } = useLanguage();
   return (
-    <div className="group/partner relative flex min-w-[210px] items-center gap-3.5 overflow-hidden rounded-2xl border border-slate-100 bg-white px-5 py-4 shadow-[0_2px_12px_rgba(6,6,22,0.05)] transition-all duration-300 hover:border-slate-200 hover:shadow-[0_6px_24px_rgba(6,6,22,0.09)] sm:min-w-[240px]">
-      {/* Hover glow */}
-      <div className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-300 group-hover/partner:opacity-100"
-        style={{ background: `radial-gradient(circle at 20% 50%, ${partner.color}0C, transparent 70%)` }} />
-      {/* Logo mark — uploaded image if present, else colored initials */}
+    <div className="flex h-[80px] w-[180px] shrink-0 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-white p-2 sm:h-[96px] sm:w-[210px]">
       {partner.logo ? (
-        <div className="relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-slate-100 bg-white shadow-sm">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={partner.logo} alt={partner.name} className="h-full w-full object-contain p-1" />
-        </div>
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={partner.logo} alt={t(partner, "name", language) || ""} title={t(partner, "name", language) || undefined} className="h-full w-full object-contain" />
       ) : (
-        <div
-          className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-[13px] font-bold text-white shadow-sm"
+        <span
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-[13px] font-bold text-white shadow-sm"
           style={{ background: `linear-gradient(135deg, ${partner.color}, ${partner.color}CC)` }}
+          title={t(partner, "name", language) || undefined}
         >
           {partner.initials}
-          <div className="pointer-events-none absolute inset-0 rounded-xl bg-gradient-to-br from-white/20 to-transparent" />
-        </div>
+        </span>
       )}
-      {/* Text */}
-      <div className="min-w-0">
-        <p className="truncate text-[0.82rem] font-semibold text-[#050A13] transition-colors duration-200 group-hover/partner:text-[#0088FF]">
-          {t(partner, "name", language)}
-        </p>
-        <p className="mt-0.5 text-[10px] font-medium text-slate-400">{t(partner, "industry", language)}</p>
-      </div>
     </div>
   );
 }

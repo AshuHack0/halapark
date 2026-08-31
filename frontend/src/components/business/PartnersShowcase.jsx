@@ -131,25 +131,23 @@ export default function PartnersShowcase() {
 }
 
 // A single partner logo card (shared by the marquee and the static layouts).
+// Logo-only — same fixed-size white tile as the Home page's Clients &
+// Partners section; no name/industry label underneath.
 function PartnerCard({ p, language }) {
   return (
-    <div className="flex w-[200px] shrink-0 items-center gap-3 rounded-[16px] border border-[#E7EAF0] bg-white px-4 py-3.5 shadow-sm hover:shadow-md transition">
+    <div className="flex h-[80px] w-[180px] shrink-0 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-white p-2 sm:h-[96px] sm:w-[210px]">
       {p.logo ? (
-        // Identical tile for every logo (fixed box + padding + neutral bg) so
-        // mixed-size uploads all display at consistent dimensions.
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-[10px] border border-[#EEF2F7] bg-[#F8FAFC] p-1">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={p.logo} alt={p.name || ""} className="h-full w-full object-contain" />
-        </span>
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={p.logo} alt={t(p, "name", language) || ""} title={t(p, "name", language) || undefined} className="h-full w-full object-contain" />
       ) : (
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] text-[13px] font-bold text-white" style={{ background: p.color || "#0088FF" }}>
+        <span
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] text-[13px] font-bold text-white"
+          style={{ background: p.color || "#0088FF" }}
+          title={t(p, "name", language) || undefined}
+        >
           {p.initials}
         </span>
       )}
-      <div className="min-w-0">
-        <p className="truncate text-[0.82rem] font-semibold text-[#050A13]">{t(p, "name", language)}</p>
-        <p className="text-[0.72rem] text-slate-400">{t(p, "industry", language)}</p>
-      </div>
     </div>
   );
 }
