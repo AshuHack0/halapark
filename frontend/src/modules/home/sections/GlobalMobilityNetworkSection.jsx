@@ -126,7 +126,8 @@ function MetricIcon({ type }) {
 }
 
 function CapabilityIcon({ type }) {
-  const common = "h-[18px] w-[18px] text-[#0088FF]";
+  // Matches the icon size used in the Why HalaPark section.
+  const common = "h-5 w-5 text-[#0088FF]";
 
   if (type === "wallet") {
     return (
@@ -409,7 +410,7 @@ export default function GlobalMobilityNetworkSection() {
                                   src={item.iconImage}
                                   alt=""
                                   aria-hidden
-                                  className="h-[18px] w-[18px] object-contain"
+                                  className="h-5 w-5 object-contain"
                                 />
                               ) : (
                                 <CapabilityIcon type={item.icon} />
