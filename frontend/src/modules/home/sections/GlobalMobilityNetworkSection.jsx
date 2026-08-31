@@ -406,11 +406,13 @@ export default function GlobalMobilityNetworkSection() {
                           <li key={`cap-${index}`}>
                             <div className="flex items-center gap-2.5">
                               {item.iconImage ? (
+                                // Custom-uploaded icons render at the same size as
+                                // the Why HalaPark section's uploaded icons.
                                 <img
                                   src={item.iconImage}
                                   alt=""
                                   aria-hidden
-                                  className="h-5 w-5 object-contain"
+                                  className="h-8 w-8 shrink-0 object-contain"
                                 />
                               ) : (
                                 <CapabilityIcon type={item.icon} />
@@ -440,11 +442,13 @@ export default function GlobalMobilityNetworkSection() {
                 >
                   <div className="mb-2 flex items-center justify-center">
                     {item.iconImage ? (
+                      // Custom-uploaded icons render at the same size as the
+                      // Why HalaPark section's uploaded icons.
                       <img
                         src={item.iconImage}
                         alt=""
                         aria-hidden
-                        className="h-5 w-5 object-contain"
+                        className="h-8 w-8 object-contain"
                       />
                     ) : (
                       <MetricIcon type={item.icon} />
