@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { useLanguage, t } from "@/context/LanguageContext";
 import RichText from "@/components/common/RichText";
+import { PARTNER_FORM_LINK } from "@/components/partners/PartnershipFormProvider";
 
 const ease = [0.22, 1, 0.36, 1];
 
@@ -1378,7 +1379,8 @@ function FinalCTA({ cta }) {
               <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
                 {hasPrimary ? (
                   <Link
-                    href={cta?.primaryCtaLink || "/contact"}
+                    href={cta?.primaryCtaPopup ? PARTNER_FORM_LINK : cta?.primaryCtaLink || "/contact"}
+                    data-partner-source="About · CTA"
                     className="inline-flex items-center gap-2 rounded-full bg-[#0088FF] px-8 py-3.5 text-sm font-semibold text-white shadow-[0_8px_28px_rgba(0,136,255,0.45)] transition hover:brightness-110"
                   >
                     {t(cta, "primaryCtaText", language)} <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
@@ -1386,7 +1388,8 @@ function FinalCTA({ cta }) {
                 ) : null}
                 {hasSecondary ? (
                   <Link
-                    href={cta?.secondaryCtaLink || "/contact"}
+                    href={cta?.secondaryCtaPopup ? PARTNER_FORM_LINK : cta?.secondaryCtaLink || "/contact"}
+                    data-partner-source="About · CTA"
                     className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-8 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/15"
                   >
                     {t(cta, "secondaryCtaText", language)}

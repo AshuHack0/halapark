@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { fetchHomeSection } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
 import RichText from "@/components/common/RichText";
+import { PARTNER_FORM_LINK } from "@/components/partners/PartnershipFormProvider";
 
 const serviceAudienceCards = [
   {
@@ -228,8 +229,9 @@ export default function AiPoweredParkingService() {
                 ctaLabel: c?.ctaLabel ?? "",
                 audienceTag: c?.audienceTag ?? "",
                 description: c?.description ?? "",
-                // Button link from the admin panel; base href only as fallback.
-                href: (c?.href ?? "").trim() || base.href || "/contact",
+                // "Open Partnership Form" tick box wins; otherwise the admin
+                // link, with the base href only as fallback.
+                href: c?.popup ? PARTNER_FORM_LINK : (c?.href ?? "").trim() || base.href || "/contact",
                 imageSrc: c?.imageSrc || base.imageSrc,
                 ar: c?.ar,
               };

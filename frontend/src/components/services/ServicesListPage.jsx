@@ -1740,7 +1740,7 @@ function PartnersSection({ partners }) {
             {t(partners, "ctaText", language)}{" "}
             {(t(partners, "ctaLabel", language) || "").trim() ? (
               <Link
-                href={(partners?.ctaLink || "").trim() || PARTNER_FORM_LINK}
+                href={partners?.ctaPopup ? PARTNER_FORM_LINK : (partners?.ctaLink || "").trim() || "/contact"}
                 data-partner-source="Services · Clients & Partners"
                 className="font-semibold text-[#0088FF] underline-offset-2 hover:underline"
               >

@@ -117,7 +117,7 @@ export default function PartnersShowcase() {
 
             {ctaLabel ? (
               <Link
-                href={ctaLink || PARTNER_FORM_LINK}
+                href={showcase.ctaPopup ? PARTNER_FORM_LINK : ctaLink || "/contact"}
                 data-partner-source="Business · Partners Showcase"
                 className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] text-white font-semibold rounded-full hover:shadow-lg hover:shadow-[#0088FF]/30 transition"
               >
@@ -300,7 +300,7 @@ export function PartnerCTA() {
             ) : null}
             {label ? (
               <Link
-                href={link || PARTNER_FORM_LINK}
+                href={showcase.ctaSectionPopup ? PARTNER_FORM_LINK : link || "/contact"}
                 data-partner-source="Business · Ready to Partner"
                 className="mt-7 inline-flex items-center gap-2 rounded-full bg-[#0088FF] px-8 py-3.5 text-sm font-semibold text-white shadow-[0_8px_28px_rgba(0,136,255,0.45)] transition hover:brightness-110"
               >

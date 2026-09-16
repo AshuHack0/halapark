@@ -7,6 +7,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { fetchPage } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
 import RichText from "@/components/common/RichText";
+import { PARTNER_FORM_LINK } from "@/components/partners/PartnershipFormProvider";
 import {
   ArrowRight,
   Check,
@@ -1507,9 +1508,9 @@ function NewFinalCTA() {
 
   // Primary button — new primaryLabel, falling back to legacy ctaLabel.
   const primaryLabel = (t(cta, "primaryLabel", language) || t(cta, "ctaLabel", language) || "").trim();
-  const primaryLink = (typeof cta.primaryLink === "string" && cta.primaryLink.trim()) || "/contact";
+  const primaryLink = cta.primaryPopup ? PARTNER_FORM_LINK : (typeof cta.primaryLink === "string" && cta.primaryLink.trim()) || "/contact";
   const secondaryLabel = (t(cta, "secondaryLabel", language) || "").trim();
-  const secondaryLink = (typeof cta.secondaryLink === "string" && cta.secondaryLink.trim()) || "/solutions";
+  const secondaryLink = cta.secondaryPopup ? PARTNER_FORM_LINK : (typeof cta.secondaryLink === "string" && cta.secondaryLink.trim()) || "/solutions";
   const hasButtons = Boolean(primaryLabel || secondaryLabel);
 
   // Hide the whole section when there's nothing at all to show.
