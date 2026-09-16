@@ -36,7 +36,7 @@ function ContactDetailItem({ detail }) {
         <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[rgba(0,136,255,0.08)] text-[#0088FF]">
           {detail.iconImage ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={detail.iconImage} alt="" className="h-6 w-6 object-contain" />
+            <img src={detail.iconImage} alt="" className="h-9 w-9 object-contain" />
           ) : (
             <Icon className="h-5 w-5" />
           )}

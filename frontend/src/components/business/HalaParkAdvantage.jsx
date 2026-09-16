@@ -81,7 +81,7 @@ export default function HalaParkAdvantage() {
                 <div className="flex h-12 w-12 items-center justify-center rounded-[14px] bg-[#EEF6FF] transition duration-300 group-hover:bg-[#0088FF]">
                   {iconImage ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={iconImage} alt="" className="h-6 w-6 object-contain" />
+                    <img src={iconImage} alt="" className="h-9 w-9 object-contain" />
                   ) : (
                     <Icon className="h-5 w-5 text-[#0088FF] transition duration-300 group-hover:text-white" strokeWidth={1.7} aria-hidden />
                   )}

@@ -32,9 +32,9 @@ function CardIcon({ item }) {
       <Image
         src={iconImage}
         alt=""
-        width={24}
-        height={24}
-        className="h-6 w-6 object-contain"
+        width={36}
+        height={36}
+        className="h-9 w-9 object-contain"
       />
     );
   }

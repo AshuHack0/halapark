@@ -267,7 +267,7 @@ export default function FAQCategorySection({ categories = [] }) {
                       >
                         {category.iconImage ? (
                           // eslint-disable-next-line @next/next/no-img-element
-                          <img src={category.iconImage} alt="" aria-hidden className="h-3.5 w-3.5 shrink-0 object-contain" />
+                          <img src={category.iconImage} alt="" aria-hidden className="h-5 w-5 shrink-0 object-contain" />
                         ) : (
                           <Icon className={`h-3.5 w-3.5 shrink-0 ${isActive ? "text-white" : "text-[#0088FF]"}`} strokeWidth={1.8} aria-hidden />
                         )}
@@ -294,7 +294,7 @@ export default function FAQCategorySection({ categories = [] }) {
                   <div className="flex h-10 w-10 items-center justify-center rounded-[12px] bg-[#EEF6FF]">
                     {activeCategory?.iconImage ? (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={activeCategory.iconImage} alt="" aria-hidden className="h-5 w-5 object-contain" />
+                      <img src={activeCategory.iconImage} alt="" aria-hidden className="h-7 w-7 object-contain" />
                     ) : (
                       <Icon className="h-5 w-5 text-[#0088FF]" strokeWidth={1.7} aria-hidden />
                     )}

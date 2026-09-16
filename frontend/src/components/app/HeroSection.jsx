@@ -79,7 +79,7 @@ function StatStrip({ stats, language }) {
               {iconImage ? (
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#EAF3FF]">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={iconImage} alt="" className="h-5 w-5 object-contain" />
+                  <img src={iconImage} alt="" className="h-8 w-8 object-contain" />
                 </span>
               ) : Icon ? (
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#EAF3FF] text-[#0088FF]">
@@ -210,7 +210,7 @@ function FloatingCard({ card, language }) {
         {iconImage ? (
           <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#0088FF]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={iconImage} alt="" className="h-5 w-5 object-contain" />
+            <img src={iconImage} alt="" className="h-7 w-7 object-contain" />
           </span>
         ) : Icon ? (
           <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#0088FF] text-white">

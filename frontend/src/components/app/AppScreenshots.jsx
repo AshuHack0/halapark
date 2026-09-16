@@ -40,7 +40,7 @@ function StepItem({ step, index, prefersReducedMotion }) {
             alt=""
             width={28}
             height={28}
-            className="h-6 w-6 object-contain sm:h-7 sm:w-7"
+            className="h-9 w-9 object-contain sm:h-10 sm:w-10"
           />
         ) : Icon ? (
           <Icon aria-hidden="true" className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2.4} />

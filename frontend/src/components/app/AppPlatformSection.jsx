@@ -154,7 +154,7 @@ function FeatureRow({ feature, fallbackIcon, title, description }) {
             alt=""
             width={20}
             height={20}
-            className="h-5 w-5 object-contain"
+            className="h-8 w-8 object-contain"
           />
         ) : (
           fallbackIcon

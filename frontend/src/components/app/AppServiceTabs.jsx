@@ -267,7 +267,7 @@ export default function AppServiceTabs() {
                       alt=""
                       width={22}
                       height={22}
-                      className="h-[22px] w-[22px] shrink-0 object-contain"
+                      className="h-7 w-7 shrink-0 object-contain"
                     />
                   ) : null}
                   <span className="whitespace-nowrap [overflow-wrap:anywhere]">{t(service, "label", language)}</span>

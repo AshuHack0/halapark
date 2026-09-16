@@ -1254,7 +1254,7 @@ function FeatureHighlightsSection() {
                       >
                         <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl bg-white/10 transition duration-300 group-hover:bg-[#0088FF] group-hover:shadow-[0_6px_20px_rgba(0,136,255,0.4)]">
                           {iconImage ? (
-                            <Image src={iconImage} alt="" width={32} height={32} className="h-8 w-8 object-contain" />
+                            <Image src={iconImage} alt="" width={32} height={32} className="h-10 w-10 object-contain" />
                           ) : (
                             <Icon className="h-6 w-6 text-white/70 transition duration-300 group-hover:text-white" strokeWidth={1.7} aria-hidden />
                           )}

@@ -425,7 +425,7 @@ function OpportunitiesSection({ opportunities, header }) {
                     <div className="flex h-12 w-12 items-center justify-center rounded-[14px] bg-[#EEF6FF]">
                       {hasText(item.iconImage) ? (
                         // eslint-disable-next-line @next/next/no-img-element
-                        <img src={item.iconImage} alt="" className="h-6 w-6 object-contain" />
+                        <img src={item.iconImage} alt="" className="h-9 w-9 object-contain" />
                       ) : (
                         <Icon className="h-6 w-6 text-[#0088FF]" strokeWidth={1.8} aria-hidden />
                       )}

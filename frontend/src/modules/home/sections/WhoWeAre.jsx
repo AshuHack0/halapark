@@ -442,7 +442,7 @@ export default function WhoWeAre() {
                           >
                             {item.iconImage ? (
                               // eslint-disable-next-line @next/next/no-img-element
-                              <img src={item.iconImage} alt="" className="h-7 w-7 object-contain" />
+                              <img src={item.iconImage} alt="" className="h-9 w-9 object-contain" />
                             ) : (
                               <Icon className="h-6 w-6" strokeWidth={1.75} aria-hidden />
                             )}

@@ -229,7 +229,7 @@ export default function AppFeatureCardsSection() {
                           alt=""
                           width={40}
                           height={40}
-                          className="h-9 w-9 object-contain"
+                          className="h-12 w-12 object-contain"
                         />
                       ) : (
                         <Icon aria-hidden="true" className="h-8 w-8" strokeWidth={2.4} />

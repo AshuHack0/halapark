@@ -1854,7 +1854,7 @@ function TrustSection({ trust }) {
               <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-[rgba(0,136,255,0.08)] shadow-[0_4px_14px_rgba(0,136,255,0.12)] transition-all duration-300 group-hover/trust:bg-[rgba(0,136,255,0.14)]">
                 {(item.iconImage || "").trim() ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={item.iconImage} alt="" className="h-7 w-7 object-contain" />
+                  <img src={item.iconImage} alt="" className="h-10 w-10 object-contain" />
                 ) : (
                   <Icon className="h-6 w-6 text-[#0088FF]" aria-hidden />
                 )}

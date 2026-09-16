@@ -204,7 +204,7 @@ export default function FloatingActions() {
                         <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[linear-gradient(165deg,#0A97FF_0%,#0088FF_50%,#006FD2_100%)] text-white">
                           {store.iconImage ? (
                             // eslint-disable-next-line @next/next/no-img-element
-                            <img src={store.iconImage} alt="" className="h-5 w-5 object-contain" />
+                            <img src={store.iconImage} alt="" className="h-6 w-6 object-contain" />
                           ) : (
                             <Icon />
                           )}
