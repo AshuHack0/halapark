@@ -125,29 +125,27 @@ export default function HowItWorksDemoSection() {
                         <span className="absolute -start-[70px] top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-[#168EFF] text-[0.85rem] font-bold text-white shadow-[0_8px_18px_rgba(0,136,255,0.34)] ring-4 ring-white sm:-start-[110px] sm:h-[48px] sm:w-[48px] sm:text-[0.95rem]">
                           {step.id}
                         </span>
-                        <div className="relative flex h-[62px] w-[82px] shrink-0 items-center justify-center overflow-hidden rounded-[8px] bg-[#F1F7FF] text-[#168EFF] sm:h-[68px] sm:w-[96px]">
-                          <div
-                            aria-hidden="true"
-                            className="absolute inset-0 opacity-45 [background-image:linear-gradient(135deg,rgba(0,136,255,0.12)_25%,transparent_25%),linear-gradient(225deg,rgba(0,136,255,0.1)_25%,transparent_25%),linear-gradient(45deg,rgba(0,136,255,0.1)_25%,transparent_25%),linear-gradient(315deg,rgba(0,136,255,0.12)_25%,#F1F7FF_25%)] [background-position:12px_0,12px_0,0_0,0_0] [background-size:24px_24px]"
-                          />
+                        {/* Compact plain tile so the icon itself carries the visual
+                            weight — no patterned background competing with it. */}
+                        <div className="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-[14px] bg-[#F1F7FF] text-[#168EFF] sm:h-16 sm:w-16">
                           {step.iconImage ? (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img
                               src={step.iconImage}
                               alt=""
-                              className="relative h-9 w-9 object-contain sm:h-10 sm:w-10"
+                              className="h-11 w-11 object-contain sm:h-12 sm:w-12"
                             />
                           ) : (
                             <>
                               {AccentIcon ? (
                                 <AccentIcon
                                   aria-hidden="true"
-                                  className="absolute end-4 top-3 h-6 w-6 fill-white stroke-[2.4]"
+                                  className="absolute end-1.5 top-1.5 h-4 w-4 fill-white stroke-[2.4]"
                                 />
                               ) : null}
                               <Icon
                                 aria-hidden="true"
-                                className="relative h-9 w-9 stroke-[2.7] sm:h-10 sm:w-10"
+                                className="h-8 w-8 stroke-[2.4] sm:h-9 sm:w-9"
                               />
                             </>
                           )}
