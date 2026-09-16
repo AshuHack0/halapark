@@ -76,7 +76,7 @@ export default function ClientsPartners() {
                 >
                   <span className="block">{t(cp, "heading", language)}</span>
                   {t(cp, "headingEnd", language) ? (
-                    <span className="block bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">
+                    <span className="mt-2 block bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-[clamp(1.75rem,3vw,2.6rem)] leading-[1.15] tracking-[-0.04em] text-transparent">
                       {t(cp, "headingEnd", language)}
                     </span>
                   ) : null}

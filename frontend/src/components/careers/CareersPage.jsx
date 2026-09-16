@@ -397,7 +397,7 @@ function OpportunitiesSection({ opportunities, header }) {
             <h2 className="text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-[1.08] tracking-[-0.05em] text-[#050A13] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
               {heading}
               {hasText(t(header, "headingGradient", language)) ? (
-                <span className="block bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">
+                <span className="mt-2 block bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-[clamp(1.4rem,2.5vw,2.1rem)] leading-[1.15] tracking-[-0.04em] text-transparent">
                   {t(header, "headingGradient", language)}
                 </span>
               ) : null}

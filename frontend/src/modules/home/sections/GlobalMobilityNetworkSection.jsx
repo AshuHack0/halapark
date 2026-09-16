@@ -294,7 +294,7 @@ export default function GlobalMobilityNetworkSection() {
             <h2 className="mx-auto w-full pt-5 text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.08] tracking-[-0.06em] text-[#050A13] sm:pt-6 [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
               <span className="block">{heading}</span>
               {headingGradient ? (
-                <span className="block bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">
+                <span className="mt-2 block bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-[clamp(1.75rem,3vw,2.6rem)] leading-[1.15] tracking-[-0.04em] text-transparent">
                   {headingGradient}
                 </span>
               ) : null}

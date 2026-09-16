@@ -78,7 +78,7 @@ export default function TransformParking() {
           <h2 className="text-[clamp(3rem,5.5vw,5rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]">
             <span className="block">{t(transformData, "title", language)}</span>
             {(t(transformData, "titleAccent", language) || "").trim() ? (
-              <span className="block bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">
+              <span className="mt-2 block bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-[clamp(1.75rem,3vw,2.6rem)] leading-[1.15] tracking-[-0.04em] text-transparent">
                 {t(transformData, "titleAccent", language)}
               </span>
             ) : null}
