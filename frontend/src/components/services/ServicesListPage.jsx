@@ -25,6 +25,7 @@ import { allServicesData, serviceNames } from "./allServicesData";
 import { fetchPage } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
 import RichText from "@/components/common/RichText";
+import { PARTNER_FORM_LINK } from "@/components/partners/PartnershipFormProvider";
 // import GoodLookingServiceHero from "./GoodLookingServiceHero"; // OLD dark hero (looked like home page) — replaced by the light HeroSection below
 
 /* ─── Springs & easing ─── */
@@ -1739,7 +1740,8 @@ function PartnersSection({ partners }) {
             {t(partners, "ctaText", language)}{" "}
             {(t(partners, "ctaLabel", language) || "").trim() ? (
               <Link
-                href={(partners?.ctaLink || "").trim() || "/contact"}
+                href={(partners?.ctaLink || "").trim() || PARTNER_FORM_LINK}
+                data-partner-source="Services · Clients & Partners"
                 className="font-semibold text-[#0088FF] underline-offset-2 hover:underline"
               >
                 {t(partners, "ctaLabel", language)} <span aria-hidden className="inline-block rtl:rotate-180">→</span>

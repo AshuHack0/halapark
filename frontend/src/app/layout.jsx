@@ -5,6 +5,7 @@ import FloatingActions from "@/components/layout/FloatingActions";
 import { AppProvider } from "@/context/AppContext";
 import { LanguageProvider } from "@/context/LanguageContext";
 import SmoothScroll from "@/components/SmoothScroll";
+import PartnershipFormProvider from "@/components/partners/PartnershipFormProvider";
 
 export const metadata = {
   title: "HalaPark - Production Ready Next.js App",
@@ -22,10 +23,12 @@ export default function RootLayout({ children }) {
         <SmoothScroll>
           <AppProvider>
             <LanguageProvider>
-              <Navbar />
-              <main className="grow">{children}</main>
-              <Footer />
-              <FloatingActions />
+              <PartnershipFormProvider>
+                <Navbar />
+                <main className="grow">{children}</main>
+                <Footer />
+                <FloatingActions />
+              </PartnershipFormProvider>
             </LanguageProvider>
           </AppProvider>
         </SmoothScroll>

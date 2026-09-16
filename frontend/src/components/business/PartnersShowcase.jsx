@@ -8,6 +8,7 @@ import { ArrowRight } from "lucide-react";
 import { fetchBusinessSection } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
 import RichText from "@/components/common/RichText";
+import { PARTNER_FORM_LINK } from "@/components/partners/PartnershipFormProvider";
 
 const ease = [0.22, 1, 0.36, 1];
 
@@ -116,7 +117,8 @@ export default function PartnersShowcase() {
 
             {ctaLabel ? (
               <Link
-                href={ctaLink || "/contact"}
+                href={ctaLink || PARTNER_FORM_LINK}
+                data-partner-source="Business · Partners Showcase"
                 className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] text-white font-semibold rounded-full hover:shadow-lg hover:shadow-[#0088FF]/30 transition"
               >
                 <span dir={language === "ar" ? "rtl" : "ltr"} className="[overflow-wrap:anywhere]">{ctaLabel}</span>
@@ -298,7 +300,8 @@ export function PartnerCTA() {
             ) : null}
             {label ? (
               <Link
-                href={link || "/contact"}
+                href={link || PARTNER_FORM_LINK}
+                data-partner-source="Business · Ready to Partner"
                 className="mt-7 inline-flex items-center gap-2 rounded-full bg-[#0088FF] px-8 py-3.5 text-sm font-semibold text-white shadow-[0_8px_28px_rgba(0,136,255,0.45)] transition hover:brightness-110"
               >
                 <span dir={language === "ar" ? "rtl" : "ltr"} className="[overflow-wrap:anywhere]">{label}</span>

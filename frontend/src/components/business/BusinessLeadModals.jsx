@@ -20,11 +20,11 @@ function resolveOptions(options, language) {
     }));
 }
 
-const inputClass =
+export const inputClass =
   "w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#0088FF] focus:bg-white focus:ring-2 focus:ring-[rgba(0,136,255,0.12)]";
 
 // Shared shell: backdrop, close, scroll-lock, success screen.
-function ModalShell({ isOpen, onClose, title, subtitle, done, successTitle, successMessage, children }) {
+export function ModalShell({ isOpen, onClose, title, subtitle, done, successTitle, successMessage, children }) {
   useEffect(() => {
     if (!isOpen) return undefined;
     const prev = document.body.style.overflow;
@@ -40,7 +40,8 @@ function ModalShell({ isOpen, onClose, title, subtitle, done, successTitle, succ
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[130] flex items-center justify-center p-4 sm:p-6" role="dialog" aria-modal="true" aria-label={title}>
+    // data-lenis-prevent: wheel/touch inside the popup scrolls the popup, not the page behind it.
+    <div data-lenis-prevent className="fixed inset-0 z-[130] flex items-center justify-center p-4 sm:p-6" role="dialog" aria-modal="true" aria-label={title}>
       <button type="button" aria-label="Close" onClick={onClose} className="absolute inset-0 h-full w-full cursor-default bg-slate-950/60 backdrop-blur-[2px]" />
       <div className="relative z-[1] w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-3xl bg-white p-6 shadow-[0_28px_80px_rgba(2,6,23,0.35)] sm:p-8">
         <button type="button" onClick={onClose} aria-label="Close" className="absolute end-4 top-4 inline-flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-600 transition hover:bg-slate-200">
