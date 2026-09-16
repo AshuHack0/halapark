@@ -56,7 +56,7 @@ export default function HalaParkAdvantage() {
                 <span className="block">{t(header, "heading", language)}</span>
               ) : null}
               {(t(header, "headingGradient", language) || "").trim() ? (
-                <span className="block bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-transparent">
+                <span className="mt-2 block bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-[clamp(1.75rem,3vw,2.6rem)] leading-[1.15] tracking-[-0.04em] text-transparent">
                   {t(header, "headingGradient", language)}
                 </span>
               ) : null}
