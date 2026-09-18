@@ -84,23 +84,14 @@ function HeroBackgroundMedia({ slide, isActive, onVideoEnd }) {
 
   if (!imageSrc) return null;
 
-  // The whole uploaded image stays visible (object-contain) instead of being
-  // cropped to the banner's shape; a blurred copy fills the leftover space so
-  // there are no empty bars beside it.
+  // Contain fit: the whole uploaded image is always visible, never cropped to
+  // the banner's shape.
   return (
-    <div className="absolute inset-0 overflow-hidden">
-      <img
-        src={imageSrc}
-        alt=""
-        aria-hidden="true"
-        className="absolute inset-0 h-full w-full scale-110 object-cover blur-2xl"
-      />
-      <img
-        src={imageSrc}
-        alt={slide.title}
-        className="relative h-full w-full object-contain"
-      />
-    </div>
+    <img
+      src={imageSrc}
+      alt={slide.title}
+      className="h-full w-full object-contain"
+    />
   );
 }
 
