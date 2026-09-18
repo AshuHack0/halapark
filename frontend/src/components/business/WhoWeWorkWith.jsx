@@ -254,15 +254,15 @@ export default function WhoWeWorkWith() {
             <motion.div variants={itemVariants} className="mb-6">
               <span
                 dir={language === "ar" ? "rtl" : "ltr"}
-                className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#0088FF]/10 text-[#0088FF] text-xs font-semibold rounded-full mb-2 [overflow-wrap:anywhere]"
+                className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[#0088FF]/10 text-[#0088FF] text-sm font-semibold rounded-full mb-2 [overflow-wrap:anywhere]"
               >
                 {activePartner.icon && (
                   <Image
                     src={activePartner.icon}
                     alt=""
-                    width={16}
-                    height={16}
-                    className="h-4 w-4 object-contain"
+                    width={28}
+                    height={28}
+                    className="h-7 w-7 object-contain"
                   />
                 )}
                 {t(header, "categoryLabel", language) || (language === "ar" ? "" : "Category")}
