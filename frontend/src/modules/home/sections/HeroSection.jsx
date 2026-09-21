@@ -37,7 +37,7 @@ const ArrowRightIcon = () => (
   </svg>
 );
 
-function HeroBackgroundMedia({ slide, isActive, onVideoEnd, onRatio }) {
+function HeroBackgroundMedia({ slide, isActive, onVideoEnd }) {
   const videoRef = useRef(null);
 
   useEffect(() => {
@@ -77,10 +77,6 @@ function HeroBackgroundMedia({ slide, isActive, onVideoEnd, onRatio }) {
         playsInline
         preload="auto"
         onEnded={onVideoEnd}
-        onLoadedMetadata={(e) => {
-          const { videoWidth, videoHeight } = e.currentTarget;
-          if (videoWidth && videoHeight) onRatio?.(videoWidth / videoHeight);
-        }}
         className="h-full w-full object-cover"
       />
     );
@@ -88,17 +84,13 @@ function HeroBackgroundMedia({ slide, isActive, onVideoEnd, onRatio }) {
 
   if (!imageSrc) return null;
 
-  // The banner takes this image's own shape on tablet/desktop (see HeroSection),
-  // so cover fills it edge to edge without cropping or empty bars.
+  // Stretch to fit: the whole image fills the banner exactly — nothing cropped,
+  // no empty bars (the image is scaled to the banner's shape).
   return (
     <img
       src={imageSrc}
       alt={slide.title}
-      onLoad={(e) => {
-        const { naturalWidth, naturalHeight } = e.currentTarget;
-        if (naturalWidth && naturalHeight) onRatio?.(naturalWidth / naturalHeight);
-      }}
-      className="h-full w-full object-cover"
+      className="h-full w-full object-fill"
     />
   );
 }
@@ -111,8 +103,6 @@ export default function HeroSection() {
   const [resolved, setResolved] = useState(false);
   const visibleSlides = slides.slice(0, 3);
   const [activeSlide, setActiveSlide] = useState(0);
-  // Natural width/height ratio of each slide's image/video, reported on load.
-  const [mediaRatios, setMediaRatios] = useState({});
   const currentSlide = visibleSlides[activeSlide] ?? visibleSlides[0];
   const shouldWaitForVideoEnd = activeSlide === 0 && Boolean(currentSlide?.video);
 
@@ -162,19 +152,10 @@ export default function HeroSection() {
     return null;
   }
 
-  // The banner follows the FIRST slide's media shape (stable height — content
-  // below doesn't jump as slides change). Other slides cover-fit that shape.
-  const bannerRatio =
-    mediaRatios[visibleSlides[0]?.id] ??
-    visibleSlides.map((s) => mediaRatios[s.id]).find(Boolean);
-
   return (
     <section id="hero-section" className="bg-white py-4 sm:py-5 lg:py-6">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div
-          className="relative flex flex-col overflow-hidden rounded-[24px] bg-[#06111f] text-white md:[aspect-ratio:var(--hero-ratio)]"
-          style={bannerRatio ? { "--hero-ratio": bannerRatio } : undefined}
-        >
+        <div className="relative overflow-hidden rounded-[24px] bg-[#06111f] text-white">
           <div className="absolute inset-0">
             {visibleSlides.map((slide, index) => (
               <div
@@ -185,9 +166,6 @@ export default function HeroSection() {
               >
                 <HeroBackgroundMedia
                   slide={slide}
-                  onRatio={(ratio) =>
-                    setMediaRatios((prev) => (prev[slide.id] === ratio ? prev : { ...prev, [slide.id]: ratio }))
-                  }
                   isActive={activeSlide === index}
                   onVideoEnd={
                     activeSlide === index && index === 0 ? showNextSlide : undefined
@@ -224,7 +202,7 @@ export default function HeroSection() {
             </>
           ) : null}
 
-          <div className={`relative flex min-h-125 w-full flex-1 flex-col justify-center px-8 py-14 sm:px-12 lg:px-20 ${bannerRatio ? "md:min-h-[420px]" : "md:min-h-[620px]"}`}>
+          <div className="relative flex min-h-125 w-full flex-col justify-center px-8 py-14 sm:px-12 md:min-h-[620px] lg:px-20">
             <div className="relative z-10 w-full max-w-lg">
               <h1 className="text-4xl font-semibold leading-tight text-white [overflow-wrap:anywhere] sm:text-5xl md:text-6xl line-clamp-3">
                 {t(currentSlide, "tag", language)}
