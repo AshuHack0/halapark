@@ -1253,14 +1253,31 @@ function HeroSection({ onGetQuote, hero }) {
                     whileTap={reduced ? undefined : { scale: 0.97 }}
                     transition={springSoft}
                   >
-                    <Link href={(hero?.ctaPrimaryLink || "/contact").trim() || "/contact"}
-                      className="group/btn inline-flex items-center gap-2.5 rounded-full bg-[#0088FF] px-6 py-3.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,136,255,0.32),0_2px_8px_rgba(0,136,255,0.18)] transition hover:brightness-110"
-                    >
-                      {primaryCtaLabel}
-                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 transition-transform duration-200 group-hover/btn:translate-x-0.5 rtl:group-hover/btn:-translate-x-0.5">
-                        <ArrowRight className="h-3.5 w-3.5 rtl:rotate-180" />
-                      </span>
-                    </Link>
+                    {/* With a link set in admin the button redirects; with the
+                        link empty it scrolls down to the services grid. */}
+                    {(hero?.ctaPrimaryLink || "").trim() ? (
+                      <Link href={(hero.ctaPrimaryLink || "").trim()}
+                        className="group/btn inline-flex items-center gap-2.5 rounded-full bg-[#0088FF] px-6 py-3.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,136,255,0.32),0_2px_8px_rgba(0,136,255,0.18)] transition hover:brightness-110"
+                      >
+                        {primaryCtaLabel}
+                        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 transition-transform duration-200 group-hover/btn:translate-x-0.5 rtl:group-hover/btn:-translate-x-0.5">
+                          <ArrowRight className="h-3.5 w-3.5 rtl:rotate-180" />
+                        </span>
+                      </Link>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          document.getElementById("services-grid")?.scrollIntoView({ behavior: "smooth", block: "start" })
+                        }
+                        className="group/btn inline-flex items-center gap-2.5 rounded-full bg-[#0088FF] px-6 py-3.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,136,255,0.32),0_2px_8px_rgba(0,136,255,0.18)] transition hover:brightness-110"
+                      >
+                        {primaryCtaLabel}
+                        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 transition-transform duration-200 group-hover/btn:translate-y-0.5">
+                          <ArrowRight className="h-3.5 w-3.5 rotate-90" />
+                        </span>
+                      </button>
+                    )}
                   </motion.div>
                 ) : null}
                 {secondaryCtaLabel ? (
@@ -1424,7 +1441,7 @@ function ServicesGrid({ onServiceClick, cmsServices, gridHeader, detailSlugs }) 
   if (services.length === 0) return null;
 
   return (
-    <section ref={setSectionNode} className="relative overflow-x-clip bg-white py-16 sm:py-20 lg:py-24">
+    <section id="services-grid" ref={setSectionNode} className="relative overflow-x-clip bg-white py-16 sm:py-20 lg:py-24" style={{ scrollMarginTop: "90px" }}>
 
       {/* Subtle background texture */}
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,#F4F8FF_0%,#FFFFFF_22%,#FFFFFF_78%,#F8FBFF_100%)]" />

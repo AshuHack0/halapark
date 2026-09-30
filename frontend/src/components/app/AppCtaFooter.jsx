@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Download } from "lucide-react";
+import { ArrowRight, Download } from "lucide-react";
 import { fetchPage } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
 import RichText from "@/components/common/RichText";
@@ -68,22 +68,40 @@ export default function AppCtaFooter() {
             P
           </div>
 
-          <div className="relative mx-auto max-w-3xl text-center">
-            {heading.trim() ? (
-              <h2 className="bg-[linear-gradient(180deg,#FFFFFF_55%,#9CC8F5_100%)] bg-clip-text text-3xl font-semibold leading-tight tracking-[-0.03em] text-transparent sm:text-4xl md:text-[3.2rem] [overflow-wrap:anywhere]">
-                {heading}
-              </h2>
-            ) : null}
+          {/* Concentric rings behind the download column */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute end-[8%] top-1/2 hidden h-[420px] w-[420px] -translate-y-1/2 rounded-full border border-white/[0.07] lg:block"
+          >
+            <div className="absolute inset-12 rounded-full border border-white/[0.06]" />
+            <div className="absolute inset-24 rounded-full border border-white/[0.05]" />
+          </div>
 
-            {description.trim() ? (
-              <RichText
-                text={description}
-                className="mx-auto mt-5 max-w-2xl text-sm leading-7 text-slate-300 sm:text-base [overflow-wrap:anywhere] block"
+          <div className="relative grid items-center gap-10 text-center lg:grid-cols-[1.05fr_0.95fr] lg:gap-14 lg:text-start">
+            {/* Copy */}
+            <div>
+              {heading.trim() ? (
+                <h2 className="bg-[linear-gradient(180deg,#FFFFFF_55%,#9CC8F5_100%)] bg-clip-text text-3xl font-semibold leading-tight tracking-[-0.03em] text-transparent sm:text-4xl md:text-[3.2rem] [overflow-wrap:anywhere]">
+                  {heading}
+                </h2>
+              ) : null}
+
+              {description.trim() ? (
+                <RichText
+                  text={description}
+                  className="mx-auto mt-5 max-w-2xl text-sm leading-7 text-slate-300 sm:text-base lg:mx-0 [overflow-wrap:anywhere] block"
+                />
+              ) : null}
+
+              <span
+                aria-hidden="true"
+                className="mx-auto mt-7 block h-1 w-20 rounded-full bg-[linear-gradient(90deg,#0088FF,#1AB2FF)] lg:mx-0"
               />
-            ) : null}
+            </div>
 
+            {/* Download column — full-width rows instead of small centred pills */}
             {stores.length > 0 ? (
-              <div className="mt-9 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+              <div className="flex flex-col gap-3">
                 {stores.map((store, i) => {
                   const icon = (store.icon ?? "").trim();
                   // Store names are brand-like: in Arabic prefer ar.label but
@@ -99,23 +117,27 @@ export default function AppCtaFooter() {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={label || "App store"}
-                      className="group inline-flex items-center gap-2.5 rounded-2xl border border-white/15 bg-white/[0.08] px-6 py-3.5 text-sm font-semibold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur transition-all duration-300 hover:-translate-y-0.5 hover:border-[#1AB2FF]/60 hover:bg-white/[0.14] hover:shadow-[0_12px_32px_rgba(0,136,255,0.35),inset_0_1px_0_rgba(255,255,255,0.12)]"
+                      className="group flex items-center gap-4 rounded-2xl border border-white/15 bg-white/[0.07] px-5 py-4 text-start shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur transition-all duration-300 hover:-translate-y-0.5 hover:border-[#1AB2FF]/60 hover:bg-white/[0.13] hover:shadow-[0_14px_34px_rgba(0,136,255,0.32),inset_0_1px_0_rgba(255,255,255,0.12)]"
                     >
                       {icon ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
                           src={icon}
                           alt={label || "Store"}
-                          className="h-6 w-6 shrink-0 object-contain sm:h-7 sm:w-7"
+                          className="h-9 w-9 shrink-0 object-contain sm:h-10 sm:w-10"
                         />
                       ) : (
-                        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#0088FF]/25 text-[#7CC4FF] transition-colors group-hover:bg-[#0088FF] group-hover:text-white">
-                          <Download className="h-3.5 w-3.5" strokeWidth={2.2} aria-hidden />
+                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#0088FF]/25 text-[#7CC4FF] transition-colors group-hover:bg-[#0088FF] group-hover:text-white">
+                          <Download className="h-4.5 w-4.5" strokeWidth={2.2} aria-hidden />
                         </span>
                       )}
                       {label ? (
-                        <span className="[overflow-wrap:anywhere]">{label}</span>
+                        <span className="flex-1 text-[0.95rem] font-semibold text-white [overflow-wrap:anywhere]">{label}</span>
                       ) : null}
+                      <ArrowRight
+                        aria-hidden="true"
+                        className="h-4 w-4 shrink-0 text-white/40 transition-all duration-300 group-hover:translate-x-0.5 group-hover:text-white rtl:rotate-180 rtl:group-hover:-translate-x-0.5"
+                      />
                     </a>
                   );
                 })}

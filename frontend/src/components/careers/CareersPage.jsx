@@ -140,36 +140,45 @@ function CareersVisual({ hero, reduced }) {
 
   return (
     <div className="relative flex items-center justify-center">
-      {/* Glow halo */}
-      <div className="pointer-events-none absolute left-1/2 top-1/2 h-[380px] w-[380px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(0,136,255,0.15),rgba(37,99,235,0.05)_58%,transparent_76%)] blur-2xl lg:h-[500px] lg:w-[500px]" />
+      {/* Soft wash behind the collage */}
+      <div className="pointer-events-none absolute left-1/2 top-1/2 h-[380px] w-[380px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(0,136,255,0.16),rgba(37,99,235,0.05)_58%,transparent_76%)] blur-2xl lg:h-[520px] lg:w-[520px]" />
 
-      {/* Mosaic grid: left tall tile spans 2 rows, right column = 2 stacked tiles */}
+      {/* Arch + circle collage — soft, people-shaped frames, deliberately
+          unlike the rectangular photo decks on the other pages. */}
       <motion.div
         initial={reduced ? false : { opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, ease, delay: 0.1 }}
-        className="relative z-20 grid h-[330px] w-[300px] grid-cols-2 grid-rows-2 gap-3 sm:h-[390px] sm:w-[360px] lg:h-[450px] lg:w-[420px]"
+        className="relative z-20 w-[280px] pb-16 sm:w-[330px] lg:w-[380px] lg:pb-20"
       >
-        {/* Tall tile (col 1, both rows) */}
-        <div className="relative row-span-2 overflow-hidden rounded-[24px] border border-white/80 shadow-[0_30px_70px_rgba(15,23,42,0.2)]">
-          <MosaicTile slides={tileA} idx={a} reduced={reduced} sizes="(min-width: 1024px) 210px, 150px" />
+        {/* Arch frame */}
+        <div className="relative aspect-[3/4] overflow-hidden rounded-[999px_999px_28px_28px] shadow-[0_30px_70px_rgba(15,23,42,0.22)] ring-1 ring-black/5">
+          <MosaicTile slides={tileA} idx={a} reduced={reduced} sizes="(min-width: 1024px) 380px, (min-width: 640px) 330px, 280px" />
           {hasText(teamTag) ? (
             <span
-              className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2 py-1 text-[8.5px] font-bold uppercase tracking-[0.14em] text-white backdrop-blur-sm [overflow-wrap:anywhere] rtl:left-auto rtl:right-3"
+              className="absolute inset-x-6 bottom-4 inline-flex items-center justify-center gap-1.5 rounded-full bg-black/45 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.14em] text-white backdrop-blur-sm [overflow-wrap:anywhere]"
               dir={language === "ar" ? "rtl" : "ltr"}
             >
               <span className="h-1.5 w-1.5 rounded-full bg-[#5BE49B] animate-pulse" /> {teamTag}
             </span>
           ) : null}
         </div>
-        {/* Top-right tile */}
-        <div className="relative overflow-hidden rounded-[24px] border border-white/80 shadow-[0_30px_70px_rgba(15,23,42,0.2)]">
-          <MosaicTile slides={tileB} idx={b} reduced={reduced} sizes="(min-width: 1024px) 210px, 150px" />
+
+        {/* Circular photo overlapping the arch's bottom corner */}
+        <div className="absolute bottom-0 start-0 h-32 w-32 overflow-hidden rounded-full border-[6px] border-white shadow-[0_18px_44px_rgba(15,23,42,0.22)] sm:h-36 sm:w-36 lg:h-40 lg:w-40">
+          <MosaicTile slides={tileB} idx={b} reduced={reduced} sizes="160px" />
         </div>
-        {/* Bottom-right tile */}
-        <div className="relative overflow-hidden rounded-[24px] border border-white/80 shadow-[0_30px_70px_rgba(15,23,42,0.2)]">
-          <MosaicTile slides={tileC} idx={c} reduced={reduced} sizes="(min-width: 1024px) 210px, 150px" />
+
+        {/* Small rounded photo on the opposite corner to balance the group */}
+        <div className="absolute bottom-6 end-0 h-24 w-24 overflow-hidden rounded-[26px] border-[5px] border-white shadow-[0_16px_38px_rgba(15,23,42,0.2)] sm:h-28 sm:w-28">
+          <MosaicTile slides={tileC} idx={c} reduced={reduced} sizes="112px" />
         </div>
+
+        {/* Thin accent ring echoing the arch */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -inset-x-4 -top-4 bottom-16 rounded-[999px_999px_36px_36px] border border-[#0088FF]/20"
+        />
       </motion.div>
 
       {/* Floating chip — we're hiring (top-left, mirrored to top-right in RTL) */}

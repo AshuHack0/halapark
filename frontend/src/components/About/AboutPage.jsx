@@ -46,14 +46,6 @@ function SlideMedia({ src, alt, sizes, priority = false }) {
   );
 }
 
-// Per-depth transforms for the fanned deck (0 = front card).
-const DECK_DEPTHS = [
-  { x: 0, y: 0, rotate: 0, scale: 1, opacity: 1 },
-  { x: 30, y: 16, rotate: 5, scale: 0.95, opacity: 0.9 },
-  { x: -26, y: 26, rotate: -6, scale: 0.9, opacity: 0.7 },
-  { x: 4, y: 34, rotate: 2, scale: 0.86, opacity: 0.5 },
-];
-
 function AboutVisual({ slides, language, reduced, hero }) {
   const [active, setActive] = useState(0);
   const count = slides.length;
@@ -77,85 +69,93 @@ function AboutVisual({ slides, language, reduced, hero }) {
   const badge2Label = t(hero, "badge2Label", language);
 
   return (
-    <div className="relative flex items-center justify-center">
-      {/* Glow halo */}
-      <div className="pointer-events-none absolute left-1/2 top-1/2 h-[380px] w-[380px] -translate-x-1/2 -translate-y-1/2 rounded-[60px] bg-[radial-gradient(circle,rgba(0,136,255,0.16),rgba(37,99,235,0.05)_58%,transparent_76%)] blur-2xl lg:h-[500px] lg:w-[500px]" />
+    <div className="relative">
+      {/* Soft wash behind the frame */}
+      <div className="pointer-events-none absolute -inset-6 rounded-[44px] bg-[radial-gradient(60%_55%_at_45%_40%,rgba(0,136,255,0.14),transparent_72%)] blur-xl" />
 
-      {/* ── Fanned deck: one card per slide, front cycles to the back ── */}
+      {/* Editorial filmstrip: one tall feature frame + a rail of the other shots.
+          Deliberately different from the tilted photo decks used elsewhere. */}
       <motion.div
-        animate={reduced ? undefined : { y: [0, -10, 0] }}
-        transition={{ duration: 6.5, repeat: Infinity, ease: "easeInOut" }}
-        className="relative z-20 h-[330px] w-[270px] sm:h-[390px] sm:w-[310px] lg:h-[450px] lg:w-[360px]"
+        initial={reduced ? false : { opacity: 0, y: 22 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, ease, delay: 0.1 }}
+        className="relative z-20 grid gap-3 sm:grid-cols-[1fr_96px]"
       >
-        {slides.map((slide, i) => {
-          const depth = (i - index + count) % count;
-          const d = DECK_DEPTHS[Math.min(depth, DECK_DEPTHS.length - 1)];
-          const isFront = depth === 0;
-          const label = language === "ar" ? (slide.ar?.label ?? "") : (slide.label ?? "");
-          return (
-            <motion.div
-              key={`${slide.img}-${i}`}
-              animate={reduced ? { opacity: isFront ? 1 : 0 } : d}
-              transition={{ duration: 0.7, ease }}
-              style={{ zIndex: 40 - depth }}
-              className="absolute inset-0 overflow-hidden rounded-[34px] border-[6px] border-white shadow-[0_34px_80px_rgba(15,23,42,0.24)]"
-            >
-              <SlideMedia
-                src={slide.img}
-                alt={label}
-                sizes="(min-width: 1024px) 360px, (min-width: 640px) 310px, 270px"
-                priority={isFront}
+        {/* Feature frame */}
+        <div className="relative aspect-[4/5] overflow-hidden rounded-[26px] bg-slate-100 shadow-[0_26px_60px_rgba(15,23,42,0.2)] ring-1 ring-black/5 sm:aspect-[5/6]">
+          {slides.map((slide, i) => {
+            const isActive = i === index;
+            const label = language === "ar" ? (slide.ar?.label ?? "") : (slide.label ?? "");
+            return (
+              <motion.div
+                key={`${slide.img}-${i}`}
+                animate={{ opacity: isActive ? 1 : 0 }}
+                transition={{ duration: 0.6, ease }}
+                className="absolute inset-0"
+                style={{ zIndex: isActive ? 2 : 1 }}
+              >
+                <SlideMedia
+                  src={slide.img}
+                  alt={label}
+                  sizes="(min-width: 1024px) 420px, (min-width: 640px) 60vw, 92vw"
+                  priority={i === 0}
+                />
+              </motion.div>
+            );
+          })}
+          <div className="pointer-events-none absolute inset-0 z-[3] bg-gradient-to-t from-[#050A13]/78 via-[#050A13]/10 to-transparent" />
+
+          {/* Counter */}
+          <div className="absolute right-4 top-4 z-[4] rounded-full bg-black/35 px-2.5 py-1 text-[10px] font-bold text-white backdrop-blur-sm">
+            {String(index + 1).padStart(2, "0")} / {String(count).padStart(2, "0")}
+          </div>
+
+          {/* Caption */}
+          <div className="absolute inset-x-0 bottom-0 z-[4] p-6" dir={language === "ar" ? "rtl" : "ltr"}>
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-white backdrop-blur-sm">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#5BE49B] animate-pulse" /> About HalaPark
+            </span>
+            {hasText(currentLabel) ? (
+              <p className="mt-2 text-[1.25rem] font-semibold leading-tight tracking-[-0.03em] text-white [overflow-wrap:anywhere]">
+                {currentLabel}
+              </p>
+            ) : null}
+          </div>
+
+          {/* Progress bars along the bottom edge */}
+          <div className="absolute inset-x-6 bottom-2 z-[4] flex gap-1.5">
+            {slides.map((s, i) => (
+              <span
+                key={`bar-${s.img}-${i}`}
+                className={`h-1 flex-1 rounded-full transition-all duration-500 ${i === index ? "bg-[#0088FF]" : "bg-white/35"}`}
               />
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#050A13]/72 via-[#050A13]/8 to-[#050A13]/6" />
+            ))}
+          </div>
+        </div>
 
-              {isFront ? (
-                <>
-                  {/* Step counter — top-right */}
-                  <div className="absolute right-4 top-4 z-10 rounded-full bg-black/35 px-2.5 py-1 text-[10px] font-bold text-white backdrop-blur-sm">
-                    {String(index + 1).padStart(2, "0")} / {String(count).padStart(2, "0")}
-                  </div>
-
-                  {/* Caption */}
-                  <div className="absolute inset-x-0 bottom-0 p-6" dir={language === "ar" ? "rtl" : "ltr"}>
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-white backdrop-blur-sm">
-                      <span className="h-1.5 w-1.5 rounded-full bg-[#5BE49B] animate-pulse" /> About HalaPark
-                    </span>
-                    {hasText(label) ? (
-                      <p className="mt-2 text-[1.25rem] font-semibold leading-tight tracking-[-0.03em] text-white [overflow-wrap:anywhere]">
-                        {label}
-                      </p>
-                    ) : null}
-                  </div>
-                </>
-              ) : null}
-            </motion.div>
-          );
-        })}
+        {/* Side rail — the other frames, straight and stacked (no tilt) */}
+        <div className="grid grid-cols-4 gap-3 sm:grid-cols-1 sm:content-start">
+          {slides.map((s, i) => (
+            <button
+              key={`rail-${s.img}-${i}`}
+              type="button"
+              aria-label={`Show image ${i + 1}`}
+              onClick={() => setActive(i)}
+              className={`relative aspect-square overflow-hidden rounded-[18px] ring-1 transition-all duration-300 sm:aspect-[4/5] ${
+                i === index
+                  ? "ring-2 ring-[#0088FF] shadow-[0_10px_26px_rgba(0,136,255,0.28)]"
+                  : "opacity-65 ring-black/5 hover:opacity-100"
+              }`}
+            >
+              {isVideoSrc(s.img) ? (
+                <video src={s.img} muted preload="metadata" playsInline className="absolute inset-0 h-full w-full object-cover object-center" />
+              ) : (
+                <Image src={s.img} alt="" fill sizes="96px" className="object-cover object-center" />
+              )}
+            </button>
+          ))}
+        </div>
       </motion.div>
-
-      {/* Thumbnail rail — jumps the deck to a slide */}
-      <div className="absolute -bottom-3 left-1/2 z-40 flex -translate-x-1/2 gap-2">
-        {slides.map((s, i) => (
-          <button
-            key={`${s.img}-${i}`}
-            type="button"
-            aria-label={`Show slide ${i + 1}`}
-            onClick={() => setActive(i)}
-            className={`relative h-10 w-10 overflow-hidden rounded-xl border-2 transition-all duration-300 ${
-              i === index
-                ? "border-[#0088FF] shadow-[0_8px_20px_rgba(0,136,255,0.3)] scale-105"
-                : "border-white/70 opacity-60 hover:opacity-100"
-            }`}
-          >
-            {isVideoSrc(s.img) ? (
-              <video src={s.img} muted preload="metadata" playsInline className="absolute inset-0 h-full w-full object-cover object-center" />
-            ) : (
-              <Image src={s.img} alt="" fill sizes="40px" className="object-cover object-center" />
-            )}
-          </button>
-        ))}
-      </div>
-
       {/* Floating stat ribbon (top-left) — CMS-driven, hidden when blank */}
       {hasText(badge1Title) || hasText(badge1Subtitle) ? (
         <motion.div
