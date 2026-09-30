@@ -47,7 +47,7 @@ function PhonePreview({ image }) {
   if (!src) return null;
 
   return (
-    <div className="relative mx-auto w-[230px] sm:w-[270px] lg:w-[300px] xl:w-[320px]">
+    <div className="relative mx-auto w-[230px] sm:w-[270px] lg:w-[330px] xl:w-[368px]">
       <div className="absolute inset-x-[18%] bottom-3 h-12 rounded-full bg-[#0F172A]/14 blur-[28px]" />
       <div className="relative isolate aspect-[1439/2920] drop-shadow-[0_28px_58px_rgba(15,23,42,0.2)]">
         <div className="absolute left-[4.1%] right-[4.1%] top-[1%] bottom-[1.2%] z-30 translate-y-[2px] overflow-hidden rounded-[3rem] bg-white">
@@ -55,7 +55,7 @@ function PhonePreview({ image }) {
             src={src}
             alt="HalaPark payment screen"
             fill
-            sizes="(min-width: 1280px) 320px, (min-width: 1024px) 300px, (min-width: 640px) 270px, 230px"
+            sizes="(min-width: 1280px) 368px, (min-width: 1024px) 330px, (min-width: 640px) 270px, 230px"
             className="object-cover object-center"
           />
         </div>
@@ -64,20 +64,20 @@ function PhonePreview({ image }) {
             src="/mobileframe.png"
             alt=""
             fill
-            sizes="(min-width: 1280px) 320px, (min-width: 1024px) 300px, (min-width: 640px) 270px, 230px"
+            sizes="(min-width: 1280px) 368px, (min-width: 1024px) 330px, (min-width: 640px) 270px, 230px"
             className="select-none object-contain"
           />
         </div>
       </div>
 
-      <div className="absolute -left-10 top-20 hidden rounded-2xl border border-[#DDEBFF] bg-white px-3 py-2 shadow-[0_14px_34px_rgba(15,23,42,0.1)] sm:block">
+      <div className="absolute -left-12 top-16 hidden rounded-2xl border border-[#DDEBFF] bg-white px-3.5 py-2.5 shadow-[0_14px_34px_rgba(15,23,42,0.1)] sm:block lg:-left-20 xl:-left-24">
         <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[#0088FF]">
           Wallet
         </p>
         <p className="mt-1 text-sm font-semibold text-[#050A13]">AED 240</p>
       </div>
 
-      <div className="absolute -right-8 bottom-24 hidden items-center gap-2 rounded-2xl border border-[#DDEBFF] bg-white px-3 py-2 shadow-[0_14px_34px_rgba(15,23,42,0.1)] sm:flex">
+      <div className="absolute -right-10 bottom-24 hidden items-center gap-2 rounded-2xl border border-[#DDEBFF] bg-white px-3.5 py-2.5 shadow-[0_14px_34px_rgba(15,23,42,0.1)] sm:flex lg:-right-16 xl:-right-20">
         <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#EAF3FF] text-[#0088FF]">
           <ShieldCheck aria-hidden="true" className="h-4 w-4" />
         </span>
@@ -257,7 +257,7 @@ export default function AppCurrencySection() {
         <div className="relative grid min-h-[600px] gap-8 px-6 py-8 sm:px-9 sm:py-10 lg:grid-cols-[0.98fr_1.02fr] lg:gap-4 lg:px-10 xl:min-h-[640px]">
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute right-[-8%] top-[18%] h-[330px] w-[330px] rounded-full bg-[#DCEBFF] blur-[2px] sm:h-[420px] sm:w-[420px] lg:right-[-1%] lg:top-[20%] lg:h-[500px] lg:w-[500px]"
+            className="pointer-events-none absolute right-[-8%] top-[18%] h-[330px] w-[330px] rounded-full bg-[#DCEBFF] blur-[2px] sm:h-[420px] sm:w-[420px] lg:right-[3%] lg:top-[12%] lg:h-[560px] lg:w-[560px]"
           />
 
           <motion.div
@@ -302,7 +302,7 @@ export default function AppCurrencySection() {
 
             {cardFeatures.length > 0 ? (
               <div
-                className={`mt-8 grid gap-3 lg:max-w-[610px] ${
+                className={`mt-8 grid gap-3 lg:mt-auto lg:max-w-[610px] lg:pt-10 ${
                   cardFeatures.length === 1
                     ? "sm:grid-cols-1"
                     : cardFeatures.length === 2
@@ -313,7 +313,7 @@ export default function AppCurrencySection() {
                 {cardFeatures.map((item, index) => (
                   <div
                     key={index}
-                    className="flex items-center gap-3 rounded-2xl border border-[#E4EAF2] bg-white/82 p-3 shadow-[0_10px_26px_rgba(15,23,42,0.04)]"
+                    className="flex items-center gap-3 rounded-2xl border border-[#E4EAF2] bg-white/82 p-3.5 shadow-[0_10px_26px_rgba(15,23,42,0.04)] sm:p-4"
                   >
                     <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#E9F3FF] text-[#0088FF]">
                       <CardIcon item={item} />
