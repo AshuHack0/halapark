@@ -366,56 +366,51 @@ function OurMission({ mission }) {
   if (!hasContent) return null;
 
   return (
-    <section className="bg-white py-16 sm:py-20 lg:py-24">
+    <section className="bg-white py-10 sm:py-12 lg:py-14">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
-          <motion.div initial={reduced ? false : { opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.6, ease }} dir={language === "ar" ? "rtl" : "ltr"}>
-            {hasText(mission?.title) ? (
-              <h2 className="mb-3 text-[clamp(2.4rem,4vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-[#050A13] [overflow-wrap:anywhere]">
-                {t(mission, "title", language)}
-              </h2>
-            ) : null}
-            {hasText(mission?.subtitle) ? (
-              <p className="mb-7 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500 [overflow-wrap:anywhere]">
-                {t(mission, "subtitle", language)}
-              </p>
-            ) : null}
-            {paragraphs.length > 0 ? (
-              <div className="space-y-5 text-[0.93rem] leading-7 text-slate-500">
-                {paragraphs.map((para, i) => (
-                  <RichText key={`${i}-${para.slice(0, 48)}`} text={para} className="[overflow-wrap:anywhere] block" />
-                ))}
+        <motion.div
+          initial={reduced ? false : { opacity: 0, y: 26 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.15 }}
+          transition={{ duration: 0.6, ease }}
+          className="group overflow-hidden rounded-[32px] border border-[#E7EAF0] bg-white shadow-[0_18px_60px_rgba(15,23,42,0.08)]"
+        >
+          <div className="relative grid lg:grid-cols-[1.05fr_0.95fr]">
+            {/* Copy half */}
+            <div className="relative flex flex-col justify-center p-8 sm:p-12 lg:p-14" dir={language === "ar" ? "rtl" : "ltr"}>
+              {/* Oversized ghost numeral for editorial rhythm */}
+              <span aria-hidden="true" className="pointer-events-none absolute end-6 top-2 select-none text-[7rem] font-bold leading-none tracking-tighter text-[#0088FF]/[0.07] sm:text-[9rem]">
+                01
+              </span>
+              {hasText(mission?.title) ? (
+                <h2 className="mb-3 text-[clamp(2.2rem,3.4vw,3.1rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-[#050A13] [overflow-wrap:anywhere]">
+                  {t(mission, "title", language)}
+                </h2>
+              ) : null}
+              {hasText(mission?.subtitle) ? (
+                <p className="text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500 [overflow-wrap:anywhere]">
+                  {t(mission, "subtitle", language)}
+                </p>
+              ) : null}
+              <span aria-hidden="true" className="my-6 block h-1 w-16 rounded-full bg-[linear-gradient(90deg,#0088FF,#1AB2FF)]" />
+              {paragraphs.length > 0 ? (
+                <div className="space-y-4 text-[0.95rem] leading-7 text-slate-600">
+                  {paragraphs.map((para, i) => (
+                    <RichText key={`${i}-${para.slice(0, 48)}`} text={para} className="[overflow-wrap:anywhere] block" />
+                  ))}
+                </div>
+              ) : null}
+            </div>
+
+            {/* Photo half — bleeds to the panel edge */}
+            {mission?.image ? (
+              <div className="relative min-h-[280px] overflow-hidden sm:min-h-[340px] lg:min-h-[500px] lg:[clip-path:polygon(14%_0,100%_0,100%_100%,0_100%)]">
+                <Image src={mission.image} alt="Smart city mobility" fill className="object-cover object-center transition duration-700 group-hover:scale-[1.04]" sizes="(min-width: 1024px) 48vw, 100vw" />
+                <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(5,10,19,0.30)_0%,transparent_45%,rgba(0,136,255,0.18)_100%)]" />
               </div>
             ) : null}
-          </motion.div>
-
-          {mission?.image ? (
-          <motion.div initial={reduced ? false : { opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.6, ease, delay: 0.1 }} className="flex flex-col gap-5">
-            <div className="relative h-56 w-full overflow-hidden rounded-[20px] sm:h-64">
-              <Image src={mission.image} alt="Smart city mobility" fill className="object-cover object-center" />
-              <div className="absolute inset-0 bg-[#050A13]/20" />
-            </div>
-            <div className="space-y-3">
-              {/* Extra mission pillars — not in content doc
-              {pillars.map((p, i) => {
-                const Icon = p.icon;
-                return (
-                  <motion.div key={p.title} initial={reduced ? false : { opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, ease, delay: i * 0.08 }} className="flex gap-4 border-b border-[#E7EAF0] pb-4 last:border-0 last:pb-0">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-[#EEF6FF]">
-                      <Icon className="h-4 w-4 text-[#0088FF]" strokeWidth={1.7} aria-hidden />
-                    </div>
-                    <div>
-                      <p className="text-[0.95rem] font-semibold text-[#050A13]">{p.title}</p>
-                      <p className="mt-1 text-[0.83rem] leading-5 text-slate-500">{p.desc}</p>
-                    </div>
-                  </motion.div>
-                );
-              })}
-              */}
-            </div>
-          </motion.div>
-          ) : null}
-        </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );
@@ -450,70 +445,89 @@ function OurVision({ vision }) {
   if (!hasContent) return null;
 
   return (
-    <section className="bg-[#F4F8FF] py-16 sm:py-20 lg:py-24">
+    <section className="bg-[#F4F8FF] py-10 sm:py-12 lg:py-14">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-          <motion.div initial={reduced ? false : { opacity: 0, x: -28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }} dir={language === "ar" ? "rtl" : "ltr"}>
-            {hasText(vision?.title) ? (
-              <h2 className="mb-3 text-[clamp(2.4rem,4vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-[#050A13] [overflow-wrap:anywhere]">
-                {t(vision, "title", language)}
-              </h2>
+        <motion.div
+          initial={reduced ? false : { opacity: 0, y: 26 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.15 }}
+          transition={{ duration: 0.65, ease }}
+          className="group relative overflow-hidden rounded-[32px] bg-[#06111f] shadow-[0_26px_70px_rgba(6,17,31,0.32)] ring-1 ring-white/10"
+        >
+          {/* The whole panel is dark here — the page reads light · dark · light */}
+          <div className="absolute inset-0">
+            {vision?.image ? (
+              <Image src={vision.image} alt="" fill className="object-cover object-center opacity-[0.18] transition duration-700 group-hover:scale-105" sizes="100vw" aria-hidden />
             ) : null}
-            {hasText(vision?.subtitle) ? (
-              <p className="mb-6 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500 [overflow-wrap:anywhere]">
-                {t(vision, "subtitle", language)}
-              </p>
-            ) : null}
-            {paragraphs.length > 0 ? (
-              <div className="space-y-4 text-[0.93rem] leading-7 text-slate-500">
-                {paragraphs.map((para, i) => (
-                  <RichText key={`${i}-${para.slice(0, 48)}`} text={para} className="[overflow-wrap:anywhere] block" />
-                ))}
-              </div>
-            ) : null}
-          </motion.div>
+            <div className="absolute inset-0 bg-[linear-gradient(115deg,#06111f_0%,rgba(6,17,31,0.94)_45%,rgba(6,17,31,0.72)_100%)]" />
+            <div aria-hidden="true" className="absolute -left-20 top-0 h-64 w-64 rounded-full bg-[#0088FF]/20 blur-[90px]" />
+            <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#1AB2FF]/50 to-transparent" />
+          </div>
 
-          {vision?.image || cardHasContent ? (
-          <motion.div initial={reduced ? false : { opacity: 0, x: 28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease, delay: 0.1 }} className="relative min-h-[340px] overflow-hidden rounded-[28px] bg-[#06111f] p-8 sm:p-10" dir={language === "ar" ? "rtl" : "ltr"}>
-            <div className="absolute inset-0">
-              {vision?.image ? (
-                <Image src={vision.image} alt="" fill className="object-cover object-center opacity-25" aria-hidden />
+          <div className="relative grid lg:grid-cols-[1.05fr_0.95fr]">
+            {/* Copy half */}
+            <div className="relative flex flex-col justify-center p-8 sm:p-12 lg:p-14" dir={language === "ar" ? "rtl" : "ltr"}>
+              <span aria-hidden="true" className="pointer-events-none absolute end-6 top-2 select-none text-[7rem] font-bold leading-none tracking-tighter text-white/[0.06] sm:text-[9rem]">
+                02
+              </span>
+              {hasText(vision?.title) ? (
+                <h2 className="mb-3 text-[clamp(2.2rem,3.4vw,3.1rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-white [overflow-wrap:anywhere]">
+                  {t(vision, "title", language)}
+                </h2>
               ) : null}
-              <div className="absolute inset-0 bg-gradient-to-tr from-[#06111f]/95 via-[#06111f]/80 to-[#06111f]/50" />
-            </div>
-            <div className="relative z-10 flex h-full flex-col justify-between gap-8">
-              <div>
-                {hasText(card.badge) ? (
-                  <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#5BC4FF]" />
-                    <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/70 [overflow-wrap:anywhere]">
-                      {t(card, "badge", language)}
-                    </span>
-                  </div>
-                ) : null}
-                {hasText(card.title) ? (
-                  <p className="text-[clamp(1.3rem,2vw,1.7rem)] font-semibold leading-[1.3] tracking-[-0.03em] text-white [overflow-wrap:anywhere]">
-                    {t(card, "title", language)}
-                  </p>
-                ) : null}
-                {hasText(card.subtitle) ? (
-                  <p className="mt-4 text-[0.88rem] leading-6 text-white/55 [overflow-wrap:anywhere]">{t(card, "subtitle", language)}</p>
-                ) : null}
-              </div>
-              {highlights.length > 0 ? (
-                <div className="grid grid-cols-3 gap-3 border-t border-white/10 pt-6">
-                  {highlights.map((item, i) => (
-                    <div key={`${i}-${item.line1}-${item.line2}`} className="text-center">
-                      <p className="text-[0.78rem] font-semibold text-white [overflow-wrap:anywhere]">{item.line1}</p>
-                      <p className="text-[0.72rem] text-white/45 [overflow-wrap:anywhere]">{item.line2}</p>
-                    </div>
+              {hasText(vision?.subtitle) ? (
+                <p className="text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-[#7CC4FF] [overflow-wrap:anywhere]">
+                  {t(vision, "subtitle", language)}
+                </p>
+              ) : null}
+              <span aria-hidden="true" className="my-6 block h-1 w-16 rounded-full bg-[linear-gradient(90deg,#0088FF,#1AB2FF)]" />
+              {paragraphs.length > 0 ? (
+                <div className="space-y-4 text-[0.95rem] leading-7 text-white/70">
+                  {paragraphs.map((para, i) => (
+                    <RichText key={`${i}-${para.slice(0, 48)}`} text={para} className="[overflow-wrap:anywhere] block" />
                   ))}
                 </div>
               ) : null}
             </div>
-          </motion.div>
-          ) : null}
-        </div>
+
+            {/* Glass card floating on the dark panel */}
+            {vision?.image || cardHasContent ? (
+              <div className="relative p-6 sm:p-8 lg:p-10" dir={language === "ar" ? "rtl" : "ltr"}>
+                <div className="flex h-full flex-col justify-between gap-8 rounded-[24px] border border-white/12 bg-white/[0.06] p-7 shadow-[0_18px_44px_rgba(2,8,20,0.4)] backdrop-blur-md sm:p-9">
+                  <div>
+                    {hasText(card.badge) ? (
+                      <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1">
+                        <span className="h-1.5 w-1.5 rounded-full bg-[#5BC4FF]" />
+                        <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/70 [overflow-wrap:anywhere]">
+                          {t(card, "badge", language)}
+                        </span>
+                      </div>
+                    ) : null}
+                    {hasText(card.title) ? (
+                      <p className="text-[clamp(1.3rem,2vw,1.7rem)] font-semibold leading-[1.3] tracking-[-0.03em] text-white [overflow-wrap:anywhere]">
+                        {t(card, "title", language)}
+                      </p>
+                    ) : null}
+                    {hasText(card.subtitle) ? (
+                      <p className="mt-4 text-[0.88rem] leading-6 text-white/55 [overflow-wrap:anywhere]">{t(card, "subtitle", language)}</p>
+                    ) : null}
+                  </div>
+                  {highlights.length > 0 ? (
+                    <div className="grid grid-cols-3 gap-3 divide-x divide-white/10 border-t border-white/10 pt-6 rtl:divide-x-reverse">
+                      {highlights.map((item, i) => (
+                        <div key={`${i}-${item.line1}-${item.line2}`} className="text-center">
+                          <p className="text-[0.78rem] font-semibold text-white [overflow-wrap:anywhere]">{item.line1}</p>
+                          <p className="text-[0.72rem] text-white/45 [overflow-wrap:anywhere]">{item.line2}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
+              </div>
+            ) : null}
+
+          </div>
+        </motion.div>
       </div>
     </section>
   );
@@ -538,43 +552,49 @@ function OurStory({ story }) {
   if (!hasContent) return null;
 
   return (
-    <section className="bg-white py-16 sm:py-20 lg:py-24">
+    <section className="bg-white py-10 sm:py-12 lg:py-14">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid items-start gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-20">
-          <motion.div initial={reduced ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }} dir={language === "ar" ? "rtl" : "ltr"}>
-            {hasText(story?.title) ? (
-              <h2 className="mb-3 text-[clamp(2.4rem,4vw,3.5rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-[#050A13] [overflow-wrap:anywhere]">
-                {t(story, "title", language)}
-              </h2>
-            ) : null}
-            {hasText(story?.subtitle) ? (
-              <p className="mb-6 text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500 [overflow-wrap:anywhere]">
-                {t(story, "subtitle", language)}
-              </p>
-            ) : null}
-            {paragraphs.length > 0 ? (
-              <div className="space-y-5 text-[0.93rem] leading-7 text-slate-500">
-                {paragraphs.map((para, i) => (
-                  <RichText key={`${i}-${para.slice(0, 48)}`} text={para} className="[overflow-wrap:anywhere] block" />
-                ))}
+        <motion.div
+          initial={reduced ? false : { opacity: 0, y: 26 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.15 }}
+          transition={{ duration: 0.65, ease }}
+          className="group overflow-hidden rounded-[32px] border border-[#E7EAF0] bg-white shadow-[0_18px_60px_rgba(15,23,42,0.08)]"
+        >
+          {/* Photo on the LEFT here so the three panels alternate down the page */}
+          <div className="grid lg:grid-cols-[0.95fr_1.05fr]">
+            {story?.image ? (
+              <div className="relative min-h-[280px] overflow-hidden sm:min-h-[340px] lg:min-h-[500px] lg:[clip-path:polygon(0_0,100%_0,86%_100%,0_100%)]">
+                <Image src={story.image} alt="HalaPark story" fill className="object-cover object-center transition duration-700 group-hover:scale-[1.04]" sizes="(min-width: 1024px) 48vw, 100vw" />
+                <div className="absolute inset-0 bg-[linear-gradient(300deg,rgba(5,10,19,0.30)_0%,transparent_45%,rgba(0,136,255,0.18)_100%)]" />
               </div>
             ) : null}
-          </motion.div>
 
-          {/* Extra story stats & milestones — not in content doc
-          <motion.div initial={reduced ? false : { opacity: 0, x: 24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.6, ease, delay: 0.12 }}>
-            ...
-          </motion.div>
-          */}
-          {story?.image ? (
-            <motion.div initial={reduced ? false : { opacity: 0, x: 24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.6, ease, delay: 0.12 }}>
-              <div className="relative h-72 w-full overflow-hidden rounded-[24px] sm:h-80">
-                <Image src={story.image} alt="HalaPark story" fill className="object-cover object-center" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#06111f]/80 via-[#06111f]/20 to-transparent" />
-              </div>
-            </motion.div>
-          ) : null}
-        </div>
+            <div className="relative flex flex-col justify-center p-8 sm:p-12 lg:p-14" dir={language === "ar" ? "rtl" : "ltr"}>
+              <span aria-hidden="true" className="pointer-events-none absolute end-6 top-2 select-none text-[7rem] font-bold leading-none tracking-tighter text-[#0088FF]/[0.07] sm:text-[9rem]">
+                03
+              </span>
+              {hasText(story?.title) ? (
+                <h2 className="mb-3 text-[clamp(2.2rem,3.4vw,3.1rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-[#050A13] [overflow-wrap:anywhere]">
+                  {t(story, "title", language)}
+                </h2>
+              ) : null}
+              {hasText(story?.subtitle) ? (
+                <p className="text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-slate-500 [overflow-wrap:anywhere]">
+                  {t(story, "subtitle", language)}
+                </p>
+              ) : null}
+              <span aria-hidden="true" className="my-6 block h-1 w-16 rounded-full bg-[linear-gradient(90deg,#0088FF,#1AB2FF)]" />
+              {paragraphs.length > 0 ? (
+                <div className="space-y-4 text-[0.95rem] leading-7 text-slate-600">
+                  {paragraphs.map((para, i) => (
+                    <RichText key={`${i}-${para.slice(0, 48)}`} text={para} className="[overflow-wrap:anywhere] block" />
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );

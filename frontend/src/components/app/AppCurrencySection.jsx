@@ -47,7 +47,12 @@ function PhonePreview({ image }) {
   if (!src) return null;
 
   return (
-    <div className="relative mx-auto w-[230px] sm:w-[270px] lg:w-[330px] xl:w-[368px]">
+    <div className="hp-phone relative mx-auto w-[230px] sm:w-[270px] lg:w-[300px] xl:w-[325px]">
+      {/* Soft halo behind the device */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -inset-x-10 -inset-y-6 rounded-[46px] bg-[radial-gradient(60%_50%_at_50%_45%,rgba(0,136,255,0.18),transparent_70%)] blur-[6px]"
+      />
       <div className="absolute inset-x-[18%] bottom-3 h-12 rounded-full bg-[#0F172A]/14 blur-[28px]" />
       <div className="relative isolate aspect-[1439/2920] drop-shadow-[0_28px_58px_rgba(15,23,42,0.2)]">
         <div className="absolute left-[4.1%] right-[4.1%] top-[1%] bottom-[1.2%] z-30 translate-y-[2px] overflow-hidden rounded-[3rem] bg-white">
@@ -55,7 +60,7 @@ function PhonePreview({ image }) {
             src={src}
             alt="HalaPark payment screen"
             fill
-            sizes="(min-width: 1280px) 368px, (min-width: 1024px) 330px, (min-width: 640px) 270px, 230px"
+            sizes="(min-width: 1280px) 325px, (min-width: 1024px) 300px, (min-width: 640px) 270px, 230px"
             className="object-cover object-center"
           />
         </div>
@@ -64,20 +69,20 @@ function PhonePreview({ image }) {
             src="/mobileframe.png"
             alt=""
             fill
-            sizes="(min-width: 1280px) 368px, (min-width: 1024px) 330px, (min-width: 640px) 270px, 230px"
+            sizes="(min-width: 1280px) 325px, (min-width: 1024px) 300px, (min-width: 640px) 270px, 230px"
             className="select-none object-contain"
           />
         </div>
       </div>
 
-      <div className="absolute -left-12 top-16 hidden rounded-2xl border border-[#DDEBFF] bg-white px-3.5 py-2.5 shadow-[0_14px_34px_rgba(15,23,42,0.1)] sm:block lg:-left-20 xl:-left-24">
+      <div className="hp-badge hp-badge-a absolute -left-12 top-16 hidden rounded-2xl border border-[#DDEBFF] bg-white/90 px-3.5 py-2.5 shadow-[0_14px_34px_rgba(15,23,42,0.1)] backdrop-blur-sm sm:block lg:-left-20 xl:-left-24">
         <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[#0088FF]">
           Wallet
         </p>
         <p className="mt-1 text-sm font-semibold text-[#050A13]">AED 240</p>
       </div>
 
-      <div className="absolute -right-10 bottom-24 hidden items-center gap-2 rounded-2xl border border-[#DDEBFF] bg-white px-3.5 py-2.5 shadow-[0_14px_34px_rgba(15,23,42,0.1)] sm:flex lg:-right-16 xl:-right-20">
+      <div className="hp-badge hp-badge-b absolute -right-10 bottom-24 hidden items-center gap-2 rounded-2xl border border-[#DDEBFF] bg-white/90 px-3.5 py-2.5 shadow-[0_14px_34px_rgba(15,23,42,0.1)] backdrop-blur-sm sm:flex lg:-right-16 xl:-right-20">
         <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#EAF3FF] text-[#0088FF]">
           <ShieldCheck aria-hidden="true" className="h-4 w-4" />
         </span>
@@ -86,6 +91,21 @@ function PhonePreview({ image }) {
           <p className="text-[10px] font-medium text-[#667085]">Fast checkout</p>
         </div>
       </div>
+
+      <style jsx>{`
+        @keyframes hp-float {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-10px); }
+        }
+        .hp-phone { animation: hp-float 7s ease-in-out infinite; }
+        .hp-badge { animation: hp-float 5.5s ease-in-out infinite; }
+        .hp-badge-b { animation-delay: -2.6s; }
+
+        @media (prefers-reduced-motion: reduce) {
+          .hp-phone,
+          .hp-badge { animation: none; }
+        }
+      `}</style>
     </div>
   );
 }
@@ -253,7 +273,16 @@ export default function AppCurrencySection() {
       transition={{ duration: 0.6, ease: "easeOut" }}
       className="px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20"
     >
-      <div className="mx-auto max-w-7xl overflow-hidden rounded-[28px] border border-[#E5EEFF] bg-[linear-gradient(112deg,#FFFFFF_0%,#F9FCFF_38%,#EEF6FF_100%)] shadow-[0_18px_46px_rgba(15,23,42,0.05)]">
+      <div className="relative mx-auto max-w-7xl overflow-hidden rounded-[28px] border border-[#E5EEFF] bg-[linear-gradient(112deg,#FFFFFF_0%,#F9FCFF_38%,#EEF6FF_100%)] shadow-[0_18px_46px_rgba(15,23,42,0.05)]">
+        {/* Blueprint texture + top hairline (same language as the dark CTA bands) */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(0,136,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(0,136,255,0.05)_1px,transparent_1px)] bg-[size:46px_46px] [mask-image:radial-gradient(ellipse_70%_60%_at_50%_40%,black,transparent)]"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#1AB2FF]/45 to-transparent"
+        />
         <div className="relative grid min-h-[600px] gap-8 px-6 py-8 sm:px-9 sm:py-10 lg:grid-cols-[0.98fr_1.02fr] lg:gap-4 lg:px-10 xl:min-h-[640px]">
           <div
             aria-hidden="true"
@@ -265,7 +294,7 @@ export default function AppCurrencySection() {
             whileInView={prefersReducedMotion ? undefined : { opacity: 1, x: 0 }}
             viewport={{ once: true, amount: 0.35 }}
             transition={{ duration: 0.55, ease: "easeOut", delay: 0.08 }}
-            className="relative z-20 flex flex-col"
+            className="relative z-20 flex flex-col lg:justify-center"
             dir={dir}
           >
             {title || subtitle ? (
@@ -290,19 +319,19 @@ export default function AppCurrencySection() {
               <button
                 type="button"
                 onClick={() => setTopUpOpen(true)}
-                className="mt-7 inline-flex w-full max-w-[315px] items-center justify-between rounded-2xl bg-[#0088FF] px-5 py-3.5 text-base font-semibold text-white shadow-[0_16px_32px_rgba(0,136,255,0.24)] transition hover:brightness-95"
+                className="group/cta mt-7 inline-flex w-full max-w-[315px] items-center justify-between rounded-2xl bg-[linear-gradient(120deg,#0078E0_0%,#0088FF_55%,#1AB2FF_100%)] px-5 py-3.5 text-base font-semibold text-white shadow-[0_16px_32px_rgba(0,136,255,0.28)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_20px_40px_rgba(0,136,255,0.42)]"
               >
                 <span className="inline-flex items-center gap-3">
                   <WalletCards aria-hidden="true" className="h-6 w-6" />
                   <span className="[overflow-wrap:anywhere]">{topUpLabel}</span>
                 </span>
-                <ArrowRight aria-hidden="true" className="h-5 w-5 rtl:rotate-180" />
+                <ArrowRight aria-hidden="true" className="h-5 w-5 transition-transform duration-300 group-hover/cta:translate-x-1 rtl:rotate-180 rtl:group-hover/cta:-translate-x-1" />
               </button>
             ) : null}
 
             {cardFeatures.length > 0 ? (
               <div
-                className={`mt-8 grid gap-3 lg:mt-auto lg:max-w-[610px] lg:pt-10 ${
+                className={`mt-8 grid gap-3 lg:max-w-[610px] ${
                   cardFeatures.length === 1
                     ? "sm:grid-cols-1"
                     : cardFeatures.length === 2
@@ -313,9 +342,9 @@ export default function AppCurrencySection() {
                 {cardFeatures.map((item, index) => (
                   <div
                     key={index}
-                    className="flex items-center gap-3 rounded-2xl border border-[#E4EAF2] bg-white/82 p-3.5 shadow-[0_10px_26px_rgba(15,23,42,0.04)] sm:p-4"
+                    className="group/feature flex items-center gap-3 rounded-2xl border border-[#E4EAF2] bg-white/70 p-3.5 shadow-[0_10px_26px_rgba(15,23,42,0.04)] backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#0088FF]/35 hover:bg-white hover:shadow-[0_18px_38px_rgba(0,136,255,0.16)] sm:p-4"
                   >
-                    <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#E9F3FF] text-[#0088FF]">
+                    <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#E9F3FF] text-[#0088FF] transition-all duration-300 group-hover/feature:bg-[linear-gradient(135deg,#0088FF,#1AB2FF)] group-hover/feature:text-white group-hover/feature:shadow-[0_8px_18px_rgba(0,136,255,0.3)]">
                       <CardIcon item={item} />
                     </span>
                     <p className="text-sm leading-5 text-[#344054] [overflow-wrap:anywhere]">
