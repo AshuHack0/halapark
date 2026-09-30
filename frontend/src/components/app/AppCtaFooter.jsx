@@ -26,6 +26,9 @@ export default function AppCtaFooter() {
   const heading = t(data, "heading", language);
   const description = t(data, "description", language);
 
+  // Optional banner artwork for the left half (admin → App page → CTA Footer).
+  const bannerImage = (data?.image || "").trim();
+
   // A store renders only with an href AND (icon or label).
   const stores = (Array.isArray(data?.stores) ? data.stores : []).filter(
     (s) => s && (s.href ?? "").trim() && ((s.icon ?? "").trim() || (s.label ?? "").trim()),
@@ -68,18 +71,31 @@ export default function AppCtaFooter() {
             P
           </div>
 
-          {/* Concentric rings behind the download column */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute end-[8%] top-1/2 hidden h-[420px] w-[420px] -translate-y-1/2 rounded-full border border-white/[0.07] lg:block"
-          >
-            <div className="absolute inset-12 rounded-full border border-white/[0.06]" />
-            <div className="absolute inset-24 rounded-full border border-white/[0.05]" />
-          </div>
+          <div className="relative grid items-center gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:gap-14">
+            {/* LEFT — visual */}
+            <div className="relative">
+              {bannerImage ? (
+                <div className="relative aspect-[4/3] overflow-hidden rounded-[22px] shadow-[0_24px_56px_rgba(2,8,20,0.45)] ring-1 ring-white/15">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={bannerImage} alt="" aria-hidden className="h-full w-full object-cover object-center" />
+                  <div className="absolute inset-0 bg-[linear-gradient(140deg,transparent_35%,rgba(5,10,19,0.45)_100%)]" />
+                </div>
+              ) : (
+                /* No artwork uploaded → a plain decorative panel keeps the split intact */
+                <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-[22px] bg-white/[0.04] ring-1 ring-white/10">
+                  <div aria-hidden="true" className="absolute h-[70%] w-[70%] rounded-full border border-white/10">
+                    <div className="absolute inset-8 rounded-full border border-white/[0.08]" />
+                    <div className="absolute inset-16 rounded-full border border-white/[0.06]" />
+                  </div>
+                  <span aria-hidden="true" className="relative select-none text-[9rem] font-bold leading-none tracking-tighter text-white/[0.07]">
+                    P
+                  </span>
+                </div>
+              )}
+            </div>
 
-          <div className="relative grid items-center gap-10 text-center lg:grid-cols-[1.05fr_0.95fr] lg:gap-14 lg:text-start">
-            {/* Copy */}
-            <div>
+            {/* RIGHT — headline, text, then the store buttons */}
+            <div className="text-center lg:text-start">
               {heading.trim() ? (
                 <h2 className="bg-[linear-gradient(180deg,#FFFFFF_55%,#9CC8F5_100%)] bg-clip-text text-3xl font-semibold leading-tight tracking-[-0.03em] text-transparent sm:text-4xl md:text-[3.2rem] [overflow-wrap:anywhere]">
                   {heading}
@@ -97,52 +113,48 @@ export default function AppCtaFooter() {
                 aria-hidden="true"
                 className="mx-auto mt-7 block h-1 w-20 rounded-full bg-[linear-gradient(90deg,#0088FF,#1AB2FF)] lg:mx-0"
               />
-            </div>
 
-            {/* Download column — full-width rows instead of small centred pills */}
-            {stores.length > 0 ? (
-              <div className="flex flex-col gap-3">
-                {stores.map((store, i) => {
-                  const icon = (store.icon ?? "").trim();
-                  // Store names are brand-like: in Arabic prefer ar.label but
-                  // fall back to the English label (never blank out a brand).
-                  const label =
-                    language === "ar"
-                      ? (store.ar?.label ?? "").trim() || (store.label ?? "").trim()
-                      : (store.label ?? "").trim();
-                  return (
-                    <a
-                      key={store.key || store.href || i}
-                      href={store.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={label || "App store"}
-                      className="group flex items-center gap-4 rounded-2xl border border-white/15 bg-white/[0.07] px-5 py-4 text-start shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur transition-all duration-300 hover:-translate-y-0.5 hover:border-[#1AB2FF]/60 hover:bg-white/[0.13] hover:shadow-[0_14px_34px_rgba(0,136,255,0.32),inset_0_1px_0_rgba(255,255,255,0.12)]"
-                    >
-                      {icon ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src={icon}
-                          alt={label || "Store"}
-                          className="h-9 w-9 shrink-0 object-contain sm:h-10 sm:w-10"
+              {/* Store buttons — below the text */}
+              {stores.length > 0 ? (
+                <div className="mt-8 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
+                  {stores.map((store, i) => {
+                    const icon = (store.icon ?? "").trim();
+                    // Store names are brand-like: in Arabic prefer ar.label but
+                    // fall back to the English label (never blank out a brand).
+                    const label =
+                      language === "ar"
+                        ? (store.ar?.label ?? "").trim() || (store.label ?? "").trim()
+                        : (store.label ?? "").trim();
+                    return (
+                      <a
+                        key={store.key || store.href || i}
+                        href={store.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={label || "App store"}
+                        className="group inline-flex items-center gap-3 rounded-2xl border border-white/15 bg-white/[0.07] px-5 py-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur transition-all duration-300 hover:-translate-y-0.5 hover:border-[#1AB2FF]/60 hover:bg-white/[0.13] hover:shadow-[0_14px_34px_rgba(0,136,255,0.32),inset_0_1px_0_rgba(255,255,255,0.12)]"
+                      >
+                        {icon ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={icon} alt={label || "Store"} className="h-8 w-8 shrink-0 object-contain sm:h-9 sm:w-9" />
+                        ) : (
+                          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#0088FF]/25 text-[#7CC4FF] transition-colors group-hover:bg-[#0088FF] group-hover:text-white">
+                            <Download className="h-4 w-4" strokeWidth={2.2} aria-hidden />
+                          </span>
+                        )}
+                        {label ? (
+                          <span className="text-[0.95rem] font-semibold text-white [overflow-wrap:anywhere]">{label}</span>
+                        ) : null}
+                        <ArrowRight
+                          aria-hidden="true"
+                          className="h-4 w-4 shrink-0 text-white/40 transition-all duration-300 group-hover:translate-x-0.5 group-hover:text-white rtl:rotate-180 rtl:group-hover:-translate-x-0.5"
                         />
-                      ) : (
-                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#0088FF]/25 text-[#7CC4FF] transition-colors group-hover:bg-[#0088FF] group-hover:text-white">
-                          <Download className="h-4.5 w-4.5" strokeWidth={2.2} aria-hidden />
-                        </span>
-                      )}
-                      {label ? (
-                        <span className="flex-1 text-[0.95rem] font-semibold text-white [overflow-wrap:anywhere]">{label}</span>
-                      ) : null}
-                      <ArrowRight
-                        aria-hidden="true"
-                        className="h-4 w-4 shrink-0 text-white/40 transition-all duration-300 group-hover:translate-x-0.5 group-hover:text-white rtl:rotate-180 rtl:group-hover:-translate-x-0.5"
-                      />
-                    </a>
-                  );
-                })}
-              </div>
-            ) : null}
+                      </a>
+                    );
+                  })}
+                </div>
+              ) : null}
+            </div>
           </div>
         </div>
       </div>
