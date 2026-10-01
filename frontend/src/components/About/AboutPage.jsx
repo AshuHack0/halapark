@@ -378,10 +378,6 @@ function OurMission({ mission }) {
           <div className="relative grid lg:grid-cols-[1.05fr_0.95fr]">
             {/* Copy half */}
             <div className="relative flex flex-col justify-center p-8 sm:p-12 lg:p-14" dir={language === "ar" ? "rtl" : "ltr"}>
-              {/* Oversized ghost numeral for editorial rhythm */}
-              <span aria-hidden="true" className="pointer-events-none absolute end-6 top-2 select-none text-[7rem] font-bold leading-none tracking-tighter text-[#0088FF]/[0.07] sm:text-[9rem]">
-                01
-              </span>
               {hasText(mission?.title) ? (
                 <h2 className="mb-3 text-[clamp(2.2rem,3.4vw,3.1rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-[#050A13] [overflow-wrap:anywhere]">
                   {t(mission, "title", language)}
@@ -467,9 +463,6 @@ function OurVision({ vision }) {
           <div className="relative grid lg:grid-cols-[1.05fr_0.95fr]">
             {/* Copy half */}
             <div className="relative flex flex-col justify-center p-8 sm:p-12 lg:p-14" dir={language === "ar" ? "rtl" : "ltr"}>
-              <span aria-hidden="true" className="pointer-events-none absolute end-6 top-2 select-none text-[7rem] font-bold leading-none tracking-tighter text-white/[0.06] sm:text-[9rem]">
-                02
-              </span>
               {hasText(vision?.title) ? (
                 <h2 className="mb-3 text-[clamp(2.2rem,3.4vw,3.1rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-white [overflow-wrap:anywhere]">
                   {t(vision, "title", language)}
@@ -571,9 +564,6 @@ function OurStory({ story }) {
             ) : null}
 
             <div className="relative flex flex-col justify-center p-8 sm:p-12 lg:p-14" dir={language === "ar" ? "rtl" : "ltr"}>
-              <span aria-hidden="true" className="pointer-events-none absolute end-6 top-2 select-none text-[7rem] font-bold leading-none tracking-tighter text-[#0088FF]/[0.07] sm:text-[9rem]">
-                03
-              </span>
               {hasText(story?.title) ? (
                 <h2 className="mb-3 text-[clamp(2.2rem,3.4vw,3.1rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-[#050A13] [overflow-wrap:anywhere]">
                   {t(story, "title", language)}
