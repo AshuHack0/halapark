@@ -139,57 +139,74 @@ function CareersVisual({ hero, reduced }) {
   if (images.length === 0) return null;
 
   return (
-    <div className="relative flex items-center justify-center">
-      {/* Soft wash behind the collage */}
-      <div className="pointer-events-none absolute left-1/2 top-1/2 h-[380px] w-[380px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(0,136,255,0.16),rgba(37,99,235,0.05)_58%,transparent_76%)] blur-2xl lg:h-[520px] lg:w-[520px]" />
+    <div className="relative w-full">
+      {/* Soft wash bleeding out behind the panel */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -left-16 top-1/2 h-[420px] w-[420px] -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(0,136,255,0.18),rgba(37,99,235,0.05)_58%,transparent_76%)] blur-2xl lg:h-[560px] lg:w-[560px]"
+      />
 
-      {/* Arch + circle collage — soft, people-shaped frames, deliberately
-          unlike the rectangular photo decks on the other pages. */}
+      {/* One large photo filling the whole column and running off the right
+          edge of the screen, instead of a small centred collage marooned in
+          white space. */}
       <motion.div
-        initial={reduced ? false : { opacity: 0, y: 24 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7, ease, delay: 0.1 }}
-        className="relative z-20 w-[280px] pb-16 sm:w-[330px] lg:w-[380px] lg:pb-20"
+        initial={reduced ? false : { opacity: 0, scale: 0.97 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.8, ease, delay: 0.1 }}
+        className="relative z-20 h-[420px] w-full overflow-hidden rounded-[30px] shadow-[0_40px_90px_rgba(15,23,42,0.26)] ring-1 ring-black/5 sm:h-[500px] lg:h-[620px] lg:rounded-s-[64px]"
       >
-        {/* Arch frame */}
-        <div className="relative aspect-[3/4] overflow-hidden rounded-[999px_999px_28px_28px] shadow-[0_30px_70px_rgba(15,23,42,0.22)] ring-1 ring-black/5">
-          <MosaicTile slides={tileA} idx={a} reduced={reduced} sizes="(min-width: 1024px) 380px, (min-width: 640px) 330px, 280px" />
-          {hasText(teamTag) ? (
-            <span
-              className="absolute inset-x-6 bottom-4 inline-flex items-center justify-center gap-1.5 rounded-full bg-black/45 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.14em] text-white backdrop-blur-sm [overflow-wrap:anywhere]"
-              dir={language === "ar" ? "rtl" : "ltr"}
-            >
-              <span className="h-1.5 w-1.5 rounded-full bg-[#5BE49B] animate-pulse" /> {teamTag}
-            </span>
-          ) : null}
-        </div>
-
-        {/* Circular photo overlapping the arch's bottom corner */}
-        <div className="absolute bottom-0 start-0 h-32 w-32 overflow-hidden rounded-full border-[6px] border-white shadow-[0_18px_44px_rgba(15,23,42,0.22)] sm:h-36 sm:w-36 lg:h-40 lg:w-40">
-          <MosaicTile slides={tileB} idx={b} reduced={reduced} sizes="160px" />
-        </div>
-
-        {/* Small rounded photo on the opposite corner to balance the group */}
-        <div className="absolute bottom-6 end-0 h-24 w-24 overflow-hidden rounded-[26px] border-[5px] border-white shadow-[0_16px_38px_rgba(15,23,42,0.2)] sm:h-28 sm:w-28">
-          <MosaicTile slides={tileC} idx={c} reduced={reduced} sizes="112px" />
-        </div>
-
-        {/* Thin accent ring echoing the arch */}
+        <MosaicTile
+          slides={tileA}
+          idx={a}
+          reduced={reduced}
+          sizes="(min-width: 1024px) 60vw, 100vw"
+        />
+        {/* Scrim so the overlaid tag stays readable on any photo */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute -inset-x-4 -top-4 bottom-16 rounded-[999px_999px_36px_36px] border border-[#0088FF]/20"
+          className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,transparent_42%,rgba(5,10,19,0.55)_100%)]"
         />
+
+        {hasText(teamTag) ? (
+          <span
+            className="absolute bottom-6 start-6 inline-flex items-center gap-2 rounded-full bg-white/15 px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white ring-1 ring-white/25 backdrop-blur-md [overflow-wrap:anywhere]"
+            dir={language === "ar" ? "rtl" : "ltr"}
+          >
+            <span className="h-1.5 w-1.5 rounded-full bg-[#5BE49B] animate-pulse" />
+            {teamTag}
+          </span>
+        ) : null}
       </motion.div>
 
-      {/* Floating chip — we're hiring (top-left, mirrored to top-right in RTL) */}
+      {/* Two smaller photos breaking the panel's left edge, so the big image
+          still reads as a composed group rather than a plain rectangle. */}
+      <motion.div
+        initial={reduced ? false : { opacity: 0, y: 18 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, ease, delay: 0.35 }}
+        className="absolute bottom-10 z-30 hidden h-32 w-32 overflow-hidden rounded-full border-[6px] border-white shadow-[0_18px_44px_rgba(15,23,42,0.24)] sm:block lg:bottom-16 lg:h-40 lg:w-40 start-[-30px] lg:start-[-56px]"
+      >
+        <MosaicTile slides={tileB} idx={b} reduced={reduced} sizes="160px" />
+      </motion.div>
+
+      <motion.div
+        initial={reduced ? false : { opacity: 0, y: -18 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, ease, delay: 0.45 }}
+        className="absolute top-16 z-30 hidden h-24 w-24 overflow-hidden rounded-[26px] border-[5px] border-white shadow-[0_16px_38px_rgba(15,23,42,0.22)] sm:block lg:h-28 lg:w-28 start-[-24px] lg:start-[-44px]"
+      >
+        <MosaicTile slides={tileC} idx={c} reduced={reduced} sizes="112px" />
+      </motion.div>
+
+      {/* Floating chip — we're hiring */}
       {hasText(hiringTitle) ? (
         <motion.div
-          initial={reduced ? false : { opacity: 0, y: -14, rotate: -5 }}
-          animate={reduced ? undefined : { opacity: 1, y: 0, rotate: -5 }}
+          initial={reduced ? false : { opacity: 0, y: -14, rotate: -4 }}
+          animate={reduced ? undefined : { opacity: 1, y: 0, rotate: -4 }}
           transition={{ duration: 0.6, ease, delay: 0.5 }}
-          className="absolute left-[-6%] top-[-4%] z-40 hidden sm:block lg:left-[-14%] rtl:left-auto rtl:right-[-6%] rtl:lg:left-auto rtl:lg:right-[-14%]"
+          className="absolute top-6 z-40 hidden sm:block lg:top-10 start-[30%] lg:start-[26%]"
         >
-          <div className="flex items-center gap-2.5 rounded-2xl border border-white/80 bg-white px-3 py-2.5 shadow-[0_16px_40px_rgba(15,23,42,0.15)]">
+          <div className="flex items-center gap-2.5 rounded-2xl border border-white/80 bg-white px-3 py-2.5 shadow-[0_16px_40px_rgba(15,23,42,0.18)]">
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#0088FF] to-[#2563EB] text-white shadow-[0_4px_10px_rgba(0,136,255,0.35)]">
               {hasText(badges?.hiringIconImage) ? (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -208,15 +225,15 @@ function CareersVisual({ hero, reduced }) {
         </motion.div>
       ) : null}
 
-      {/* Floating chip — culture (bottom-right, mirrored to bottom-left in RTL) */}
+      {/* Floating card — culture */}
       {hasText(cultureTitle) ? (
         <motion.div
-          initial={reduced ? false : { opacity: 0, x: 16, rotate: 5 }}
-          animate={reduced ? undefined : { opacity: 1, x: 0, rotate: 5 }}
+          initial={reduced ? false : { opacity: 0, y: 16, rotate: 4 }}
+          animate={reduced ? undefined : { opacity: 1, y: 0, rotate: 4 }}
           transition={{ duration: 0.6, ease, delay: 0.6 }}
-          className="absolute bottom-[-4%] right-[-6%] z-40 hidden sm:block lg:right-[-12%] rtl:right-auto rtl:left-[-6%] rtl:lg:right-auto rtl:lg:left-[-12%]"
+          className="absolute bottom-8 z-40 hidden sm:block lg:bottom-14 end-6 lg:end-16"
         >
-          <div className="w-[150px] rounded-2xl border border-white/80 bg-white p-3 shadow-[0_16px_40px_rgba(15,23,42,0.15)]">
+          <div className="w-[160px] rounded-2xl border border-white/80 bg-white p-3.5 shadow-[0_16px_40px_rgba(15,23,42,0.18)]">
             {hasText(cultureTag) ? (
               <div className="flex items-center gap-1.5">
                 {hasText(badges?.cultureIconImage) ? (
@@ -317,7 +334,7 @@ function CareersHero({ hero }) {
             initial={reduced ? false : { opacity: 0, x: 32 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.75, ease, delay: 0.1 }}
-            className="relative mt-16 flex min-h-[420px] items-center justify-center lg:mt-0 lg:min-h-[560px]"
+            className="relative mt-16 flex w-full items-center lg:mt-0"
           >
             <CareersVisual hero={hero} reduced={reduced} />
           </motion.div>
