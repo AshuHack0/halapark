@@ -15,7 +15,7 @@ const phoneFrameSrc = "/mobileframe.png";
 
 function PhonePreview({ screen, label }) {
   return (
-    <div className="relative mx-auto w-[156px] scale-95 sm:w-[228px] sm:scale-100 lg:w-[320px]">
+    <div className="relative mx-auto w-[205px] sm:w-[228px] lg:w-[320px]">
       <div className="absolute inset-x-[18%] bottom-3 h-12 rounded-full bg-[#0F172A]/14 blur-[28px]" />
 
       <div className="relative isolate aspect-[1439/2920] drop-shadow-[0_28px_60px_-28px_rgba(15,23,42,0.45)]">
@@ -34,21 +34,23 @@ function PhonePreview({ screen, label }) {
                   src={screen}
                   alt={`${label} screen preview`}
                   fill
-                  sizes="(min-width: 1024px) 320px, (min-width: 640px) 228px, 156px"
+                  sizes="(min-width: 1024px) 320px, (min-width: 640px) 228px, 205px"
                   className="object-cover object-center"
                   priority
                 />
               </motion.div>
             </AnimatePresence>
           </div>
-        ) : null}
+        ) : (
+          <div className="absolute left-[4.4%] right-[4.4%] top-[1.2%] bottom-[1.45%] z-10 translate-y-[1px] overflow-hidden rounded-[1.3rem] bg-[linear-gradient(170deg,#F2F8FF,#E3EFFC)] sm:rounded-[2.2rem] lg:rounded-[2.7rem]" />
+        )}
 
         <div className="pointer-events-none absolute inset-0 z-0">
           <Image
             src={phoneFrameSrc}
             alt=""
             fill
-            sizes="(min-width: 1024px) 320px, (min-width: 640px) 228px, 156px"
+            sizes="(min-width: 1024px) 320px, (min-width: 640px) 228px, 205px"
             className="select-none object-contain"
             priority
           />
@@ -232,7 +234,7 @@ export default function AppServiceTabs() {
   return (
     <section className="w-full bg-white px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
       <div className="max-w-7xl mx-auto overflow-hidden">
-        <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+        <div className="relative -mx-4 overflow-x-auto px-4 sm:mx-0 sm:overflow-visible sm:px-0">
           <div
             role="tablist"
             aria-label="App services"
@@ -436,7 +438,7 @@ export default function AppServiceTabs() {
             </div>
           </div>
 
-          <div className="mt-4 flex h-full w-full justify-center md:mt-8 md:w-[44%] md:flex-none md:justify-end lg:mt-10">
+          <div className="mt-2 flex h-full w-full justify-center md:mt-8 md:w-[44%] md:flex-none md:justify-end lg:mt-10">
             <PhonePreview
               screen={activeScreen}
               label={`${t(activeService, "label", language)} ${safeActiveStep}`}
