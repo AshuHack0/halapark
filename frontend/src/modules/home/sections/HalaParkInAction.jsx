@@ -95,7 +95,7 @@ function StoreBadge({
         <p className="truncate text-[8px] font-normal text-[#0F172A] sm:text-[9.2px]">
           {eyebrow}
         </p>
-        <p className="mt-1.5 truncate text-[13px] font-medium tracking-[-0.03em] text-[#050A13] sm:mt-2 sm:text-[16.6px]">
+        <p className="mt-1.5 truncate text-[13px] font-medium tracking-[-0.03em] text-[#050A13] sm:mt-2 sm:overflow-visible sm:whitespace-normal sm:text-[15.5px] lg:text-[16.6px]">
           {label}
         </p>
       </div>
@@ -108,7 +108,7 @@ function StoreBadge({
     whileHover: prefersReducedMotion
       ? undefined
       : { y: -4, transition: { duration: 0.2, ease: "easeOut" } },
-    className: "flex min-w-0 flex-1 items-center gap-2.5 sm:gap-3",
+    className: "flex w-full min-w-0 items-center gap-3 sm:w-auto sm:flex-1 sm:gap-3",
   };
 
   // With a store URL the whole badge is a link; without one it stays static.
@@ -213,7 +213,7 @@ export default function HalaParkInAction({ cmsKey = "halaParkInAction", pageSlug
               {storeLinks.length > 0 ? (
                 <motion.div
                   variants={prefersReducedMotion ? undefined : copyItemVariants}
-                  className="mt-8 flex items-center justify-between gap-3 sm:gap-4 lg:gap-6"
+                  className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:items-center sm:justify-between sm:gap-3 lg:gap-5"
                 >
                   {storeLinks.map((store, index) => (
                     <StoreBadge
@@ -229,7 +229,7 @@ export default function HalaParkInAction({ cmsKey = "halaParkInAction", pageSlug
               ) : null}
             </motion.div>
 
-            <div className="relative flex min-h-[250px] items-end justify-start sm:min-h-[310px] lg:min-h-[390px] lg:self-end">
+            <div className="relative flex items-end justify-start sm:min-h-[310px] lg:min-h-[390px] lg:self-end">
               <div aria-hidden="true" className="absolute right-[6%] top-[15%]">
                 <div className="h-[180px] w-[180px] rounded-full bg-[#0088FF]/25 blur-[78px] sm:h-[220px] sm:w-[220px] lg:h-[280px] lg:w-[280px]" />
               </div>
