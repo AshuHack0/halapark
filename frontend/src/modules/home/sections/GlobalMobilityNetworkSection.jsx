@@ -319,10 +319,10 @@ export default function GlobalMobilityNetworkSection() {
           </div> */}
 
           {hasMap || hasPanelText ? (
-            <div className="relative z-10 mt-4 isolate min-h-[420px] overflow-hidden sm:min-h-[460px] lg:min-h-[500px]">
-              <div className="relative flex min-h-[420px] flex-col sm:min-h-[460px] lg:min-h-[500px]">
+            <div className="relative z-10 mt-4 isolate overflow-hidden lg:min-h-[500px]">
+              <div className="relative flex flex-col lg:min-h-[500px]">
                 {hasMap ? (
-                  <>
+                  <div className="relative order-2 mt-4 h-[260px] w-full sm:h-[340px] lg:absolute lg:inset-0 lg:order-none lg:mt-0 lg:h-auto">
                     <img
                       src="/map_6824dc8ea581a9958227b98c_map.svg"
                       alt="Global mobility map"
@@ -383,10 +383,10 @@ export default function GlobalMobilityNetworkSection() {
                         <span className="gm-city-label">ABU DHABI</span>
                       </div>
                     </div>
-                  </>
+                  </div>
                 ) : null}
                 {hasPanelText ? (
-                  <div className="absolute start-0 top-[10%] z-20 w-full max-w-[360px] px-4 sm:max-w-[390px] sm:px-6">
+                  <div className="relative order-1 z-20 w-full px-4 sm:px-6 lg:absolute lg:start-0 lg:top-[10%] lg:max-w-[390px]">
                     <h3 className="text-[1.45rem] font-semibold leading-[1.18] tracking-[0.02em] text-[#071221] sm:text-[1.85rem] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
                       {t(content, "panelTitle", language)}
                       {t(content, "panelTitleAccent", language) ? (
@@ -397,7 +397,7 @@ export default function GlobalMobilityNetworkSection() {
                       ) : null}
                     </h3>
                     <span dir={language === "ar" ? "rtl" : "ltr"} className="block">
-                      <RichText text={t(content, "panelBody", language)} className="mt-2 max-w-[300px] text-sm leading-relaxed text-slate-600 [overflow-wrap:anywhere] block" />
+                      <RichText text={t(content, "panelBody", language)} className="mt-2 max-w-none text-sm leading-relaxed text-slate-600 lg:max-w-[300px] [overflow-wrap:anywhere] block" />
                     </span>
 
                     {caps.length > 0 ? (
@@ -421,7 +421,7 @@ export default function GlobalMobilityNetworkSection() {
                                 {t(item, "title", language)}
                               </p>
                             </div>
-                            <RichText text={t(item, "description", language)} className="mt-1 max-w-[290px] text-[0.92rem] leading-relaxed text-slate-600 block" />
+                            <RichText text={t(item, "description", language)} className="mt-1 max-w-none text-[0.92rem] leading-relaxed text-slate-600 lg:max-w-[290px] block" />
                           </li>
                         ))}
                       </ul>
