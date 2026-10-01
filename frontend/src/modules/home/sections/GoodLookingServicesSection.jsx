@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import { fetchHomeSection } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
 import RichText from "@/components/common/RichText";
+import { usePrefersReducedMotionOS } from "@/hooks/usePrefersReducedMotionOS";
 
 // Map a CMS service (from the Services page) to the card shape this section uses.
 function toCard(svc) {
@@ -32,6 +33,9 @@ const SWITCH_MARGIN_PX = 40;
 
 function ServiceCard({ service, index, cardRef, isActive, language }) {
   const prefersReducedMotion = useReducedMotion();
+  // Muted background video keeps playing on phones; only a real OS
+  // "reduce motion" setting stops it.
+  const osReducedMotion = usePrefersReducedMotionOS();
 
   const highlights = Array.isArray(service.highlights)
     ? service.highlights.slice(0, 5)
@@ -85,7 +89,7 @@ function ServiceCard({ service, index, cardRef, isActive, language }) {
             {service.mediaType === "video" && service.mediaSrc ? (
               <video onContextMenu={(e) => e.preventDefault()}
                 src={service.mediaSrc}
-                autoPlay={!prefersReducedMotion}
+                autoPlay={!osReducedMotion}
                 loop
                 muted
                 playsInline

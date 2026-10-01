@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { allServicesData, serviceNames } from "./allServicesData";
 import { fetchPage } from "@/lib/cms";
+import { usePrefersReducedMotionOS } from "@/hooks/usePrefersReducedMotionOS";
 import { useLanguage, t } from "@/context/LanguageContext";
 import RichText from "@/components/common/RichText";
 import { PARTNER_FORM_LINK } from "@/components/partners/PartnershipFormProvider";
@@ -36,6 +37,9 @@ const ease       = [0.22, 1, 0.36, 1];
 /* ═══════════════════════════ SERVICE MODAL ══════════════════════════ */
 
 function ServiceModal({ service, onClose }) {
+  // Muted background video keeps playing on phones; only a real OS
+  // "reduce motion" setting stops it.
+  const osReducedMotion = usePrefersReducedMotionOS();
   const reduced = useReducedMotion();
   const { language } = useLanguage();
   const [mounted, setMounted] = useState(false);
@@ -104,7 +108,7 @@ function ServiceModal({ service, onClose }) {
             {service.mediaType === "video" ? (
               <video onContextMenu={(e) => e.preventDefault()}
                 src={service.mediaSrc}
-                autoPlay={!reduced}
+                autoPlay={!osReducedMotion}
                 loop
                 muted
                 playsInline
@@ -741,6 +745,9 @@ const CAT_META = {
 };
 
 function ServiceCard({ service, index, onClick, category, clickable = false }) {
+  // Muted background video keeps playing on phones; only a real OS
+  // "reduce motion" setting stops it.
+  const osReducedMotion = usePrefersReducedMotionOS();
   const reduced = useReducedMotion();
   const { language } = useLanguage();
   const col = index % 4;
@@ -778,7 +785,7 @@ function ServiceCard({ service, index, onClick, category, clickable = false }) {
           {service.mediaType === "video" && service.mediaSrc ? (
             <video onContextMenu={(e) => e.preventDefault()}
               src={service.mediaSrc}
-              autoPlay={!reduced}
+              autoPlay={!osReducedMotion}
               loop muted playsInline preload="metadata"
               className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover/card:scale-[1.07]"
             />

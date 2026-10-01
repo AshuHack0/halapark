@@ -5,6 +5,7 @@ import FloatingActions from "@/components/layout/FloatingActions";
 import { AppProvider } from "@/context/AppContext";
 import { LanguageProvider } from "@/context/LanguageContext";
 import SmoothScroll from "@/components/SmoothScroll";
+import MobileMotionConfig from "@/components/MobileMotionConfig";
 import PartnershipFormProvider from "@/components/partners/PartnershipFormProvider";
 
 export const metadata = {
@@ -21,6 +22,7 @@ export default function RootLayout({ children }) {
         suppressHydrationWarning
       >
         <SmoothScroll>
+          <MobileMotionConfig>
           <AppProvider>
             <LanguageProvider>
               <PartnershipFormProvider>
@@ -31,6 +33,7 @@ export default function RootLayout({ children }) {
               </PartnershipFormProvider>
             </LanguageProvider>
           </AppProvider>
+          </MobileMotionConfig>
         </SmoothScroll>
       </body>
     </html>
