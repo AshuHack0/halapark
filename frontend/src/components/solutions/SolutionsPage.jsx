@@ -559,7 +559,7 @@ function SolutionCard({ card, i, reduced, detailSlugs, categoryLabel }) {
   // and the media never stops short of the card's bottom edge.
   const inner = (
     <>
-      <div className="relative h-48 w-full shrink-0 overflow-hidden bg-slate-100">
+      <div className="relative h-40 w-full shrink-0 overflow-hidden bg-slate-100 sm:h-48">
         {hasPhoto ? (
           <>
             <Image
@@ -598,7 +598,7 @@ function SolutionCard({ card, i, reduced, detailSlugs, categoryLabel }) {
         ) : null}
       </div>
 
-      <div className="flex flex-1 items-start justify-between gap-4 p-5">
+      <div className="flex flex-1 items-start justify-between gap-3 p-4 sm:gap-4 sm:p-5">
         <div className="flex-1">
           <h3 className="text-[1rem] font-semibold leading-tight tracking-[-0.02em] text-[#050A13] transition-colors duration-300 group-hover:text-[#0088FF] sm:text-[1.05rem] [overflow-wrap:anywhere]">
             {t(card, "title", language)}
@@ -644,6 +644,10 @@ function StatsSection() {
   const [groupOrder, setGroupOrder] = useState([]);
   // Active category pill ("all" = every solution in one grid).
   const [activeTab, setActiveTab] = useState("all");
+  // How many cards are on screen. "All" is 27 solutions — on a phone that is a
+  // ~9,000px wall of cards, so the grid pages in instead of dumping everything.
+  const PAGE_SIZE = 9;
+  const [shown, setShown] = useState(PAGE_SIZE);
   // Slugs that actually have a detail page — a card only links when its slug
   // resolves to real content (otherwise the link would 404).
   const [detailSlugs, setDetailSlugs] = useState(() => new Set());
@@ -660,6 +664,12 @@ function StatsSection() {
       setDetailSlugs(new Set(details.map((d) => (d?.slug || "").trim()).filter(Boolean)));
     });
   }, []);
+
+  // A new category always starts from the top of its own list.
+  const selectTab = (key) => {
+    setActiveTab(key);
+    setShown(PAGE_SIZE);
+  };
 
   const heading = t(sol, "heading", language);
   const gradient = t(sol, "headingGradient", language)?.trim() || "";
@@ -796,7 +806,7 @@ function StatsSection() {
                             type="button"
                             role="tab"
                             aria-selected={active}
-                            onClick={() => setActiveTab(tab.key)}
+                            onClick={() => selectTab(tab.key)}
                             className={`flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-start text-[0.82rem] font-semibold transition-all duration-300 ${
                               active
                                 ? "bg-[linear-gradient(120deg,#0088FF,#1AB2FF)] text-white shadow-[0_8px_20px_rgba(0,136,255,0.25)]"
@@ -823,7 +833,11 @@ function StatsSection() {
             <div>
               {/* ── Same categories as a scrolling pill row on phones/tablets ── */}
               {tabs.length > 1 ? (
-                <div className="-mx-4 mb-6 px-4 lg:hidden">
+                <div className="relative -mx-4 mb-6 px-4 lg:hidden">
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute inset-y-0 end-0 z-10 w-10 bg-gradient-to-l from-[#F4F8FF] to-transparent rtl:bg-gradient-to-r"
+                  />
                   <div
                     role="tablist"
                     aria-label={heading || "Solution categories"}
@@ -837,7 +851,7 @@ function StatsSection() {
                           type="button"
                           role="tab"
                           aria-selected={active}
-                          onClick={() => setActiveTab(tab.key)}
+                          onClick={() => selectTab(tab.key)}
                           className={`inline-flex shrink-0 items-center gap-2 rounded-full px-4 py-2 text-[0.82rem] font-semibold transition-all duration-300 ${
                             active
                               ? "bg-[linear-gradient(120deg,#0088FF,#1AB2FF)] text-white shadow-[0_10px_24px_rgba(0,136,255,0.28)]"
@@ -867,7 +881,7 @@ function StatsSection() {
                 transition={{ duration: 0.35, ease }}
                 className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3"
               >
-                {visibleCards.map((entry, i) => (
+                {visibleCards.slice(0, shown).map((entry, i) => (
                   <SolutionCard
                     key={`${entry.card.slug || entry.card.title}-${i}`}
                     card={entry.card}
@@ -878,6 +892,21 @@ function StatsSection() {
                   />
                 ))}
               </motion.div>
+
+              {visibleCards.length > shown ? (
+                <div className="mt-8 flex justify-center">
+                  <button
+                    type="button"
+                    onClick={() => setShown((n) => n + PAGE_SIZE)}
+                    className="inline-flex items-center gap-2 rounded-full border border-[#0088FF] px-6 py-2.5 text-[0.88rem] font-semibold text-[#0088FF] transition hover:bg-[#0088FF] hover:text-white"
+                  >
+                    {language === "ar" ? "عرض المزيد" : "Show more"}
+                    <span className="rounded-full bg-[#0088FF]/10 px-2 py-0.5 text-[11px] font-bold tabular-nums">
+                      {visibleCards.length - shown}
+                    </span>
+                  </button>
+                </div>
+              ) : null}
             </div>
           </div>
         </div>

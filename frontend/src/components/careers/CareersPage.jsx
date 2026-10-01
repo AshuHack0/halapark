@@ -787,12 +787,15 @@ function WhyJoinUs({ whyJoin }) {
   );
 }
 
-function CareersCTA({ cta, heroImage, hasOpenPositions }) {
+function CareersCTA({ cta, hasOpenPositions }) {
   const reduced = useReducedMotion();
   const { language } = useLanguage();
   // The primary "Join Our Team" button opens the general application form
   // modal (client request) instead of navigating away.
   const [applyOpen, setApplyOpen] = useState(false);
+  // Background comes from this section's own CMS field — blank means a plain
+  // dark band, not the hero photo.
+  const background = (cta?.image || "").trim();
   const secondaryHref = cta?.secondaryCtaLink || "#open-positions";
   const SecondaryTag = secondaryHref.startsWith("#") ? "a" : Link;
 
@@ -818,9 +821,9 @@ function CareersCTA({ cta, heroImage, hasOpenPositions }) {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="relative overflow-hidden rounded-[28px] bg-[#06111f]">
           <div className="absolute inset-0">
-            {heroImage ? (
+            {background ? (
               <Image
-                src={heroImage}
+                src={background}
                 alt=""
                 fill
                 className="object-cover object-center"
@@ -914,7 +917,6 @@ export default function CareersPage({ content }) {
       {content.cta?.enabled !== false && (
         <CareersCTA
           cta={content.cta}
-          heroImage={content.hero?.image || (content.hero?.images ?? [])[0]}
           hasOpenPositions={(content.openPositions?.posts ?? []).filter((p) => p?.status !== "closed").length > 0}
         />
       )}
