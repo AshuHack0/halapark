@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import {
@@ -12,6 +12,9 @@ import {
   Navigation,
   ArrowRight,
   ArrowUpRight,
+  ChevronLeft,
+  ChevronRight,
+  X,
 } from "lucide-react";
 import { fetchPage } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
@@ -46,6 +49,49 @@ import RichText from "@/components/common/RichText";
  */
 
 const ease = [0.22, 1, 0.36, 1];
+
+/* ─────────────────────────── search box ─────────────────────────── */
+// Rendered twice (hero + above the grid) against one piece of state, so typing
+// in either one filters the same list. `onFirstType` lets the hero copy scroll
+// the results into view — otherwise you type at the top of the page and the
+// filtering happens off-screen, which reads as "the search doesn't work".
+function SearchBox({ value, onChange, placeholder, onFirstType, onSubmit, className = "" }) {
+  return (
+    <div
+      className={`flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-[0_10px_30px_rgba(15,23,42,0.06)] focus-within:border-[#0088FF]/50 focus-within:ring-2 focus-within:ring-[#0088FF]/12 ${className}`}
+    >
+      <Search className="h-4 w-4 shrink-0 text-slate-400" aria-hidden />
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => {
+          const next = e.target.value;
+          if (next.trim() && !value.trim()) onFirstType?.();
+          onChange(next);
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            onSubmit?.();
+          }
+        }}
+        placeholder={placeholder}
+        aria-label={placeholder || "Search parking locations"}
+        className="w-full bg-transparent text-sm text-[#050A13] outline-none placeholder:text-slate-400"
+      />
+      {value ? (
+        <button
+          type="button"
+          onClick={() => onChange("")}
+          aria-label="Clear search"
+          className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition hover:bg-slate-200 hover:text-[#050A13]"
+        >
+          <X className="h-3.5 w-3.5" aria-hidden />
+        </button>
+      ) : null}
+    </div>
+  );
+}
 
 /* ─────────────────── shared section heading ─────────────────── */
 function SectionHeading({ block, language, tone = "light", align = "center" }) {
@@ -101,7 +147,7 @@ function SectionHeading({ block, language, tone = "light", align = "center" }) {
 }
 
 /* ─────────────────────────── location card ─────────────────────────── */
-function LocationCard({ item, index, emirateLabel, language, reduced }) {
+function LocationCard({ item, index, emirateLabel, language, reduced, highlighted, cardKey }) {
   const name = (t(item, "name", language) || "").trim();
   const area = (t(item, "area", language) || "").trim();
   const description = (t(item, "description", language) || "").trim();
@@ -125,7 +171,13 @@ function LocationCard({ item, index, emirateLabel, language, reduced }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.15 }}
       transition={{ duration: 0.5, ease, delay: Math.min(index, 6) * 0.05 }}
-      className="group relative flex flex-col overflow-hidden rounded-[22px] border border-slate-200/80 bg-white shadow-[0_10px_30px_rgba(15,23,42,0.05)] transition-all duration-300 hover:-translate-y-1 hover:border-[#0088FF]/35 hover:shadow-[0_22px_48px_rgba(0,136,255,0.16)]"
+      data-location-card
+      data-card-key={cardKey}
+      className={`group relative flex flex-col overflow-hidden rounded-[22px] border bg-white transition-all duration-300 hover:-translate-y-1 hover:border-[#0088FF]/35 hover:shadow-[0_22px_48px_rgba(0,136,255,0.16)] ${
+        highlighted
+          ? "border-[#0088FF] shadow-[0_0_0_4px_rgba(0,136,255,0.18),0_22px_48px_rgba(0,136,255,0.22)]"
+          : "border-slate-200/80 shadow-[0_10px_30px_rgba(15,23,42,0.05)]"
+      }`}
     >
       {/* Media */}
       <div className="relative aspect-[16/10] w-full overflow-hidden bg-[linear-gradient(135deg,#E8F2FF,#F6FAFF)]">
@@ -273,6 +325,117 @@ function ReviewCard({ review, index, language, reduced }) {
   );
 }
 
+/* ───────────────────────── reviews carousel ───────────────────────── */
+// A horizontal scroll-snap track instead of a growing grid: however many
+// reviews the admin adds, the section stays one row tall. Arrows page through
+// it, touch/trackpad swiping works natively, and the dots show where you are.
+function ReviewsCarousel({ items, language, reduced }) {
+  const trackRef = useRef(null);
+  const [page, setPage] = useState(0);
+  const [pageCount, setPageCount] = useState(1);
+  // In RTL the track scrolls the other way, so paging has to flip sign.
+  const rtl = language === "ar";
+
+  const measure = useCallback(() => {
+    const el = trackRef.current;
+    if (!el) return;
+    const perPage = Math.max(1, Math.round(el.clientWidth / (el.scrollWidth / items.length || 1)));
+    setPageCount(Math.max(1, Math.ceil(items.length / perPage)));
+    const pos = Math.abs(el.scrollLeft);
+    setPage(el.clientWidth ? Math.round(pos / el.clientWidth) : 0);
+  }, [items.length]);
+
+  useEffect(() => {
+    measure();
+    const el = trackRef.current;
+    if (!el) return undefined;
+    const onResize = () => measure();
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [measure]);
+
+  const scrollByPage = (dir) => {
+    const el = trackRef.current;
+    if (!el) return;
+    el.scrollBy({ left: dir * el.clientWidth * (rtl ? -1 : 1), behavior: reduced ? "auto" : "smooth" });
+  };
+
+  const goToPage = (i) => {
+    const el = trackRef.current;
+    if (!el) return;
+    el.scrollTo({ left: i * el.clientWidth * (rtl ? -1 : 1), behavior: reduced ? "auto" : "smooth" });
+  };
+
+  const atStart = page <= 0;
+  const atEnd = page >= pageCount - 1;
+
+  const arrowClass = (disabled) =>
+    `flex h-10 w-10 items-center justify-center rounded-full border transition-all duration-300 ${
+      disabled
+        ? "cursor-not-allowed border-white/10 text-white/25"
+        : "border-white/20 bg-white/[0.07] text-white hover:border-[#1AB2FF]/60 hover:bg-white/[0.14]"
+    }`;
+
+  return (
+    <div className="mt-10">
+      <div
+        ref={trackRef}
+        onScroll={measure}
+        className="flex snap-x snap-mandatory gap-5 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      >
+        {items.map((review, i) => (
+          <div
+            key={`${review?.name || "review"}-${i}`}
+            className="w-[86%] shrink-0 snap-start sm:w-[calc(50%-10px)] lg:w-[calc(33.333%-14px)]"
+          >
+            <ReviewCard review={review} index={i} language={language} reduced={reduced} />
+          </div>
+        ))}
+      </div>
+
+      {/* Controls hide entirely when everything already fits on one page. */}
+      {pageCount > 1 ? (
+        <div className="mt-6 flex items-center justify-center gap-4">
+          <button
+            type="button"
+            onClick={() => scrollByPage(-1)}
+            disabled={atStart}
+            aria-label="Previous reviews"
+            className={arrowClass(atStart)}
+          >
+            <ChevronLeft className="h-4 w-4 rtl:rotate-180" aria-hidden />
+          </button>
+
+          <div className="flex items-center gap-1.5">
+            {Array.from({ length: pageCount }).map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                onClick={() => goToPage(i)}
+                aria-label={`Go to review page ${i + 1}`}
+                aria-current={page === i}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  page === i ? "w-6 bg-[#1AB2FF]" : "w-1.5 bg-white/25 hover:bg-white/50"
+                }`}
+              />
+            ))}
+          </div>
+
+          <button
+            type="button"
+            onClick={() => scrollByPage(1)}
+            disabled={atEnd}
+            aria-label="Next reviews"
+            className={arrowClass(atEnd)}
+          >
+            <ChevronRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
+          </button>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 /* ══════════════════════════════ PAGE ══════════════════════════════ */
 export default function ParkingLocationsPage() {
   const { language } = useLanguage();
@@ -327,6 +490,39 @@ export default function ParkingLocationsPage() {
       return haystack.includes(q);
     });
   }, [allItems, activeEmirate, query, language]);
+
+  const scrollToGrid = () =>
+    document.getElementById("locations-grid")?.scrollIntoView({ behavior: "smooth", block: "start" });
+
+  // Enter jumps straight to the first matching card and flashes a ring around
+  // it, so there is no hunting through the grid for what you just searched.
+  const [highlightKey, setHighlightKey] = useState("");
+  const highlightTimer = useRef(null);
+  useEffect(() => () => clearTimeout(highlightTimer.current), []);
+
+  const jumpToFirstMatch = () => {
+    // Two frames, so a match typed and Enter-ed in the same tick is rendered.
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const first = document.querySelector("[data-location-card]");
+        if (!first) {
+          scrollToGrid();
+          return;
+        }
+        first.scrollIntoView({ behavior: "smooth", block: "center" });
+        setHighlightKey(first.getAttribute("data-card-key") || "first");
+        clearTimeout(highlightTimer.current);
+        highlightTimer.current = setTimeout(() => setHighlightKey(""), 2200);
+      });
+    });
+  };
+
+  // Searching always looks across every emirate — otherwise a match sitting
+  // under a different tab would silently return nothing.
+  const handleQueryChange = (next) => {
+    setQuery(next);
+    if (next.trim()) setActiveEmirate("all");
+  };
 
   const emirateName = (key) => {
     const found = emirates.find((e) => e.key === key);
@@ -427,19 +623,16 @@ export default function ParkingLocationsPage() {
                   />
                 ) : null}
 
-                {/* Search — filters the locations grid below */}
+                {/* Search — filters the grid below and scrolls it into view */}
                 {allItems.length > 0 ? (
-                  <div className="mx-auto mt-8 flex w-full max-w-md items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-[0_10px_30px_rgba(15,23,42,0.06)] focus-within:border-[#0088FF]/50 focus-within:ring-2 focus-within:ring-[#0088FF]/12 lg:mx-0">
-                    <Search className="h-4 w-4 shrink-0 text-slate-400" aria-hidden />
-                    <input
-                      type="search"
-                      value={query}
-                      onChange={(e) => setQuery(e.target.value)}
-                      placeholder={searchPlaceholder}
-                      aria-label={searchPlaceholder || "Search parking locations"}
-                      className="w-full bg-transparent text-sm text-[#050A13] outline-none placeholder:text-slate-400"
-                    />
-                  </div>
+                  <SearchBox
+                    value={query}
+                    onChange={handleQueryChange}
+                    placeholder={searchPlaceholder}
+                    onFirstType={scrollToGrid}
+                    onSubmit={jumpToFirstMatch}
+                    className="mx-auto mt-8 w-full max-w-md lg:mx-0"
+                  />
                 ) : null}
 
                 {/* Stats strip */}
@@ -502,6 +695,16 @@ export default function ParkingLocationsPage() {
           <div className="mx-auto w-full max-w-7xl">
             <SectionHeading block={locations} language={language} />
 
+            {/* Search again, right above the results — this is where people
+                look for it once they have scrolled past the hero. */}
+            <SearchBox
+              value={query}
+              onChange={handleQueryChange}
+              placeholder={searchPlaceholder}
+              onSubmit={jumpToFirstMatch}
+              className="mx-auto mt-8 w-full max-w-md"
+            />
+
             {/* Emirate filter */}
             {emirates.length > 0 ? (
               <div className="mt-9 flex flex-wrap justify-center gap-2">
@@ -539,17 +742,43 @@ export default function ParkingLocationsPage() {
               </div>
             ) : null}
 
+            {query.trim() ? (
+              <p className="mt-6 text-center text-[0.82rem] font-medium text-slate-500">
+                {visibleItems.length}
+                {" "}
+                {language === "ar"
+                  ? visibleItems.length === 1
+                    ? "نتيجة"
+                    : "نتائج"
+                  : visibleItems.length === 1
+                    ? "result"
+                    : "results"}
+                {" · "}
+                <button
+                  type="button"
+                  onClick={() => handleQueryChange("")}
+                  className="font-semibold text-[#0088FF] underline-offset-2 hover:underline"
+                >
+                  {language === "ar" ? "مسح البحث" : "Clear search"}
+                </button>
+              </p>
+            ) : null}
+
             {/* Grid */}
             {visibleItems.length > 0 ? (
               <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {visibleItems.map((item, i) => (
                   <LocationCard
                     key={`${item.name || "loc"}-${i}`}
+                    cardKey={`${item.name || "loc"}-${i}`}
                     item={item}
                     index={i}
                     emirateLabel={emirateName(item.emirate)}
                     language={language}
                     reduced={reduced}
+                    highlighted={
+                      highlightKey === `${item.name || "loc"}-${i}` || (highlightKey === "first" && i === 0)
+                    }
                   />
                 ))}
               </div>
@@ -657,17 +886,7 @@ export default function ParkingLocationsPage() {
               </div>
             ) : null}
 
-            <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {reviewItems.map((review, i) => (
-                <ReviewCard
-                  key={`${review?.name || "review"}-${i}`}
-                  review={review}
-                  index={i}
-                  language={language}
-                  reduced={reduced}
-                />
-              ))}
-            </div>
+            <ReviewsCarousel items={reviewItems} language={language} reduced={reduced} />
           </div>
         </section>
       ) : null}
