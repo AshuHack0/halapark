@@ -26,6 +26,10 @@ function toCard(svc) {
   };
 }
 
+// A candidate card must beat the current one by this many pixels before it
+// takes over, so the active card cannot oscillate between two neighbours.
+const SWITCH_MARGIN_PX = 40;
+
 function ServiceCard({ service, index, cardRef, isActive, language }) {
   const prefersReducedMotion = useReducedMotion();
 
@@ -39,7 +43,7 @@ function ServiceCard({ service, index, cardRef, isActive, language }) {
         initial: { opacity: 0, y: 28 },
         whileInView: { opacity: 1, y: 0 },
         viewport: {
-          once: false,
+          once: true,
           amount: 0.15,
           margin: "0px 0px -100px 0px",
         },
@@ -218,7 +222,20 @@ export default function GoodLookingServicesSection() {
       });
 
       if (nextIndex !== null) {
-        setActiveServiceIndex((prev) => (prev === nextIndex ? prev : nextIndex));
+        setActiveServiceIndex((prev) => {
+          if (prev === nextIndex) return prev;
+          // Hysteresis: keep the current card unless the candidate is clearly
+          // closer to the anchor, so a few pixels of scroll can't flip it back
+          // and forth (which made the heading flicker on phones).
+          const prevEl = cards[prev];
+          if (prevEl) {
+            const prevRect = prevEl.getBoundingClientRect();
+            const prevVisible = prevRect.bottom > 120 && prevRect.top < viewportHeight - 80;
+            const prevDistance = Math.abs(prevRect.top + prevRect.height / 2 - anchorY);
+            if (prevVisible && prevDistance - nearestDistance < SWITCH_MARGIN_PX) return prev;
+          }
+          return nextIndex;
+        });
       }
     };
 
@@ -292,7 +309,7 @@ export default function GoodLookingServicesSection() {
                   initial: { opacity: 0, y: 32 },
                   whileInView: { opacity: 1, y: 0 },
                   viewport: {
-                    once: false,
+                    once: true,
                     amount: 0.2,
                     margin: "0px 0px -80px 0px",
                   },
