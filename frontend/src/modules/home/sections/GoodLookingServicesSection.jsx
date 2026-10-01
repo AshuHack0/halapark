@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useSyncExternalStore } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -31,17 +32,38 @@ function toCard(svc) {
 // takes over, so the active card cannot oscillate between two neighbours.
 const SWITCH_MARGIN_PX = 40;
 
+// Phones and tablets get this section completely static: no fade/slide on
+// scroll and no scroll-focus effect (the blur/dim/glow that followed whichever
+// card sat nearest the middle of the screen). Desktop keeps both.
+const MOBILE_QUERY = "(max-width: 1023px)";
+
+function subscribeToViewport(onChange) {
+  const mq = window.matchMedia(MOBILE_QUERY);
+  mq.addEventListener("change", onChange);
+  return () => mq.removeEventListener("change", onChange);
+}
+
+function useIsMobileViewport() {
+  return useSyncExternalStore(
+    subscribeToViewport,
+    () => window.matchMedia(MOBILE_QUERY).matches,
+    () => false, // no viewport on the server; desktop is the safe default
+  );
+}
+
 function ServiceCard({ service, index, cardRef, isActive, language }) {
   const prefersReducedMotion = useReducedMotion();
   // Muted background video keeps playing on phones; only a real OS
   // "reduce motion" setting stops it.
   const osReducedMotion = usePrefersReducedMotionOS();
+  const isMobile = useIsMobileViewport();
+  const noMotion = prefersReducedMotion || isMobile;
 
   const highlights = Array.isArray(service.highlights)
     ? service.highlights.slice(0, 5)
     : [];
 
-  const scrollMotion = prefersReducedMotion
+  const scrollMotion = noMotion
     ? {}
     : {
         initial: { opacity: 0, y: 28 },
@@ -63,7 +85,7 @@ function ServiceCard({ service, index, cardRef, isActive, language }) {
       ref={cardRef}
       {...scrollMotion}
       className={`group relative rounded-[22px] transition-shadow duration-300 sm:rounded-[26px] lg:rounded-[30px] ${
-        isActive
+        isActive && !noMotion
           ? "shadow-[0_0_34px_rgba(0,136,255,0.42)]"
           : ""
       }`}
@@ -81,7 +103,7 @@ function ServiceCard({ service, index, cardRef, isActive, language }) {
               blur + dim. Reduced-motion users always see it sharp. */}
           <div
             className={`absolute inset-0 transition-[filter,opacity,transform] duration-500 ease-out ${
-              prefersReducedMotion || isActive
+              noMotion || isActive
                 ? "opacity-100 blur-0 scale-100"
                 : "opacity-70 blur-[6px] scale-[1.02]"
             }`}
@@ -154,6 +176,8 @@ function ServiceCard({ service, index, cardRef, isActive, language }) {
 
 export default function GoodLookingServicesSection() {
   const prefersReducedMotion = useReducedMotion();
+  const isMobile = useIsMobileViewport();
+  const noMotion = prefersReducedMotion || isMobile;
   const { language } = useLanguage();
   const [activeServiceIndex, setActiveServiceIndex] = useState(0);
   const cardRefs = useRef([]);
@@ -189,6 +213,10 @@ export default function GoodLookingServicesSection() {
   const featuredServices = services;
 
   useEffect(() => {
+    // On mobile nothing follows the scroll — the active card stays put, so the
+    // cards never re-blur and the heading never swaps mid-scroll.
+    if (isMobile) return undefined;
+
     const scrollContainer = document.querySelector("[data-scroll-container]");
     const scrollTarget =
       scrollContainer instanceof HTMLElement ? scrollContainer : window;
@@ -263,7 +291,7 @@ export default function GoodLookingServicesSection() {
     };
     // Re-run once the cards have loaded so the initial focus is measured
     // against real DOM nodes (they mount async after the CMS fetch).
-  }, [featuredServices.length]);
+  }, [featuredServices.length, isMobile]);
 
   const activeService = featuredServices[activeServiceIndex] ?? featuredServices[0] ?? {};
   const activeHighlights = Array.isArray(activeService?.highlights)
@@ -307,7 +335,7 @@ export default function GoodLookingServicesSection() {
         <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start lg:gap-12 lg:pb-10">
           <motion.div
             className="max-w-xl lg:sticky lg:top-28 lg:self-start"
-            {...(prefersReducedMotion
+            {...(noMotion
               ? {}
               : {
                   initial: { opacity: 0, y: 32 },
@@ -328,7 +356,7 @@ export default function GoodLookingServicesSection() {
             </p>
             <motion.div
               key={activeService.slug}
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
+              initial={noMotion ? false : { opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
             >
