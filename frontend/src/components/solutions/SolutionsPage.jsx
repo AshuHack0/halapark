@@ -518,27 +518,95 @@ function solutionCardHref(card, detailSlugs) {
   return `/solutions/${slug}`;
 }
 
-function SolutionCard({ card, i, reduced, detailSlugs }) {
+// 24 of the solution cards still carry the shared "/image.png" placeholder, so
+// a photo strip would repeat the same picture down the whole grid. Those cards
+// get a tinted icon tile instead; a card with a real uploaded photo shows it.
+function isRealCardImage(image) {
+  const v = (image || "").trim();
+  if (!v) return false;
+  return !/\/image\.png$/i.test(v);
+}
+
+// Icon + tint per category, matched on the English group name so the look never
+// changes with the language. Falls back to the parking mark.
+const GROUP_STYLES = [
+  [/payment|wallet|billing/i, CreditCard, "from-[#E6F1FF] to-[#D3E6FF]", "text-[#0068C8]"],
+  [/access|enforce|security|surveill/i, ShieldCheck, "from-[#E8F4FF] to-[#D7EBFF]", "text-[#0088FF]"],
+  [/propert|hospitalit|residen|hotel/i, Building2, "from-[#EAF6F3] to-[#D8EDE7]", "text-[#0E8C73]"],
+  [/commercial|retail|mall|office/i, TrendingUp, "from-[#F0EDFF] to-[#E2DCFF]", "text-[#5B4BD6]"],
+  [/infrastructure|city|airport|univers|government/i, MapPin, "from-[#FFF1E8] to-[#FFE2D1]", "text-[#D1601A]"],
+  [/mobilit|energy|ev|charg/i, Zap, "from-[#EAF7EC] to-[#D7EFDC]", "text-[#1F8A3B]"],
+  [/\bai\b|intelligen|smart tech|predict/i, Cpu, "from-[#E9F6FF] to-[#D6EEFF]", "text-[#0A7FB8]"],
+  [/monitor|camera|cctv|plate/i, Cctv, "from-[#F2F4F8] to-[#E3E8F0]", "text-[#44546F]"],
+];
+
+function groupStyle(group) {
+  const g = (group || "").trim();
+  const hit = GROUP_STYLES.find(([re]) => re.test(g));
+  if (hit) return { Icon: hit[1], tint: hit[2], ink: hit[3] };
+  return { Icon: ParkingCircle, tint: "from-[#EAF3FF] to-[#D7E9FF]", ink: "text-[#0088FF]" };
+}
+
+function SolutionCard({ card, i, reduced, detailSlugs, categoryLabel }) {
   const { language } = useLanguage();
   const href = solutionCardHref(card, detailSlugs);
   const clickable = Boolean(href);
+  const image = (card.image || "").trim();
+  const hasPhoto = isRealCardImage(image);
+  const { Icon: TileIcon, tint, ink } = groupStyle(card.group);
 
-  // Inner card content is identical whether or not it's clickable; only the
-  // "Learn more" arrow affordance is dropped when there's no detail page.
+  // h-full down the whole chain so every card in a row ends at the same height
+  // and the media never stops short of the card's bottom edge.
   const inner = (
     <>
-      <div className="relative h-48 w-full overflow-hidden bg-slate-100">
-        {(card.image || "").trim() ? (
+      <div className="relative h-48 w-full shrink-0 overflow-hidden bg-slate-100">
+        {hasPhoto ? (
           <>
-            <Image src={card.image} alt={card.title} fill className="object-cover transition duration-500 group-hover:scale-105" sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" />
+            <Image
+              src={image}
+              alt={card.title}
+              fill
+              className="object-cover transition duration-500 group-hover:scale-105"
+              sizes="(min-width: 1280px) 25vw, (min-width: 640px) 45vw, 100vw"
+            />
             <div className="absolute inset-0 bg-gradient-to-t from-[#050A13]/40 to-transparent" />
           </>
+        ) : (
+          /* Cards still on the shared "/image.png" placeholder get a tinted
+             category tile instead, so the same photo doesn't repeat 24 times. */
+          <div className={`relative h-full w-full bg-gradient-to-br ${tint}`}>
+            <span
+              aria-hidden
+              className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.7)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.7)_1px,transparent_1px)] bg-[size:18px_18px] opacity-60"
+            />
+            <span className="relative flex h-full w-full items-center justify-center">
+              <TileIcon
+                className={`h-10 w-10 ${ink} transition-transform duration-500 group-hover:scale-110`}
+                strokeWidth={1.5}
+                aria-hidden
+              />
+            </span>
+          </div>
+        )}
+
+        {/* Category chip — only in the "All" view, where the rail no longer says
+            which category a solution belongs to. */}
+        {categoryLabel ? (
+          <span className="absolute bottom-3 start-3 max-w-[calc(100%-1.5rem)] truncate rounded-full bg-white/92 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-[#0088FF] shadow-sm backdrop-blur">
+            {categoryLabel}
+          </span>
         ) : null}
       </div>
-      <div className="flex items-start justify-between gap-4 p-5">
+
+      <div className="flex flex-1 items-start justify-between gap-4 p-5">
         <div className="flex-1">
-          <h3 className="text-[1rem] font-semibold leading-tight tracking-[-0.02em] text-[#050A13] sm:text-[1.05rem]">{t(card, "title", language)}</h3>
-          <RichText text={t(card, "description", language)} className="mt-2 line-clamp-3 text-[0.82rem] leading-6 text-slate-500 sm:text-[0.88rem] block" />
+          <h3 className="text-[1rem] font-semibold leading-tight tracking-[-0.02em] text-[#050A13] transition-colors duration-300 group-hover:text-[#0088FF] sm:text-[1.05rem] [overflow-wrap:anywhere]">
+            {t(card, "title", language)}
+          </h3>
+          <RichText
+            text={t(card, "description", language)}
+            className="mt-2 line-clamp-3 text-[0.82rem] leading-6 text-slate-500 sm:text-[0.88rem] block [overflow-wrap:anywhere]"
+          />
         </div>
         {clickable ? (
           <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EEF6FF] text-[#0088FF] transition group-hover:bg-[#0088FF] group-hover:text-white">
@@ -554,15 +622,15 @@ function SolutionCard({ card, i, reduced, detailSlugs }) {
       initial={reduced ? false : { opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.1 }}
-      transition={{ duration: 0.5, ease, delay: (i % 4) * 0.06 }}
-      className="group overflow-hidden rounded-[22px] bg-white shadow-[0_4px_24px_rgba(6,6,22,0.06)] transition hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(0,136,255,0.12)]"
+      transition={{ duration: 0.5, ease, delay: Math.min(i, 8) * 0.05 }}
+      className="group h-full overflow-hidden rounded-[22px] bg-white shadow-[0_4px_24px_rgba(6,6,22,0.06)] transition hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(0,136,255,0.12)]"
     >
       {clickable ? (
-        <Link href={href} className="block" aria-label={`Learn more about ${card.title}`}>
+        <Link href={href} className="flex h-full flex-col" aria-label={`Learn more about ${card.title}`}>
           {inner}
         </Link>
       ) : (
-        <div className="block cursor-default">{inner}</div>
+        <div className="flex h-full cursor-default flex-col">{inner}</div>
       )}
     </motion.article>
   );
@@ -574,6 +642,8 @@ function StatsSection() {
   const [sol, setSol] = useState({});
   const [solutionItems, setSolutionItems] = useState([]);
   const [groupOrder, setGroupOrder] = useState([]);
+  // Active category pill ("all" = every solution in one grid).
+  const [activeTab, setActiveTab] = useState("all");
   // Slugs that actually have a detail page — a card only links when its slug
   // resolves to real content (otherwise the link would 404).
   const [detailSlugs, setDetailSlugs] = useState(() => new Set());
@@ -631,6 +701,40 @@ function StatsSection() {
     });
   }
 
+  // Display name for a category. Arabic names live in sections.solutions.ar.groups
+  // at the SAME index as the English list — matching always uses the English key,
+  // so switching language can never ungroup a card.
+  const groupLabel = (group) => {
+    const gi = catKeys.indexOf((group || "").trim());
+    if (language === "ar" && gi >= 0) {
+      const arName = Array.isArray(sol?.ar?.groups) ? (sol.ar.groups[gi] || "").trim() : "";
+      if (arName) return arName;
+    }
+    return group;
+  };
+
+  // If the active category disappears (admin renamed/deleted it), fall back to "all".
+  const safeTab =
+    activeTab !== "all" && !grouped.some((g) => g.group === activeTab) ? "all" : activeTab;
+
+  const tabs = [
+    { key: "all", label: language === "ar" ? "الكل" : "All", count: validCards.length },
+    ...grouped
+      .filter((g) => !g.hideHeading)
+      .map((g) => ({ key: g.group, label: groupLabel(g.group), count: g.items.length })),
+  ];
+
+  // One flat list drives the grid — all solutions, or just the active category.
+  const visibleCards =
+    safeTab === "all"
+      ? grouped.flatMap((g) =>
+          g.items.map((card) => ({ card, categoryLabel: g.hideHeading ? "" : groupLabel(g.group) })),
+        )
+      : (grouped.find((g) => g.group === safeTab)?.items ?? []).map((card) => ({
+          card,
+          categoryLabel: "",
+        }));
+
   // Hide the whole Solutions section when there are no categories with
   // solutions to show — a heading alone (with no solutions) is not rendered.
   if (sol?.enabled === false) return null;
@@ -673,29 +777,108 @@ function StatsSection() {
         </div>
 
         <div id="solutions-grid" className="scroll-mt-24" style={{ scrollMarginTop: "90px" }}>
-          <div className="space-y-14">
-            {grouped.map((g) => (
-              <div key={g.group}>
-                {/* Category heading (omitted for the fallback bucket when the
-                    admin has no categories at all) */}
-                {!g.hideHeading ? (
-                <div className="mb-6 flex items-center gap-4">
-                  <h3 className="text-[clamp(1.3rem,2.4vw,1.9rem)] font-semibold tracking-[-0.03em] text-[#050A13] [overflow-wrap:anywhere]">
-                    {g.group}
-                  </h3>
-                  <span className="h-px flex-1 bg-gradient-to-r from-[#0088FF]/30 to-transparent" />
-                  <span className="rounded-full bg-[#0088FF]/10 px-2.5 py-1 text-[11px] font-bold text-[#0088FF]">
-                    {g.items.length}
-                  </span>
+          <div className="lg:grid lg:grid-cols-[232px_1fr] lg:items-start lg:gap-8 xl:grid-cols-[248px_1fr] xl:gap-10">
+            {/* ── Category rail (desktop) — sticky, so all 9 categories stay in
+                view while the cards scroll. Mirrors to the right side in Arabic
+                because <html dir> flips. ── */}
+            {tabs.length > 1 ? (
+              <aside className="hidden lg:block">
+                <div className="sticky top-24">
+                  <p className="mb-3 px-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">
+                    {language === "ar" ? "الفئات" : "Categories"}
+                  </p>
+                  <ul role="tablist" aria-label={heading || "Solution categories"} className="space-y-1">
+                    {tabs.map((tab) => {
+                      const active = safeTab === tab.key;
+                      return (
+                        <li key={tab.key}>
+                          <button
+                            type="button"
+                            role="tab"
+                            aria-selected={active}
+                            onClick={() => setActiveTab(tab.key)}
+                            className={`flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-start text-[0.82rem] font-semibold transition-all duration-300 ${
+                              active
+                                ? "bg-[linear-gradient(120deg,#0088FF,#1AB2FF)] text-white shadow-[0_8px_20px_rgba(0,136,255,0.25)]"
+                                : "text-slate-600 hover:bg-white hover:text-[#0088FF]"
+                            }`}
+                          >
+                            <span className="min-w-0 flex-1 leading-snug [overflow-wrap:anywhere]">{tab.label}</span>
+                            <span
+                              className={`shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-bold tabular-nums ${
+                                active ? "bg-white/20 text-white" : "bg-white text-slate-400"
+                              }`}
+                            >
+                              {tab.count}
+                            </span>
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
                 </div>
-                ) : null}
-                <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
-                  {g.items.map((card, i) => (
-                    <SolutionCard key={card.slug || card.title} card={card} i={i} reduced={reduced} detailSlugs={detailSlugs} />
-                  ))}
+              </aside>
+            ) : null}
+
+            <div>
+              {/* ── Same categories as a scrolling pill row on phones/tablets ── */}
+              {tabs.length > 1 ? (
+                <div className="-mx-4 mb-6 px-4 lg:hidden">
+                  <div
+                    role="tablist"
+                    aria-label={heading || "Solution categories"}
+                    className="flex gap-2 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                  >
+                    {tabs.map((tab) => {
+                      const active = safeTab === tab.key;
+                      return (
+                        <button
+                          key={tab.key}
+                          type="button"
+                          role="tab"
+                          aria-selected={active}
+                          onClick={() => setActiveTab(tab.key)}
+                          className={`inline-flex shrink-0 items-center gap-2 rounded-full px-4 py-2 text-[0.82rem] font-semibold transition-all duration-300 ${
+                            active
+                              ? "bg-[linear-gradient(120deg,#0088FF,#1AB2FF)] text-white shadow-[0_10px_24px_rgba(0,136,255,0.28)]"
+                              : "bg-white text-slate-600 ring-1 ring-slate-200"
+                          }`}
+                        >
+                          <span className="[overflow-wrap:anywhere]">{tab.label}</span>
+                          <span
+                            className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold tabular-nums ${
+                              active ? "bg-white/20 text-white" : "bg-[#F3F7FC] text-slate-400"
+                            }`}
+                          >
+                            {tab.count}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ) : null}
+
+              {/* Remounting on category change gives the new set a soft fade-in. */}
+              <motion.div
+                key={safeTab}
+                initial={reduced ? false : { opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.35, ease }}
+                className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3"
+              >
+                {visibleCards.map((entry, i) => (
+                  <SolutionCard
+                    key={`${entry.card.slug || entry.card.title}-${i}`}
+                    card={entry.card}
+                    i={i}
+                    reduced={reduced}
+                    detailSlugs={detailSlugs}
+                    categoryLabel={safeTab === "all" ? entry.categoryLabel : ""}
+                  />
+                ))}
+              </motion.div>
+            </div>
           </div>
         </div>
       </div>
