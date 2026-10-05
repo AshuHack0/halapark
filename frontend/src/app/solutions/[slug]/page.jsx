@@ -35,10 +35,20 @@ export default async function SolutionDetailPage({ params }) {
     notFound();
   }
 
-  // The card's image (managed via CMS "Our Solutions" cards) is the source of
-  // truth for this solution. Fall back to the detail's own image, then default.
+  // The detail's own Banner Image wins, so the card and the detail hero can be
+  // two different photos (the card image used to override it, which made the
+  // Banner Image field on the Solution Detail impossible to see). The shared
+  // "/image.png" placeholder counts as "not set" so a solution that has never
+  // had a banner uploaded still falls back to its card image.
   const card = cards.find((c) => c.slug === slug);
-  const heroImage = card?.image || detail.image || "/hf_20260327_060926_cbb82448-441c-42ee-9589-785e7acd7565.png";
+  const isRealImage = (src) => {
+    const v = (src || "").trim();
+    return Boolean(v) && !/\/image\.png$/i.test(v);
+  };
+  const heroImage =
+    (isRealImage(detail.image) && detail.image) ||
+    (isRealImage(card?.image) && card.image) ||
+    "/hf_20260327_060926_cbb82448-441c-42ee-9589-785e7acd7565.png";
 
   // `details` is passed as relatedList so "Other Related Services" can resolve
   // each related slug to a live solution title + link. `cards` provides the
