@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { fetchHomeSection } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
+import LogoTicker from "@/components/common/LogoTicker";
 
 export default function ClientsPartners() {
   const { language } = useLanguage();
@@ -45,143 +45,15 @@ export default function ClientsPartners() {
   )
     return null;
 
+  // The band itself now lives in the shared LogoTicker, so Home, Business and
+  // Services render exactly the same markup instead of three copies.
   return (
-    <section className="py-10 sm:py-12 md:py-14 bg-white">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="rounded-3xl p-5 sm:p-7 md:p-8">
-          <div className="flex justify-center">
-            <div className="flex flex-col items-center text-center">
-              {/* <div className="flex w-full justify-center">
-                <div className="flex w-fit items-center justify-center gap-1.5 rounded-full px-3 py-1.5 sm:gap-2 sm:px-4 sm:py-2">
-                  <img
-                    src="/download(1).svg"
-                    alt="About HalaPark"
-                    className="h-4 w-4 shrink-0 sm:h-5 sm:w-5"
-                  />
-                  <p className="text-xs sm:text-sm lg:text-[14px] text-black max-w-2xl mx-auto">
-                    Our Clients & Partners
-                  </p>
-                </div>
-              </div>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-[56px] font-semibold text-gray-900 mb-3 sm:mb-4 tracking-tight">
-                Trusted Across Properties, Retail Spaces, and Enterprise
-                Networks
-              </h2> */}
-              <div className="mx-auto w-full text-center">
-                {/* Same pattern as the other home sections: heading on one
-                    line, the second part on its own line with the gradient. */}
-                <h2
-                  id="clients-partners-title"
-                  className="mx-auto w-full text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.08] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]"
-                >
-                  <span className="block">{t(cp, "heading", language)}</span>
-                  {t(cp, "headingEnd", language) ? (
-                    <span className="mt-2 block bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-[clamp(1.75rem,3vw,2.6rem)] leading-[1.15] tracking-[-0.04em] text-transparent">
-                      {t(cp, "headingEnd", language)}
-                    </span>
-                  ) : null}
-                </h2>
-              </div>
-            </div>
-          </div>
-          {/* ========================= from right to left to right =============================== */}
-          {/* overflow-x-hidden (not overflow-hidden) so card top/bottom borders
-              aren't clipped — fixes the "broken border" look. */}
-          <div className="relative mt-6 overflow-x-hidden py-5">
-            <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-white via-white/90 to-transparent sm:w-24" />
-            <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-white via-white/90 to-transparent sm:w-24" />
-
-            <div className="clients-ticker flex w-max items-stretch gap-5 sm:gap-7">
-              {hasLogos
-                ? // Duplicate the list so the -50% loop is seamless (no jump /
-                  // clipped card borders mid-scroll). Each card auto-sizes to its
-                  // logo: fixed height, width fits the image (no distortion, no
-                  // forced min/max that leaves empty space).
-                  [...cp.logos, ...cp.logos].map((logo, index) => (
-                    <div
-                      key={`${logo.image}-${index}`}
-                      className="flex h-[80px] w-[180px] shrink-0 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-white p-2 sm:h-[96px] sm:w-[210px]"
-                    >
-                      {/* Every card is the SAME fixed size; the logo fills the
-                          whole tile (h-full w-full) and object-contain scales it
-                          up to fit edge-to-edge without distorting or cropping.
-                          Minimal padding so there's no dead space.
-                          title= shows the admin's Alt text on hover. */}
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={logo.image}
-                        alt={logo.alt || "Client logo"}
-                        title={logo.alt || undefined}
-                        className="h-full w-full object-contain"
-                      />
-                    </div>
-                  ))
-                : placeholderItems.map((name, index) => (
-                    <div
-                      key={`${name}-${index}`}
-                      className="flex min-w-[140px] items-center justify-center rounded-xl border border-dashed border-slate-300 bg-white/80 px-4 py-5 text-center text-[0.78rem] font-medium text-slate-500 sm:min-w-[200px] sm:px-7 sm:py-6 sm:text-sm"
-                    >
-                      {name}
-                    </div>
-                  ))}
-            </div>
-          </div>
-
-          {/* CTA — CMS-driven; hidden when no label is set in admin. */}
-          {t(cp, "ctaLabel", language) ? (
-            <div className="mt-8 flex justify-center">
-              <Link
-                href={cp.ctaHref || "/contact"}
-                className="inline-flex min-h-[3.05rem] items-center justify-center rounded-full bg-[#0088FF] px-8 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(0,136,255,0.2)] transition hover:brightness-110 [overflow-wrap:anywhere]"
-              >
-                {t(cp, "ctaLabel", language)}
-              </Link>
-            </div>
-          ) : null}
-          {/* ========================= from left to right =============================== */}
-          {/* <div className="relative mt-6 overflow-hidden py-2">
-            <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-white via-white/90 to-transparent sm:w-24" />
-            <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-white via-white/90 to-transparent sm:w-24" />
-
-            <div className="clients-ticker flex w-max items-center gap-2.5 sm:gap-3">
-              {tickerItems.map((name, index) => (
-                <div
-                  key={`${name}-${index}`}
-                  className="flex min-w-[160px] items-center justify-center rounded-xl border border-dashed border-slate-300 bg-white/80 px-4 py-5 text-center text-sm font-medium text-slate-500 sm:min-w-[190px] sm:text-base"
-                >
-                  {name}
-                </div>
-              ))}
-            </div>
-          </div> */}
-        </div>
-      </div>
-
-      <style jsx>{`
-        .clients-ticker {
-          animation: clients-ticker-scroll 45s linear infinite;
-        }
-
-        /* Ease off when the user hovers, so a logo can be read. */
-        .clients-ticker:hover {
-          animation-play-state: paused;
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .clients-ticker {
-            animation-duration: 90s;
-          }
-        }
-
-        @keyframes clients-ticker-scroll {
-          from {
-            transform: translateX(0);
-          }
-          to {
-            transform: translateX(-50%);
-          }
-        }
-      `}</style>
-    </section>
+    <LogoTicker
+      heading={t(cp, "heading", language)}
+      headingEnd={t(cp, "headingEnd", language)}
+      logos={(cp.logos || []).map((l) => ({ image: l.image, alt: l.alt }))}
+      placeholders={cp.logoPlaceholders || []}
+      cta={t(cp, "ctaLabel", language) ? { label: t(cp, "ctaLabel", language), href: cp.ctaHref } : null}
+    />
   );
 }

@@ -917,8 +917,10 @@ function StatsSection() {
 
 // ─── Solution Integration ──────────────────────────────────────────────────────
 
-function IntegrationCard({ card, i, reduced, accent }) {
-  const { language } = useLanguage();
+// One selectable integration in the left-hand list. Collapsed it is just a
+// title; open it reveals the description and key points. Replaces the old grid
+// of six large photo cards, which made the section very tall.
+function IntegrationRow({ card, index, isActive, onSelect, accent, language }) {
   const title = t(card, "title", language);
   const description = t(card, "description", language);
   const points = Array.isArray(card.points)
@@ -926,51 +928,75 @@ function IntegrationCard({ card, i, reduced, accent }) {
         .map((p) => (typeof p === "string" ? p : t(p, "label", language)))
         .filter((p) => typeof p === "string" && p.trim() !== "")
     : [];
-  const hasDetails = Boolean(description) || points.length > 0;
 
   return (
-    <motion.article
-      dir={language === "ar" ? "rtl" : "ltr"}
-      initial={reduced ? false : { opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.1 }}
-      transition={{ duration: 0.5, ease, delay: i * 0.06 }}
-      className="group relative flex min-h-[220px] flex-col overflow-hidden rounded-[18px] bg-slate-800 sm:min-h-[260px]"
-    >
-      {card.image ? (
-        <Image src={card.image} alt={title || ""} fill className="object-cover transition duration-700 group-hover:scale-105" sizes="(min-width: 640px) 25vw, 50vw" />
-      ) : null}
-      <div className={`absolute inset-0 bg-gradient-to-b ${card.gradient || ""}`} />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10" />
-      {/* Details are always visible (no hover/click needed). */}
-      <div className="relative z-20 flex flex-1 flex-col justify-end gap-2 p-4 sm:p-5">
-        {title ? (
-          <h3 className="text-[0.9rem] font-semibold leading-tight tracking-[-0.02em] text-white [overflow-wrap:anywhere] sm:text-[1rem]">
-            {title}
-          </h3>
-        ) : null}
-        {hasDetails ? (
-          <div>
-            {description ? (
-              <RichText
-                text={description}
-                className="block text-[0.75rem] leading-relaxed text-white/85 [overflow-wrap:anywhere]"
-              />
+    <li>
+      <button
+        type="button"
+        onClick={() => onSelect(index)}
+        aria-expanded={isActive}
+        dir={language === "ar" ? "rtl" : "ltr"}
+        className={`w-full rounded-2xl border px-4 py-3 text-start transition-all duration-300 ${
+          isActive
+            ? "border-transparent bg-white shadow-[0_14px_34px_rgba(15,23,42,0.1)]"
+            : "border-slate-200/80 bg-white/55 hover:border-slate-300 hover:bg-white"
+        }`}
+      >
+        <span className="flex items-start gap-3">
+          <span
+            className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg text-[11px] font-bold tabular-nums transition-colors duration-300"
+            style={
+              isActive
+                ? { backgroundColor: accent, color: "#fff" }
+                : { backgroundColor: "rgba(15,23,42,0.06)", color: "#64748B" }
+            }
+          >
+            {String(index + 1).padStart(2, "0")}
+          </span>
+
+          <span className="min-w-0 flex-1">
+            {title ? (
+              <span
+                className={`block text-[0.95rem] font-semibold leading-snug tracking-[-0.02em] [overflow-wrap:anywhere] ${
+                  isActive ? "text-[#050A13]" : "text-slate-600"
+                }`}
+              >
+                {title}
+              </span>
             ) : null}
-            {points.length > 0 ? (
-              <ul className="mt-2 space-y-1.5">
-                {points.map((point, pi) => (
-                  <li key={pi} className="flex items-start gap-2 text-[0.72rem] leading-snug text-white/85 [overflow-wrap:anywhere]">
-                    <Check className="mt-0.5 h-3 w-3 shrink-0" style={{ color: accent }} strokeWidth={3} aria-hidden />
-                    <span className="whitespace-pre-line">{point}</span>
-                  </li>
-                ))}
-              </ul>
+
+            {isActive ? (
+              <motion.span
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                transition={{ duration: 0.3, ease }}
+                className="block overflow-hidden"
+              >
+                {description ? (
+                  <RichText
+                    text={description}
+                    className="mt-2 block text-[0.82rem] leading-6 text-slate-500 [overflow-wrap:anywhere]"
+                  />
+                ) : null}
+                {points.length > 0 ? (
+                  <span className="mt-3 flex flex-wrap gap-x-4 gap-y-2">
+                    {points.map((point, pi) => (
+                      <span
+                        key={pi}
+                        className="inline-flex items-start gap-1.5 text-[0.78rem] font-medium leading-snug text-slate-600 [overflow-wrap:anywhere]"
+                      >
+                        <Check className="mt-0.5 h-3 w-3 shrink-0" style={{ color: accent }} strokeWidth={3} aria-hidden />
+                        {point}
+                      </span>
+                    ))}
+                  </span>
+                ) : null}
+              </motion.span>
             ) : null}
-          </div>
-        ) : null}
-      </div>
-    </motion.article>
+          </span>
+        </span>
+      </button>
+    </li>
   );
 }
 
@@ -979,6 +1005,8 @@ function SectorSolutionsSection() {
   const { language } = useLanguage();
   const [content, setContent] = useState({});
   const [resolved, setResolved] = useState(false);
+  // Which integration the right-hand visual is showing.
+  const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
     fetchPage("solutions").then((data) => {
@@ -1002,39 +1030,117 @@ function SectorSolutionsSection() {
     return null;
   }
 
-  return (
-    <section className="bg-white py-16 sm:py-20 lg:py-24">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {heading || gradient || subtitle ? (
-          <div dir={language === "ar" ? "rtl" : "ltr"} className="mx-auto mb-14 max-w-3xl text-center">
-            {heading || gradient ? (
-              <h2 className="text-[clamp(3rem,5.5vw,5rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]">
-                {heading}
-                {gradient ? (
-                  <>
-                    {heading ? " " : null}
-                    <span className="bg-clip-text text-transparent" style={{ backgroundImage: `linear-gradient(to right, ${accent}, ${accent})` }}>
-                      {gradient}
-                    </span>
-                  </>
-                ) : null}
-              </h2>
-            ) : null}
-            {subtitle ? (
-              <p className="mt-4 whitespace-pre-line text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-[#050A13] [overflow-wrap:anywhere]">
-                {subtitle}
-              </p>
-            ) : null}
-          </div>
-        ) : null}
+  // Guard against the active row disappearing if the admin removes a card.
+  const safeIndex = activeIndex < cards.length ? activeIndex : 0;
+  const activeCard = cards[safeIndex] ?? null;
+  const activeImage = (activeCard?.image || "").trim();
+  const activeTitle = activeCard ? t(activeCard, "title", language) : "";
 
-        {cards.length > 0 ? (
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-            {cards.map((card, i) => (
-              <IntegrationCard key={i} card={card} i={i} reduced={reduced} accent={accent} />
-            ))}
+  return (
+    <section className="bg-[#F7FAFF] py-14 sm:py-16 lg:py-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="grid items-stretch gap-10 lg:grid-cols-[1.02fr_0.98fr] lg:gap-14">
+          {/* ── LEFT: heading, subtitle, key points ── */}
+          <div>
+            {heading || gradient || subtitle ? (
+              <div dir={language === "ar" ? "rtl" : "ltr"} className="mb-7">
+                {heading || gradient ? (
+                  <h2 className="text-[clamp(2.1rem,3.6vw,3.1rem)] font-semibold leading-[1.06] tracking-[-0.05em] text-[#050A13] [overflow-wrap:anywhere]">
+                    {heading}
+                    {gradient ? (
+                      <>
+                        {heading ? " " : null}
+                        <span className="bg-clip-text text-transparent" style={{ backgroundImage: `linear-gradient(to right, ${accent}, ${accent})` }}>
+                          {gradient}
+                        </span>
+                      </>
+                    ) : null}
+                  </h2>
+                ) : null}
+                {subtitle ? (
+                  <p className="mt-3 max-w-xl whitespace-pre-line text-[0.95rem] leading-7 text-slate-500 [overflow-wrap:anywhere]">
+                    {subtitle}
+                  </p>
+                ) : null}
+              </div>
+            ) : null}
+
+            {cards.length > 0 ? (
+              <ul className="space-y-2">
+                {cards.map((card, i) => (
+                  <IntegrationRow
+                    key={i}
+                    card={card}
+                    index={i}
+                    isActive={i === safeIndex}
+                    onSelect={setActiveIndex}
+                    accent={accent}
+                    language={language}
+                  />
+                ))}
+              </ul>
+            ) : null}
           </div>
-        ) : null}
+
+          {/* ── RIGHT: the active integration's image ── */}
+          {activeImage ? (
+            <div className="relative">
+              {/* Offset accent panel behind the photo */}
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute -bottom-4 -end-4 top-10 start-10 rounded-[34px] opacity-[0.12]"
+                style={{ backgroundColor: accent }}
+              />
+
+              <motion.div
+                key={activeImage}
+                initial={reduced ? false : { opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.45, ease }}
+                className="relative aspect-[16/11] w-full overflow-hidden rounded-[30px] shadow-[0_30px_70px_rgba(15,23,42,0.2)] ring-1 ring-black/5 sm:aspect-[5/4] lg:aspect-auto lg:h-full"
+              >
+                <Image
+                  src={activeImage}
+                  alt={activeTitle || ""}
+                  fill
+                  className="object-cover"
+                  sizes="(min-width: 1024px) 46vw, 100vw"
+                />
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,transparent_45%,rgba(5,10,19,0.72)_100%)]"
+                />
+
+                {/* Counter */}
+                <span className="absolute end-5 top-5 rounded-full bg-white/15 px-3 py-1 text-[11px] font-bold tabular-nums text-white ring-1 ring-white/25 backdrop-blur-md">
+                  {String(safeIndex + 1).padStart(2, "0")} / {String(cards.length).padStart(2, "0")}
+                </span>
+
+                {/* Glass caption */}
+                {activeTitle ? (
+                  <div
+                    dir={language === "ar" ? "rtl" : "ltr"}
+                    className="absolute inset-x-5 bottom-5 rounded-2xl bg-white/12 p-4 ring-1 ring-white/20 backdrop-blur-md"
+                  >
+                    <p className="text-[0.95rem] font-semibold leading-snug text-white [overflow-wrap:anywhere]">
+                      {activeTitle}
+                    </p>
+                    <span className="mt-2.5 flex gap-1.5">
+                      {cards.map((_, i) => (
+                        <span
+                          key={i}
+                          className={`h-1 rounded-full transition-all duration-300 ${
+                            i === safeIndex ? "w-6 bg-white" : "w-1.5 bg-white/40"
+                          }`}
+                        />
+                      ))}
+                    </span>
+                  </div>
+                ) : null}
+              </motion.div>
+            </div>
+          ) : null}
+        </div>
       </div>
     </section>
   );

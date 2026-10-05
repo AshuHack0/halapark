@@ -26,6 +26,7 @@ import { fetchPage } from "@/lib/cms";
 import { usePrefersReducedMotionOS } from "@/hooks/usePrefersReducedMotionOS";
 import { useLanguage, t } from "@/context/LanguageContext";
 import RichText from "@/components/common/RichText";
+import LogoTicker from "@/components/common/LogoTicker";
 import { PARTNER_FORM_LINK } from "@/components/partners/PartnershipFormProvider";
 // import GoodLookingServiceHero from "./GoodLookingServiceHero"; // OLD dark hero (looked like home page) — replaced by the light HeroSection below
 
@@ -1652,139 +1653,33 @@ function PartnerCard({ partner }) {
 }
 
 function PartnersSection({ partners }) {
-  const reduced = useReducedMotion();
   const { language } = useLanguage();
-  // CMS-only partner list — no hardcoded fallback. A partner counts only when it
-  // has a logo or a name, so cleared rows don't render ghost cards.
-  const cmsList = Array.isArray(partners?.partners) ? partners.partners.filter((p) => p && (p.name || p.logo)) : [];
-  // The two-row marquee needs the lists doubled (and row2 backfilled) to loop
-  // seamlessly — but with only a few partners that shows visible duplicates
-  // (1 added → several on screen). Below the threshold, render each partner
-  // exactly ONCE in a single static centered row.
-  const marquee = cmsList.length >= 5;
-  const mid = Math.ceil(cmsList.length / 2);
-  const base1 = marquee ? cmsList.slice(0, mid) : cmsList;
-  const base2 = marquee ? (cmsList.slice(mid).length > 0 ? cmsList.slice(mid) : base1) : [];
-  const row1 = marquee ? [...base1, ...base1] : base1;
-  const row2 = marquee ? [...base2, ...base2] : [];
-  const heading = (t(partners, "heading", language) || "").trim();
-  const headingGradient = (t(partners, "headingGradient", language) || "").trim();
-  const subtitle = (t(partners, "subtitle", language) || "").trim();
-  const description = (t(partners, "description", language) || "").trim();
+  // CMS-only partner list — no hardcoded fallback. Only partners with a logo
+  // render, since this band is logo-only.
+  const logos = (Array.isArray(partners?.partners) ? partners.partners : [])
+    .filter((p) => p && p.logo)
+    .map((p) => ({ image: p.logo, alt: t(p, "name", language) }));
 
-  // Hide the whole section when the admin has cleared all partners and text.
-  if (cmsList.length === 0 && !heading && !headingGradient && !subtitle && !description) {
-    return null;
-  }
+  const ctaLabel = (t(partners, "ctaLabel", language) || "").trim();
 
+  // Renders the shared LogoTicker, so this band is identical to the Home
+  // page's Clients & Partners section.
   return (
-    <section className="relative overflow-hidden bg-white py-20 sm:py-24">
-
-      {/* Subtle bg */}
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,#F8FBFF_0%,#FFFFFF_30%,#FFFFFF_70%,#F4F8FF_100%)]" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_40%_at_50%_50%,rgba(0,136,255,0.04),transparent)]" />
-
-      {/* ── Section header ── */}
-      <div className="relative z-10 mx-auto mb-14 max-w-7xl px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={reduced ? false : { opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.65, ease }}
-          className="flex flex-col items-center text-center"
-        >
-          <h2 className="text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]">
-            {heading}
-            {headingGradient ? (
-              <>
-                {" "}
-                <span className="bg-[linear-gradient(120deg,#0060CC_0%,#0088FF_50%,#38BDF8_100%)] bg-clip-text text-transparent">
-                  {headingGradient}
-                </span>
-              </>
-            ) : null}
-          </h2>
-          <p className="mt-3 max-w-[460px] text-[clamp(1.25rem,2vw,1.6rem)] font-medium leading-[1.2] tracking-[-0.03em] text-[#050A13] [overflow-wrap:anywhere]">
-            {subtitle}
-          </p>
-          <RichText text={description} className="mt-3 max-w-[460px] text-[0.88rem] leading-6 text-slate-500 [overflow-wrap:anywhere] block" />
-        </motion.div>
-
-        {/* ── Stats strip ── */}
-        {/* <motion.div
-          initial={reduced ? false : { opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.4 }}
-          transition={{ duration: 0.6, ease, delay: 0.15 }}
-          className="mx-auto mt-10 grid max-w-2xl grid-cols-4 divide-x divide-slate-100 rounded-2xl border border-slate-100 bg-[#F7FAFF] px-2 py-5 shadow-[0_2px_12px_rgba(6,6,22,0.05)]"
-        >
-          {PARTNER_STATS.map((s) => (
-            <div key={s.label} className="px-2 text-center sm:px-4">
-              <p className="text-[1.35rem] font-bold tracking-[-0.04em] text-[#050A13] sm:text-[1.6rem]">{s.value}</p>
-              <p className="mt-0.5 text-[10px] leading-4 text-slate-400 sm:text-[11px]">{s.label}</p>
-            </div>
-          ))}
-        </motion.div> */}
-      </div>
-
-      {/* ── Row 1 — scrolls left (static centered row when few partners) ── */}
-      <div className="relative overflow-hidden pb-3">
-        {marquee ? (
-          <>
-            <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-28 bg-gradient-to-r from-white to-transparent sm:w-40" />
-            <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-28 bg-gradient-to-l from-white to-transparent sm:w-40" />
-          </>
-        ) : null}
-        <div className={marquee ? `flex w-max items-center gap-3 ${!reduced ? "partners-row1" : ""}` : "flex flex-wrap items-center justify-center gap-3 px-4"}>
-          {row1.map((p, i) => <PartnerCard key={`r1-${p.name}-${i}`} partner={p} />)}
-        </div>
-      </div>
-
-      {/* ── Row 2 — scrolls right (omitted when few partners) ── */}
-      {row2.length > 0 ? (
-        <div className="relative mt-3 overflow-hidden">
-          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-28 bg-gradient-to-r from-white to-transparent sm:w-40" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-28 bg-gradient-to-l from-white to-transparent sm:w-40" />
-          <div className={`flex w-max items-center gap-3 ${!reduced ? "partners-row2" : ""}`}>
-            {row2.map((p, i) => <PartnerCard key={`r2-${p.name}-${i}`} partner={p} />)}
-          </div>
-        </div>
-      ) : null}
-
-      {/* ── Bottom CTA line — CMS-driven (hidden when cleared in admin) ── */}
-      {(t(partners, "ctaText", language) || "").trim() || (t(partners, "ctaLabel", language) || "").trim() ? (
-        <motion.div
-          initial={reduced ? false : { opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.5 }}
-          transition={{ duration: 0.55, ease, delay: 0.2 }}
-          className="relative z-10 mt-12 text-center"
-        >
-          <p className="text-[0.82rem] text-slate-400 [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
-            {t(partners, "ctaText", language)}{" "}
-            {(t(partners, "ctaLabel", language) || "").trim() ? (
-              <Link
-                href={partners?.ctaPopup ? PARTNER_FORM_LINK : (partners?.ctaLink || "").trim() || "/contact"}
-                data-partner-source="Services · Clients & Partners"
-                className="font-semibold text-[#0088FF] underline-offset-2 hover:underline"
-              >
-                {t(partners, "ctaLabel", language)} <span aria-hidden className="inline-block rtl:rotate-180">→</span>
-              </Link>
-            ) : null}
-          </p>
-        </motion.div>
-      ) : null}
-
-      <style>{`
-        .partners-row1 { animation: partners-left 36s linear infinite; }
-        .partners-row2 { animation: partners-right 40s linear infinite; }
-        @keyframes partners-left  { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-        @keyframes partners-right { from { transform: translateX(-50%); } to { transform: translateX(0); } }
-        @media (prefers-reduced-motion: reduce) {
-          .partners-row1, .partners-row2 { animation: none; }
-        }
-      `}</style>
-    </section>
+    <LogoTicker
+      heading={(t(partners, "heading", language) || "").trim()}
+      headingEnd={(t(partners, "headingGradient", language) || "").trim()}
+      logos={logos}
+      cta={
+        ctaLabel
+          ? {
+              label: ctaLabel,
+              href: partners?.ctaPopup
+                ? PARTNER_FORM_LINK
+                : (partners?.ctaLink || "").trim() || "/contact",
+            }
+          : null
+      }
+    />
   );
 }
 

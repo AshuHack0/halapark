@@ -7,6 +7,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { fetchBusinessSection } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
+import LogoTicker from "@/components/common/LogoTicker";
 import RichText from "@/components/common/RichText";
 import { PARTNER_FORM_LINK } from "@/components/partners/PartnershipFormProvider";
 
@@ -190,8 +191,9 @@ function MarqueeRow({ partners, reverse = false, language }) {
 }
 
 // ─── Section 2: Partner Carousel (logo marquee) ────────────────────────────────
+// Renders the shared LogoTicker, so this band is identical to the Home page's
+// Clients & Partners section (same tiles, spacing, fades and scroll speed).
 export function PartnerCarousel() {
-  const reduced = useReducedMotion();
   const { language } = useLanguage();
   const { showcase, resolved } = usePartnersShowcase();
 
@@ -199,53 +201,19 @@ export function PartnerCarousel() {
   // Independent enable flag stored on the carousel object.
   if (showcase?.carousel?.enabled === false) return null;
 
-  const row1 = Array.isArray(showcase.partners?.row1) ? showcase.partners.row1.filter((p) => p && (p.name || p.logo || p.initials)) : [];
-  const row2 = Array.isArray(showcase.partners?.row2) ? showcase.partners.row2.filter((p) => p && (p.name || p.logo || p.initials)) : [];
-  const all = [...row1, ...row2];
-  const heading = (t(showcase, "carouselHeading", language) || "").trim();
-  const subheading = (t(showcase, "carouselSubheading", language) || "").trim();
-
-  // Hide when there are no partners and no heading.
-  if (all.length === 0 && !heading && !subheading) return null;
+  // Both admin rows feed the single ticker row.
+  const rows = [showcase.partners?.row1, showcase.partners?.row2]
+    .map((r) => (Array.isArray(r) ? r : []))
+    .flat()
+    .filter((p) => p && p.logo);
+  const logos = rows.map((p) => ({ image: p.logo, alt: t(p, "name", language) }));
 
   return (
-    <section className="bg-white pb-16 sm:pb-20 lg:pb-24">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={reduced ? false : { opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.65, ease }}
-          className="pt-16 border-t border-[#E7EAF0]"
-        >
-          {(heading || subheading) ? (
-            <div className="mb-12">
-              {heading ? (
-                <h3 dir={language === "ar" ? "rtl" : "ltr"} className="text-2xl sm:text-3xl font-bold text-[#050A13] text-center mb-2 [overflow-wrap:anywhere]">{heading}</h3>
-              ) : null}
-              {subheading ? (
-                <p dir={language === "ar" ? "rtl" : "ltr"} className="text-center text-slate-600 [overflow-wrap:anywhere]">{subheading}</p>
-              ) : null}
-            </div>
-          ) : null}
-
-          {all.length > 0 ? (
-            !reduced ? (
-              <div className="space-y-4 overflow-hidden">
-                {row1.length > 0 ? <MarqueeRow partners={row1} language={language} /> : null}
-                {row2.length > 0 ? <MarqueeRow partners={row2} reverse language={language} /> : null}
-              </div>
-            ) : (
-              <div className="flex flex-wrap justify-center gap-3">
-                {all.map((p, i) => (
-                  <PartnerCard key={`${p.name}-${i}`} p={p} language={language} />
-                ))}
-              </div>
-            )
-          ) : null}
-        </motion.div>
-      </div>
-    </section>
+    <LogoTicker
+      heading={(t(showcase, "carouselHeading", language) || "").trim()}
+      headingEnd={(t(showcase, "carouselSubheading", language) || "").trim()}
+      logos={logos}
+    />
   );
 }
 
