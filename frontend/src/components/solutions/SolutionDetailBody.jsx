@@ -114,87 +114,51 @@ export default function SolutionDetailBody({ detail, heroImage, relatedList = []
   return (
     <main className="bg-white" dir={dir}>
       {/* ── 1. Banner ──────────────────────────────────────────────────── */}
-      {/* Full-bleed banner image with the copy written over it. Without an
-          image it falls back to the original light gradient + dark text. */}
-      <section className="relative isolate overflow-hidden">
-        {heroImage ? (
-          <>
-            <Image
-              src={heroImage}
-              alt=""
-              aria-hidden
-              fill
-              priority
-              sizes="100vw"
-              className="-z-10 object-cover object-center"
-            />
-            {/* Scrim — heaviest behind the text, clearing toward the far side
-                so the photo still reads. Mirrored for Arabic. */}
-            <div
-              aria-hidden
-              className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(3,10,20,0.9)_0%,rgba(3,10,20,0.76)_38%,rgba(3,10,20,0.4)_70%,rgba(3,10,20,0.18)_100%)] rtl:bg-[linear-gradient(270deg,rgba(3,10,20,0.9)_0%,rgba(3,10,20,0.76)_38%,rgba(3,10,20,0.4)_70%,rgba(3,10,20,0.18)_100%)]"
-            />
-            <div
-              aria-hidden
-              className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(3,10,20,0.45)_0%,transparent_32%,transparent_62%,rgba(3,10,20,0.5)_100%)]"
-            />
-            {/* On phones the copy runs the full width, so the side-to-side
-                scrim alone leaves line-ends sitting on the bright part of the
-                photo. Flat wash below lg; nothing on desktop. */}
-            <div aria-hidden className="absolute inset-0 -z-10 bg-[rgba(3,10,20,0.45)] lg:hidden" />
-          </>
-        ) : (
-          <>
-            <div
-              aria-hidden
-              className="absolute inset-0 -z-10 bg-[linear-gradient(135deg,#EBF4FF_0%,#F8FBFF_38%,#F0F7FF_66%,#EAF3FF_100%)]"
-            />
-            <div
-              aria-hidden
-              className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(rgba(0,136,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(0,136,255,0.05)_1px,transparent_1px)] bg-[size:44px_44px] [mask-image:radial-gradient(ellipse_80%_60%_at_50%_30%,black,transparent)]"
-            />
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#0088FF]/20 to-transparent" />
-          </>
-        )}
+      <section className="relative overflow-hidden bg-[linear-gradient(135deg,#EBF4FF_0%,#F8FBFF_38%,#F0F7FF_66%,#EAF3FF_100%)]">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(0,136,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(0,136,255,0.05)_1px,transparent_1px)] bg-[size:44px_44px] [mask-image:radial-gradient(ellipse_80%_60%_at_50%_30%,black,transparent)]"
+        />
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#0088FF]/20 to-transparent" />
 
-        <div className="relative z-[2] mx-auto flex w-full max-w-7xl flex-col justify-center px-4 py-16 sm:px-6 sm:py-20 lg:min-h-[560px] lg:px-8 lg:py-28">
-          <div className="max-w-[680px]">
-            {banner.subtitle ? (
-              <p
-                className={`mb-4 text-[11px] font-bold uppercase tracking-[0.18em] [overflow-wrap:anywhere] ${
-                  heroImage ? "text-[#7CC4FF]" : "text-[#0088FF]"
-                }`}
-              >
-                {banner.subtitle}
-              </p>
-            ) : null}
+        <div className="relative z-[2] mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+          <div className="grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-12">
+            <div>
+              {banner.subtitle ? (
+                <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.18em] text-[#0088FF] [overflow-wrap:anywhere]">
+                  {banner.subtitle}
+                </p>
+              ) : null}
+              <h1 className="max-w-[620px] text-[clamp(2.2rem,4.4vw,3.6rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-[#050A13] [overflow-wrap:anywhere]">
+                {banner.title}
+              </h1>
+              {banner.shortDescription ? (
+                <p className="mt-6 max-w-[560px] whitespace-pre-line text-[1.05rem] leading-[1.85] text-slate-600 sm:text-[1.12rem] [overflow-wrap:anywhere]">
+                  {banner.shortDescription}
+                </p>
+              ) : null}
+              {banner.ctaLabel ? (
+                <Link
+                  href={banner.ctaLink}
+                  className="mt-8 inline-flex items-center gap-2 rounded-full bg-[#0088FF] px-7 py-3.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,136,255,0.4)] transition hover:brightness-110"
+                >
+                  {banner.ctaLabel}
+                  <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
+                </Link>
+              ) : null}
+            </div>
 
-            <h1
-              className={`text-[clamp(2.2rem,4.4vw,3.6rem)] font-semibold leading-[1.05] tracking-[-0.05em] [overflow-wrap:anywhere] ${
-                heroImage ? "text-white [text-shadow:0_2px_24px_rgba(3,10,20,0.45)]" : "text-[#050A13]"
-              }`}
-            >
-              {banner.title}
-            </h1>
-
-            {banner.shortDescription ? (
-              <p
-                className={`mt-6 max-w-[560px] whitespace-pre-line text-[1.05rem] leading-[1.85] sm:text-[1.12rem] [overflow-wrap:anywhere] ${
-                  heroImage ? "text-slate-200" : "text-slate-600"
-                }`}
-              >
-                {banner.shortDescription}
-              </p>
-            ) : null}
-
-            {banner.ctaLabel ? (
-              <Link
-                href={banner.ctaLink}
-                className="mt-8 inline-flex items-center gap-2 rounded-full bg-[#0088FF] px-7 py-3.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(0,136,255,0.4)] transition hover:brightness-110"
-              >
-                {banner.ctaLabel}
-                <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
-              </Link>
+            {heroImage ? (
+              <div className="relative mx-auto aspect-[4/3] w-full max-w-[560px] overflow-hidden rounded-[22px] border border-white/80 bg-white shadow-[0_24px_60px_rgba(15,23,42,0.14)] lg:mx-0 lg:ms-auto lg:max-w-[540px]">
+                <Image
+                  src={heroImage}
+                  alt={banner.title}
+                  fill
+                  className="object-cover object-center"
+                  sizes="(min-width: 1024px) 540px, 560px"
+                  priority
+                />
+              </div>
             ) : null}
           </div>
         </div>
