@@ -220,12 +220,12 @@ export default function SolutionDetailBody({ detail, heroImage, relatedList = []
                 </div>
               </div>
               {whyImage ? (
-                <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[22px] border border-[rgba(0,136,255,0.12)] bg-white shadow-[0_18px_48px_rgba(15,23,42,0.08)]">
+                <div className="relative aspect-[3/2] w-full overflow-hidden rounded-[22px] border border-[rgba(0,136,255,0.12)] bg-white p-2 shadow-[0_18px_48px_rgba(15,23,42,0.08)]">
                   <Image
                     src={whyImage}
                     alt={whyHeading || banner.title}
                     fill
-                    className="object-cover object-center"
+                    className="object-contain object-center"
                     sizes="(min-width: 1024px) 540px, 90vw"
                   />
                 </div>
@@ -256,12 +256,12 @@ export default function SolutionDetailBody({ detail, heroImage, relatedList = []
                     ))}
                   </div>
                   {problemImage ? (
-                    <div className="relative mt-6 aspect-[4/3] w-full overflow-hidden rounded-[18px] border border-[rgba(239,68,68,0.14)] bg-white shadow-[0_18px_48px_rgba(15,23,42,0.08)]">
+                    <div className="relative mt-6 aspect-[3/2] w-full overflow-hidden rounded-[18px] border border-[rgba(239,68,68,0.14)] bg-white p-2 shadow-[0_18px_48px_rgba(15,23,42,0.08)]">
                       <Image
                         src={problemImage}
                         alt={problemHeading || banner.title}
                         fill
-                        className="object-cover object-center"
+                        className="object-contain object-center"
                         sizes="(min-width: 1024px) 540px, 90vw"
                       />
                     </div>
@@ -285,12 +285,12 @@ export default function SolutionDetailBody({ detail, heroImage, relatedList = []
                     ))}
                   </div>
                   {solutionImage ? (
-                    <div className="relative mt-6 aspect-[4/3] w-full overflow-hidden rounded-[18px] border border-[rgba(0,136,255,0.14)] bg-white shadow-[0_18px_48px_rgba(15,23,42,0.08)]">
+                    <div className="relative mt-6 aspect-[3/2] w-full overflow-hidden rounded-[18px] border border-[rgba(0,136,255,0.14)] bg-white p-2 shadow-[0_18px_48px_rgba(15,23,42,0.08)]">
                       <Image
                         src={solutionImage}
                         alt={solutionHeading || banner.title}
                         fill
-                        className="object-cover object-center"
+                        className="object-contain object-center"
                         sizes="(min-width: 1024px) 540px, 90vw"
                       />
                     </div>
