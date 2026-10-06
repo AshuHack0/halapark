@@ -148,13 +148,19 @@ export default function SolutionDetailBody({ detail, heroImage, relatedList = []
               ) : null}
             </div>
 
+            {/* No fixed aspect ratio: the block takes the HEIGHT OF THE IMAGE
+                itself, so the whole picture shows with no crop and no empty
+                white band above or below it, whatever shape is uploaded. The
+                width/height below are only a pre-load ratio hint — the
+                rendered height comes from the real image. */}
             {heroImage ? (
-              <div className="relative mx-auto aspect-[4/3] w-full max-w-[560px] overflow-hidden rounded-[22px] border border-white/80 bg-white shadow-[0_24px_60px_rgba(15,23,42,0.14)] lg:mx-0 lg:ms-auto lg:max-w-[540px]">
+              <div className="mx-auto w-full max-w-[560px] overflow-hidden rounded-[22px] border border-white/80 bg-white shadow-[0_24px_60px_rgba(15,23,42,0.14)] lg:mx-0 lg:ms-auto lg:max-w-[540px]">
                 <Image
                   src={heroImage}
                   alt={banner.title}
-                  fill
-                  className="object-cover object-center"
+                  width={1200}
+                  height={800}
+                  className="h-auto w-full"
                   sizes="(min-width: 1024px) 540px, 560px"
                   priority
                 />
@@ -184,12 +190,13 @@ export default function SolutionDetailBody({ detail, heroImage, relatedList = []
                 </div>
               </div>
               {whyImage ? (
-                <div className="relative aspect-[3/2] w-full overflow-hidden rounded-[22px] border border-[rgba(0,136,255,0.12)] bg-white p-2 shadow-[0_18px_48px_rgba(15,23,42,0.08)]">
+                <div className="w-full overflow-hidden rounded-[22px] border border-[rgba(0,136,255,0.12)] bg-white shadow-[0_18px_48px_rgba(15,23,42,0.08)]">
                   <Image
                     src={whyImage}
                     alt={whyHeading || banner.title}
-                    fill
-                    className="object-contain object-center"
+                    width={1200}
+                    height={800}
+                    className="h-auto w-full"
                     sizes="(min-width: 1024px) 540px, 90vw"
                   />
                 </div>
@@ -220,12 +227,13 @@ export default function SolutionDetailBody({ detail, heroImage, relatedList = []
                     ))}
                   </div>
                   {problemImage ? (
-                    <div className="relative mt-6 aspect-[3/2] w-full overflow-hidden rounded-[18px] border border-[rgba(239,68,68,0.14)] bg-white p-2 shadow-[0_18px_48px_rgba(15,23,42,0.08)]">
+                    <div className="mt-6 w-full overflow-hidden rounded-[18px] border border-[rgba(239,68,68,0.14)] bg-white shadow-[0_18px_48px_rgba(15,23,42,0.08)]">
                       <Image
                         src={problemImage}
                         alt={problemHeading || banner.title}
-                        fill
-                        className="object-contain object-center"
+                        width={1200}
+                        height={800}
+                        className="h-auto w-full"
                         sizes="(min-width: 1024px) 540px, 90vw"
                       />
                     </div>
@@ -249,12 +257,13 @@ export default function SolutionDetailBody({ detail, heroImage, relatedList = []
                     ))}
                   </div>
                   {solutionImage ? (
-                    <div className="relative mt-6 aspect-[3/2] w-full overflow-hidden rounded-[18px] border border-[rgba(0,136,255,0.14)] bg-white p-2 shadow-[0_18px_48px_rgba(15,23,42,0.08)]">
+                    <div className="mt-6 w-full overflow-hidden rounded-[18px] border border-[rgba(0,136,255,0.14)] bg-white shadow-[0_18px_48px_rgba(15,23,42,0.08)]">
                       <Image
                         src={solutionImage}
                         alt={solutionHeading || banner.title}
-                        fill
-                        className="object-contain object-center"
+                        width={1200}
+                        height={800}
+                        className="h-auto w-full"
                         sizes="(min-width: 1024px) 540px, 90vw"
                       />
                     </div>
