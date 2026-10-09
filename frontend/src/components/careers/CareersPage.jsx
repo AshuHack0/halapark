@@ -847,8 +847,10 @@ function CareersCTA({ cta, hasOpenPositions }) {
                 aria-hidden
               />
             ) : null}
-            <div className="absolute inset-0 bg-black/55" />
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/60" />
+            {/* Lighter scrims so the photo reads brightly; the text keeps its
+                contrast from a soft shadow rather than a heavy black wash. */}
+            <div className="absolute inset-0 bg-black/28" />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/40" />
           </div>
 
           <motion.div
@@ -860,17 +862,17 @@ function CareersCTA({ cta, hasOpenPositions }) {
             dir={language === "ar" ? "rtl" : "ltr"}
           >
             {hasText(title) ? (
-              <h2 className="max-w-[640px] text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-[1.08] tracking-[-0.05em] text-white [overflow-wrap:anywhere]">
+              <h2 className="max-w-[640px] text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-[1.08] tracking-[-0.05em] text-white [text-shadow:0_2px_18px_rgba(3,10,20,0.55)] [overflow-wrap:anywhere]">
                 {title}
               </h2>
             ) : null}
             {hasText(subtitle) ? (
-              <p className="mt-3 text-[clamp(1.1rem,1.8vw,1.35rem)] font-medium text-white/85 [overflow-wrap:anywhere]">
+              <p className="mt-3 text-[clamp(1.1rem,1.8vw,1.35rem)] font-medium text-white [text-shadow:0_2px_14px_rgba(3,10,20,0.55)] [overflow-wrap:anywhere]">
                 {subtitle}
               </p>
             ) : null}
             {hasText(description) ? (
-              <RichText text={description} className="mt-5 max-w-[620px] text-[0.88rem] leading-6 text-white/70 [overflow-wrap:anywhere] sm:text-[0.94rem] block" />
+              <RichText text={description} className="mt-5 max-w-[620px] text-[0.88rem] leading-6 text-white/90 [text-shadow:0_1px_12px_rgba(3,10,20,0.6)] [overflow-wrap:anywhere] sm:text-[0.94rem] block" />
             ) : null}
             {hasText(primaryCtaText) || showSecondary ? (
               <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
