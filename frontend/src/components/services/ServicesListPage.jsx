@@ -743,6 +743,7 @@ const CAT_META = {
   parking: { label: "Parking",      color: "#0088FF", bg: "rgba(0,136,255,0.12)" },
   valet:   { label: "Valet",        color: "#0088FF", bg: "rgba(0,136,255,0.12)" },
   care:    { label: "Vehicle Care", color: "#0088FF", bg: "rgba(0,136,255,0.12)" },
+  technical: { label: "Technical Service", color: "#0088FF", bg: "rgba(0,136,255,0.12)" },
 };
 
 function ServiceCard({ service, index, onClick, category, clickable = false }) {
@@ -1378,6 +1379,7 @@ const FILTERS = [
   { id: "parking", label: "Parking",        labelAr: "ركن السيارات",   emoji: "🅿" },
   { id: "valet",   label: "Valet & Access", labelAr: "صف السيارات والدخول", emoji: "🚗" },
   { id: "care",    label: "Vehicle Care",   labelAr: "العناية بالمركبة", emoji: "🔧" },
+  { id: "technical", label: "Technical Service", labelAr: "الخدمات الفنية", emoji: "🛠" },
 ];
 
 function ServicesGrid({ onServiceClick, cmsServices, gridHeader, detailSlugs }) {
