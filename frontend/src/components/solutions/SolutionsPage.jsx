@@ -1534,7 +1534,10 @@ function FeatureHighlightsSection() {
         <section className="relative overflow-hidden bg-[#06111f] py-16 sm:py-20 lg:py-24">
           {featImage ? (
             <div className="pointer-events-none absolute inset-0" aria-hidden>
-              <Image src={featImage} alt="" fill className="object-cover object-center opacity-40" />
+              {/* contain, not cover: wide banner uploads (e.g. 1440x458) were
+                  being scaled up to fill the taller band, clipping the top and
+                  bottom. Any space left over is the section's own dark navy. */}
+              <Image src={featImage} alt="" fill className="object-contain object-center opacity-40" />
               <div className="absolute inset-0 bg-gradient-to-b from-[#06111f]/50 via-[#06111f]/30 to-[#06111f]/70" />
             </div>
           ) : null}
