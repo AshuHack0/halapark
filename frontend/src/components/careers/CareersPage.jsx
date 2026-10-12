@@ -649,7 +649,12 @@ function JobOpenings({ openPositions }) {
               loading="lazy"
               className="absolute inset-0 -z-20 h-full w-full object-cover object-center"
             />
-            <span aria-hidden className="absolute inset-0 -z-10 bg-white/82" />
+            {/* Light wash only — the photo stays clearly visible. A little more
+                white at the very top keeps the heading legible over it. */}
+            <span
+              aria-hidden
+              className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(255,255,255,0.72)_0%,rgba(255,255,255,0.4)_26%,rgba(255,255,255,0.32)_100%)]"
+            />
           </>
         ) : null}
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
