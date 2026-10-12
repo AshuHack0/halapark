@@ -98,42 +98,23 @@ function MosaicTile({ slides, idx, reduced, sizes }) {
 function CareersVisual({ hero, reduced }) {
   const { language } = useLanguage();
 
-  // CMS-driven mosaic: distribute hero.images across the three tiles
-  // round-robin (A: 0,3,6…  B: 1,4,7…  C: 2,5,8…). A tile that would end up
-  // empty gets the full list instead so every tile always has ≥1 image.
+  // Every hero image is a slide in the single large panel — the small corner
+  // photos were removed, so all uploads cycle here instead of being split
+  // three ways (which left only one image on the main panel).
   const images = (Array.isArray(hero?.images) ? hero.images : []).filter(hasText);
-  const pickTile = (offset) => {
-    const tile = images.filter((_, i) => i % 3 === offset);
-    return tile.length > 0 ? tile : images;
-  };
-  const tileA = pickTile(0);
-  const tileB = pickTile(1);
-  const tileC = pickTile(2);
 
   const [a, setA] = useState(0);
-  const [b, setB] = useState(0);
-  const [c, setC] = useState(0);
 
   useEffect(() => {
-    if (reduced || tileA.length === 0) return undefined;
-    const ta = setInterval(() => setA((p) => (p + 1) % tileA.length), 3800);
-    const tb = setInterval(() => setB((p) => (p + 1) % tileB.length), 3100);
-    const tc = setInterval(() => setC((p) => (p + 1) % tileC.length), 2600);
-    return () => {
-      clearInterval(ta);
-      clearInterval(tb);
-      clearInterval(tc);
-    };
-  }, [reduced, tileA.length, tileB.length, tileC.length]);
+    if (reduced || images.length < 2) return undefined;
+    const ta = setInterval(() => setA((p) => (p + 1) % images.length), 4200);
+    return () => clearInterval(ta);
+  }, [reduced, images.length]);
 
-  // Floating chips — from CMS (hero.badges), strict Arabic.
-  const badges = hero?.badges;
-  const teamTag = t(badges, "teamTag", language);
-  const hiringTitle = t(badges, "hiringTitle", language);
-  const hiringSub = t(badges, "hiringSub", language);
-  const cultureTag = t(badges, "cultureTag", language);
-  const cultureTitle = t(badges, "cultureTitle", language);
-  const cultureSub = t(badges, "cultureSub", language);
+  // Only the "Our Team" tag is still shown — the We're Hiring and Culture
+  // cards were removed from this visual (their CMS fields stay in the admin
+  // but no longer render here).
+  const teamTag = t(hero?.badges, "teamTag", language);
 
   // No CMS images → hide the whole visual mosaic block.
   if (images.length === 0) return null;
@@ -156,7 +137,7 @@ function CareersVisual({ hero, reduced }) {
         className="relative z-20 h-[420px] w-full overflow-hidden rounded-[30px] shadow-[0_40px_90px_rgba(15,23,42,0.26)] ring-1 ring-black/5 sm:h-[500px] lg:h-[620px] lg:rounded-s-[64px]"
       >
         <MosaicTile
-          slides={tileA}
+          slides={images}
           idx={a}
           reduced={reduced}
           sizes="(min-width: 1024px) 60vw, 100vw"
@@ -178,80 +159,6 @@ function CareersVisual({ hero, reduced }) {
         ) : null}
       </motion.div>
 
-      {/* Two smaller photos breaking the panel's left edge, so the big image
-          still reads as a composed group rather than a plain rectangle. */}
-      <motion.div
-        initial={reduced ? false : { opacity: 0, y: 18 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7, ease, delay: 0.35 }}
-        className="absolute bottom-10 z-30 hidden h-32 w-32 overflow-hidden rounded-full border-[6px] border-white shadow-[0_18px_44px_rgba(15,23,42,0.24)] sm:block lg:bottom-16 lg:h-40 lg:w-40 start-[-30px] lg:start-[-56px]"
-      >
-        <MosaicTile slides={tileB} idx={b} reduced={reduced} sizes="160px" />
-      </motion.div>
-
-      <motion.div
-        initial={reduced ? false : { opacity: 0, y: -18 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7, ease, delay: 0.45 }}
-        className="absolute top-16 z-30 hidden h-24 w-24 overflow-hidden rounded-[26px] border-[5px] border-white shadow-[0_16px_38px_rgba(15,23,42,0.22)] sm:block lg:h-28 lg:w-28 start-[-24px] lg:start-[-44px]"
-      >
-        <MosaicTile slides={tileC} idx={c} reduced={reduced} sizes="112px" />
-      </motion.div>
-
-      {/* Floating chip — we're hiring */}
-      {hasText(hiringTitle) ? (
-        <motion.div
-          initial={reduced ? false : { opacity: 0, y: -14, rotate: -4 }}
-          animate={reduced ? undefined : { opacity: 1, y: 0, rotate: -4 }}
-          transition={{ duration: 0.6, ease, delay: 0.5 }}
-          className="absolute top-6 z-40 hidden sm:block lg:top-10 start-[30%] lg:start-[26%]"
-        >
-          <div className="flex items-center gap-2.5 rounded-2xl border border-white/80 bg-white px-3 py-2.5 shadow-[0_16px_40px_rgba(15,23,42,0.18)]">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#0088FF] to-[#2563EB] text-white shadow-[0_4px_10px_rgba(0,136,255,0.35)]">
-              {hasText(badges?.hiringIconImage) ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={badges.hiringIconImage} alt="" className="h-5 w-5 object-contain" />
-              ) : (
-                <Briefcase className="h-4.5 w-4.5" aria-hidden />
-              )}
-            </span>
-            <div>
-              <p className="text-[11px] font-semibold text-[#050A13] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>{hiringTitle}</p>
-              {hasText(hiringSub) ? (
-                <p className="text-[10px] text-[#667085] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>{hiringSub}</p>
-              ) : null}
-            </div>
-          </div>
-        </motion.div>
-      ) : null}
-
-      {/* Floating card — culture */}
-      {hasText(cultureTitle) ? (
-        <motion.div
-          initial={reduced ? false : { opacity: 0, y: 16, rotate: 4 }}
-          animate={reduced ? undefined : { opacity: 1, y: 0, rotate: 4 }}
-          transition={{ duration: 0.6, ease, delay: 0.6 }}
-          className="absolute bottom-8 z-40 hidden sm:block lg:bottom-14 end-6 lg:end-16"
-        >
-          <div className="w-[160px] rounded-2xl border border-white/80 bg-white p-3.5 shadow-[0_16px_40px_rgba(15,23,42,0.18)]">
-            {hasText(cultureTag) ? (
-              <div className="flex items-center gap-1.5">
-                {hasText(badges?.cultureIconImage) ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={badges.cultureIconImage} alt="" className="h-3.5 w-3.5 object-contain" />
-                ) : (
-                  <Sparkles className="h-3.5 w-3.5 text-[#0088FF]" aria-hidden />
-                )}
-                <p className="text-[11px] font-semibold text-[#050A13] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>{cultureTag}</p>
-              </div>
-            ) : null}
-            <p className="mt-1.5 text-[0.92rem] font-bold leading-tight tracking-[-0.02em] text-[#050A13] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>{cultureTitle}</p>
-            {hasText(cultureSub) ? (
-              <p className="text-[9px] text-slate-400 [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>{cultureSub}</p>
-            ) : null}
-          </div>
-        </motion.div>
-      ) : null}
     </div>
   );
 }
