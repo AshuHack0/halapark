@@ -619,6 +619,8 @@ function JobOpenings({ openPositions }) {
 
   const title = t(openPositions, "title", language);
   const subtitle = t(openPositions, "subtitle", language);
+  // Background photo for the whole section — blank means the plain white band.
+  const sectionBg = (openPositions?.image || "").trim();
 
   if (!hasText(title) && posts.length === 0) return null;
 
@@ -631,8 +633,26 @@ function JobOpenings({ openPositions }) {
       />
       <JobDetailModal job={detailJob} onClose={() => setDetailJob(null)} onApply={setApplyJob} />
 
-      <section id="open-positions" className="bg-white py-16 sm:py-20 lg:py-24">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <section
+        id="open-positions"
+        className={`relative isolate py-16 sm:py-20 lg:py-24 ${sectionBg ? "" : "bg-white"}`}
+      >
+        {/* Optional background photo for the whole section (admin upload).
+            A white veil keeps the heading and the job cards readable. */}
+        {sectionBg ? (
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={sectionBg}
+              alt=""
+              aria-hidden
+              loading="lazy"
+              className="absolute inset-0 -z-20 h-full w-full object-cover object-center"
+            />
+            <span aria-hidden className="absolute inset-0 -z-10 bg-white/82" />
+          </>
+        ) : null}
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {hasText(title) || hasText(subtitle) ? (
             <motion.div
               initial={reduced ? false : { opacity: 0, y: 24 }}
