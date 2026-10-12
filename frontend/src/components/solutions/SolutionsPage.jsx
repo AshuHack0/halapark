@@ -83,10 +83,18 @@ function SolutionImageColumn({ images, direction = "up", reduced }) {
 function SolutionsControlPanel({ reduced, showcase, language }) {
   const sc = showcase && typeof showcase === "object" ? showcase : {};
   // Strict-Arabic helper for showcase text (blank AR → English text).
-  const sct = (key, fallback) => {
-    if (language === "ar") return (sc.ar?.[key] ?? "").trim() || fallback;
-    return (sc[key] ?? "").trim() || fallback;
+  // Strictly CMS: an empty field renders nothing. (It used to fall back to
+  // sample text like "Plate Recognized", so the badges appeared even when the
+  // admin had never filled them in.)
+  const sct = (key) => {
+    if (language === "ar") return (sc.ar?.[key] ?? "").trim();
+    return (sc[key] ?? "").trim();
   };
+  // A badge shows only when at least one of its own fields has text.
+  const centreHasText = Boolean(sct("centerTitle") || sct("centerTitleAccent") || sct("centerBadge"));
+  const plateHasText = Boolean(sct("plateTitle") || sct("plateValue"));
+  const evHasText = Boolean(sct("evTitle") || sct("evValue") || sct("evNote"));
+
   // Mosaic images: use CMS lists when provided (filter blanks), else the
   // built-in defaults so the hero never renders empty frames.
   const colA = (Array.isArray(sc.imagesA) ? sc.imagesA.filter(Boolean) : []);
@@ -113,7 +121,8 @@ function SolutionsControlPanel({ reduced, showcase, language }) {
       {/* Center connector line glow */}
       <div aria-hidden className="pointer-events-none absolute left-1/2 top-1/2 z-20 h-[280px] w-px -translate-x-1/2 -translate-y-1/2 bg-gradient-to-b from-transparent via-[#0088FF]/40 to-transparent lg:h-[360px]" />
 
-      {/* Central glass "connected platform" badge */}
+      {/* Central glass "connected platform" badge — only when filled in */}
+      {centreHasText ? (
       <motion.div
         initial={reduced ? false : { opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -125,16 +134,18 @@ function SolutionsControlPanel({ reduced, showcase, language }) {
             <Image src="/Layer_1.svg" alt="HalaPark" width={26} height={32} className="h-7 w-auto" />
           </span>
           <div>
-            <p className="text-[0.95rem] font-bold leading-tight tracking-[-0.03em] text-[#050A13] [overflow-wrap:anywhere]">{sct("centerTitle", "One Connected")}</p>
-            <p className="text-[0.95rem] font-bold leading-tight tracking-[-0.03em] text-[#0088FF] [overflow-wrap:anywhere]">{sct("centerTitleAccent", "Platform")}</p>
+            <p className="text-[0.95rem] font-bold leading-tight tracking-[-0.03em] text-[#050A13] [overflow-wrap:anywhere]">{sct("centerTitle")}</p>
+            <p className="text-[0.95rem] font-bold leading-tight tracking-[-0.03em] text-[#0088FF] [overflow-wrap:anywhere]">{sct("centerTitleAccent")}</p>
           </div>
           <span className="inline-flex items-center gap-1.5 rounded-full bg-[rgba(22,179,100,0.1)] px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.12em] text-[#16B364]">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#16B364] animate-pulse" /> {sct("centerBadge", "Unified")}
+            <span className="h-1.5 w-1.5 rounded-full bg-[#16B364] animate-pulse" /> {sct("centerBadge")}
           </span>
         </div>
       </motion.div>
+      ) : null}
 
-      {/* Floating chip — ANPR capture (top-left) */}
+      {/* Floating chip — ANPR capture (top-left) — only when filled in */}
+      {plateHasText ? (
       <motion.div
         initial={reduced ? false : { opacity: 0, y: -14, rotate: -5 }}
         animate={reduced ? undefined : { opacity: 1, y: 0, rotate: -5 }}
@@ -146,13 +157,15 @@ function SolutionsControlPanel({ reduced, showcase, language }) {
             <Car className="h-4.5 w-4.5" aria-hidden />
           </span>
           <div>
-            <p className="text-[11px] font-semibold text-[#050A13] [overflow-wrap:anywhere]">{sct("plateTitle", "Plate Recognized")}</p>
-            <p className="text-[10px] font-mono text-[#667085] [overflow-wrap:anywhere]">{sct("plateValue", "DXB · A 48291")}</p>
+            <p className="text-[11px] font-semibold text-[#050A13] [overflow-wrap:anywhere]">{sct("plateTitle")}</p>
+            <p className="text-[10px] font-mono text-[#667085] [overflow-wrap:anywhere]">{sct("plateValue")}</p>
           </div>
         </div>
       </motion.div>
+      ) : null}
 
-      {/* Floating chip — EV charging (bottom-right) */}
+      {/* Floating chip — EV charging (bottom-right) — only when filled in */}
+      {evHasText ? (
       <motion.div
         initial={reduced ? false : { opacity: 0, x: 16, rotate: 5 }}
         animate={reduced ? undefined : { opacity: 1, x: 0, rotate: 5 }}
@@ -162,12 +175,13 @@ function SolutionsControlPanel({ reduced, showcase, language }) {
         <div className="w-[150px] rounded-2xl border border-white/80 bg-white p-3 shadow-[0_16px_40px_rgba(15,23,42,0.15)]">
           <div className="flex items-center gap-1.5">
             <Zap className="h-3.5 w-3.5 text-[#16B364]" fill="currentColor" aria-hidden />
-            <p className="text-[11px] font-semibold text-[#050A13] [overflow-wrap:anywhere]">{sct("evTitle", "EV Bay · 12")}</p>
+            <p className="text-[11px] font-semibold text-[#050A13] [overflow-wrap:anywhere]">{sct("evTitle")}</p>
           </div>
-          <p className="mt-1.5 text-[1.1rem] font-bold tracking-[-0.03em] text-[#050A13] [overflow-wrap:anywhere]">{sct("evValue", "7.4 kW")}</p>
-          <p className="text-[9px] text-slate-400 [overflow-wrap:anywhere]">{sct("evNote", "charging · 4 active")}</p>
+          <p className="mt-1.5 text-[1.1rem] font-bold tracking-[-0.03em] text-[#050A13] [overflow-wrap:anywhere]">{sct("evValue")}</p>
+          <p className="text-[9px] text-slate-400 [overflow-wrap:anywhere]">{sct("evNote")}</p>
         </div>
       </motion.div>
+      ) : null}
 
       <style>{`
         @keyframes solMarqueeUp {
