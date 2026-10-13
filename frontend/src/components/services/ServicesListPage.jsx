@@ -861,199 +861,76 @@ function ServiceCard({ service, index, onClick, category, clickable = false }) {
 // from the CMS (sections.hero) — no hardcoded content, no defaults. When there
 // are no slides the whole visual is hidden; each floating card hides on its own
 // when the admin leaves it empty.
-function SvcHeroVisual({ reduced, slides, floatTop, floatBottom, language }) {
-  const [active, setActive] = useState(0);
-
-  useEffect(() => {
-    if (reduced || slides.length === 0) return undefined;
-    const id = setInterval(() => {
-      setActive((p) => (p + 1) % slides.length);
-    }, 3200);
-    return () => clearInterval(id);
-  }, [reduced, slides.length]);
-
-  // No slides configured → render nothing (no default imagery).
+// Three portrait service tiles shown side by side, each playing its own clip
+// (or showing its image). No floating chips — the client asked for the icons
+// to go and for all three services to be visible at once.
+function SvcHeroVisual({ reduced, slides }) {
   if (slides.length === 0) return null;
 
-  const current = slides[active % slides.length];
-
-  // Floating-card visibility (hide-when-empty, strictly from CMS).
-  const topTitle = (t(floatTop, "title", language) || "").trim();
-  const topSubtitle = (t(floatTop, "subtitle", language) || "").trim();
-  const showTop = Boolean(topTitle || topSubtitle);
-  const botTitle = (t(floatBottom, "title", language) || "").trim();
-  const botValue = (t(floatBottom, "value", language) || "").trim();
-  const botCaption = (t(floatBottom, "caption", language) || "").trim();
-  const botBadge = (t(floatBottom, "badge", language) || "").trim();
-  const botPercent = Number.parseInt(String(floatBottom?.percent ?? "").trim(), 10);
-  const botPercentValid = Number.isFinite(botPercent) && botPercent >= 0 && botPercent <= 100;
-  const showBottom = Boolean(botTitle || botValue || botCaption || botBadge || botPercentValid);
+  // Up to three tiles; the admin controls which services appear and in what order.
+  const tiles = slides.slice(0, 3);
 
   return (
-    <div className="relative flex items-center justify-center">
+    <div className="relative w-full">
+      {/* Soft glow behind the row */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-1/2 h-[380px] w-[380px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(0,136,255,0.16),rgba(37,99,235,0.06)_52%,transparent_76%)] blur-2xl lg:h-[520px] lg:w-[520px]"
+      />
 
-      {/* Deep glow halo */}
-      <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[340px] w-[340px] rounded-full bg-[radial-gradient(circle,rgba(0,136,255,0.18),rgba(37,99,235,0.08)_50%,transparent_75%)] blur-2xl lg:h-[460px] lg:w-[460px]" />
-
-      {/* Outer slow-rotating dashed orbit ring */}
-      {!reduced && (
-        <div
-          aria-hidden
-          className="svc-orbit-ring pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[340px] w-[340px] rounded-full border border-dashed border-[#0088FF]/18 lg:h-[460px] lg:w-[460px]"
-        />
-      )}
-
-      {/* Inner counter-rotating ring */}
-      {!reduced && (
-        <div
-          aria-hidden
-          className="svc-orbit-ring-rev pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[280px] w-[280px] rounded-full border border-[#0088FF]/10 lg:h-[380px] lg:w-[380px]"
-          style={{ background: "conic-gradient(from 0deg, transparent 70%, rgba(0,136,255,0.12) 85%, transparent 100%)" }}
-        />
-      )}
-
-      {/* ── Stacked decorative cards behind the main one ── */}
-      <div aria-hidden className="absolute z-10 h-[300px] w-[230px] -rotate-6 rounded-[28px] bg-white/55 shadow-[0_20px_50px_rgba(15,23,42,0.10)] backdrop-blur-sm sm:h-[360px] sm:w-[270px] lg:h-[420px] lg:w-[320px]" />
-      <div aria-hidden className="absolute z-10 h-[300px] w-[230px] rotate-3 rounded-[28px] bg-white/70 shadow-[0_20px_50px_rgba(15,23,42,0.10)] sm:h-[360px] sm:w-[270px] lg:h-[420px] lg:w-[320px]" />
-
-      {/* ── Main image card (cross-fading service imagery) ── */}
-      <motion.div
-        animate={reduced ? undefined : { y: [0, -10, 0] }}
-        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-        className="relative z-20 h-[300px] w-[230px] overflow-hidden rounded-[28px] border border-white/80 shadow-[0_30px_70px_rgba(15,23,42,0.22)] sm:h-[360px] sm:w-[270px] lg:h-[420px] lg:w-[320px]"
-      >
-        <AnimatePresence mode="popLayout">
+      <div className="relative z-10 grid grid-cols-3 gap-2.5 sm:gap-3.5 lg:gap-4">
+        {tiles.map((tile, i) => (
           <motion.div
-            key={active}
-            initial={reduced ? false : { opacity: 0, scale: 1.08 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={reduced ? undefined : { opacity: 0, scale: 1.02 }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute inset-0"
+            key={`${tile.name || tile.img || tile.video}-${i}`}
+            initial={reduced ? false : { opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease, delay: 0.1 + i * 0.1 }}
+            className="relative aspect-[9/16] overflow-hidden rounded-[18px] border border-white/80 shadow-[0_24px_60px_rgba(15,23,42,0.2)] sm:rounded-[22px] lg:rounded-[26px]"
           >
-            <Image
-              src={current.img}
-              alt={current.name}
-              fill
-              sizes="(min-width: 1024px) 320px, (min-width: 640px) 270px, 230px"
-              className="object-cover object-center"
-              priority
-            />
+            {tile.video ? (
+              <video
+                src={tile.video}
+                poster={tile.img || undefined}
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                onContextMenu={(e) => e.preventDefault()}
+                aria-label={tile.name || "Service"}
+                className="h-full w-full object-cover object-center"
+              />
+            ) : (
+              <Image
+                src={tile.img}
+                alt={tile.name || ""}
+                fill
+                sizes="(min-width: 1024px) 200px, (min-width: 640px) 170px, 115px"
+                className="object-cover object-center"
+                priority={i === 0}
+              />
+            )}
+
+            {/* Scrim so the caption stays readable on any footage */}
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#050A13]/80 via-[#050A13]/10 to-transparent" />
+
+            {tile.tag || tile.name ? (
+              <div className="absolute inset-x-0 bottom-0 p-2.5 sm:p-3 lg:p-4">
+                {tile.tag ? (
+                  <span className="inline-block rounded-full bg-[#0088FF] px-2 py-0.5 text-[8px] font-bold uppercase tracking-[0.12em] text-white shadow-[0_4px_12px_rgba(0,136,255,0.4)] sm:text-[9px]">
+                    {tile.tag}
+                  </span>
+                ) : null}
+                {tile.name ? (
+                  <p className="mt-1.5 text-[0.75rem] font-semibold leading-tight tracking-[-0.02em] text-white [overflow-wrap:anywhere] sm:text-[0.9rem] lg:text-[1.05rem]">
+                    {tile.name}
+                  </p>
+                ) : null}
+              </div>
+            ) : null}
           </motion.div>
-        </AnimatePresence>
-
-        {/* Gradient scrim */}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#050A13]/75 via-[#050A13]/10 to-transparent" />
-
-        {/* Caption */}
-        <div className="absolute inset-x-0 bottom-0 p-5">
-          <span className="inline-block rounded-full bg-[#0088FF] px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.14em] text-white shadow-[0_4px_12px_rgba(0,136,255,0.4)]">
-            {current.tag}
-          </span>
-          <AnimatePresence mode="wait">
-            <motion.p
-              key={current.name}
-              initial={reduced ? false : { opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={reduced ? undefined : { opacity: 0, y: -6 }}
-              transition={{ duration: 0.4 }}
-              className="mt-2 text-[1.25rem] font-semibold leading-tight tracking-[-0.03em] text-white"
-            >
-              {current.name}
-            </motion.p>
-          </AnimatePresence>
-        </div>
-
-        {/* Progress dots */}
-        <div className="absolute left-5 top-5 flex gap-1.5">
-          {slides.map((s, i) => (
-            <span
-              key={`${s.img}-${i}`}
-              className={`h-1.5 rounded-full transition-all duration-300 ${
-                i === active % slides.length ? "w-5 bg-white" : "w-1.5 bg-white/45"
-              }`}
-            />
-          ))}
-        </div>
-      </motion.div>
-
-      {/* ── Floating card (top-left) — CMS-driven, hides when empty ── */}
-      {showTop ? (
-        <motion.div
-          initial={reduced ? false : { opacity: 0, y: -16, rotate: -6 }}
-          animate={reduced ? undefined : { opacity: 1, y: 0, rotate: -6 }}
-          transition={{ duration: 0.6, ease: [0.22,1,0.36,1], delay: 0.3 }}
-          className="absolute left-[-6%] top-2 z-30 hidden sm:block lg:left-[-16%] lg:top-6"
-        >
-          <div className="flex items-center gap-2.5 rounded-2xl border border-white/80 bg-white px-3 py-2.5 shadow-[0_16px_40px_rgba(15,23,42,0.13)]">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#0088FF] to-[#2563EB] text-white shadow-[0_4px_10px_rgba(0,136,255,0.35)]">
-              <ParkingCircle aria-hidden className="h-4.5 w-4.5" />
-            </span>
-            <div>
-              {topTitle ? <p className="text-[11px] font-semibold text-[#050A13] [overflow-wrap:anywhere]">{topTitle}</p> : null}
-              {topSubtitle ? <p className="text-[10px] text-[#667085] [overflow-wrap:anywhere]">{topSubtitle}</p> : null}
-            </div>
-            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#16B364] text-white">
-              <Check aria-hidden className="h-3 w-3" strokeWidth={3} />
-            </span>
-          </div>
-        </motion.div>
-      ) : null}
-
-      {/* ── Floating stat card (bottom-right) — CMS-driven, hides when empty ── */}
-      {showBottom ? (
-        <motion.div
-          initial={reduced ? false : { opacity: 0, x: 16, rotate: 5 }}
-          animate={reduced ? undefined : { opacity: 1, x: 0, rotate: 5 }}
-          transition={{ duration: 0.6, ease: [0.22,1,0.36,1], delay: 0.5 }}
-          className="absolute bottom-[10%] right-[-6%] z-30 hidden sm:block lg:right-[-14%]"
-        >
-          <div className="w-[162px] rounded-2xl border border-white/80 bg-white p-3 shadow-[0_16px_40px_rgba(15,23,42,0.13)]">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5">
-                <Zap aria-hidden className="h-3.5 w-3.5 text-[#16B364]" fill="currentColor" />
-                {botTitle ? <p className="text-[11px] font-semibold text-[#050A13] [overflow-wrap:anywhere]">{botTitle}</p> : null}
-              </div>
-              {botBadge ? <span className="rounded-full bg-[rgba(22,179,100,0.1)] px-1.5 py-0.5 text-[9px] font-bold text-[#16B364] [overflow-wrap:anywhere]">{botBadge}</span> : null}
-            </div>
-            {botPercentValid ? (
-              <div className="mt-2.5 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
-                <motion.div
-                  className="h-full rounded-full bg-gradient-to-r from-[#0088FF] to-[#16B364]"
-                  initial={{ width: "0%" }}
-                  animate={{ width: `${botPercent}%` }}
-                  transition={{ duration: 1.4, ease: "easeOut", delay: 0.7 }}
-                />
-              </div>
-            ) : null}
-            {(botValue || botCaption) ? (
-              <div className="mt-1.5 flex justify-between gap-2">
-                {botValue ? <p className="text-[9px] text-slate-400 [overflow-wrap:anywhere]">{botValue}</p> : null}
-                {botCaption ? <p className="text-[9px] font-semibold text-[#0088FF] [overflow-wrap:anywhere]">{botCaption}</p> : null}
-              </div>
-            ) : null}
-          </div>
-        </motion.div>
-      ) : null}
-
-      {/* ── Pulsing location pin ── */}
-      {!reduced && (
-        <motion.div
-          animate={{ y: [0, -9, 0] }}
-          transition={{ duration: 3.6, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-[6%] left-[6%] z-30 hidden text-[#0088FF] sm:block lg:left-[0%]"
-        >
-          <div className="relative">
-            <motion.div
-              className="absolute -inset-3 rounded-full bg-[#0088FF]/12"
-              animate={{ scale: [1, 1.6, 1], opacity: [0.6, 0, 0.6] }}
-              transition={{ duration: 2.4, repeat: Infinity, ease: "easeOut" }}
-            />
-            <MapPin aria-hidden className="h-10 w-10 drop-shadow-[0_8px_16px_rgba(0,136,255,0.4)]" fill="currentColor" />
-          </div>
-          <span className="mt-1 block h-1.5 w-8 rounded-full bg-[#0088FF]/20 blur-sm" />
-        </motion.div>
-      )}
+        ))}
+      </div>
     </div>
   );
 }
@@ -1136,10 +1013,11 @@ function HeroSection({ onGetQuote, hero }) {
   const heroSlides = (Array.isArray(hero?.slides) ? hero.slides : [])
     .map((s) => ({
       img: (s?.img || "").trim(),
+      video: (s?.video || "").trim(),
       name: t(s, "name", language),
       tag: t(s, "tag", language),
     }))
-    .filter((s) => s.img);
+    .filter((s) => s.img || s.video);
 
   return (
     <section
@@ -1311,15 +1189,9 @@ function HeroSection({ onGetQuote, hero }) {
               initial={reduced ? false : { opacity: 0, x: 40 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.75, ease, delay: 0.12 }}
-              className="relative mt-16 flex min-h-[480px] items-center justify-center lg:mt-0 lg:min-h-[620px]"
+              className="relative mt-16 flex w-full items-center justify-center lg:mt-0"
             >
-              <SvcHeroVisual
-                reduced={reduced}
-                slides={heroSlides}
-                floatTop={hero?.floatCardTop}
-                floatBottom={hero?.floatCardBottom}
-                language={language}
-              />
+              <SvcHeroVisual reduced={reduced} slides={heroSlides} />
             </motion.div>
           ) : null}
 
