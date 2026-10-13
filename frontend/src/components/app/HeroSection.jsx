@@ -120,10 +120,11 @@ function StatStrip({ stats, language }) {
   );
 }
 
-function HeroPhone({ phoneImage }) {
+function HeroPhone({ phoneImage, phoneVideo }) {
   const src = (phoneImage || "").trim();
-  // No screenshot configured → no phone block (no hardcoded fallback).
-  if (!src) return null;
+  const video = (phoneVideo || "").trim();
+  // Neither configured → no phone block (no hardcoded fallback).
+  if (!src && !video) return null;
 
   return (
     <motion.div
@@ -138,14 +139,30 @@ function HeroPhone({ phoneImage }) {
       <div className="absolute inset-x-[16%] bottom-2 h-14 rounded-full bg-[#0F172A]/18 blur-[24px]" />
       <div className="relative isolate aspect-[1439/2920] drop-shadow-[0_30px_58px_rgba(5,10,19,0.28)]">
         <div className="absolute left-[4.2%] right-[4.2%] top-[1%] bottom-[1.2%] z-20 translate-y-[1px] overflow-hidden rounded-[1.6rem] bg-white lg:rounded-[3.2rem]">
-          <Image
-            src={src}
-            alt="HalaPark booking screen"
-            fill
-            sizes="(min-width: 1280px) 365px, (min-width: 1024px) 340px, (min-width: 640px) 290px, 235px"
-            className="object-cover object-center"
-            priority
-          />
+          {/* A video wins when one is uploaded; otherwise the screenshot.
+              Muted + playsInline so it autoplays on phones too. */}
+          {video ? (
+            <video
+              src={video}
+              poster={src || undefined}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              onContextMenu={(e) => e.preventDefault()}
+              className="h-full w-full object-cover object-center"
+            />
+          ) : (
+            <Image
+              src={src}
+              alt="HalaPark booking screen"
+              fill
+              sizes="(min-width: 1280px) 365px, (min-width: 1024px) 340px, (min-width: 640px) 290px, 235px"
+              className="object-cover object-center"
+              priority
+            />
+          )}
         </div>
         <div className="pointer-events-none absolute inset-0 z-10">
           <Image
@@ -358,6 +375,7 @@ export default function HeroSection() {
   if (content?.enabled === false) return null;
 
   const phoneImage = (content.phoneImage || "").trim();
+  const phoneVideo = (content.phoneVideo || "").trim();
   const stats = Array.isArray(content.stats) ? content.stats : [];
   const cards = Array.isArray(content.cards) ? content.cards : [];
 
@@ -378,7 +396,7 @@ export default function HeroSection() {
     (content.subtitle || "").trim() ||
     (content.eyebrow || "").trim();
   const hasContent =
-    hasText || phoneImage || stats.length > 0 || cards.length > 0;
+    hasText || phoneImage || phoneVideo || stats.length > 0 || cards.length > 0;
   if (!hasContent) return null;
 
   const dir = language === "ar" ? "rtl" : "ltr";
@@ -464,7 +482,7 @@ export default function HeroSection() {
             language={language}
             prefersReducedMotion={prefersReducedMotion}
           />
-          <HeroPhone phoneImage={phoneImage} />
+          <HeroPhone phoneImage={phoneImage} phoneVideo={phoneVideo} />
           <MobileFloatingCards cards={cards} language={language} />
         </motion.div>
 
