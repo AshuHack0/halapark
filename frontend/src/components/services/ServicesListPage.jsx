@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useLayoutEffect, useEffect, useMemo } from "react";
+import { useState, useRef, useLayoutEffect, useEffect, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { createPortal } from "react-dom";
 import ReCAPTCHA from "react-google-recaptcha";
@@ -861,82 +861,118 @@ function ServiceCard({ service, index, onClick, category, clickable = false }) {
 // from the CMS (sections.hero) — no hardcoded content, no defaults. When there
 // are no slides the whole visual is hidden; each floating card hides on its own
 // when the admin leaves it empty.
-// Three portrait service tiles shown side by side, each playing its own clip
-// (or showing its image). No floating chips — the client asked for the icons
-// to go and for all three services to be visible at once.
-function SvcHeroVisual({ reduced, slides }) {
-  if (slides.length === 0) return null;
+// ONE service slide at a time in a single portrait frame. A video slide plays
+// to the end and then hands over to the next one; an image slide holds for a
+// few seconds. Never more than one clip playing at once.
+const SVC_IMAGE_HOLD_MS = 5000;
 
-  // Up to three tiles; the admin controls which services appear and in what order.
-  const tiles = slides.slice(0, 3);
-  // Columns match the number of tiles, so two tiles fill the row (and render
-  // larger) instead of leaving an empty third column. Static class names so
-  // Tailwind keeps them.
-  const colsClass =
-    tiles.length === 1 ? "grid-cols-1 mx-auto max-w-[380px]"
-    : tiles.length === 2 ? "grid-cols-2"
-    : "grid-cols-3";
+function SvcHeroVisual({ reduced, slides }) {
+  const [active, setActive] = useState(0);
+  const count = slides.length;
+
+  const next = useCallback(() => {
+    setActive((p) => (p + 1) % Math.max(count, 1));
+  }, [count]);
+
+  const current = count > 0 ? slides[active % count] : null;
+  const isVideo = Boolean(current?.video);
+
+  // Image slides have no "ended" event, so they advance on a timer. Video
+  // slides advance from onEnded instead — no timer, so a long clip is never
+  // cut off and a short one never leaves a gap.
+  useEffect(() => {
+    if (count < 2 || isVideo) return undefined;
+    const id = setTimeout(next, SVC_IMAGE_HOLD_MS);
+    return () => clearTimeout(id);
+  }, [active, count, isVideo, next]);
+
+  if (count === 0 || !current) return null;
 
   return (
-    <div className="relative w-full">
-      {/* Soft glow behind the row */}
+    <div className="relative mx-auto w-full max-w-[300px] sm:max-w-[340px] lg:mx-0 lg:ms-auto lg:max-w-[380px]">
+      {/* Soft glow behind the frame */}
       <div
         aria-hidden
         className="pointer-events-none absolute left-1/2 top-1/2 h-[380px] w-[380px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(0,136,255,0.16),rgba(37,99,235,0.06)_52%,transparent_76%)] blur-2xl lg:h-[520px] lg:w-[520px]"
       />
 
-      <div className={`relative z-10 grid ${colsClass} gap-2.5 sm:gap-3.5 lg:gap-4`}>
-        {tiles.map((tile, i) => (
+      <div className="relative z-10 aspect-[9/16] w-full overflow-hidden rounded-[26px] border border-white/80 shadow-[0_30px_70px_rgba(15,23,42,0.22)]">
+        <AnimatePresence mode="wait">
           <motion.div
-            key={`${tile.name || tile.img || tile.video}-${i}`}
-            initial={reduced ? false : { opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease, delay: 0.1 + i * 0.1 }}
-            className="relative aspect-[9/16] overflow-hidden rounded-[18px] border border-white/80 shadow-[0_24px_60px_rgba(15,23,42,0.2)] sm:rounded-[22px] lg:rounded-[26px]"
+            key={`${active}-${current.video || current.img}`}
+            initial={reduced ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={reduced ? undefined : { opacity: 0 }}
+            transition={{ duration: 0.5, ease }}
+            className="absolute inset-0"
           >
-            {tile.video ? (
+            {isVideo ? (
               <video
-                src={tile.video}
-                poster={tile.img || undefined}
+                key={current.video}
+                src={current.video}
+                poster={current.img || undefined}
                 autoPlay
                 muted
-                loop
                 playsInline
-                preload="metadata"
+                // Only loop when it is the single slide; otherwise the end of
+                // the clip is what moves us on.
+                loop={count < 2}
+                preload="auto"
+                onEnded={count > 1 ? next : undefined}
+                onError={count > 1 ? next : undefined}
                 onContextMenu={(e) => e.preventDefault()}
-                aria-label={tile.name || "Service"}
+                aria-label={current.name || "Service"}
                 className="h-full w-full object-cover object-center"
               />
             ) : (
               <Image
-                src={tile.img}
-                alt={tile.name || ""}
+                src={current.img}
+                alt={current.name || ""}
                 fill
-                sizes="(min-width: 1024px) 200px, (min-width: 640px) 170px, 115px"
+                sizes="(min-width: 1024px) 380px, (min-width: 640px) 340px, 300px"
                 className="object-cover object-center"
-                priority={i === 0}
+                priority
               />
             )}
-
-            {/* Scrim so the caption stays readable on any footage */}
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#050A13]/80 via-[#050A13]/10 to-transparent" />
-
-            {tile.tag || tile.name ? (
-              <div className="absolute inset-x-0 bottom-0 p-2.5 sm:p-3 lg:p-4">
-                {tile.tag ? (
-                  <span className="inline-block rounded-full bg-[#0088FF] px-2 py-0.5 text-[8px] font-bold uppercase tracking-[0.12em] text-white shadow-[0_4px_12px_rgba(0,136,255,0.4)] sm:text-[9px]">
-                    {tile.tag}
-                  </span>
-                ) : null}
-                {tile.name ? (
-                  <p className="mt-1.5 text-[0.75rem] font-semibold leading-tight tracking-[-0.02em] text-white [overflow-wrap:anywhere] sm:text-[0.9rem] lg:text-[1.05rem]">
-                    {tile.name}
-                  </p>
-                ) : null}
-              </div>
-            ) : null}
           </motion.div>
-        ))}
+        </AnimatePresence>
+
+        {/* Scrim so the caption stays readable on any footage */}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#050A13]/80 via-[#050A13]/10 to-transparent" />
+
+        {/* Caption */}
+        {current.tag || current.name ? (
+          <div className="absolute inset-x-0 bottom-0 p-5">
+            {current.tag ? (
+              <span className="inline-block rounded-full bg-[#0088FF] px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.14em] text-white shadow-[0_4px_12px_rgba(0,136,255,0.4)]">
+                {current.tag}
+              </span>
+            ) : null}
+            {current.name ? (
+              <p className="mt-2 text-[1.25rem] font-semibold leading-tight tracking-[-0.03em] text-white [overflow-wrap:anywhere]">
+                {current.name}
+              </p>
+            ) : null}
+          </div>
+        ) : null}
+
+        {/* Which slide we are on */}
+        {count > 1 ? (
+          <div className="absolute inset-x-0 top-4 flex justify-center gap-1.5">
+            {slides.map((sl, i) => (
+              <button
+                key={`${sl.name || sl.img || sl.video}-${i}`}
+                type="button"
+                onClick={() => setActive(i)}
+                aria-label={`Show ${sl.name || `slide ${i + 1}`}`}
+                aria-current={i === active}
+                className={`h-1 rounded-full transition-all duration-300 ${
+                  i === active ? "w-7 bg-white" : "w-3 bg-white/45 hover:bg-white/70"
+                }`}
+              />
+            ))}
+          </div>
+        ) : null}
       </div>
     </div>
   );
@@ -1087,7 +1123,7 @@ function HeroSection({ onGetQuote, hero }) {
 
       {/* ══ CONTENT ══ */}
       <div className="relative z-[2] mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-28">
-        <div className="lg:grid lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:gap-12 xl:gap-16">
+        <div className="lg:grid lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-12 xl:gap-16">
 
           {/* ─── LEFT — text ─── */}
           <motion.div initial={reduced ? false : "hidden"} animate="visible" variants={container}>
