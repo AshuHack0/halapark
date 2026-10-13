@@ -1087,7 +1087,7 @@ function HeroSection({ onGetQuote, hero }) {
 
       {/* ══ CONTENT ══ */}
       <div className="relative z-[2] mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-28">
-        <div className="lg:grid lg:grid-cols-[0.82fr_1.18fr] lg:items-center lg:gap-10 xl:gap-14">
+        <div className="lg:grid lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:gap-12 xl:gap-16">
 
           {/* ─── LEFT — text ─── */}
           <motion.div initial={reduced ? false : "hidden"} animate="visible" variants={container}>
