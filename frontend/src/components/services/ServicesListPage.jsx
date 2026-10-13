@@ -869,6 +869,13 @@ function SvcHeroVisual({ reduced, slides }) {
 
   // Up to three tiles; the admin controls which services appear and in what order.
   const tiles = slides.slice(0, 3);
+  // Columns match the number of tiles, so two tiles fill the row (and render
+  // larger) instead of leaving an empty third column. Static class names so
+  // Tailwind keeps them.
+  const colsClass =
+    tiles.length === 1 ? "grid-cols-1 mx-auto max-w-[380px]"
+    : tiles.length === 2 ? "grid-cols-2"
+    : "grid-cols-3";
 
   return (
     <div className="relative w-full">
@@ -878,7 +885,7 @@ function SvcHeroVisual({ reduced, slides }) {
         className="pointer-events-none absolute left-1/2 top-1/2 h-[380px] w-[380px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(0,136,255,0.16),rgba(37,99,235,0.06)_52%,transparent_76%)] blur-2xl lg:h-[520px] lg:w-[520px]"
       />
 
-      <div className="relative z-10 grid grid-cols-3 gap-2.5 sm:gap-3.5 lg:gap-4">
+      <div className={`relative z-10 grid ${colsClass} gap-2.5 sm:gap-3.5 lg:gap-4`}>
         {tiles.map((tile, i) => (
           <motion.div
             key={`${tile.name || tile.img || tile.video}-${i}`}
@@ -1080,7 +1087,7 @@ function HeroSection({ onGetQuote, hero }) {
 
       {/* ══ CONTENT ══ */}
       <div className="relative z-[2] mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-28">
-        <div className="lg:grid lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-14 xl:gap-24">
+        <div className="lg:grid lg:grid-cols-[0.82fr_1.18fr] lg:items-center lg:gap-10 xl:gap-14">
 
           {/* ─── LEFT — text ─── */}
           <motion.div initial={reduced ? false : "hidden"} animate="visible" variants={container}>
