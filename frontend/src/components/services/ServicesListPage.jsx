@@ -861,9 +861,10 @@ function ServiceCard({ service, index, onClick, category, clickable = false }) {
 // from the CMS (sections.hero) — no hardcoded content, no defaults. When there
 // are no slides the whole visual is hidden; each floating card hides on its own
 // when the admin leaves it empty.
-// ONE service slide at a time in a single portrait frame. A video slide plays
-// to the end and then hands over to the next one; an image slide holds for a
-// few seconds. Never more than one clip playing at once.
+// Fanned card stack: the active service sits centred and upright with its
+// neighbours peeking out behind it, tilted and scaled down. Only the centre
+// card plays — the side cards show their still, so there is never more than
+// one clip running. A video hands over when it ends; a still holds briefly.
 const SVC_IMAGE_HOLD_MS = 5000;
 
 function SvcHeroVisual({ reduced, slides }) {
@@ -877,9 +878,8 @@ function SvcHeroVisual({ reduced, slides }) {
   const current = count > 0 ? slides[active % count] : null;
   const isVideo = Boolean(current?.video);
 
-  // Image slides have no "ended" event, so they advance on a timer. Video
-  // slides advance from onEnded instead — no timer, so a long clip is never
-  // cut off and a short one never leaves a gap.
+  // Stills have no "ended" event, so they advance on a timer; videos advance
+  // from onEnded so a clip is never cut short.
   useEffect(() => {
     if (count < 2 || isVideo) return undefined;
     const id = setTimeout(next, SVC_IMAGE_HOLD_MS);
@@ -888,92 +888,127 @@ function SvcHeroVisual({ reduced, slides }) {
 
   if (count === 0 || !current) return null;
 
+  // Where each card sits relative to the active one: 0 centre, 1 to the right,
+  // -1 to the left, anything else parked behind the centre and hidden.
+  const offsetOf = (i) => {
+    const raw = (i - active + count) % count;
+    if (raw === 0) return 0;
+    if (raw === 1) return 1;
+    if (raw === count - 1) return -1;
+    return 2; // not one of the three visible positions
+  };
+
+  const layoutFor = (offset) => {
+    if (offset === 0) return { x: "0%", scale: 1, rotate: 0, opacity: 1, zIndex: 30 };
+    if (offset === 1) return { x: "62%", scale: 0.82, rotate: 7, opacity: 0.9, zIndex: 20 };
+    if (offset === -1) return { x: "-62%", scale: 0.82, rotate: -7, opacity: 0.9, zIndex: 20 };
+    return { x: "0%", scale: 0.7, rotate: 0, opacity: 0, zIndex: 10 };
+  };
+
   return (
-    <div className="relative mx-auto w-full max-w-[300px] sm:max-w-[340px] lg:mx-0 lg:ms-auto lg:max-w-[380px]">
-      {/* Soft glow behind the frame */}
+    <div className="relative mx-auto w-full max-w-[420px] lg:max-w-[460px]">
+      {/* Soft glow behind the stack */}
       <div
         aria-hidden
-        className="pointer-events-none absolute left-1/2 top-1/2 h-[380px] w-[380px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(0,136,255,0.16),rgba(37,99,235,0.06)_52%,transparent_76%)] blur-2xl lg:h-[520px] lg:w-[520px]"
+        className="pointer-events-none absolute left-1/2 top-[42%] h-[360px] w-[360px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(0,136,255,0.16),rgba(37,99,235,0.06)_52%,transparent_76%)] blur-2xl lg:h-[480px] lg:w-[480px]"
       />
 
-      <div className="relative z-10 aspect-[9/16] w-full overflow-hidden rounded-[26px] border border-white/80 shadow-[0_30px_70px_rgba(15,23,42,0.22)]">
+      {/* The stack. Height comes from an invisible spacer so the absolutely
+          positioned cards have a box to sit in. */}
+      <div className="relative">
+        <div aria-hidden className="mx-auto aspect-[9/16] w-[56%] opacity-0" />
+
+        {slides.map((slide, i) => {
+          const offset = offsetOf(i);
+          const isActive = offset === 0;
+          return (
+            <motion.div
+              key={`${slide.name || slide.img || slide.video}-${i}`}
+              initial={false}
+              animate={layoutFor(offset)}
+              transition={reduced ? { duration: 0 } : { duration: 0.6, ease }}
+              style={{ zIndex: layoutFor(offset).zIndex }}
+              className="absolute inset-x-0 top-0 mx-auto aspect-[9/16] w-[56%] overflow-hidden rounded-[22px] shadow-[0_26px_60px_rgba(15,23,42,0.24)] lg:rounded-[26px]"
+            >
+              {/* Only the centre card plays; the others show their still. */}
+              {isActive && slide.video ? (
+                <video
+                  key={slide.video}
+                  src={slide.video}
+                  poster={slide.img || undefined}
+                  autoPlay
+                  muted
+                  playsInline
+                  loop={count < 2}
+                  preload="auto"
+                  onEnded={count > 1 ? next : undefined}
+                  onError={count > 1 ? next : undefined}
+                  onContextMenu={(e) => e.preventDefault()}
+                  aria-label={slide.name || "Service"}
+                  className="h-full w-full object-cover object-center"
+                />
+              ) : slide.img ? (
+                <Image
+                  src={slide.img}
+                  alt={isActive ? slide.name || "" : ""}
+                  fill
+                  sizes="(min-width: 1024px) 260px, 230px"
+                  className="object-cover object-center"
+                  priority={isActive}
+                />
+              ) : slide.video ? (
+                // A side card whose slide is video-only: show its first frame,
+                // paused. Never autoplays, so only the centre card is playing.
+                <video
+                  src={slide.video}
+                  muted
+                  playsInline
+                  preload="metadata"
+                  aria-hidden
+                  className="h-full w-full object-cover object-center"
+                />
+              ) : (
+                <div className="h-full w-full bg-slate-200" />
+              )}
+
+              {/* Accent ring on the active card; the others sit back behind a veil. */}
+              {isActive ? (
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 rounded-[22px] ring-2 ring-[#0088FF] lg:rounded-[26px]"
+                />
+              ) : (
+                <span aria-hidden className="pointer-events-none absolute inset-0 bg-white/25" />
+              )}
+            </motion.div>
+          );
+        })}
+      </div>
+
+      {/* Caption under the stack — belongs to the centre card */}
+      {current.name || current.tag ? (
         <AnimatePresence mode="wait">
           <motion.div
-            key={`${active}-${current.video || current.img}`}
-            initial={reduced ? false : { opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={reduced ? undefined : { opacity: 0 }}
-            transition={{ duration: 0.5, ease }}
-            className="absolute inset-0"
+            key={`${active}-caption`}
+            initial={reduced ? false : { opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={reduced ? undefined : { opacity: 0, y: -6 }}
+            transition={{ duration: 0.35, ease }}
+            className="relative z-30 mt-7 text-center"
           >
-            {isVideo ? (
-              <video
-                key={current.video}
-                src={current.video}
-                poster={current.img || undefined}
-                autoPlay
-                muted
-                playsInline
-                // Only loop when it is the single slide; otherwise the end of
-                // the clip is what moves us on.
-                loop={count < 2}
-                preload="auto"
-                onEnded={count > 1 ? next : undefined}
-                onError={count > 1 ? next : undefined}
-                onContextMenu={(e) => e.preventDefault()}
-                aria-label={current.name || "Service"}
-                className="h-full w-full object-cover object-center"
-              />
-            ) : (
-              <Image
-                src={current.img}
-                alt={current.name || ""}
-                fill
-                sizes="(min-width: 1024px) 380px, (min-width: 640px) 340px, 300px"
-                className="object-cover object-center"
-                priority
-              />
-            )}
-          </motion.div>
-        </AnimatePresence>
-
-        {/* Scrim so the caption stays readable on any footage */}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#050A13]/80 via-[#050A13]/10 to-transparent" />
-
-        {/* Caption */}
-        {current.tag || current.name ? (
-          <div className="absolute inset-x-0 bottom-0 p-5">
-            {current.tag ? (
-              <span className="inline-block rounded-full bg-[#0088FF] px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.14em] text-white shadow-[0_4px_12px_rgba(0,136,255,0.4)]">
-                {current.tag}
-              </span>
-            ) : null}
             {current.name ? (
-              <p className="mt-2 text-[1.25rem] font-semibold leading-tight tracking-[-0.03em] text-white [overflow-wrap:anywhere]">
+              <p className="text-[1.3rem] font-semibold leading-tight tracking-[-0.03em] text-[#050A13] [overflow-wrap:anywhere]">
                 {current.name}
               </p>
             ) : null}
-          </div>
-        ) : null}
-
-        {/* Which slide we are on */}
-        {count > 1 ? (
-          <div className="absolute inset-x-0 top-4 flex justify-center gap-1.5">
-            {slides.map((sl, i) => (
-              <button
-                key={`${sl.name || sl.img || sl.video}-${i}`}
-                type="button"
-                onClick={() => setActive(i)}
-                aria-label={`Show ${sl.name || `slide ${i + 1}`}`}
-                aria-current={i === active}
-                className={`h-1 rounded-full transition-all duration-300 ${
-                  i === active ? "w-7 bg-white" : "w-3 bg-white/45 hover:bg-white/70"
-                }`}
-              />
-            ))}
-          </div>
-        ) : null}
-      </div>
+            {current.tag ? (
+              <p className="mt-1 text-[0.9rem] font-medium text-slate-500 [overflow-wrap:anywhere]">
+                {current.tag}
+              </p>
+            ) : null}
+          </motion.div>
+        </AnimatePresence>
+      ) : null}
     </div>
   );
 }
