@@ -1511,6 +1511,8 @@ function FeatureHighlightsSection() {
   const depGradient = t(deployment, "headingGradient", language)?.trim() || "";
   const depSubtitle = t(deployment, "subtitle", language) || "";
   const depImage = typeof deployment.image === "string" ? deployment.image.trim() : "";
+  // A video takes priority over the still image when the admin uploads one.
+  const depVideo = typeof deployment.video === "string" ? deployment.video.trim() : "";
   const depPanelTitle = t(deployment, "panelTitle", language) || "";
   const depPanelAccent = t(deployment, "panelTitleAccent", language) || "";
   const steps = (Array.isArray(deployment.steps) ? deployment.steps : [])
@@ -1528,6 +1530,7 @@ function FeatureHighlightsSection() {
       !depGradient &&
       !depSubtitle &&
       !depImage &&
+      !depVideo &&
       !depPanelTitle &&
       !depPanelAccent &&
       steps.length === 0);
@@ -1682,9 +1685,24 @@ function FeatureHighlightsSection() {
               </motion.div>
 
               <motion.div initial={reduced ? false : { opacity: 0, x: 28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease, delay: 0.1 }} className="relative overflow-hidden rounded-[28px] bg-[#06111f] p-8 sm:p-10">
-                {depImage ? (
+                {depVideo || depImage ? (
                   <div className="absolute inset-0">
-                    <Image src={depImage} alt="" fill className="object-cover object-center" aria-hidden />
+                    {depVideo ? (
+                      <video
+                        src={depVideo}
+                        poster={depImage || undefined}
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        preload="metadata"
+                        onContextMenu={(e) => e.preventDefault()}
+                        aria-hidden
+                        className="h-full w-full object-cover object-center"
+                      />
+                    ) : (
+                      <Image src={depImage} alt="" fill className="object-cover object-center" aria-hidden />
+                    )}
                     <div className="absolute inset-0 bg-gradient-to-tr from-[#06111f]/90 via-[#06111f]/70 to-[#06111f]/40" />
                   </div>
                 ) : null}
