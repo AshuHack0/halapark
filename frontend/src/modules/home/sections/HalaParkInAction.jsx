@@ -92,10 +92,10 @@ function StoreBadge({
       ) : null}
 
       <div className="min-w-0 text-start leading-none">
-        <p className="truncate text-[8px] font-normal text-[#0F172A] sm:text-[9.2px]">
+        <p className="truncate text-[8px] font-normal text-white/70 sm:text-[9.2px]">
           {eyebrow}
         </p>
-        <p className="mt-1.5 truncate text-[13px] font-medium tracking-[-0.03em] text-[#050A13] sm:mt-2 sm:overflow-visible sm:whitespace-normal sm:text-[15.5px] lg:text-[16.6px]">
+        <p className="mt-1.5 truncate text-[13px] font-medium tracking-[-0.03em] text-white sm:mt-2 sm:overflow-visible sm:whitespace-normal sm:text-[15.5px] lg:text-[16.6px]">
           {label}
         </p>
       </div>
@@ -108,7 +108,7 @@ function StoreBadge({
     whileHover: prefersReducedMotion
       ? undefined
       : { y: -4, transition: { duration: 0.2, ease: "easeOut" } },
-    className: "flex w-full min-w-0 items-center gap-3 sm:w-auto sm:flex-1 sm:gap-3",
+    className: "flex w-full min-w-0 items-center gap-3 sm:w-auto sm:gap-3",
   };
 
   // With a store URL the whole badge is a link; without one it stays static.
@@ -183,79 +183,70 @@ export default function HalaParkInAction({ cmsKey = "halaParkInAction", pageSlug
       initial={prefersReducedMotion ? false : "hidden"}
       whileInView={prefersReducedMotion ? undefined : "visible"}
       viewport={{ once: true, amount: 0.28 }}
-      className="bg-white px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20"
+      className="relative isolate overflow-hidden bg-[#06111f]"
     >
-      <div className="mx-auto max-w-7xl">
-        <div className="overflow-hidden rounded-[24px] border border-[rgba(0,136,255,0.14)] bg-[linear-gradient(92deg,#FFFFFF_0%,rgba(0,136,255,0.05)_27%,rgba(0,136,255,0.12)_60%,rgba(0,136,255,0.22)_100%)] shadow-[0_12px_36px_rgba(15,23,42,0.04)]">
-          <div className="grid items-center gap-6 lg:items-end lg:min-h-[390px] lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
+      {/* Full-width banner: the image IS the section background, with the copy
+          written over it. Removes the empty half the two-column card left. */}
+      {copy.image ? (
+        <>
+          <Image
+            src={copy.image}
+            alt=""
+            aria-hidden
+            fill
+            sizes="100vw"
+            className="-z-10 object-cover object-center"
+            priority
+          />
+          {/* Scrim: heaviest behind the copy, clearing toward the far side.
+              Mirrors for Arabic. */}
+          <div
+            aria-hidden
+            className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(3,10,20,0.9)_0%,rgba(3,10,20,0.72)_40%,rgba(3,10,20,0.35)_72%,rgba(3,10,20,0.15)_100%)] rtl:bg-[linear-gradient(270deg,rgba(3,10,20,0.9)_0%,rgba(3,10,20,0.72)_40%,rgba(3,10,20,0.35)_72%,rgba(3,10,20,0.15)_100%)]"
+          />
+          {/* Phones show the copy full width, so the sideways scrim alone is
+              not enough — flat wash below lg. */}
+          <div aria-hidden className="absolute inset-0 -z-10 bg-[rgba(3,10,20,0.5)] lg:hidden" />
+        </>
+      ) : null}
+
+      <div className="relative mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:min-h-[520px] lg:px-8 lg:py-28">
+        <motion.div
+          variants={prefersReducedMotion ? undefined : copyStackVariants}
+          className="max-w-[640px]"
+        >
+          <motion.h1
+            variants={prefersReducedMotion ? undefined : copyItemVariants}
+            className="text-[clamp(2rem,4.5vw,4rem)] font-semibold leading-[1.05] tracking-[-0.06em] text-white [text-shadow:0_2px_24px_rgba(3,10,20,0.45)] [overflow-wrap:anywhere]"
+          >
+            {t(copy, "title", language)}
+          </motion.h1>
+
+          <motion.p
+            variants={prefersReducedMotion ? undefined : copyItemVariants}
+            className="mt-4 max-w-[560px] text-[0.95rem] leading-7 text-slate-200 sm:text-[1rem] [overflow-wrap:anywhere]"
+          >
+            {t(copy, "subtitle", language)}
+          </motion.p>
+
+          {storeLinks.length > 0 ? (
             <motion.div
-              variants={prefersReducedMotion ? undefined : copyStackVariants}
-              className="flex h-full flex-col justify-between px-5 pb-6 pt-6 sm:px-10 md:px-14 lg:py-[40px] lg:ps-[58px] lg:pe-6"
+              variants={prefersReducedMotion ? undefined : copyItemVariants}
+              className="mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-5"
             >
-              <div className="max-w-[560px]">
-                <motion.h1
-                  variants={prefersReducedMotion ? undefined : copyItemVariants}
-                  className="max-w-[560px] text-[clamp(2rem,4.5vw,4rem)] font-semibold leading-[1.05] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]"
-                >
-                  {t(copy, "title", language)}
-                </motion.h1>
-
-                <motion.p
-                  variants={prefersReducedMotion ? undefined : copyItemVariants}
-                  className="mt-3 max-w-[650px] text-[0.88rem] font-light leading-6 text-[#8A94A6] sm:text-[0.94rem] [overflow-wrap:anywhere]"
-                >
-                  {t(copy, "subtitle", language)}
-                </motion.p>
-
-               
-              </div>
-
-              {storeLinks.length > 0 ? (
-                <motion.div
-                  variants={prefersReducedMotion ? undefined : copyItemVariants}
-                  className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:items-center sm:justify-between sm:gap-3 lg:gap-5"
-                >
-                  {storeLinks.map((store, index) => (
-                    <StoreBadge
-                      key={store.label || index}
-                      {...store}
-                      eyebrow={t(store, "eyebrow", language)}
-                      label={t(store, "label", language)}
-                      index={index}
-                      prefersReducedMotion={prefersReducedMotion}
-                    />
-                  ))}
-                </motion.div>
-              ) : null}
+              {storeLinks.map((store, index) => (
+                <StoreBadge
+                  key={store.label || index}
+                  {...store}
+                  eyebrow={t(store, "eyebrow", language)}
+                  label={t(store, "label", language)}
+                  index={index}
+                  prefersReducedMotion={prefersReducedMotion}
+                />
+              ))}
             </motion.div>
-
-            <div className="relative flex items-end justify-start sm:min-h-[310px] lg:min-h-[390px] lg:self-end">
-              <div aria-hidden="true" className="absolute right-[6%] top-[15%]">
-                <div className="h-[180px] w-[180px] rounded-full bg-[#0088FF]/25 blur-[78px] sm:h-[220px] sm:w-[220px] lg:h-[280px] lg:w-[280px]" />
-              </div>
-
-              <div className="relative z-10 flex h-full w-full max-w-[600px] items-end lg:translate-x-10 xl:max-w-[680px]">
-                <div className="absolute bottom-[6%] left-[8%] right-[12%] h-10 rounded-full bg-[#0F172A]/12 blur-2xl sm:h-14" />
-
-                <motion.div
-                  variants={prefersReducedMotion ? undefined : previewImageVariants}
-                  initial={prefersReducedMotion ? false : "hidden"}
-                  whileInView={prefersReducedMotion ? undefined : "visible"}
-                  viewport={{ once: true, amount: 0.2 }}
-                  className="relative h-full w-full"
-                >
-                  <Image
-                    src={copy.image || "/UI/hf_20260401_051940_148a185a-d002-45bf-87b7-80e45dd5de5e 1.png"}
-                    alt={copy.imageAlt || copy.title || "HalaPark mobile app preview"}
-                    width={2352}
-                    height={1236}
-                    className="relative h-full w-full object-contain object-bottom-right"
-                  />
-                </motion.div>
-              </div>
-            </div>
-          </div>
-        </div>
+          ) : null}
+        </motion.div>
       </div>
     </motion.section>
   );
