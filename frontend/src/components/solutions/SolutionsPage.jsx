@@ -1703,7 +1703,9 @@ function FeatureHighlightsSection() {
                     ) : (
                       <Image src={depImage} alt="" fill className="object-cover object-center" aria-hidden />
                     )}
-                    <div className="absolute inset-0 bg-gradient-to-tr from-[#06111f]/90 via-[#06111f]/70 to-[#06111f]/40" />
+                    {/* Light wash only — enough to seat the panel in the section without
+                        dimming the photo. */}
+                    <div className="absolute inset-0 bg-gradient-to-tr from-[#06111f]/40 via-[#06111f]/20 to-[#06111f]/10" />
                   </div>
                 ) : null}
                 {/* Center overlay (pin + brand + caption) — hidden entirely
