@@ -1896,9 +1896,11 @@ function NewFinalCTA() {
           {/* Background: city skyline (CMS-editable: sections.cta.image) */}
           <div className="absolute inset-0">
             {image ? (
-              <Image src={image} alt="" fill className="object-cover object-center opacity-40" aria-hidden />
+              <Image src={image} alt="" fill className="object-cover object-center opacity-80" aria-hidden />
             ) : null}
-            <div className="absolute inset-0 bg-gradient-to-b from-[#06111f]/60 via-[#06111f]/40 to-[#06111f]/80" />
+            {/* Lighter wash so the photo reads; still darkest top and bottom
+                where the heading and the buttons sit. */}
+            <div className="absolute inset-0 bg-gradient-to-b from-[#06111f]/45 via-[#06111f]/20 to-[#06111f]/55" />
           </div>
 
           {/* Glowing network SVG overlay */}
