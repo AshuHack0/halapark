@@ -1752,19 +1752,17 @@ function LongTermCTA({ onGetQuote, cta }) {
   const headingGradient = (t(cta, "headingGradient", language) || "").trim();
   const subtitle = (t(cta, "subtitle", language) || "").trim();
   const ctaLabel = (t(cta, "ctaLabel", language) || "").trim();
+  // Optional photo for the curved cutout on the right (admin upload).
+  const image = (cta?.image || "").trim();
 
   return (
     <section className="bg-white px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
       <div className="mx-auto max-w-7xl">
-        <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[linear-gradient(120deg,#050A13_0%,#0B1220_42%,#0088FF_140%)] px-6 py-14 shadow-[0_28px_64px_rgba(15,23,42,0.28)] sm:px-10 sm:py-20 lg:px-16">
+        <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[linear-gradient(120deg,#050A13_0%,#0B1220_42%,#0088FF_140%)] shadow-[0_28px_64px_rgba(15,23,42,0.28)]">
           {/* Decorative layers: blueprint grid + soft glows + top hairline */}
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.045)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.045)_1px,transparent_1px)] bg-[size:44px_44px] [mask-image:radial-gradient(ellipse_75%_70%_at_50%_40%,black,transparent)]"
-          />
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full bg-[#0088FF]/35 blur-[100px] rtl:right-auto rtl:-left-24"
           />
           <div
             aria-hidden="true"
@@ -1774,32 +1772,66 @@ function LongTermCTA({ onGetQuote, cta }) {
             aria-hidden="true"
             className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#1AB2FF]/60 to-transparent"
           />
-          {/* Faint parking "P" watermark */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute -bottom-10 end-6 select-none text-[16rem] font-bold leading-none tracking-tighter text-white/[0.04] sm:text-[20rem]"
-          >
-            P
-          </div>
 
+          {/* ── Curved image cutout on the right ──
+              An ellipse clip gives one large sweeping curve down the left edge
+              of the photo instead of a straight rectangular join. */}
+          {image ? (
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-y-0 end-0 hidden w-[52%] lg:block"
+            >
+              <div className="absolute inset-0 [clip-path:ellipse(78%_125%_at_100%_50%)] rtl:[clip-path:ellipse(78%_125%_at_0%_50%)]">
+                <Image src={image} alt="" fill className="object-cover object-center" sizes="52vw" />
+                {/* Tint so the photo sits in the band rather than on top of it */}
+                <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(5,10,19,0.92)_0%,rgba(5,10,19,0.45)_38%,rgba(5,10,19,0.12)_100%)] rtl:bg-[linear-gradient(270deg,rgba(5,10,19,0.92)_0%,rgba(5,10,19,0.45)_38%,rgba(5,10,19,0.12)_100%)]" />
+              </div>
+              {/* Soft blue glow tracing the curve */}
+              <div className="absolute inset-0 [clip-path:ellipse(78%_125%_at_100%_50%)] rtl:[clip-path:ellipse(78%_125%_at_0%_50%)] ring-1 ring-inset ring-[#1AB2FF]/25" />
+            </div>
+          ) : (
+            /* No photo uploaded → keep the original glow so the band still
+               has life on the right. */
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full bg-[#0088FF]/35 blur-[100px] rtl:right-auto rtl:-left-24"
+            />
+          )}
+
+          {/* Faint parking "P" watermark — only when there is no photo */}
+          {!image ? (
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -bottom-10 end-6 select-none text-[16rem] font-bold leading-none tracking-tighter text-white/[0.04] sm:text-[20rem]"
+            >
+              P
+            </div>
+          ) : null}
+
+          {/* ── Copy on the left ── */}
           <motion.div
             initial={reduced ? false : { opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.6, ease }}
-            className="relative mx-auto max-w-3xl text-center"
+            className={`relative px-6 py-14 sm:px-10 sm:py-20 lg:py-24 lg:ps-16 ${
+              image ? "text-center lg:max-w-[52%] lg:pe-6 lg:text-start" : "mx-auto max-w-3xl text-center lg:px-16"
+            }`}
           >
             <h2 className="text-[clamp(2.4rem,4.2vw,3.6rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-white [overflow-wrap:anywhere]">
               {heading}
               {headingGradient ? (
-                <>
-                  {" "}
-                  <span className="block bg-gradient-to-r from-[#4DAAFF] to-[#1AB2FF] bg-clip-text text-transparent">{headingGradient}</span>
-                </>
+                <span className="block bg-gradient-to-r from-[#4DAAFF] to-[#1AB2FF] bg-clip-text text-transparent">
+                  {headingGradient}
+                </span>
               ) : null}
             </h2>
             {subtitle ? (
-              <p className="mx-auto mt-5 max-w-2xl text-sm leading-7 text-slate-300 sm:text-base [overflow-wrap:anywhere]">
+              <p
+                className={`mt-5 max-w-2xl text-sm leading-7 text-slate-300 sm:text-base [overflow-wrap:anywhere] ${
+                  image ? "mx-auto lg:mx-0" : "mx-auto"
+                }`}
+              >
                 {subtitle}
               </p>
             ) : null}
