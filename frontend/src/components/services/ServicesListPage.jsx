@@ -1794,7 +1794,7 @@ function LongTermCTA({ onGetQuote, cta }) {
               <div className="absolute inset-0 [clip-path:ellipse(78%_125%_at_100%_50%)] rtl:[clip-path:ellipse(78%_125%_at_0%_50%)]">
                 <Image src={image} alt="" fill className="object-cover object-center" sizes="52vw" />
                 {/* Tint so the photo sits in the band rather than on top of it */}
-                <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(5,10,19,0.92)_0%,rgba(5,10,19,0.45)_38%,rgba(5,10,19,0.12)_100%)] rtl:bg-[linear-gradient(270deg,rgba(5,10,19,0.92)_0%,rgba(5,10,19,0.45)_38%,rgba(5,10,19,0.12)_100%)]" />
+                <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(5,10,19,0.85)_0%,rgba(5,10,19,0.28)_42%,transparent_100%)] rtl:bg-[linear-gradient(270deg,rgba(5,10,19,0.85)_0%,rgba(5,10,19,0.28)_42%,transparent_100%)]" />
               </div>
               {/* Soft blue glow tracing the curve */}
               <div className="absolute inset-0 [clip-path:ellipse(78%_125%_at_100%_50%)] rtl:[clip-path:ellipse(78%_125%_at_0%_50%)] ring-1 ring-inset ring-[#1AB2FF]/25" />
