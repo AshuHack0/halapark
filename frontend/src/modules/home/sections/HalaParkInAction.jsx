@@ -92,10 +92,10 @@ function StoreBadge({
       ) : null}
 
       <div className="min-w-0 text-start leading-none">
-        <p className="truncate text-[8px] font-normal text-white/70 sm:text-[9.2px]">
+        <p className="truncate text-[8px] font-normal text-[#5B6779] sm:text-[9.2px]">
           {eyebrow}
         </p>
-        <p className="mt-1.5 truncate text-[13px] font-medium tracking-[-0.03em] text-white sm:mt-2 sm:overflow-visible sm:whitespace-normal sm:text-[15.5px] lg:text-[16.6px]">
+        <p className="mt-1.5 truncate text-[13px] font-medium tracking-[-0.03em] text-[#0A1B33] sm:mt-2 sm:overflow-visible sm:whitespace-normal sm:text-[15px]">
           {label}
         </p>
       </div>
@@ -108,7 +108,7 @@ function StoreBadge({
     whileHover: prefersReducedMotion
       ? undefined
       : { y: -4, transition: { duration: 0.2, ease: "easeOut" } },
-    className: "flex w-full min-w-0 items-center gap-3 sm:w-auto sm:gap-3",
+    className: "flex min-w-0 items-center gap-2.5 rounded-xl bg-white px-3 py-2 shadow-[0_2px_10px_rgba(15,23,42,0.08)]",
   };
 
   // With a store URL the whole badge is a link; without one it stays static.
@@ -141,10 +141,22 @@ export default function HalaParkInAction({ cmsKey = "halaParkInAction", pageSlug
       setCopy({
         // Admin saves the heading as `heading` (EN + ar.heading); the render reads
         // `title`, so remap the `ar` sub-object's heading→title to match.
-        ar: { ...d.ar, title: d.ar?.heading ?? d.ar?.title, subtitle: d.ar?.subtitle },
+        ar: {
+          ...d.ar,
+          title: d.ar?.heading ?? d.ar?.title,
+          subtitle: d.ar?.subtitle,
+          eyebrow: d.ar?.eyebrow,
+          headingAccent: d.ar?.headingAccent,
+          downloadLabel: d.ar?.downloadLabel,
+        },
         enabled: d.enabled,
         title: d.heading || d.title || "",
         subtitle: d.subtitle || "",
+        // Small label above the heading, the blue second line, and the label
+        // beside the store buttons — each hides when the admin leaves it blank.
+        eyebrow: (d.eyebrow || "").trim(),
+        headingAccent: (d.headingAccent || "").trim(),
+        downloadLabel: (d.downloadLabel || "").trim(),
         // Right-side preview image — admin upload overrides the built-in art.
         image: (d.image || "").trim(),
         imageAlt: (d.imageAlt || "").trim(),
@@ -178,53 +190,43 @@ export default function HalaParkInAction({ cmsKey = "halaParkInAction", pageSlug
   )
     return null;
 
+  const eyebrow = t(copy, "eyebrow", language);
+  const headingAccent = t(copy, "headingAccent", language);
+  const downloadLabel = t(copy, "downloadLabel", language);
+
   return (
     <motion.section
       initial={prefersReducedMotion ? false : "hidden"}
       whileInView={prefersReducedMotion ? undefined : "visible"}
       viewport={{ once: true, amount: 0.28 }}
-      className="relative isolate overflow-hidden bg-[#06111f]"
+      className="relative overflow-hidden bg-[linear-gradient(135deg,#F4F9FF_0%,#EAF4FF_48%,#DBEDFF_100%)] px-4 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20"
     >
-      {/* Full-width banner: the image IS the section background, with the copy
-          written over it. Removes the empty half the two-column card left. */}
-      {copy.image ? (
-        <>
-          <Image
-            src={copy.image}
-            alt=""
-            aria-hidden
-            fill
-            sizes="100vw"
-            className="-z-10 object-cover object-center"
-            priority
-          />
-          {/* Scrim: heaviest behind the copy, clearing toward the far side.
-              Mirrors for Arabic. */}
-          <div
-            aria-hidden
-            className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(3,10,20,0.9)_0%,rgba(3,10,20,0.72)_40%,rgba(3,10,20,0.35)_72%,rgba(3,10,20,0.15)_100%)] rtl:bg-[linear-gradient(270deg,rgba(3,10,20,0.9)_0%,rgba(3,10,20,0.72)_40%,rgba(3,10,20,0.35)_72%,rgba(3,10,20,0.15)_100%)]"
-          />
-          {/* Phones show the copy full width, so the sideways scrim alone is
-              not enough — flat wash below lg. */}
-          <div aria-hidden className="absolute inset-0 -z-10 bg-[rgba(3,10,20,0.5)] lg:hidden" />
-        </>
-      ) : null}
+      <div className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:gap-12">
+        {/* ── LEFT: eyebrow, heading, copy, download strip ── */}
+        <motion.div variants={prefersReducedMotion ? undefined : copyStackVariants}>
+          {eyebrow ? (
+            <motion.div
+              variants={prefersReducedMotion ? undefined : copyItemVariants}
+              className="mb-5 flex items-center gap-3"
+            >
+              <span className="text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-[#4A5A70] [overflow-wrap:anywhere]">
+                {eyebrow}
+              </span>
+              <span aria-hidden className="h-px w-24 bg-gradient-to-r from-[#0088FF]/60 to-transparent" />
+            </motion.div>
+          ) : null}
 
-      <div className="relative mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:min-h-[520px] lg:px-8 lg:py-28">
-        <motion.div
-          variants={prefersReducedMotion ? undefined : copyStackVariants}
-          className="max-w-[640px]"
-        >
-          <motion.h1
+          <motion.h2
             variants={prefersReducedMotion ? undefined : copyItemVariants}
-            className="text-[clamp(2rem,4.5vw,4rem)] font-semibold leading-[1.05] tracking-[-0.06em] text-white [text-shadow:0_2px_24px_rgba(3,10,20,0.45)] [overflow-wrap:anywhere]"
+            className="text-[clamp(2.2rem,4.6vw,4rem)] font-semibold leading-[1.02] tracking-[-0.055em] text-[#0A1B33] [overflow-wrap:anywhere]"
           >
-            {t(copy, "title", language)}
-          </motion.h1>
+            <span className="block">{t(copy, "title", language)}</span>
+            {headingAccent ? <span className="block text-[#0088FF]">{headingAccent}</span> : null}
+          </motion.h2>
 
           <motion.p
             variants={prefersReducedMotion ? undefined : copyItemVariants}
-            className="mt-4 max-w-[560px] text-[0.95rem] leading-7 text-slate-200 sm:text-[1rem] [overflow-wrap:anywhere]"
+            className="mt-5 max-w-[520px] text-[0.95rem] leading-7 text-[#49566B] sm:text-[1rem] [overflow-wrap:anywhere]"
           >
             {t(copy, "subtitle", language)}
           </motion.p>
@@ -232,21 +234,52 @@ export default function HalaParkInAction({ cmsKey = "halaParkInAction", pageSlug
           {storeLinks.length > 0 ? (
             <motion.div
               variants={prefersReducedMotion ? undefined : copyItemVariants}
-              className="mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-5"
+              className="mt-9 inline-flex w-full flex-col gap-4 rounded-[22px] bg-white/70 p-4 shadow-[0_10px_30px_rgba(15,23,42,0.06)] ring-1 ring-white sm:w-auto sm:flex-row sm:items-center sm:gap-5 sm:p-5"
             >
-              {storeLinks.map((store, index) => (
-                <StoreBadge
-                  key={store.label || index}
-                  {...store}
-                  eyebrow={t(store, "eyebrow", language)}
-                  label={t(store, "label", language)}
-                  index={index}
-                  prefersReducedMotion={prefersReducedMotion}
-                />
-              ))}
+              {downloadLabel ? (
+                <p className="max-w-[140px] text-[0.95rem] font-semibold leading-tight tracking-[-0.02em] text-[#0A1B33] [overflow-wrap:anywhere]">
+                  {downloadLabel}
+                </p>
+              ) : null}
+              <div className="flex flex-wrap items-center gap-3">
+                {storeLinks.map((store, index) => (
+                  <StoreBadge
+                    key={store.label || index}
+                    {...store}
+                    eyebrow={t(store, "eyebrow", language)}
+                    label={t(store, "label", language)}
+                    index={index}
+                    prefersReducedMotion={prefersReducedMotion}
+                  />
+                ))}
+              </div>
             </motion.div>
           ) : null}
         </motion.div>
+
+        {/* ── RIGHT: artwork on a soft blue disc ── */}
+        {copy.image ? (
+          <motion.div
+            variants={prefersReducedMotion ? undefined : previewImageVariants}
+            initial={prefersReducedMotion ? false : "hidden"}
+            whileInView={prefersReducedMotion ? undefined : "visible"}
+            viewport={{ once: true, amount: 0.2 }}
+            className="relative"
+          >
+            <div
+              aria-hidden
+              className="pointer-events-none absolute left-1/2 top-1/2 h-[90%] w-[90%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle_at_50%_50%,rgba(0,136,255,0.18),rgba(0,136,255,0.06)_55%,transparent_72%)]"
+            />
+            <Image
+              src={copy.image}
+              alt={copy.imageAlt || t(copy, "title", language) || "HalaPark app preview"}
+              width={1600}
+              height={1200}
+              className="relative h-auto w-full"
+              priority
+            />
+          </motion.div>
+        ) : null}
       </div>
     </motion.section>
   );
