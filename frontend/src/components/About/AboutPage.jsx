@@ -1357,21 +1357,36 @@ function FinalCTA({ cta }) {
   return (
     <section className="bg-white py-4 sm:py-5 lg:py-6">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="relative overflow-hidden rounded-[28px] bg-[#06111f]">
-          <div className="absolute inset-0">
-            {cta?.image ? (
-              <Image src={cta.image} alt="" fill className="object-cover object-center" aria-hidden />
-            ) : null}
-            <div className="absolute inset-0 bg-black/55" />
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/60" />
-          </div>
+        <div className="relative isolate overflow-hidden rounded-[28px] bg-[linear-gradient(118deg,#071327_0%,#0A1E3C_50%,#0B2E5E_100%)]">
+          {/* Depth: blueprint grid + a soft blue pool behind the copy */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:42px_42px] [mask-image:radial-gradient(ellipse_60%_80%_at_25%_50%,black,transparent)]"
+          />
+          <div aria-hidden className="pointer-events-none absolute -bottom-28 -left-20 h-72 w-72 rounded-full bg-[#0088FF]/25 blur-[90px]" />
+
+          {/* ── Image panel on the right: a tilted squircle with a blue ring
+                behind it, so it reads as artwork rather than a photo box. ── */}
+          {cta?.image ? (
+            <div aria-hidden className="pointer-events-none absolute inset-y-8 end-10 hidden w-[36%] lg:block">
+              <div className="absolute inset-0 -rotate-3 rounded-[64px] border border-[#1AB2FF]/40 rtl:rotate-3" />
+              <div className="absolute inset-0 rotate-2 overflow-hidden rounded-[64px] shadow-[0_30px_70px_rgba(3,10,20,0.5)] rtl:-rotate-2">
+                <Image src={cta.image} alt="" fill className="object-cover object-center" sizes="36vw" aria-hidden />
+                <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,19,39,0.6)_0%,rgba(7,19,39,0.1)_55%,transparent_100%)] rtl:bg-[linear-gradient(270deg,rgba(7,19,39,0.6)_0%,rgba(7,19,39,0.1)_55%,transparent_100%)]" />
+              </div>
+            </div>
+          ) : null}
 
           <motion.div
             initial={reduced ? false : { opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.65, ease }}
-            className="relative z-10 mx-auto max-w-3xl px-8 py-14 text-center sm:px-12 sm:py-16 lg:px-16 lg:py-20"
+            className={`relative z-10 px-8 py-14 text-center sm:px-12 sm:py-16 lg:py-20 ${
+              cta?.image
+                ? "lg:max-w-[56%] lg:ps-16 lg:pe-6 lg:text-start"
+                : "mx-auto max-w-3xl lg:px-16"
+            }`}
             dir={language === "ar" ? "rtl" : "ltr"}
           >
             {hasText(cta?.title) ? (
@@ -1382,11 +1397,11 @@ function FinalCTA({ cta }) {
             {hasText(cta?.description) ? (
               <RichText
                 text={t(cta, "description", language)}
-                className="mx-auto mt-5 max-w-2xl text-sm leading-7 text-white/75 sm:text-base [overflow-wrap:anywhere] block"
+                className={`mt-5 max-w-xl text-sm leading-7 text-white/80 sm:text-base [overflow-wrap:anywhere] block ${cta?.image ? "lg:mx-0" : "mx-auto"}`}
               />
             ) : null}
             {hasPrimary || hasSecondary ? (
-              <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+              <div className={`mt-8 flex flex-wrap items-center gap-3 ${cta?.image ? "justify-center lg:justify-start" : "justify-center"}`}>
                 {hasPrimary ? (
                   <Link
                     href={cta?.primaryCtaPopup ? PARTNER_FORM_LINK : cta?.primaryCtaLink || "/contact"}
