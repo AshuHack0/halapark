@@ -1895,15 +1895,24 @@ function NewFinalCTA() {
     <section className="bg-white py-4 sm:py-5 lg:py-6">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="relative overflow-hidden rounded-[28px] bg-[#06111f]">
-          {/* Background: city skyline (CMS-editable: sections.cta.image) */}
-          <div className="absolute inset-0">
-            {image ? (
-              <Image src={image} alt="" fill className="object-cover object-center opacity-80" aria-hidden />
-            ) : null}
-            {/* Lighter wash so the photo reads; still darkest top and bottom
-                where the heading and the buttons sit. */}
-            <div className="absolute inset-0 bg-gradient-to-b from-[#06111f]/45 via-[#06111f]/20 to-[#06111f]/55" />
-          </div>
+          {/* Deep gradient base */}
+          <div
+            aria-hidden
+            className="absolute inset-0 bg-[linear-gradient(118deg,#071327_0%,#0A1E3C_52%,#0B2E5E_100%)]"
+          />
+
+          {/* ── Image panel on the right: an arch, not a rectangle ──
+              Rounded right across the top and bottom-right, square where it
+              meets the copy, with an offset blue outline echoing the shape. */}
+          {image ? (
+            <div aria-hidden className="pointer-events-none absolute inset-y-6 end-6 hidden w-[44%] md:block">
+              <div className="absolute inset-0 translate-x-3 translate-y-3 rounded-[180px_28px_180px_28px] border border-[#1AB2FF]/35 rtl:-translate-x-3 rtl:rounded-[28px_180px_28px_180px]" />
+              <div className="absolute inset-0 overflow-hidden rounded-[180px_28px_180px_28px] rtl:rounded-[28px_180px_28px_180px]">
+                <Image src={image} alt="" fill className="object-cover object-center" sizes="44vw" />
+                <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,19,39,0.78)_0%,rgba(7,19,39,0.18)_55%,transparent_100%)] rtl:bg-[linear-gradient(270deg,rgba(7,19,39,0.78)_0%,rgba(7,19,39,0.18)_55%,transparent_100%)]" />
+              </div>
+            </div>
+          ) : null}
 
           {/* Glowing network SVG overlay */}
           <svg className="pointer-events-none absolute inset-0 h-full w-full opacity-20" aria-hidden preserveAspectRatio="xMidYMid slice" viewBox="0 0 800 400">
@@ -1929,11 +1938,15 @@ function NewFinalCTA() {
             <circle cx="400" cy="200" r="6" fill="#0088FF" />
           </svg>
 
-          <motion.div dir={language === "ar" ? "rtl" : "ltr"} initial={reduced ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.65, ease }} className="relative z-10 flex flex-col items-center px-6 py-12 text-center sm:px-10 sm:py-14 lg:py-16">
+          <motion.div dir={language === "ar" ? "rtl" : "ltr"} initial={reduced ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.65, ease }} className={`relative z-10 flex flex-col px-6 py-12 sm:px-10 sm:py-14 lg:py-20 ${
+              image
+                ? "items-center text-center md:max-w-[54%] md:items-start md:pe-4 md:text-start lg:ps-14"
+                : "items-center text-center"
+            }`}>
             {heading || gradient ? (
               /* Heading on one line; the gradient part always on its own
                  second line, per the sitewide pattern. */
-              <h2 className="max-w-[720px] text-[clamp(2.65rem,4.5vw,4.2rem)] font-semibold leading-[1.08] tracking-[-0.06em] text-white [overflow-wrap:anywhere]">
+              <h2 className="max-w-[620px] text-[clamp(2.2rem,3.8vw,3.4rem)] font-semibold leading-[1.08] tracking-[-0.06em] text-white [overflow-wrap:anywhere]">
                 {heading ? <span className="block">{heading}</span> : null}
                 {gradient ? (
                   <span className="block bg-gradient-to-r from-[#3AADFF] to-[#0088FF] bg-clip-text text-transparent">
@@ -1943,18 +1956,18 @@ function NewFinalCTA() {
               </h2>
             ) : null}
             {subtitle ? (
-              <p className="mt-5 max-w-[560px] whitespace-pre-line text-[0.88rem] leading-6 text-white/65 sm:text-[0.94rem] [overflow-wrap:anywhere]">
+              <p className="mt-5 max-w-[500px] whitespace-pre-line text-[0.88rem] leading-6 text-white/70 sm:text-[0.94rem] [overflow-wrap:anywhere]">
                 {subtitle}
               </p>
             ) : null}
             {description ? (
               <RichText
                 text={description}
-                className="mt-3 max-w-[560px] block text-[0.82rem] leading-6 text-white/55 sm:text-[0.88rem] [overflow-wrap:anywhere]"
+                className="mt-3 max-w-[500px] block text-[0.82rem] leading-6 text-white/60 sm:text-[0.88rem] [overflow-wrap:anywhere]"
               />
             ) : null}
             {hasButtons ? (
-              <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+              <div className={`mt-8 flex flex-wrap items-center gap-3 ${image ? "justify-center md:justify-start" : "justify-center"}`}>
                 {primaryLabel ? (
                   <Link href={primaryLink} className="inline-flex items-center gap-2 rounded-full bg-[#0088FF] px-8 py-3.5 text-sm font-semibold text-white shadow-[0_8px_28px_rgba(0,136,255,0.45)] transition hover:brightness-110">
                     {primaryLabel} <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
