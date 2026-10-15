@@ -42,9 +42,10 @@ function CardIcon({ item }) {
   return <Icon aria-hidden="true" className="h-6 w-6" />;
 }
 
-function PhonePreview({ image }) {
+function PhonePreview({ image, video }) {
   const src = (image || "").trim();
-  if (!src) return null;
+  const clip = (video || "").trim();
+  if (!src && !clip) return null;
 
   return (
     <div className="hp-phone relative mx-auto w-[230px] sm:w-[270px] lg:w-[300px] xl:w-[325px]">
@@ -56,13 +57,30 @@ function PhonePreview({ image }) {
       <div className="absolute inset-x-[18%] bottom-3 h-12 rounded-full bg-[#0F172A]/14 blur-[28px]" />
       <div className="relative isolate aspect-[1439/2920] drop-shadow-[0_28px_58px_rgba(15,23,42,0.2)]">
         <div className="absolute left-[4.1%] right-[4.1%] top-[1%] bottom-[1.2%] z-30 translate-y-[2px] overflow-hidden rounded-[3rem] bg-white">
-          <Image
-            src={src}
-            alt="HalaPark payment screen"
-            fill
-            sizes="(min-width: 1280px) 325px, (min-width: 1024px) 300px, (min-width: 640px) 270px, 230px"
-            className="object-cover object-center"
-          />
+          {/* A video wins when one is uploaded; the image becomes its poster.
+              Muted + playsInline so it autoplays on phones too. */}
+          {clip ? (
+            <video
+              src={clip}
+              poster={src || undefined}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              onContextMenu={(e) => e.preventDefault()}
+              aria-label="HalaPark payment screen"
+              className="h-full w-full object-cover object-center"
+            />
+          ) : (
+            <Image
+              src={src}
+              alt="HalaPark payment screen"
+              fill
+              sizes="(min-width: 1280px) 325px, (min-width: 1024px) 300px, (min-width: 640px) 270px, 230px"
+              className="object-cover object-center"
+            />
+          )}
         </div>
         <div className="pointer-events-none absolute inset-0 z-10">
           <Image
@@ -239,6 +257,7 @@ export default function AppCurrencySection() {
   const subtitle = t(content, "subtitle", language);
   const description = t(content, "description", language);
   const image = (content.image || "").trim();
+  const video = (content.video || "").trim();
 
   // Card features: strictly CMS, keep only rows with real text.
   const cardFeatures = (
@@ -263,7 +282,7 @@ export default function AppCurrencySection() {
   // Hide the whole section when it carries no real content.
   const hasText =
     title.trim() !== "" || subtitle.trim() !== "" || description.trim() !== "";
-  if (!hasText && cardFeatures.length === 0 && image === "") return null;
+  if (!hasText && cardFeatures.length === 0 && image === "" && video === "") return null;
 
   return (
     <motion.section
@@ -366,7 +385,7 @@ export default function AppCurrencySection() {
             ) : null}
           </motion.div>
 
-          {image ? (
+          {image || video ? (
             <motion.div
               initial={prefersReducedMotion ? false : { opacity: 0, x: 24 }}
               whileInView={prefersReducedMotion ? undefined : { opacity: 1, x: 0 }}
@@ -374,7 +393,7 @@ export default function AppCurrencySection() {
               transition={{ duration: 0.6, ease: "easeOut", delay: 0.12 }}
               className="relative z-10 flex min-h-[420px] items-center justify-center lg:min-h-0 lg:justify-center"
             >
-              <PhonePreview image={image} />
+              <PhonePreview image={image} video={video} />
             </motion.div>
           ) : null}
         </div>
