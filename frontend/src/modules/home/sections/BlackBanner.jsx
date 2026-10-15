@@ -4,6 +4,10 @@ import { useEffect, useState } from "react";
 import { fetchHomeSection } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
 import RichText from "@/components/common/RichText";
+import { ArrowRight, Cctv, BarChart3, Car, ShieldCheck } from "lucide-react";
+
+// Built-in marks for the ring nodes, used when no icon is uploaded.
+const BANNER_NODE_ICONS = [Cctv, Car, BarChart3, ShieldCheck];
 
 export default function BlackBanner() {
   const { language } = useLanguage();
@@ -16,8 +20,15 @@ export default function BlackBanner() {
           enabled: data.enabled,
           ar: data.ar,
           title: data.title || "",
+          titleAccent: (data.titleAccent || "").trim(),
+          eyebrow: (data.eyebrow || "").trim(),
           description: data.description || "",
           image: data.image || "",
+          // Labelled nodes around the circular image. Each needs a label; an
+          // uploaded iconImage replaces the built-in mark.
+          features: (Array.isArray(data.features) ? data.features : []).filter(
+            (f) => f && ((f.label ?? "").trim()),
+          ),
           // Only CTAs with a real label count — cleared CTA shells must not
           // render ghost buttons or keep the section alive.
           ctas: (Array.isArray(data.ctas) ? data.ctas : []).filter(
@@ -77,20 +88,42 @@ export default function BlackBanner() {
                   className="absolute right-[12%] top-[18%] h-[140px] w-[140px] rounded-full blur-[90px]"
                   style={{ background: "rgba(189, 227, 255, 0.24)" }}
                 />
-                <div className="absolute inset-[1px] rounded-[24px] border border-white/5" />
+                {/* Dotted grids, bottom-left and top-right */}
                 <div
-                  className="absolute inset-x-[8%] bottom-[-72px] h-[140px] rounded-full border border-white/40"
-                  style={{ filter: "blur(0.25px)" }}
+                  className="absolute bottom-[14%] left-[46%] h-[70px] w-[110px] opacity-60 [background-image:radial-gradient(rgba(255,255,255,0.55)_1.2px,transparent_1.2px)] [background-size:13px_13px]"
                 />
+                <div
+                  className="absolute right-[3%] top-[8%] h-[80px] w-[120px] opacity-45 [background-image:radial-gradient(rgba(255,255,255,0.5)_1.2px,transparent_1.2px)] [background-size:13px_13px]"
+                />
+                {/* Deeper blue shape sweeping behind the circle */}
+                <div
+                  className="absolute -right-[8%] top-[-18%] h-[420px] w-[420px] rounded-full"
+                  style={{ background: "radial-gradient(circle at 40% 40%, rgba(10,80,165,0.42), transparent 62%)" }}
+                />
+                <div className="absolute inset-[1px] rounded-[24px] border border-white/5" />
+
               </div>
 
-              <div className="relative z-10 grid flex-1 gap-10 sm:gap-12 lg:grid-cols-12 lg:items-center">
-                <div className="lg:col-span-8">
-                  <h2 className="max-w-[16ch] text-[clamp(2rem,4.5vw,4rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-white [overflow-wrap:anywhere]">
-                    {t(featureCard, "title", language)}
+              <div className="relative z-10 grid flex-1 gap-12 sm:gap-14 lg:grid-cols-12 lg:items-center lg:gap-10">
+                {/* ── LEFT: eyebrow, heading, copy, buttons ── */}
+                <div className="lg:col-span-7">
+                  {t(featureCard, "eyebrow", language) ? (
+                    <div className="mb-5 flex items-center gap-3">
+                      <span aria-hidden className="h-px w-10 bg-white/50" />
+                      <span className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-white/80 [overflow-wrap:anywhere]">
+                        {t(featureCard, "eyebrow", language)}
+                      </span>
+                    </div>
+                  ) : null}
+
+                  <h2 className="text-[clamp(2rem,4.4vw,3.6rem)] font-semibold leading-[1.04] tracking-[-0.05em] text-white [overflow-wrap:anywhere]">
+                    <span className="block">{t(featureCard, "title", language)}</span>
+                    {t(featureCard, "titleAccent", language) ? (
+                      <span className="block text-[#A9D8FF]">{t(featureCard, "titleAccent", language)}</span>
+                    ) : null}
                   </h2>
 
-                  <p className="mt-5 max-w-[650px] text-justify text-[0.88rem] leading-6 tracking-[-0.02em] text-white/74 [overflow-wrap:anywhere] sm:text-[0.94rem]">
+                  <p className="mt-5 max-w-[540px] text-[0.92rem] leading-7 tracking-[-0.01em] text-white/80 [overflow-wrap:anywhere]">
                     <RichText text={t(featureCard, "description", language)} />
                   </p>
 
@@ -99,28 +132,120 @@ export default function BlackBanner() {
                       <a
                         key={cta.label}
                         href={cta.href}
-                        className={`inline-flex min-h-[48px] items-center justify-center rounded-full px-5 text-[14px] font-semibold tracking-[-0.03em] transition-all duration-200 sm:min-h-[52px] sm:min-w-[210px] sm:text-[15px] ${
+                        className={`group inline-flex min-h-[50px] items-center justify-center gap-2 rounded-full px-7 text-[14px] font-semibold tracking-[-0.02em] transition-all duration-200 sm:text-[15px] ${
                           index === 0
-                            ? "bg-white text-[#090d1d] hover:bg-white/90"
-                            : "border border-white/18 bg-white/6 text-white backdrop-blur-sm hover:bg-white/10"
+                            ? "bg-white text-[#0A1B33] hover:bg-white/90"
+                            : "border border-white/45 text-white hover:bg-white/10"
                         }`}
                       >
                         {t(cta, "label", language)}
+                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5" aria-hidden />
                       </a>
                     ))}
                   </div>
                 </div>
 
+                {/* ── RIGHT: circular image ringed by labelled feature nodes ── */}
                 {featureCard.image ? (
-                  <div className="flex items-center justify-start lg:col-span-4 lg:justify-end lg:-translate-y-3">
-                    <div className="relative overflow-hidden">
-                      <div className="black-logo-shine absolute -left-1/2 top-0 h-full w-1/2 bg-gradient-to-r from-transparent via-white/50 to-transparent" />
-                      <img
-                        src={featureCard.image}
-                        alt="Banner visual"
-                        className="relative z-[1] h-44 w-auto max-w-[320px] object-contain sm:h-52 lg:h-64"
-                      />
+                  <div className="lg:col-span-5">
+                    <div className="relative mx-auto aspect-square w-full max-w-[300px] sm:max-w-[340px] lg:max-w-[380px]">
+                      {/* Connector lines from each node to a dot on the ring */}
+                      {(featureCard.features || []).length > 0 ? (
+                        <svg
+                          aria-hidden
+                          viewBox="0 0 100 100"
+                          className="pointer-events-none absolute inset-0 hidden h-full w-full overflow-visible lg:block"
+                        >
+                          {[
+                            // Measured: the icons occupy 0–11.7 and 88.3–100
+                            // in these units, so each line starts just past
+                            // the icon's inner edge and never crosses it.
+                            { x1: 12.6, y1: 12.3, x2: 19.6, y2: 19.6 },
+                            { x1: 87.4, y1: 12.3, x2: 80.4, y2: 19.6 },
+                            { x1: 12.6, y1: 81.3, x2: 19.6, y2: 80.4 },
+                            { x1: 87.4, y1: 81.3, x2: 80.4, y2: 80.4 },
+                          ]
+                            .slice(0, (featureCard.features || []).length)
+                            .map((l, i) => (
+                              <g key={i}>
+                                <line
+                                  x1={l.x1}
+                                  y1={l.y1}
+                                  x2={l.x2}
+                                  y2={l.y2}
+                                  stroke="rgba(255,255,255,0.55)"
+                                  strokeWidth="0.4"
+                                />
+                                <circle cx={l.x2} cy={l.y2} r="1.4" fill="#ffffff" />
+                              </g>
+                            ))}
+                        </svg>
+                      ) : null}
+
+                      {/* Glowing ring around the photo */}
+                      <div aria-hidden className="absolute inset-0 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.28),transparent_62%)] blur-[2px]" />
+                      <div aria-hidden className="absolute inset-[3%] rounded-full border-[6px] border-[#4FB0FF]/70 shadow-[0_0_50px_rgba(79,176,255,0.45)]" />
+                      <div className="absolute inset-[7%] overflow-hidden rounded-full ring-1 ring-white/30">
+                        <img
+                          src={featureCard.image}
+                          alt="Banner visual"
+                          className="h-full w-full object-cover object-center"
+                        />
+                      </div>
+
+                      {/* Nodes — placed at the four corners on desktop */}
+                      {(featureCard.features || []).slice(0, 4).map((f, i) => {
+                        const Icon = BANNER_NODE_ICONS[i % BANNER_NODE_ICONS.length];
+                        const spot = [
+                          "lg:-left-[22%] lg:top-[6%] lg:text-end lg:items-end",
+                          "lg:-right-[22%] lg:top-[6%] lg:text-start lg:items-start",
+                          "lg:-left-[22%] lg:bottom-[6%] lg:text-end lg:items-end",
+                          "lg:-right-[22%] lg:bottom-[6%] lg:text-start lg:items-start",
+                        ][i];
+                        return (
+                          <div
+                            key={`${f.label}-${i}`}
+                            className={`hidden lg:absolute lg:flex lg:w-[128px] lg:flex-col lg:gap-2 ${spot}`}
+                          >
+                            <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-[0_10px_26px_rgba(3,25,56,0.28)]">
+                              {(f.iconImage || "").trim() ? (
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img src={f.iconImage} alt="" className="h-6 w-6 object-contain" />
+                              ) : (
+                                <Icon className="h-5 w-5 text-[#0A6FD8]" aria-hidden />
+                              )}
+                            </span>
+                            <span className="text-[0.82rem] font-semibold leading-tight text-white [overflow-wrap:anywhere]">
+                              {t(f, "label", language)}
+                            </span>
+                          </div>
+                        );
+                      })}
                     </div>
+
+                    {/* Same nodes as a simple grid below the circle on small screens */}
+                    {(featureCard.features || []).length > 0 ? (
+                      <div className="mt-8 grid grid-cols-2 gap-4 lg:hidden">
+                        {(featureCard.features || []).slice(0, 4).map((f, i) => {
+                          const Icon = BANNER_NODE_ICONS[i % BANNER_NODE_ICONS.length];
+                          return (
+                            <div key={`m-${f.label}-${i}`} className="flex items-center gap-2.5">
+                              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white shadow-[0_8px_20px_rgba(3,25,56,0.25)]">
+                                {(f.iconImage || "").trim() ? (
+                                  // eslint-disable-next-line @next/next/no-img-element
+                                  <img src={f.iconImage} alt="" className="h-5 w-5 object-contain" />
+                                ) : (
+                                  <Icon className="h-4 w-4 text-[#0A6FD8]" aria-hidden />
+                                )}
+                              </span>
+                              <span className="text-[0.8rem] font-semibold leading-tight text-white [overflow-wrap:anywhere]">
+                                {t(f, "label", language)}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ) : null}
                   </div>
                 ) : null}
               </div>
