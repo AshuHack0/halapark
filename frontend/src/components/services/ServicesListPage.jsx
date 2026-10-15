@@ -1779,7 +1779,7 @@ function LongTermCTA({ onGetQuote, cta }) {
           {image ? (
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute inset-y-0 end-0 hidden w-[52%] lg:block"
+              className="pointer-events-none absolute inset-y-0 end-0 hidden w-[52%] md:block"
             >
               <div className="absolute inset-0 [clip-path:ellipse(78%_125%_at_100%_50%)] rtl:[clip-path:ellipse(78%_125%_at_0%_50%)]">
                 <Image src={image} alt="" fill className="object-cover object-center" sizes="52vw" />
@@ -1815,7 +1815,7 @@ function LongTermCTA({ onGetQuote, cta }) {
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.6, ease }}
             className={`relative px-6 py-14 sm:px-10 sm:py-20 lg:py-24 lg:ps-16 ${
-              image ? "text-center lg:max-w-[52%] lg:pe-6 lg:text-start" : "mx-auto max-w-3xl text-center lg:px-16"
+              image ? "text-center md:max-w-[52%] md:pe-6 md:text-start lg:ps-16" : "mx-auto max-w-3xl text-center lg:px-16"
             }`}
           >
             <h2 className="text-[clamp(2.4rem,4.2vw,3.6rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-white [overflow-wrap:anywhere]">
@@ -1829,7 +1829,7 @@ function LongTermCTA({ onGetQuote, cta }) {
             {subtitle ? (
               <p
                 className={`mt-5 max-w-2xl text-sm leading-7 text-slate-300 sm:text-base [overflow-wrap:anywhere] ${
-                  image ? "mx-auto lg:mx-0" : "mx-auto"
+                  image ? "mx-auto md:mx-0" : "mx-auto"
                 }`}
               >
                 {subtitle}
