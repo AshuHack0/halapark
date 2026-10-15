@@ -80,22 +80,22 @@ function StoreBadge({
     <>
       {icon ? (
         <div className="relative shrink-0">
-          <div className="absolute inset-1 rounded-[18px] bg-[#0088FF]/12 blur-md" />
+          
           <Image
             src={icon}
             alt={alt || label || "Store"}
             width={50}
             height={50}
-            className="relative h-10 w-10 rounded-[14px] object-contain shadow-[0_10px_24px_rgba(15,23,42,0.08)] sm:h-[50px] sm:w-[50px] sm:rounded-[16px]"
+            className="relative h-7 w-7 rounded-[9px] object-contain sm:h-8 sm:w-8 sm:rounded-[10px]"
           />
         </div>
       ) : null}
 
       <div className="min-w-0 text-start leading-none">
-        <p className="truncate text-[8px] font-normal text-[#5B6779] sm:text-[9.2px]">
+        <p className="truncate text-[7px] font-normal uppercase tracking-[0.06em] text-white/70 sm:text-[7.5px]">
           {eyebrow}
         </p>
-        <p className="mt-1.5 truncate text-[13px] font-medium tracking-[-0.03em] text-[#0A1B33] sm:mt-2 sm:overflow-visible sm:whitespace-normal sm:text-[15px]">
+        <p className="truncate text-[12px] font-semibold tracking-[-0.02em] text-white sm:text-[13px]">
           {label}
         </p>
       </div>
@@ -108,7 +108,7 @@ function StoreBadge({
     whileHover: prefersReducedMotion
       ? undefined
       : { y: -4, transition: { duration: 0.2, ease: "easeOut" } },
-    className: "flex min-w-0 items-center gap-2.5 rounded-xl bg-white px-3 py-2 shadow-[0_2px_10px_rgba(15,23,42,0.08)]",
+    className: "flex min-w-0 shrink-0 items-center gap-2 rounded-[10px] bg-[#0A1B33] px-2.5 py-1.5",
   };
 
   // With a store URL the whole badge is a link; without one it stays static.
@@ -199,15 +199,26 @@ export default function HalaParkInAction({ cmsKey = "halaParkInAction", pageSlug
       initial={prefersReducedMotion ? false : "hidden"}
       whileInView={prefersReducedMotion ? undefined : "visible"}
       viewport={{ once: true, amount: 0.28 }}
-      className="relative overflow-hidden bg-[linear-gradient(135deg,#F4F9FF_0%,#EAF4FF_48%,#DBEDFF_100%)] px-4 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20"
+      className="relative overflow-hidden bg-[linear-gradient(180deg,#FFFFFF_0%,#F7FBFF_60%,#EFF7FF_100%)] px-4 py-12 sm:px-6 sm:py-14 lg:px-8 lg:py-16"
     >
-      <div className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:gap-12">
+      {/* Large pale-blue disc behind the artwork on the right */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -right-[12%] top-1/2 h-[560px] w-[560px] -translate-y-1/2 rounded-full bg-[#CFE6FF]/55 blur-[2px] sm:h-[680px] sm:w-[680px] lg:-right-[6%] lg:h-[780px] lg:w-[780px] rtl:right-auto rtl:-left-[12%] rtl:lg:-left-[6%]"
+      />
+      {/* Soft wash sweeping in from the bottom-left corner */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -bottom-32 -left-24 h-[420px] w-[420px] rounded-full bg-[#DCEDFF]/70 blur-[40px] rtl:left-auto rtl:-right-24"
+      />
+
+      <div className="relative mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:gap-12">
         {/* ── LEFT: eyebrow, heading, copy, download strip ── */}
         <motion.div variants={prefersReducedMotion ? undefined : copyStackVariants}>
           {eyebrow ? (
             <motion.div
               variants={prefersReducedMotion ? undefined : copyItemVariants}
-              className="mb-5 flex items-center gap-3"
+              className="mb-4 flex items-center gap-3"
             >
               <span className="text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-[#4A5A70] [overflow-wrap:anywhere]">
                 {eyebrow}
@@ -218,7 +229,7 @@ export default function HalaParkInAction({ cmsKey = "halaParkInAction", pageSlug
 
           <motion.h2
             variants={prefersReducedMotion ? undefined : copyItemVariants}
-            className="text-[clamp(2.2rem,4.6vw,4rem)] font-semibold leading-[1.02] tracking-[-0.055em] text-[#0A1B33] [overflow-wrap:anywhere]"
+            className="text-[clamp(2.6rem,5.6vw,4.6rem)] font-semibold leading-[0.98] tracking-[-0.06em] text-[#0A1B33] [overflow-wrap:anywhere]"
           >
             <span className="block">{t(copy, "title", language)}</span>
             {headingAccent ? <span className="block text-[#0088FF]">{headingAccent}</span> : null}
@@ -226,7 +237,7 @@ export default function HalaParkInAction({ cmsKey = "halaParkInAction", pageSlug
 
           <motion.p
             variants={prefersReducedMotion ? undefined : copyItemVariants}
-            className="mt-5 max-w-[520px] text-[0.95rem] leading-7 text-[#49566B] sm:text-[1rem] [overflow-wrap:anywhere]"
+            className="mt-4 max-w-[460px] text-[0.9rem] leading-6 text-[#49566B] [overflow-wrap:anywhere]"
           >
             {t(copy, "subtitle", language)}
           </motion.p>
@@ -234,14 +245,14 @@ export default function HalaParkInAction({ cmsKey = "halaParkInAction", pageSlug
           {storeLinks.length > 0 ? (
             <motion.div
               variants={prefersReducedMotion ? undefined : copyItemVariants}
-              className="mt-9 inline-flex w-full flex-col gap-4 rounded-[22px] bg-white/70 p-4 shadow-[0_10px_30px_rgba(15,23,42,0.06)] ring-1 ring-white sm:w-auto sm:flex-row sm:items-center sm:gap-5 sm:p-5"
+              className="mt-8 inline-flex w-full flex-col gap-3 rounded-[18px] bg-[#E8F3FF]/80 p-3 ring-1 ring-white sm:w-auto sm:flex-row sm:items-center sm:gap-4 sm:p-3.5"
             >
               {downloadLabel ? (
-                <p className="max-w-[140px] text-[0.95rem] font-semibold leading-tight tracking-[-0.02em] text-[#0A1B33] [overflow-wrap:anywhere]">
+                <p className="max-w-[120px] shrink-0 text-[0.85rem] font-semibold leading-tight tracking-[-0.02em] text-[#0A1B33] [overflow-wrap:anywhere]">
                   {downloadLabel}
                 </p>
               ) : null}
-              <div className="flex flex-wrap items-center gap-3">
+              <div className="flex flex-nowrap items-center gap-2 overflow-x-auto sm:gap-2.5 sm:overflow-visible">
                 {storeLinks.map((store, index) => (
                   <StoreBadge
                     key={store.label || index}
