@@ -20,7 +20,11 @@ import {
 import {
   X, ArrowUpRight, Check, Shield, Camera, BadgeCheck,
   CreditCard, Lock, ChevronRight, ChevronDown, MapPin, Clock, ParkingCircle, ArrowRight, Zap, Search, Loader2,
+  ShieldCheck, CalendarCheck, Users,
 } from "lucide-react";
+
+// Built-in marks for the Long-Term CTA chips, used when no icon is uploaded.
+const LT_CHIP_ICONS = [ShieldCheck, CalendarCheck, Users];
 import { allServicesData, serviceNames } from "./allServicesData";
 import { fetchPage } from "@/lib/cms";
 import { usePrefersReducedMotionOS } from "@/hooks/usePrefersReducedMotionOS";
@@ -1754,11 +1758,17 @@ function LongTermCTA({ onGetQuote, cta }) {
   const ctaLabel = (t(cta, "ctaLabel", language) || "").trim();
   // Optional photo for the curved cutout on the right (admin upload).
   const image = (cta?.image || "").trim();
+  const eyebrow = (t(cta, "eyebrow", language) || "").trim();
+  // Small pills under the button. Each needs a label; an uploaded icon
+  // replaces the built-in mark.
+  const chips = (Array.isArray(cta?.features) ? cta.features : []).filter(
+    (f) => f && ((f.label ?? "").trim()),
+  );
 
   return (
     <section className="bg-white px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
       <div className="mx-auto max-w-7xl">
-        <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[linear-gradient(120deg,#050A13_0%,#0B1220_42%,#0088FF_140%)] shadow-[0_28px_64px_rgba(15,23,42,0.28)]">
+        <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[linear-gradient(118deg,#071327_0%,#0A1E3C_46%,#0B2E5E_100%)] shadow-[0_28px_64px_rgba(15,23,42,0.28)]">
           {/* Decorative layers: blueprint grid + soft glows + top hairline */}
           <div
             aria-hidden="true"
@@ -1798,15 +1808,17 @@ function LongTermCTA({ onGetQuote, cta }) {
             />
           )}
 
-          {/* Faint parking "P" watermark — only when there is no photo */}
-          {!image ? (
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute -bottom-10 end-6 select-none text-[16rem] font-bold leading-none tracking-tighter text-white/[0.04] sm:text-[20rem]"
-            >
-              P
-            </div>
-          ) : null}
+          {/* Faint parking "P" watermark */}
+          <div
+            aria-hidden="true"
+            className={`pointer-events-none absolute select-none font-bold leading-none tracking-tighter text-white/[0.05] ${
+              image
+                ? "left-[38%] top-1/2 -translate-y-1/2 text-[18rem] sm:text-[22rem]"
+                : "-bottom-10 end-6 text-[16rem] sm:text-[20rem]"
+            }`}
+          >
+            P
+          </div>
 
           {/* ── Copy on the left ── */}
           <motion.div
@@ -1818,6 +1830,12 @@ function LongTermCTA({ onGetQuote, cta }) {
               image ? "text-center md:max-w-[52%] md:pe-6 md:text-start lg:ps-16" : "mx-auto max-w-3xl text-center lg:px-16"
             }`}
           >
+            {eyebrow ? (
+              <p className={`mb-4 text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-white/70 [overflow-wrap:anywhere] ${image ? "" : "mx-auto"}`}>
+                {eyebrow}
+              </p>
+            ) : null}
+
             <h2 className="text-[clamp(2.4rem,4.2vw,3.6rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-white [overflow-wrap:anywhere]">
               {heading}
               {headingGradient ? (
@@ -1844,6 +1862,32 @@ function LongTermCTA({ onGetQuote, cta }) {
                 {ctaLabel}
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5" aria-hidden />
               </button>
+            ) : null}
+
+            {chips.length > 0 ? (
+              <div className={`mt-8 flex flex-wrap gap-3 ${image ? "justify-center md:justify-start" : "justify-center"}`}>
+                {chips.map((chip, i) => {
+                  const Icon = LT_CHIP_ICONS[i % LT_CHIP_ICONS.length];
+                  return (
+                    <span
+                      key={`${chip.label}-${i}`}
+                      className="inline-flex items-center gap-2.5 rounded-full border border-white/15 bg-white/[0.06] px-4 py-2.5 backdrop-blur-sm"
+                    >
+                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/10">
+                        {(chip.iconImage || "").trim() ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={chip.iconImage} alt="" className="h-4 w-4 object-contain" />
+                        ) : (
+                          <Icon className="h-4 w-4 text-[#7CC4FF]" aria-hidden />
+                        )}
+                      </span>
+                      <span className="text-[0.84rem] font-medium text-white [overflow-wrap:anywhere]">
+                        {t(chip, "label", language)}
+                      </span>
+                    </span>
+                  );
+                })}
+              </div>
             ) : null}
           </motion.div>
         </div>
