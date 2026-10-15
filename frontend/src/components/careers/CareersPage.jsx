@@ -527,7 +527,6 @@ function JobOpenings({ openPositions }) {
   const title = t(openPositions, "title", language);
   const subtitle = t(openPositions, "subtitle", language);
   // Background photo for the whole section — blank means the plain white band.
-  const sectionBg = (openPositions?.image || "").trim();
 
   if (!hasText(title) && posts.length === 0) return null;
 
@@ -542,28 +541,8 @@ function JobOpenings({ openPositions }) {
 
       <section
         id="open-positions"
-        className={`relative isolate py-16 sm:py-20 lg:py-24 ${sectionBg ? "" : "bg-white"}`}
+        className="relative bg-white py-16 sm:py-20 lg:py-24"
       >
-        {/* Optional background photo for the whole section (admin upload).
-            A white veil keeps the heading and the job cards readable. */}
-        {sectionBg ? (
-          <>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={sectionBg}
-              alt=""
-              aria-hidden
-              loading="lazy"
-              className="absolute inset-0 -z-20 h-full w-full object-cover object-center"
-            />
-            {/* Light wash only — the photo stays clearly visible. A little more
-                white at the very top keeps the heading legible over it. */}
-            <span
-              aria-hidden
-              className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(255,255,255,0.72)_0%,rgba(255,255,255,0.4)_26%,rgba(255,255,255,0.32)_100%)]"
-            />
-          </>
-        ) : null}
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {hasText(title) || hasText(subtitle) ? (
             <motion.div
@@ -593,8 +572,8 @@ function JobOpenings({ openPositions }) {
             <div
               className={
                 posts.length === 1
-                  ? "mx-auto grid max-w-xl gap-5"
-                  : "mx-auto grid max-w-5xl gap-5 sm:grid-cols-2"
+                  ? "mx-auto grid max-w-sm gap-5"
+                  : "mx-auto grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
               }
             >
               {posts.map((post, i) => (
@@ -604,44 +583,59 @@ function JobOpenings({ openPositions }) {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.1 }}
                   transition={{ duration: 0.45, ease, delay: (i % 2) * 0.05 }}
-                  className="group flex cursor-pointer flex-col rounded-[22px] border border-[#E7EAF0] bg-white p-6 shadow-[0_4px_24px_rgba(6,6,22,0.06)] transition hover:-translate-y-1 hover:border-[#0088FF]/40 hover:shadow-[0_16px_40px_rgba(0,136,255,0.12)] sm:p-7"
+                  className="group flex h-full cursor-pointer flex-col rounded-[18px] border border-[#E7EAF0] bg-white p-4 shadow-[0_4px_18px_rgba(6,6,22,0.07)] transition hover:-translate-y-1 hover:border-[#0088FF]/40 hover:shadow-[0_16px_36px_rgba(0,136,255,0.14)] sm:p-5"
                   dir={language === "ar" ? "rtl" : "ltr"}
                   onClick={() => setDetailJob(post)}
                 >
-                  <h3 className="text-[1.05rem] font-semibold tracking-[-0.02em] text-[#050A13] [overflow-wrap:anywhere] sm:text-lg">
-                    {jt(post, "title", language)}
-                  </h3>
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {hasText(jt(post, "department", language)) ? (
-                      <span className="rounded-full bg-[#EEF6FF] px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-wider text-[#0088FF] [overflow-wrap:anywhere]">
-                        {jt(post, "department", language)}
-                      </span>
-                    ) : null}
-                    {hasText(jt(post, "employmentType", language)) ? (
-                      <span className="rounded-full border border-[#E7EAF0] bg-slate-50 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-wider text-slate-600 [overflow-wrap:anywhere]">
-                        {jt(post, "employmentType", language)}
-                      </span>
-                    ) : null}
-                  </div>
-                  {hasText(jt(post, "location", language)) ? (
-                    <p className="mt-3 inline-flex items-center gap-1 text-sm text-slate-500 [overflow-wrap:anywhere]">
-                      <MapPin className="h-3.5 w-3.5" aria-hidden /> {jt(post, "location", language)}
-                    </p>
-                  ) : null}
-                  {hasText(jt(post, "description", language)) ? (
-                    <RichText text={jt(post, "description", language)} className="mt-4 line-clamp-3 text-[0.88rem] leading-6 text-slate-500 [overflow-wrap:anywhere] sm:text-[0.94rem] block" />
+                  {/* Photo on top (admin upload per job) */}
+                  {hasText(post.image) ? (
+                    <div className="relative mb-4 aspect-[16/10] w-full overflow-hidden rounded-[14px] bg-[linear-gradient(135deg,#E8F2FF,#F6FAFF)]">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={post.image}
+                        alt={jt(post, "title", language) || ""}
+                        loading="lazy"
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                      />
+                    </div>
                   ) : null}
 
-                  <div className="mt-5 flex items-center justify-between gap-3 border-t border-slate-100 pt-4">
-                    <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#0088FF]">
+                  <h3 className="text-[1.05rem] font-semibold leading-snug tracking-[-0.02em] text-[#0A1B33] [overflow-wrap:anywhere] sm:text-[1.15rem]">
+                    {jt(post, "title", language)}
+                  </h3>
+
+                  {/* Department / type / location as icon rows */}
+                  <div className="mt-3 space-y-2">
+                    {hasText(jt(post, "department", language)) ? (
+                      <p className="flex items-start gap-2 text-[0.85rem] text-slate-600 [overflow-wrap:anywhere]">
+                        <Briefcase className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#0A6FD8]" aria-hidden />
+                        {jt(post, "department", language)}
+                      </p>
+                    ) : null}
+                    {hasText(jt(post, "employmentType", language)) ? (
+                      <p className="flex items-start gap-2 text-[0.85rem] text-slate-600 [overflow-wrap:anywhere]">
+                        <Clock className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#0A6FD8]" aria-hidden />
+                        {jt(post, "employmentType", language)}
+                      </p>
+                    ) : null}
+                    {hasText(jt(post, "location", language)) ? (
+                      <p className="flex items-start gap-2 text-[0.85rem] text-slate-600 [overflow-wrap:anywhere]">
+                        <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#0A6FD8]" aria-hidden />
+                        {jt(post, "location", language)}
+                      </p>
+                    ) : null}
+                  </div>
+
+                  {/* Buttons side by side under a divider */}
+                  <div className="mt-auto flex items-center gap-2.5 border-t border-slate-100 pt-4">
+                    <span className="inline-flex flex-1 items-center justify-center rounded-full border border-[#0088FF]/45 px-3 py-2 text-[0.8rem] font-semibold text-[#0088FF] transition hover:bg-[#EEF6FF]">
                       {ct("viewDetails", language)}
-                      <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5" aria-hidden />
                     </span>
-                    <span onClick={(e) => e.stopPropagation()} className="shrink-0">
+                    <span onClick={(e) => e.stopPropagation()} className="flex-1">
                       <JobApplyButton
                         post={post}
                         onApply={setApplyJob}
-                        className="inline-flex shrink-0 items-center gap-2 rounded-full border border-[#0088FF]/30 bg-[#EEF6FF] px-4 py-2 text-xs font-semibold text-[#0088FF] transition hover:bg-[#0088FF] hover:text-white"
+                        className="inline-flex w-full items-center justify-center rounded-full bg-[#0088FF] px-3 py-2 text-[0.8rem] font-semibold text-white transition hover:brightness-110"
                       />
                     </span>
                   </div>
