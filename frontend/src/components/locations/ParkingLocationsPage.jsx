@@ -150,114 +150,65 @@ function SectionHeading({ block, language, tone = "light", align = "center" }) {
 function LocationCard({ item, index, emirateLabel, language, reduced, highlighted, cardKey }) {
   const name = (t(item, "name", language) || "").trim();
   const area = (t(item, "area", language) || "").trim();
-  const description = (t(item, "description", language) || "").trim();
-  const tag = (t(item, "tag", language) || "").trim();
   const image = (item?.image || "").trim();
   const mapLink = (item?.mapLink || "").trim();
-  const mapLabel = (t(item, "mapLabel", language) || "").trim();
-  const features = (
-    language === "ar"
-      ? Array.isArray(item?.ar?.features) && item.ar.features.length
-        ? item.ar.features
-        : []
-      : Array.isArray(item?.features)
-        ? item.features
-        : []
-  ).filter((f) => typeof f === "string" && f.trim());
 
-  return (
-    <motion.article
-      initial={reduced ? false : { opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.15 }}
-      transition={{ duration: 0.5, ease, delay: Math.min(index, 6) * 0.05 }}
-      data-location-card
-      data-card-key={cardKey}
-      className={`group relative flex flex-col overflow-hidden rounded-[22px] border bg-white transition-all duration-300 hover:-translate-y-1 hover:border-[#0088FF]/35 hover:shadow-[0_22px_48px_rgba(0,136,255,0.16)] ${
-        highlighted
-          ? "border-[#0088FF] shadow-[0_0_0_4px_rgba(0,136,255,0.18),0_22px_48px_rgba(0,136,255,0.22)]"
-          : "border-slate-200/80 shadow-[0_10px_30px_rgba(15,23,42,0.05)]"
-      }`}
-    >
-      {/* Media */}
-      <div className="relative aspect-[16/10] w-full overflow-hidden bg-[linear-gradient(135deg,#E8F2FF,#F6FAFF)]">
+  // Photo on top, name and location beneath — the whole tile links to the map
+  // when one is set.
+  const inner = (
+    <>
+      <div className="relative aspect-[16/10] w-full overflow-hidden rounded-[14px] bg-[linear-gradient(135deg,#E8F2FF,#F6FAFF)]">
         {image ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={image}
             alt={name || "Parking location"}
             loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.05]"
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
           />
         ) : (
           <span className="flex h-full w-full items-center justify-center">
-            <Building2 className="h-10 w-10 text-[#0088FF]/25" strokeWidth={1.6} aria-hidden />
+            <Building2 className="h-9 w-9 text-[#0088FF]/25" strokeWidth={1.6} aria-hidden />
           </span>
         )}
-        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,transparent_45%,rgba(5,10,19,0.55)_100%)]" />
-
-        {emirateLabel ? (
-          <span className="absolute start-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-semibold text-[#0F1E33] shadow-sm backdrop-blur">
-            <MapPin className="h-3 w-3 text-[#0088FF]" aria-hidden />
-            {emirateLabel}
-          </span>
-        ) : null}
-
-        {tag ? (
-          <span className="absolute end-3 top-3 rounded-full bg-[#0088FF] px-2.5 py-1 text-[11px] font-semibold text-white shadow-[0_4px_14px_rgba(0,136,255,0.35)]">
-            {tag}
-          </span>
-        ) : null}
       </div>
 
-      {/* Body */}
-      <div className="flex flex-1 flex-col p-5">
+      <div className="px-1 pb-1 pt-3.5">
         {name ? (
-          <h3 className="text-[1.05rem] font-semibold leading-snug tracking-[-0.02em] text-[#050A13] [overflow-wrap:anywhere]">
+          <h3 className="text-[0.95rem] font-semibold leading-snug tracking-[-0.01em] text-[#0A6FD8] [overflow-wrap:anywhere]">
             {name}
           </h3>
         ) : null}
-
-        {area ? (
-          <p className="mt-1.5 flex items-start gap-1.5 text-[0.82rem] leading-6 text-slate-500 [overflow-wrap:anywhere]">
-            <MapPin className="mt-1 h-3.5 w-3.5 shrink-0 text-[#0088FF]" aria-hidden />
-            {area}
+        {emirateLabel || area ? (
+          <p className="mt-1 text-[0.82rem] leading-5 text-slate-500 [overflow-wrap:anywhere]">
+            {emirateLabel || area}
           </p>
         ) : null}
-
-        {description ? (
-          <RichText
-            text={description}
-            className="mt-3 block text-[0.83rem] leading-6 text-slate-500 [overflow-wrap:anywhere]"
-          />
-        ) : null}
-
-        {features.length > 0 ? (
-          <ul className="mt-4 flex flex-wrap gap-1.5">
-            {features.map((f, i) => (
-              <li
-                key={`${f}-${i}`}
-                className="rounded-full bg-[#F3F7FC] px-2.5 py-1 text-[11px] font-medium text-slate-600 ring-1 ring-slate-200/70"
-              >
-                {f}
-              </li>
-            ))}
-          </ul>
-        ) : null}
-
-        {mapLink ? (
-          <a
-            href={mapLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-5 inline-flex w-fit items-center gap-1.5 text-[0.82rem] font-semibold text-[#0088FF] transition-colors hover:text-[#0070d4]"
-          >
-            <Navigation className="h-3.5 w-3.5" aria-hidden />
-            {mapLabel || "View on map"}
-            <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 rtl:rotate-[-90deg]" aria-hidden />
-          </a>
-        ) : null}
       </div>
+    </>
+  );
+
+  return (
+    <motion.article
+      data-location-card
+      data-card-key={cardKey}
+      initial={reduced ? false : { opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.15 }}
+      transition={{ duration: 0.45, ease, delay: Math.min(index, 6) * 0.04 }}
+      className={`group rounded-[18px] bg-white p-2.5 transition-all duration-300 hover:-translate-y-1 ${
+        highlighted
+          ? "shadow-[0_0_0_3px_rgba(0,136,255,0.28),0_18px_40px_rgba(15,23,42,0.12)]"
+          : "shadow-[0_4px_18px_rgba(15,23,42,0.08)] hover:shadow-[0_16px_36px_rgba(15,23,42,0.14)]"
+      }`}
+    >
+      {mapLink ? (
+        <a href={mapLink} target="_blank" rel="noopener noreferrer" className="block" aria-label={name || "Parking location"}>
+          {inner}
+        </a>
+      ) : (
+        inner
+      )}
     </motion.article>
   );
 }
@@ -695,78 +646,73 @@ export default function ParkingLocationsPage() {
           <div className="mx-auto w-full max-w-7xl">
             <SectionHeading block={locations} language={language} />
 
-            {/* Search again, right above the results — this is where people
-                look for it once they have scrolled past the hero. */}
-            <SearchBox
-              value={query}
-              onChange={handleQueryChange}
-              placeholder={searchPlaceholder}
-              onSubmit={jumpToFirstMatch}
-              className="mx-auto mt-8 w-full max-w-md"
-            />
-
-            {/* Emirate filter */}
-            {emirates.length > 0 ? (
-              <div className="mt-9 flex flex-wrap justify-center gap-2">
-                {[{ key: "all", label: (t(locations, "allLabel", language) || "").trim() }, ...emirates.map((e) => ({ key: e.key, label: (t(e, "name", language) || "").trim() }))]
-                  .filter((tab) => tab.label)
-                  .map((tab) => {
-                    const active = activeEmirate === tab.key;
-                    const count =
-                      tab.key === "all"
-                        ? allItems.length
-                        : allItems.filter((i) => (i.emirate || "") === tab.key).length;
-                    return (
-                      <button
-                        key={tab.key}
-                        type="button"
-                        onClick={() => setActiveEmirate(tab.key)}
-                        aria-pressed={active}
-                        className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-[0.82rem] font-semibold transition-all duration-300 ${
-                          active
-                            ? "bg-[linear-gradient(120deg,#0088FF,#1AB2FF)] text-white shadow-[0_10px_24px_rgba(0,136,255,0.28)]"
-                            : "bg-[#F3F7FC] text-slate-600 ring-1 ring-slate-200 hover:bg-[#EEF6FF] hover:text-[#0088FF]"
-                        }`}
-                      >
-                        {tab.label}
-                        <span
-                          className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold tabular-nums ${
-                            active ? "bg-white/20 text-white" : "bg-white text-slate-400"
+            {/* Filter pills on the left, search on the right — one row. */}
+            <div className="mt-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+              {emirates.length > 0 ? (
+                <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:mx-0 lg:flex-wrap lg:overflow-visible lg:px-0">
+                  {[{ key: "all", label: (t(locations, "allLabel", language) || "").trim() }, ...emirates.map((e) => ({ key: e.key, label: (t(e, "name", language) || "").trim() }))]
+                    .filter((tab) => tab.label)
+                    .map((tab) => {
+                      const active = activeEmirate === tab.key;
+                      return (
+                        <button
+                          key={tab.key}
+                          type="button"
+                          onClick={() => setActiveEmirate(tab.key)}
+                          aria-pressed={active}
+                          className={`shrink-0 rounded-full px-4 py-2 text-[0.82rem] font-semibold transition-colors duration-200 ${
+                            active
+                              ? "bg-[#0F2544] text-white"
+                              : "border border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-[#0F2544]"
                           }`}
                         >
-                          {count}
-                        </span>
-                      </button>
-                    );
-                  })}
-              </div>
-            ) : null}
+                          {tab.label}
+                        </button>
+                      );
+                    })}
+                </div>
+              ) : null}
 
-            {query.trim() ? (
-              <p className="mt-6 text-center text-[0.82rem] font-medium text-slate-500">
-                {visibleItems.length}
-                {" "}
-                {language === "ar"
-                  ? visibleItems.length === 1
-                    ? "نتيجة"
-                    : "نتائج"
-                  : visibleItems.length === 1
-                    ? "result"
-                    : "results"}
-                {" · "}
-                <button
-                  type="button"
-                  onClick={() => handleQueryChange("")}
-                  className="font-semibold text-[#0088FF] underline-offset-2 hover:underline"
-                >
-                  {language === "ar" ? "مسح البحث" : "Clear search"}
-                </button>
-              </p>
-            ) : null}
+              {/* Search — underline style, like the reference */}
+              <div className="flex items-center gap-2 border-b border-slate-200 pb-2 lg:w-[280px]">
+                <Search className="h-4 w-4 shrink-0 text-slate-400" aria-hidden />
+                <input
+                  type="text"
+                  value={query}
+                  onChange={(e) => handleQueryChange(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      jumpToFirstMatch();
+                    }
+                  }}
+                  placeholder={searchPlaceholder}
+                  aria-label={searchPlaceholder || "Search parking locations"}
+                  className="w-full bg-transparent text-sm text-[#050A13] outline-none placeholder:text-slate-400"
+                />
+                {query ? (
+                  <button
+                    type="button"
+                    onClick={() => handleQueryChange("")}
+                    aria-label="Clear search"
+                    className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200"
+                  >
+                    <X className="h-3 w-3" aria-hidden />
+                  </button>
+                ) : null}
+              </div>
+            </div>
+
+            {/* Showing X of Y */}
+            <p className="mt-3 text-[0.78rem] font-medium text-slate-500">
+              {language === "ar"
+                ? `عرض ${visibleItems.length} من ${allItems.length}`
+                : `Showing ${visibleItems.length} of ${allItems.length}`}
+            </p>
 
             {/* Grid */}
             {visibleItems.length > 0 ? (
-              <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {visibleItems.map((item, i) => (
                   <LocationCard
                     key={`${item.name || "loc"}-${i}`}
