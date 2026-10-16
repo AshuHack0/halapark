@@ -453,9 +453,11 @@ function OurVision({ vision }) {
           {/* The whole panel is dark here — the page reads light · dark · light */}
           <div className="absolute inset-0">
             {vision?.image ? (
-              <Image src={vision.image} alt="" fill className="object-cover object-center opacity-[0.18] transition duration-700 group-hover:scale-105" sizes="100vw" aria-hidden />
+              <Image src={vision.image} alt="" fill className="object-cover object-center opacity-80 transition duration-700 group-hover:scale-105" sizes="100vw" aria-hidden />
             ) : null}
-            <div className="absolute inset-0 bg-[linear-gradient(115deg,#06111f_0%,rgba(6,17,31,0.94)_45%,rgba(6,17,31,0.72)_100%)]" />
+            {/* Dark on the copy side, clearing toward the photo so the upload
+                is actually visible. Mirrors for Arabic. */}
+            <div className="absolute inset-0 bg-[linear-gradient(100deg,#06111f_0%,rgba(6,17,31,0.96)_38%,rgba(6,17,31,0.72)_58%,rgba(6,17,31,0.35)_100%)] rtl:bg-[linear-gradient(260deg,#06111f_0%,rgba(6,17,31,0.96)_38%,rgba(6,17,31,0.72)_58%,rgba(6,17,31,0.35)_100%)]" />
             <div aria-hidden="true" className="absolute -left-20 top-0 h-64 w-64 rounded-full bg-[#0088FF]/20 blur-[90px]" />
             <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#1AB2FF]/50 to-transparent" />
           </div>
