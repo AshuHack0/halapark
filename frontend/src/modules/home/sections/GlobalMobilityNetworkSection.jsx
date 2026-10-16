@@ -338,9 +338,27 @@ export default function GlobalMobilityNetworkSection() {
                       {links.map((link, index) => {
                         const from = nodesById[link.from];
                         const to = nodesById[link.to];
-                        const curve = Number(link.curve) || 0;
-                        const cx = (from.x + to.x) / 2;
-                        const cy = (from.y + to.y) / 2 + curve;
+                        // Bow the arc perpendicular to the chord (not straight
+                        // down the y axis) so every link reads as the same clean
+                        // flight-map curve. `curve` is the bow in map units:
+                        // negative bows upward (the admin default), positive
+                        // downward; blank → auto from the link's length.
+                        const dx = to.x - from.x;
+                        const dy = to.y - from.y;
+                        const dist = Math.hypot(dx, dy);
+                        // Hops shorter than 3 map units sit under the city lens
+                        // and only add clutter — skip them.
+                        if (dist < 3) return null;
+                        const rawCurve = Number(link.curve);
+                        const bow = Number.isFinite(rawCurve) && link.curve !== "" && link.curve != null
+                          ? rawCurve
+                          : -Math.min(14, dist * 0.22);
+                        // Unit normal pointing to the upper side of the chord.
+                        let nx = dist ? -dy / dist : 0;
+                        let ny = dist ? dx / dist : 0;
+                        if (ny > 0 || (ny === 0 && nx > 0)) { nx = -nx; ny = -ny; }
+                        const cx = (from.x + to.x) / 2 - nx * bow;
+                        const cy = (from.y + to.y) / 2 - ny * bow;
                         const path = `M ${from.x} ${from.y} Q ${cx} ${cy} ${to.x} ${to.y}`;
 
                         return (
