@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useLayoutEffect, useEffect, useMemo, useCallback } from "react";
+import { useState, useRef, useLayoutEffect, useEffect, useMemo, useCallback, useId } from "react";
 import { useRouter } from "next/navigation";
 import { createPortal } from "react-dom";
 import ReCAPTCHA from "react-google-recaptcha";
@@ -1751,6 +1751,17 @@ function TrustSection({ trust }) {
 
 function LongTermCTA({ onGetQuote, cta }) {
   const reduced = useReducedMotion();
+  // Unique id for the SVG clipPath (the component can render more than once).
+  const leafClipId = `lt-leaf-${useId().replace(/:/g, "")}`;
+  // Watermark logo: the site logo from global Settings, bundled asset as fallback
+  // (same source the navbar uses).
+  const [logo, setLogo] = useState("/logo-blue-11.svg");
+  useEffect(() => {
+    fetchPage("settings").then((page) => {
+      const img = (page?.sections?.logo?.image || "").trim();
+      if (img) setLogo(img);
+    });
+  }, []);
   const { language } = useLanguage();
   const heading = (t(cta, "heading", language) || "").trim();
   const headingGradient = (t(cta, "headingGradient", language) || "").trim();
@@ -1769,11 +1780,7 @@ function LongTermCTA({ onGetQuote, cta }) {
     <section className="bg-white px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
       <div className="mx-auto max-w-7xl">
         <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[linear-gradient(118deg,#071327_0%,#0A1E3C_46%,#0B2E5E_100%)] shadow-[0_28px_64px_rgba(15,23,42,0.28)]">
-          {/* Decorative layers: blueprint grid + soft glows + top hairline */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.045)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.045)_1px,transparent_1px)] bg-[size:44px_44px] [mask-image:radial-gradient(ellipse_75%_70%_at_50%_40%,black,transparent)]"
-          />
+          {/* Decorative layers: soft glows + top hairline */}
           <div
             aria-hidden="true"
             className="pointer-events-none absolute -bottom-32 -left-20 h-72 w-72 rounded-full bg-[#1AB2FF]/20 blur-[110px] rtl:left-auto rtl:-right-20"
@@ -1783,21 +1790,62 @@ function LongTermCTA({ onGetQuote, cta }) {
             className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#1AB2FF]/60 to-transparent"
           />
 
-          {/* ── Curved image cutout on the right ──
-              An ellipse clip gives one large sweeping curve down the left edge
-              of the photo instead of a straight rectangular join. */}
+          {/* Faint HalaPark logo watermark (white, very low opacity) */}
+          <div
+            aria-hidden="true"
+            className={`pointer-events-none absolute select-none ${
+              image
+                ? "left-[30%] top-1/2 w-[30%] -translate-y-1/2 lg:left-[33%]"
+                : "bottom-6 end-8 w-[28%]"
+            }`}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={logo} alt="" className="h-auto w-full opacity-[0.07] brightness-0 invert" />
+          </div>
+
+          {/* ── Leaf-shaped image cutout on the right (matches the reference) ──
+              One SVG path in bounding-box units clips the photo, so the same
+              sweeping curve holds at every width; a blue rim layer sits behind
+              it, offset a little, to trace the curve. */}
           {image ? (
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute inset-y-0 end-0 hidden w-[52%] md:block"
+              className="pointer-events-none absolute inset-y-0 end-0 hidden w-[54%] md:block rtl:-scale-x-100"
             >
-              <div className="absolute inset-0 [clip-path:ellipse(78%_125%_at_100%_50%)] rtl:[clip-path:ellipse(78%_125%_at_0%_50%)]">
-                <Image src={image} alt="" fill className="object-cover object-center" sizes="52vw" />
-                {/* Tint so the photo sits in the band rather than on top of it */}
-                <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(5,10,19,0.85)_0%,rgba(5,10,19,0.28)_42%,transparent_100%)] rtl:bg-[linear-gradient(270deg,rgba(5,10,19,0.85)_0%,rgba(5,10,19,0.28)_42%,transparent_100%)]" />
+              <svg className="absolute h-0 w-0" aria-hidden="true">
+                <defs>
+                  <clipPath id={leafClipId} clipPathUnits="objectBoundingBox">
+                    <path d="M0.16 0 C0.03 0.18 -0.03 0.42 0.01 0.62 C0.04 0.8 0.13 0.94 0.26 1 L1 1 L1 0 Z" />
+                  </clipPath>
+                  {/* Two smooth waves for the blue band along the bottom-right */}
+                  <clipPath id={`${leafClipId}-w1`} clipPathUnits="objectBoundingBox">
+                    <path d="M0.18 1 C0.45 0.92 0.7 0.76 1 0.6 L1 1 Z" />
+                  </clipPath>
+                  <clipPath id={`${leafClipId}-w2`} clipPathUnits="objectBoundingBox">
+                    <path d="M0.3 1 C0.55 0.96 0.78 0.86 1 0.77 L1 1 Z" />
+                  </clipPath>
+                </defs>
+              </svg>
+              {/* Blue rim behind the photo */}
+              <div
+                className="absolute inset-0 -translate-x-3 translate-y-1 bg-[linear-gradient(160deg,#1AB2FF_0%,#0A66FF_55%,#0B2E5E_100%)] opacity-90"
+                style={{ clipPath: `url(#${leafClipId})` }}
+              />
+              {/* The photo */}
+              <div className="absolute inset-0" style={{ clipPath: `url(#${leafClipId})` }}>
+                <Image src={image} alt="" fill className="object-cover object-center rtl:-scale-x-100" sizes="54vw" />
+                {/* Light tint on the inner edge so the copy side stays legible */}
+                <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(5,10,19,0.45)_0%,rgba(5,10,19,0.08)_30%,transparent_60%)]" />
+                {/* Blue wave band sweeping along the bottom-right, cut by the leaf */}
+                <div
+                  className="absolute inset-0 bg-[linear-gradient(90deg,#0A3F9E_0%,#1270F0_55%,#1AB2FF_100%)] opacity-95"
+                  style={{ clipPath: `url(#${leafClipId}-w1)` }}
+                />
+                <div
+                  className="absolute inset-0 bg-[linear-gradient(90deg,#071B3F_0%,#0A2F72_60%,#0E4CB8_100%)]"
+                  style={{ clipPath: `url(#${leafClipId}-w2)` }}
+                />
               </div>
-              {/* Soft blue glow tracing the curve */}
-              <div className="absolute inset-0 [clip-path:ellipse(78%_125%_at_100%_50%)] rtl:[clip-path:ellipse(78%_125%_at_0%_50%)] ring-1 ring-inset ring-[#1AB2FF]/25" />
             </div>
           ) : (
             /* No photo uploaded → keep the original glow so the band still
@@ -1808,18 +1856,6 @@ function LongTermCTA({ onGetQuote, cta }) {
             />
           )}
 
-          {/* Faint parking "P" watermark */}
-          <div
-            aria-hidden="true"
-            className={`pointer-events-none absolute select-none font-bold leading-none tracking-tighter text-white/[0.05] ${
-              image
-                ? "left-[38%] top-1/2 -translate-y-1/2 text-[18rem] sm:text-[22rem]"
-                : "-bottom-10 end-6 text-[16rem] sm:text-[20rem]"
-            }`}
-          >
-            P
-          </div>
-
           {/* ── Copy on the left ── */}
           <motion.div
             initial={reduced ? false : { opacity: 0, y: 20 }}
@@ -1827,7 +1863,7 @@ function LongTermCTA({ onGetQuote, cta }) {
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.6, ease }}
             className={`relative px-6 py-14 sm:px-10 sm:py-20 lg:py-24 lg:ps-16 ${
-              image ? "text-center md:max-w-[52%] md:pe-6 md:text-start lg:ps-16" : "mx-auto max-w-3xl text-center lg:px-16"
+              image ? "text-center md:max-w-[47%] md:pe-4 md:text-start lg:ps-16" : "mx-auto max-w-3xl text-center lg:px-16"
             }`}
           >
             {eyebrow ? (
