@@ -199,17 +199,50 @@ export default function HalaParkInAction({ cmsKey = "halaParkInAction", pageSlug
       initial={prefersReducedMotion ? false : "hidden"}
       whileInView={prefersReducedMotion ? undefined : "visible"}
       viewport={{ once: true, amount: 0.28 }}
-      className="relative overflow-hidden bg-[linear-gradient(180deg,#FFFFFF_0%,#F7FBFF_60%,#EFF7FF_100%)] px-4 py-12 sm:px-6 sm:py-14 lg:px-8 lg:py-16"
+      className="relative overflow-hidden bg-[#F6FBFF] px-4 py-12 sm:px-6 sm:py-14 lg:px-8 lg:py-16"
     >
-      {/* Large pale-blue disc behind the artwork on the right */}
+      {/* Background rebuilt from the reference: white on the left, and on the
+          right one huge sky-blue circle (its left arc cuts through the section)
+          over a lighter wash, with a pale sphere top-right and a deeper glow in
+          the bottom-right corner. Pure CSS. */}
+      {/* Light blue wash on the far right, behind the circle */}
       <div
         aria-hidden
-        className="pointer-events-none absolute -right-[12%] top-1/2 h-[560px] w-[560px] -translate-y-1/2 rounded-full bg-[#CFE6FF]/55 blur-[2px] sm:h-[680px] sm:w-[680px] lg:-right-[6%] lg:h-[780px] lg:w-[780px] rtl:right-auto rtl:-left-[12%] rtl:lg:-left-[6%]"
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(199,230,253,0)_55%,#C7E6FD_100%)] rtl:-scale-x-100"
       />
-      {/* Soft wash sweeping in from the bottom-left corner */}
+      {/* One perfect circle that runs off the top, right and bottom edges, so
+          only its left arc shows (bulging to ~54% of the width mid-height, as
+          in the client's sketch) and the artwork sits inside. Inside: a glossy
+          highlight, two concentric rings and a dot grid at the bottom-right. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute -bottom-32 -left-24 h-[420px] w-[420px] rounded-full bg-[#DCEDFF]/70 blur-[40px] rtl:left-auto rtl:-right-24"
+        className="pointer-events-none absolute bottom-[-8%] right-0 aspect-square h-[100%] translate-x-1/2 overflow-hidden rounded-full bg-[linear-gradient(172deg,#7AC6F7_0%,#93D2FB_30%,#B9E1FC_60%,#D4ECFD_85%,#E0F1FD_100%)] shadow-[inset_0_0_0_26px_rgba(255,255,255,0.22)] lg:bottom-auto lg:left-[54%] lg:top-[-63%] lg:h-[201%] lg:translate-x-0 rtl:right-auto rtl:left-0 rtl:-translate-x-1/2 rtl:lg:left-auto rtl:lg:right-[54%] rtl:lg:translate-x-0 rtl:-scale-x-100"
+      >
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_28%_22%,rgba(255,255,255,0.55)_0%,rgba(255,255,255,0.18)_26%,rgba(255,255,255,0)_48%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.55)_1px,transparent_1.6px)] bg-[size:22px_22px] opacity-35 [mask-image:radial-gradient(circle_at_60%_70%,#000_0%,transparent_55%)]" />
+        <div className="absolute inset-[5%] rounded-full border border-white/45" />
+        <div className="absolute inset-[11%] rounded-full border border-white/25" />
+      </div>
+      {/* Pale sphere at the top-right, as in the reference */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute right-[-10%] top-[-30%] hidden aspect-square h-[88%] rounded-full bg-[radial-gradient(circle_at_40%_42%,#DCEFFE_0%,#C6E6FD_58%,#B9E0FC_100%)] lg:block rtl:right-auto rtl:left-[-10%]"
+      />
+      {/* Second, smaller circle in the bottom-right corner that sits behind the
+          phone in the artwork; a touch deeper so it reads as its own ring. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute bottom-[-12%] right-[-18%] aspect-square h-[46%] overflow-hidden rounded-full bg-[linear-gradient(115deg,#9AD6FE_0%,#73C6FA_45%,#5EB5F3_100%)] shadow-[0_0_0_1.5px_rgba(255,255,255,0.6),0_-18px_50px_rgba(31,112,196,0.18)] lg:bottom-[-36%] lg:right-[-12%] lg:h-[88%] rtl:right-auto rtl:left-[-18%] rtl:lg:left-[-12%] rtl:-scale-x-100"
+      >
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_25%,rgba(255,255,255,0.5)_0%,rgba(255,255,255,0.15)_28%,rgba(255,255,255,0)_50%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.55)_1px,transparent_1.6px)] bg-[size:22px_22px] opacity-50 [mask-image:radial-gradient(circle_at_40%_40%,#000_0%,transparent_60%)]" />
+        <div className="absolute inset-[5%] rounded-full border border-white/45" />
+        <div className="absolute inset-[11%] rounded-full border border-white/25" />
+      </div>
+      {/* Deeper glow in the bottom-right corner */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_102%_106%,#5EBAF9_0%,rgba(94,186,249,0.5)_9%,rgba(94,186,249,0)_22%)] rtl:-scale-x-100"
       />
 
       <div className="relative mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:gap-12">
@@ -268,25 +301,23 @@ export default function HalaParkInAction({ cmsKey = "halaParkInAction", pageSlug
           ) : null}
         </motion.div>
 
-        {/* ── RIGHT: artwork on a soft blue disc ── */}
+        {/* ── RIGHT: artwork floats on the blue sphere ── */}
         {copy.image ? (
           <motion.div
             variants={prefersReducedMotion ? undefined : previewImageVariants}
             initial={prefersReducedMotion ? false : "hidden"}
             whileInView={prefersReducedMotion ? undefined : "visible"}
             viewport={{ once: true, amount: 0.2 }}
-            className="relative"
+            className="relative ms-auto aspect-[4/3] w-full lg:w-[88%]"
           >
-            <div
-              aria-hidden
-              className="pointer-events-none absolute left-1/2 top-1/2 h-[90%] w-[90%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle_at_50%_50%,rgba(0,136,255,0.18),rgba(0,136,255,0.06)_55%,transparent_72%)]"
-            />
+            {/* No mask or frame: the uploaded image (ideally a transparent PNG
+                render) is shown whole, with a soft shadow for lift. */}
             <Image
               src={copy.image}
               alt={copy.imageAlt || t(copy, "title", language) || "HalaPark app preview"}
-              width={1600}
-              height={1200}
-              className="relative h-auto w-full"
+              fill
+              sizes="(min-width: 1024px) 52vw, 100vw"
+              className="object-contain object-center drop-shadow-[0_34px_60px_rgba(10,27,51,0.32)]"
               priority
             />
           </motion.div>
