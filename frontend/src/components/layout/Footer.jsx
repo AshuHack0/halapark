@@ -56,7 +56,12 @@ export default function Footer() {
     .filter((link) => link.label && link.href);
   const appHeading = tr("appHeading");
   const appText = tr("appText");
-  const appDownloadUrl = f.appDownloadUrl ?? "";
+  const appDownloadUrl = (f.appDownloadUrl ?? "").trim();
+  // One link per store badge; a badge renders only when its link is set.
+  const appStoreUrl = (f.appStoreUrl ?? "").trim();
+  const playStoreUrl = (f.playStoreUrl ?? "").trim();
+  const appGalleryUrl = (f.appGalleryUrl ?? "").trim();
+  const hasStoreLinks = Boolean(appStoreUrl || playStoreUrl || appGalleryUrl);
   const rights = tr("rights");
   const dataSafe = tr("dataSafe");
   const uaeProud = tr("uaeProud");
@@ -193,7 +198,7 @@ export default function Footer() {
             </div>
           ) : null}
 
-          {appHeading || appText || appDownloadUrl ? (
+          {appHeading || appText || appDownloadUrl || hasStoreLinks ? (
             <div className="w-full md:max-w-[22.5rem] md:justify-self-end md:text-right rtl:md:text-left">
               {appHeading ? (
                 <h4 className="text-sm font-semibold uppercase tracking-[0.1em] text-[#050A13] md:text-right rtl:md:text-left" dir={language === "ar" ? "rtl" : "ltr"}>
@@ -205,53 +210,67 @@ export default function Footer() {
                   {appText}
                 </p>
               ) : null}
-              {appDownloadUrl ? (
+              {appDownloadUrl || hasStoreLinks ? (
                 <div className="mt-4 flex flex-col gap-4 min-[420px]:flex-row min-[420px]:items-start md:justify-end">
-                  <Link
-                    href={appDownloadUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="shrink-0"
-                  >
-                    <img
-                      src={qrCodeSrc}
-                      alt="QR code for HalaPark app download"
-                      className="h-36 w-36 rounded-xl border border-[#D7E5F6] bg-white p-2.5 shadow-[0_10px_24px_rgba(15,23,42,0.05)]"
-                    />
-                  </Link>
-                  <div className="flex w-[6.75rem] flex-col items-start gap-2 md:items-end">
-                    <img
-                      src="/google-play.svg"
-                      alt="Get it on Google Play"
-                      className="h-9 w-[6.75rem] object-contain"
-                    />
-                    <img
-                      src="/app-store.svg"
-                      alt="Download on the App Store"
-                      className="h-9 w-[6.75rem] object-contain"
-                    />
+                  {appDownloadUrl && qrCodeSrc ? (
                     <Link
                       href={appDownloadUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex h-9 w-[6.75rem] items-center gap-1.5 rounded-2xl border-2 border-black bg-black px-2.5"
-                      aria-label="Download on Huawei AppGallery"
+                      className="shrink-0"
                     >
                       <img
-                        src="/channels4_profile.jpg"
-                        alt="Huawei AppGallery"
-                        className="h-4 w-4 rounded-sm object-cover"
+                        src={qrCodeSrc}
+                        alt="QR code for HalaPark app download"
+                        className="h-36 w-36 rounded-xl border border-[#D7E5F6] bg-white p-2.5 shadow-[0_10px_24px_rgba(15,23,42,0.05)]"
                       />
-                      <span className="flex flex-col leading-none text-white">
-                        <span className="text-[7px] font-medium opacity-90">
-                          {language === "ar" ? "متوفر على" : "Get it on"}
-                        </span>
-                        <span className="mt-0.5 text-[13px] font-semibold">
-                          Huawei
-                        </span>
-                      </span>
                     </Link>
-                  </div>
+                  ) : null}
+                  {hasStoreLinks ? (
+                    <div className="flex w-[6.75rem] flex-col items-start gap-2 md:items-end">
+                      {playStoreUrl ? (
+                        <Link href={playStoreUrl} target="_blank" rel="noopener noreferrer" aria-label="Get it on Google Play">
+                          <img
+                            src="/google-play.svg"
+                            alt="Get it on Google Play"
+                            className="h-9 w-[6.75rem] object-contain"
+                          />
+                        </Link>
+                      ) : null}
+                      {appStoreUrl ? (
+                        <Link href={appStoreUrl} target="_blank" rel="noopener noreferrer" aria-label="Download on the App Store">
+                          <img
+                            src="/app-store.svg"
+                            alt="Download on the App Store"
+                            className="h-9 w-[6.75rem] object-contain"
+                          />
+                        </Link>
+                      ) : null}
+                      {appGalleryUrl ? (
+                        <Link
+                          href={appGalleryUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex h-9 w-[6.75rem] items-center gap-1.5 rounded-2xl border-2 border-black bg-black px-2.5"
+                          aria-label="Download on Huawei AppGallery"
+                        >
+                          <img
+                            src="/channels4_profile.jpg"
+                            alt="Huawei AppGallery"
+                            className="h-4 w-4 rounded-sm object-cover"
+                          />
+                          <span className="flex flex-col leading-none text-white">
+                            <span className="text-[7px] font-medium opacity-90">
+                              {language === "ar" ? "متوفر على" : "Get it on"}
+                            </span>
+                            <span className="mt-0.5 text-[13px] font-semibold">
+                              Huawei
+                            </span>
+                          </span>
+                        </Link>
+                      ) : null}
+                    </div>
+                  ) : null}
                 </div>
               ) : null}
             </div>
