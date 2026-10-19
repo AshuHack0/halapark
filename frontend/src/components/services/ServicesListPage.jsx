@@ -19,7 +19,7 @@ import {
 } from "framer-motion";
 import {
   X, ArrowUpRight, Check, Shield, Camera, BadgeCheck,
-  CreditCard, Lock, ChevronRight, ChevronDown, MapPin, Clock, ParkingCircle, ArrowRight, Zap, Search, Loader2,
+  CreditCard, Lock, ChevronLeft, ChevronRight, ChevronDown, MapPin, Clock, ParkingCircle, ArrowRight, Zap, Search, Loader2,
   ShieldCheck, CalendarCheck, Users,
 } from "lucide-react";
 
@@ -878,6 +878,9 @@ function SvcHeroVisual({ reduced, slides }) {
   const next = useCallback(() => {
     setActive((p) => (p + 1) % Math.max(count, 1));
   }, [count]);
+  const prev = useCallback(() => {
+    setActive((p) => (p - 1 + Math.max(count, 1)) % Math.max(count, 1));
+  }, [count]);
 
   const current = count > 0 ? slides[active % count] : null;
   const isVideo = Boolean(current?.video);
@@ -932,7 +935,8 @@ function SvcHeroVisual({ reduced, slides }) {
               animate={layoutFor(offset)}
               transition={reduced ? { duration: 0 } : { duration: 0.6, ease }}
               style={{ zIndex: layoutFor(offset).zIndex }}
-              className="absolute inset-x-0 top-0 mx-auto aspect-[9/16] w-[56%] overflow-hidden rounded-[22px] shadow-[0_26px_60px_rgba(15,23,42,0.24)] lg:rounded-[26px]"
+              onClick={offset === 1 ? next : offset === -1 ? prev : undefined}
+              className={`absolute inset-x-0 top-0 mx-auto aspect-[9/16] w-[56%] overflow-hidden rounded-[22px] shadow-[0_26px_60px_rgba(15,23,42,0.24)] lg:rounded-[26px] ${offset === 1 || offset === -1 ? "cursor-pointer" : ""}`}
             >
               {/* Only the centre card plays; the others show their still. */}
               {isActive && slide.video ? (
@@ -989,6 +993,29 @@ function SvcHeroVisual({ reduced, slides }) {
         })}
       </div>
 
+      {/* ‹ › arrows: jump to any slide without waiting for the clip to end.
+          A side card is clickable too. */}
+      {count > 1 ? (
+        <div className="relative z-30 mt-6 flex items-center justify-center gap-3">
+          <button
+            type="button"
+            onClick={prev}
+            aria-label="Previous service"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-[#CFE0F5] bg-white text-[#0A1B33] shadow-[0_6px_18px_rgba(6,6,22,0.08)] transition-all duration-300 hover:border-[#0088FF] hover:text-[#0088FF]"
+          >
+            <ChevronLeft className="h-5 w-5 rtl:rotate-180" aria-hidden />
+          </button>
+          <button
+            type="button"
+            onClick={next}
+            aria-label="Next service"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-[#CFE0F5] bg-white text-[#0A1B33] shadow-[0_6px_18px_rgba(6,6,22,0.08)] transition-all duration-300 hover:border-[#0088FF] hover:text-[#0088FF]"
+          >
+            <ChevronRight className="h-5 w-5 rtl:rotate-180" aria-hidden />
+          </button>
+        </div>
+      ) : null}
+
       {/* Caption under the stack — belongs to the centre card */}
       {current.name || current.tag ? (
         <AnimatePresence mode="wait">
@@ -998,7 +1025,7 @@ function SvcHeroVisual({ reduced, slides }) {
             animate={{ opacity: 1, y: 0 }}
             exit={reduced ? undefined : { opacity: 0, y: -6 }}
             transition={{ duration: 0.35, ease }}
-            className="relative z-30 mt-7 text-center"
+            className="relative z-30 mt-4 text-center"
           >
             {current.name ? (
               <p className="text-[1.3rem] font-semibold leading-tight tracking-[-0.03em] text-[#050A13] [overflow-wrap:anywhere]">
