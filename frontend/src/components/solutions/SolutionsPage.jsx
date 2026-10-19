@@ -35,18 +35,26 @@ const ease = [0.22, 1, 0.36, 1];
 // scrolling in OPPOSITE directions ("many systems") converging on a central glass
 // "One Connected Platform" badge ("→ unified"). Distinct from every other hero.
 
-const SOL_COL_A = [
-  "/hf_20260327_064316_9c7b1a28-dbfa-456e-b88a-0087cb567a61.png",
-  "/hf_20260327_061010_f3bc038b-576f-4903-8896-5d998cc78527.png",
-  "/hf_20260327_060926_cbb82448-441c-42ee-9589-785e7acd7565.png",
-  "/AI-Driven Parking Intelligence.jpeg",
-];
-const SOL_COL_B = [
-  "/hf_20260327_065515_cd3808b8-d99d-4faa-817d-e3f772726da6.png",
-  "/hf_20260327_061900_db12a62e-2867-44b6-83f0-ea7f1a5442ef.png",
-  "/hf_20260327_070648_996630bc-828e-4cd7-8cb1-f42c30332d86.png",
-  "/Smart Public Parking.jpeg",
-];
+
+// Placeholder tiles with the exact size/spacing of the real column, shown while
+// the CMS images load (or when none are configured).
+function SolutionSkeletonColumn() {
+  return (
+    <div
+      aria-hidden
+      className="relative h-full w-[120px] overflow-hidden sm:w-[140px] lg:w-[160px] [mask-image:linear-gradient(to_bottom,transparent,black_14%,black_86%,transparent)] [-webkit-mask-image:linear-gradient(to_bottom,transparent,black_14%,black_86%,transparent)]"
+    >
+      <div className="flex flex-col gap-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div
+            key={i}
+            className="h-[150px] w-full shrink-0 animate-pulse rounded-[20px] border border-white/70 bg-[linear-gradient(180deg,#E6F0FB_0%,#D6E6F7_100%)] sm:h-[170px] lg:h-[190px]"
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
 
 function SolutionImageColumn({ images, direction = "up", reduced }) {
   // Duplicate the set so the marquee loops seamlessly.
@@ -80,7 +88,7 @@ function SolutionImageColumn({ images, direction = "up", reduced }) {
   );
 }
 
-function SolutionsControlPanel({ reduced, showcase, language }) {
+function SolutionsControlPanel({ reduced, showcase, language, loading = false }) {
   const sc = showcase && typeof showcase === "object" ? showcase : {};
   // Strict-Arabic helper for showcase text (blank AR → English text).
   // Strictly CMS: an empty field renders nothing. (It used to fall back to
@@ -95,12 +103,12 @@ function SolutionsControlPanel({ reduced, showcase, language }) {
   const plateHasText = Boolean(sct("plateTitle") || sct("plateValue"));
   const evHasText = Boolean(sct("evTitle") || sct("evValue") || sct("evNote"));
 
-  // Mosaic images: use CMS lists when provided (filter blanks), else the
-  // built-in defaults so the hero never renders empty frames.
-  const colA = (Array.isArray(sc.imagesA) ? sc.imagesA.filter(Boolean) : []);
-  const colB = (Array.isArray(sc.imagesB) ? sc.imagesB.filter(Boolean) : []);
-  const imagesA = colA.length > 0 ? colA : SOL_COL_A;
-  const imagesB = colB.length > 0 ? colB : SOL_COL_B;
+  // Mosaic images come from the CMS only (no bundled defaults — they used to
+  // flash before the real images arrived and looked like a stale cache). While
+  // the page data is loading, or when a column has no images, a skeleton of
+  // the same tiles is shown instead.
+  const imagesA = (Array.isArray(sc.imagesA) ? sc.imagesA.filter(Boolean) : []);
+  const imagesB = (Array.isArray(sc.imagesB) ? sc.imagesB.filter(Boolean) : []);
 
   return (
     <div className="relative flex items-center justify-center">
@@ -114,8 +122,16 @@ function SolutionsControlPanel({ reduced, showcase, language }) {
         transition={{ duration: 0.7, ease, delay: 0.1 }}
         className="relative z-20 flex h-[420px] items-stretch gap-4 sm:h-[480px] sm:gap-5 lg:h-[540px]"
       >
-        <SolutionImageColumn images={imagesA} direction="up" reduced={reduced} />
-        <SolutionImageColumn images={imagesB} direction="down" reduced={reduced} />
+        {!loading && imagesA.length > 0 ? (
+          <SolutionImageColumn images={imagesA} direction="up" reduced={reduced} />
+        ) : (
+          <SolutionSkeletonColumn />
+        )}
+        {!loading && imagesB.length > 0 ? (
+          <SolutionImageColumn images={imagesB} direction="down" reduced={reduced} />
+        ) : (
+          <SolutionSkeletonColumn />
+        )}
       </motion.div>
 
       {/* Center connector line glow */}
@@ -206,17 +222,21 @@ function NewHero() {
   const reduced = useReducedMotion();
   const { language } = useLanguage();
   const [hero, setHero] = useState({});
+  // True until the CMS page has been fetched — drives the mosaic skeleton.
+  const [heroLoading, setHeroLoading] = useState(true);
 
   useEffect(() => {
-    fetchPage("solutions").then((data) => {
-      const h = data?.sections?.hero;
-      if (h && typeof h === "object") {
-        setHero((prev) => ({
-          ...prev,
-          ...Object.fromEntries(Object.entries(h).filter(([, v]) => v !== "" && v != null)),
-        }));
-      }
-    });
+    fetchPage("solutions")
+      .then((data) => {
+        const h = data?.sections?.hero;
+        if (h && typeof h === "object") {
+          setHero((prev) => ({
+            ...prev,
+            ...Object.fromEntries(Object.entries(h).filter(([, v]) => v !== "" && v != null)),
+          }));
+        }
+      })
+      .finally(() => setHeroLoading(false));
   }, []);
 
   if (hero?.enabled === false) return null;
@@ -334,7 +354,7 @@ function NewHero() {
           >
             {/* The Solutions hero always uses the animated mosaic + badges
                 showcase (fully editable from admin). */}
-            <SolutionsControlPanel reduced={reduced} showcase={hero.showcase} language={language} />
+            <SolutionsControlPanel reduced={reduced} showcase={hero.showcase} language={language} loading={heroLoading} />
           </motion.div>
         </div>
       </div>
