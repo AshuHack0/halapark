@@ -448,36 +448,36 @@ function OurVision({ vision }) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.15 }}
           transition={{ duration: 0.65, ease }}
-          className="group relative overflow-hidden rounded-[32px] bg-[#06111f] shadow-[0_26px_70px_rgba(6,17,31,0.32)] ring-1 ring-white/10"
+          className="group relative overflow-hidden rounded-[28px] bg-[#06111f] shadow-[0_26px_70px_rgba(6,17,31,0.32)] ring-1 ring-white/15"
         >
           {/* The whole panel is dark here — the page reads light · dark · light */}
           <div className="absolute inset-0">
             {vision?.image ? (
-              <Image src={vision.image} alt="" fill className="object-cover object-center opacity-80 transition duration-700 group-hover:scale-105" sizes="100vw" aria-hidden />
+              <Image src={vision.image} alt="" fill className="object-cover object-center transition duration-700 group-hover:scale-[1.03]" sizes="100vw" aria-hidden />
             ) : null}
             {/* Dark on the copy side, clearing toward the photo so the upload
                 is actually visible. Mirrors for Arabic. */}
-            <div className="absolute inset-0 bg-[linear-gradient(100deg,#06111f_0%,rgba(6,17,31,0.96)_38%,rgba(6,17,31,0.72)_58%,rgba(6,17,31,0.35)_100%)] rtl:bg-[linear-gradient(260deg,#06111f_0%,rgba(6,17,31,0.96)_38%,rgba(6,17,31,0.72)_58%,rgba(6,17,31,0.35)_100%)]" />
+            <div className="absolute inset-0 max-lg:!bg-[linear-gradient(180deg,#071a33_0%,rgba(7,26,51,0.96)_52%,rgba(7,26,51,0.55)_78%,rgba(7,26,51,0.35)_100%)] bg-[linear-gradient(95deg,#071a33_0%,rgba(7,26,51,0.97)_30%,rgba(7,26,51,0.7)_46%,rgba(7,26,51,0.12)_62%,rgba(7,26,51,0)_100%)] rtl:bg-[linear-gradient(265deg,#071a33_0%,rgba(7,26,51,0.97)_30%,rgba(7,26,51,0.7)_46%,rgba(7,26,51,0.12)_62%,rgba(7,26,51,0)_100%)]" />
             <div aria-hidden="true" className="absolute -left-20 top-0 h-64 w-64 rounded-full bg-[#0088FF]/20 blur-[90px]" />
             <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#1AB2FF]/50 to-transparent" />
           </div>
 
           <div className="relative grid lg:grid-cols-[1.05fr_0.95fr]">
             {/* Copy half */}
-            <div className="relative flex flex-col justify-center p-8 sm:p-12 lg:p-14" dir={language === "ar" ? "rtl" : "ltr"}>
+            <div className="relative flex flex-col justify-center p-8 sm:p-12 lg:py-16 lg:ps-16 lg:pe-10" dir={language === "ar" ? "rtl" : "ltr"}>
               {hasText(vision?.title) ? (
-                <h2 className="mb-3 text-[clamp(2.2rem,3.4vw,3.1rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-white [overflow-wrap:anywhere]">
+                <h2 className="mb-4 text-[clamp(2.4rem,3.9vw,3.5rem)] font-semibold leading-[1.02] tracking-[-0.05em] text-white [overflow-wrap:anywhere]">
                   {t(vision, "title", language)}
                 </h2>
               ) : null}
               {hasText(vision?.subtitle) ? (
-                <p className="text-[clamp(1rem,1.5vw,1.2rem)] font-medium leading-snug tracking-[-0.02em] text-[#7CC4FF] [overflow-wrap:anywhere]">
+                <p className="text-[clamp(1.05rem,1.6vw,1.3rem)] font-normal leading-snug tracking-[-0.02em] text-[#4DB2FF] [overflow-wrap:anywhere]">
                   {t(vision, "subtitle", language)}
                 </p>
               ) : null}
-              <span aria-hidden="true" className="my-6 block h-1 w-16 rounded-full bg-[linear-gradient(90deg,#0088FF,#1AB2FF)]" />
+              <span aria-hidden="true" className="my-7 block h-[3px] w-[72px] rounded-full bg-[#1AB2FF]" />
               {paragraphs.length > 0 ? (
-                <div className="space-y-4 text-[0.95rem] leading-7 text-white/70">
+                <div className="space-y-4 text-[0.98rem] leading-[1.9] text-white/85">
                   {paragraphs.map((para, i) => (
                     <RichText key={`${i}-${para.slice(0, 48)}`} text={para} className="[overflow-wrap:anywhere] block" />
                   ))}
@@ -488,31 +488,31 @@ function OurVision({ vision }) {
             {/* Glass card floating on the dark panel */}
             {vision?.image || cardHasContent ? (
               <div className="relative p-6 sm:p-8 lg:p-10" dir={language === "ar" ? "rtl" : "ltr"}>
-                <div className="flex h-full flex-col justify-between gap-8 rounded-[24px] border border-white/12 bg-white/[0.06] p-7 shadow-[0_18px_44px_rgba(2,8,20,0.4)] backdrop-blur-md sm:p-9">
+                <div className="flex h-full flex-col justify-between gap-10 rounded-[22px] border border-white/25 bg-white/[0.08] p-7 shadow-[0_18px_44px_rgba(2,8,20,0.35)] backdrop-blur-[6px] sm:p-9">
                   <div>
                     {hasText(card.badge) ? (
-                      <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1">
-                        <span className="h-1.5 w-1.5 rounded-full bg-[#5BC4FF]" />
-                        <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/70 [overflow-wrap:anywhere]">
+                      <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-3.5 py-1.5">
+                        <span className="h-2 w-2 rounded-full bg-[#1AB2FF]" />
+                        <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-white [overflow-wrap:anywhere]">
                           {t(card, "badge", language)}
                         </span>
                       </div>
                     ) : null}
                     {hasText(card.title) ? (
-                      <p className="text-[clamp(1.3rem,2vw,1.7rem)] font-semibold leading-[1.3] tracking-[-0.03em] text-white [overflow-wrap:anywhere]">
+                      <p className="text-[clamp(1.5rem,2.3vw,2rem)] font-semibold leading-[1.2] tracking-[-0.03em] text-white [overflow-wrap:anywhere]">
                         {t(card, "title", language)}
                       </p>
                     ) : null}
                     {hasText(card.subtitle) ? (
-                      <p className="mt-4 text-[0.88rem] leading-6 text-white/55 [overflow-wrap:anywhere]">{t(card, "subtitle", language)}</p>
+                      <p className="mt-4 text-[0.95rem] leading-7 text-white/85 [overflow-wrap:anywhere]">{t(card, "subtitle", language)}</p>
                     ) : null}
                   </div>
                   {highlights.length > 0 ? (
-                    <div className="grid grid-cols-3 gap-3 divide-x divide-white/10 border-t border-white/10 pt-6 rtl:divide-x-reverse">
+                    <div className="grid grid-cols-3 gap-3 divide-x divide-white/25 rtl:divide-x-reverse">
                       {highlights.map((item, i) => (
                         <div key={`${i}-${item.line1}-${item.line2}`} className="text-center">
-                          <p className="text-[0.78rem] font-semibold text-white [overflow-wrap:anywhere]">{item.line1}</p>
-                          <p className="text-[0.72rem] text-white/45 [overflow-wrap:anywhere]">{item.line2}</p>
+                          <p className="text-[0.95rem] font-semibold text-white [overflow-wrap:anywhere]">{item.line1}</p>
+                          <p className="mt-0.5 text-[0.85rem] text-white/80 [overflow-wrap:anywhere]">{item.line2}</p>
                         </div>
                       ))}
                     </div>
