@@ -1,12 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import {
   ArrowRight,
   Check,
+  ChevronLeft,
+  ChevronRight,
   Briefcase,
   Headset,
   Building2,
@@ -553,6 +555,85 @@ function JobDetailModal({ job, onClose, onApply }) {
   );
 }
 
+// ─── Open Positions carousel ──────────────────────────────────────────────────
+// Jobs scroll sideways a page at a time (4 / 3 / 2 / 1 per page by width) with
+// ‹ › arrows only (no dots/scrollbar), so the section keeps one row no matter how many jobs
+// the admin adds. Controls hide when everything already fits on one page.
+
+function JobsCarousel({ posts, language, reduced, renderCard }) {
+  const trackRef = useRef(null);
+  const [page, setPage] = useState(0);
+  const [pageCount, setPageCount] = useState(1);
+  const rtl = language === "ar";
+
+  const measure = useCallback(() => {
+    const el = trackRef.current;
+    if (!el) return;
+    const perPage = Math.max(1, Math.round(el.clientWidth / (el.scrollWidth / posts.length || 1)));
+    setPageCount(Math.max(1, Math.ceil(posts.length / perPage)));
+    const pos = Math.abs(el.scrollLeft);
+    setPage(el.clientWidth ? Math.round(pos / el.clientWidth) : 0);
+  }, [posts.length]);
+
+  useEffect(() => {
+    measure();
+    const onResize = () => measure();
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [measure]);
+
+  const scrollByPage = (dir) => {
+    const el = trackRef.current;
+    if (!el) return;
+    el.scrollBy({ left: dir * el.clientWidth * (rtl ? -1 : 1), behavior: reduced ? "auto" : "smooth" });
+  };
+
+  // A single job centers itself instead of hugging the start of the track.
+  if (posts.length === 1) {
+    return <div className="mx-auto grid max-w-sm gap-5">{renderCard(posts[0], 0)}</div>;
+  }
+
+  const atStart = page <= 0;
+  const atEnd = page >= pageCount - 1;
+  const arrowClass = (disabled) =>
+    `flex h-11 w-11 items-center justify-center rounded-full border transition-all duration-300 ${
+      disabled
+        ? "cursor-not-allowed border-slate-200 text-slate-300"
+        : "border-[#CFE0F5] bg-white text-[#0A1B33] shadow-[0_6px_18px_rgba(6,6,22,0.08)] hover:border-[#0088FF] hover:text-[#0088FF]"
+    }`;
+
+  return (
+    <div>
+      <div
+        ref={trackRef}
+        onScroll={measure}
+        className="flex snap-x snap-mandatory gap-5 overflow-x-auto px-1 pb-3 pt-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+      >
+        {posts.map((post, i) => (
+          <div
+            key={`${post.title}-${i}`}
+            className="w-[86%] shrink-0 snap-start sm:w-[calc(50%-10px)] lg:w-[calc(33.333%-14px)] xl:w-[calc(25%-15px)]"
+          >
+            {renderCard(post, i)}
+          </div>
+        ))}
+      </div>
+
+      {pageCount > 1 ? (
+        <div className="mt-6 flex items-center justify-center gap-3">
+          <button type="button" onClick={() => scrollByPage(-1)} disabled={atStart} aria-label="Previous jobs" className={arrowClass(atStart)}>
+            <ChevronLeft className="h-5 w-5 rtl:rotate-180" aria-hidden />
+          </button>
+          <button type="button" onClick={() => scrollByPage(1)} disabled={atEnd} aria-label="Next jobs" className={arrowClass(atEnd)}>
+            <ChevronRight className="h-5 w-5 rtl:rotate-180" aria-hidden />
+          </button>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 function JobOpenings({ openPositions }) {
   const reduced = useReducedMotion();
   const { language } = useLanguage();
@@ -610,16 +691,11 @@ function JobOpenings({ openPositions }) {
           ) : null}
 
           {posts.length > 0 ? (
-            /* A single open position centers itself instead of hugging the
-               left column of the two-column grid. */
-            <div
-              className={
-                posts.length === 1
-                  ? "mx-auto grid max-w-sm gap-5"
-                  : "mx-auto grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-              }
-            >
-              {posts.map((post, i) => (
+            <JobsCarousel
+              posts={posts}
+              language={language}
+              reduced={reduced}
+              renderCard={(post, i) => (
                 <motion.article
                   key={`${post.title}-${i}`}
                   initial={reduced ? false : { opacity: 0, y: 16 }}
@@ -683,8 +759,8 @@ function JobOpenings({ openPositions }) {
                     </span>
                   </div>
                 </motion.article>
-              ))}
-            </div>
+              )}
+            />
           ) : null}
         </div>
       </section>
