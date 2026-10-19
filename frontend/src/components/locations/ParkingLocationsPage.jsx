@@ -512,6 +512,8 @@ export default function ParkingLocationsPage() {
   const ctaPrimaryLink = (cta?.primaryLink || "").trim();
   const ctaSecondary = (t(cta, "secondaryLabel", language) || "").trim();
   const ctaSecondaryLink = (cta?.secondaryLink || "").trim();
+  // Optional photo for the right side of the CTA band (admin upload).
+  const ctaImage = (cta?.image || "").trim();
 
   const showHero =
     hero?.enabled !== false &&
@@ -841,50 +843,98 @@ export default function ParkingLocationsPage() {
       {cta?.enabled !== false && (ctaHeading || ctaGradient || ctaDescription) ? (
         <section className="bg-white px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
           <div className="mx-auto w-full max-w-7xl">
-            <div className="relative overflow-hidden rounded-[2rem] border border-[#0088FF]/12 bg-[linear-gradient(120deg,#EEF6FF_0%,#F8FBFF_55%,#E8F2FF_100%)] px-6 py-14 text-center sm:px-10 sm:py-16">
+            <div className="relative overflow-hidden rounded-[2rem] border border-[#0088FF]/12 bg-[linear-gradient(120deg,#EEF6FF_0%,#F8FBFF_55%,#E8F2FF_100%)] px-6 py-12 sm:px-10 sm:py-14 lg:px-14 lg:py-16">
               <div
                 aria-hidden
                 className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[radial-gradient(circle,rgba(0,136,255,0.16),transparent_68%)] blur-xl"
               />
-              <div className="relative mx-auto max-w-2xl">
-                {ctaHeading || ctaGradient ? (
-                  <h2 className="text-[clamp(1.8rem,3.4vw,2.8rem)] font-semibold leading-[1.1] tracking-[-0.045em] text-[#050A13] [overflow-wrap:anywhere]">
-                    {ctaHeading ? <span className="block">{ctaHeading}</span> : null}
-                    {ctaGradient ? (
-                      <span className="mt-2 block bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-[clamp(1.3rem,2.3vw,1.9rem)] leading-[1.2] tracking-[-0.035em] text-transparent">
-                        {ctaGradient}
-                      </span>
-                    ) : null}
-                  </h2>
-                ) : null}
+              <div
+                aria-hidden
+                className="pointer-events-none absolute -bottom-24 -left-16 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(37,99,235,0.12),transparent_68%)] blur-xl"
+              />
 
-                {ctaDescription ? (
-                  <RichText
-                    text={ctaDescription}
-                    className="mx-auto mt-4 block max-w-xl text-sm leading-7 text-slate-500 sm:text-[0.95rem] [overflow-wrap:anywhere]"
-                  />
-                ) : null}
+              {/* With a photo: copy + buttons on the left, image on the right.
+                  Without one: the copy stays centred as before. */}
+              <div
+                className={`relative ${
+                  ctaImage
+                    ? "grid items-center gap-10 text-center lg:grid-cols-[1.05fr_0.95fr] lg:gap-14 lg:text-start"
+                    : "mx-auto max-w-2xl text-center"
+                }`}
+              >
+                <div>
+                  {ctaHeading || ctaGradient ? (
+                    <h2 className="text-[clamp(1.8rem,3.4vw,2.8rem)] font-semibold leading-[1.1] tracking-[-0.045em] text-[#050A13] [overflow-wrap:anywhere]">
+                      {ctaHeading ? <span className="block">{ctaHeading}</span> : null}
+                      {ctaGradient ? (
+                        <span className="mt-2 block bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-[clamp(1.3rem,2.3vw,1.9rem)] leading-[1.2] tracking-[-0.035em] text-transparent">
+                          {ctaGradient}
+                        </span>
+                      ) : null}
+                    </h2>
+                  ) : null}
 
-                {(ctaPrimary && ctaPrimaryLink) || (ctaSecondary && ctaSecondaryLink) ? (
-                  <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-                    {ctaPrimary && ctaPrimaryLink ? (
-                      <Link
-                        href={ctaPrimaryLink}
-                        className="group inline-flex items-center gap-2 rounded-full bg-[linear-gradient(120deg,#0088FF,#1AB2FF)] px-6 py-3 text-sm font-semibold text-white shadow-[0_12px_28px_rgba(0,136,255,0.3)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_18px_38px_rgba(0,136,255,0.38)]"
-                      >
-                        {ctaPrimary}
-                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5" aria-hidden />
-                      </Link>
-                    ) : null}
-                    {ctaSecondary && ctaSecondaryLink ? (
-                      <Link
-                        href={ctaSecondaryLink}
-                        className="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-[#0F1E33] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#0088FF]/40 hover:text-[#0088FF]"
-                      >
-                        {ctaSecondary}
-                      </Link>
-                    ) : null}
-                  </div>
+                  {ctaDescription ? (
+                    <RichText
+                      text={ctaDescription}
+                      className={`mt-4 block max-w-xl text-sm leading-7 text-slate-500 sm:text-[0.95rem] [overflow-wrap:anywhere] ${ctaImage ? "mx-auto lg:mx-0" : "mx-auto"}`}
+                    />
+                  ) : null}
+
+                  {(ctaPrimary && ctaPrimaryLink) || (ctaSecondary && ctaSecondaryLink) ? (
+                    <div className={`mt-8 flex flex-wrap items-center gap-3 ${ctaImage ? "justify-center lg:justify-start" : "justify-center"}`}>
+                      {ctaPrimary && ctaPrimaryLink ? (
+                        <Link
+                          href={ctaPrimaryLink}
+                          className="group inline-flex items-center gap-2 rounded-full bg-[linear-gradient(120deg,#0088FF,#1AB2FF)] px-6 py-3 text-sm font-semibold text-white shadow-[0_12px_28px_rgba(0,136,255,0.3)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_18px_38px_rgba(0,136,255,0.38)]"
+                        >
+                          {ctaPrimary}
+                          <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5" aria-hidden />
+                        </Link>
+                      ) : null}
+                      {ctaSecondary && ctaSecondaryLink ? (
+                        <Link
+                          href={ctaSecondaryLink}
+                          className="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-[#0F1E33] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#0088FF]/40 hover:text-[#0088FF]"
+                        >
+                          {ctaSecondary}
+                        </Link>
+                      ) : null}
+                    </div>
+                  ) : null}
+                </div>
+
+                {/* "Leaf" image container: two opposite corners swept into big
+                    curves, an offset outline echo, a pin badge and a dot patch —
+                    deliberately not a plain rectangle. */}
+                {ctaImage ? (
+                  <motion.div
+                    initial={reduced ? false : { opacity: 0, scale: 0.96 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true, amount: 0.3 }}
+                    transition={{ duration: 0.7, ease, delay: 0.1 }}
+                    className="relative mx-auto w-full max-w-[520px] lg:max-w-none"
+                  >
+                    <div
+                      aria-hidden
+                      className="pointer-events-none absolute inset-0 translate-x-4 translate-y-4 rounded-[96px_22px_96px_22px] border-2 border-[#0088FF]/25 sm:rounded-[150px_30px_150px_30px] rtl:-translate-x-4 rtl:rounded-[22px_96px_22px_96px] rtl:sm:rounded-[30px_150px_30px_150px]"
+                    />
+                    <div
+                      aria-hidden
+                      className="pointer-events-none absolute -bottom-5 -left-5 h-24 w-24 bg-[radial-gradient(rgba(0,136,255,0.35)_1.5px,transparent_1.6px)] bg-[size:12px_12px] [mask-image:radial-gradient(circle_at_30%_70%,#000_0%,transparent_70%)] rtl:left-auto rtl:-right-5"
+                    />
+                    <div className="relative aspect-[5/4] overflow-hidden rounded-[96px_22px_96px_22px] shadow-[0_24px_56px_rgba(15,23,42,0.18)] ring-1 ring-white/70 sm:rounded-[150px_30px_150px_30px] rtl:rounded-[22px_96px_22px_96px] rtl:sm:rounded-[30px_150px_30px_150px]">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={ctaImage} alt="" aria-hidden className="h-full w-full object-cover object-center" />
+                      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(150deg,transparent_55%,rgba(5,10,19,0.28)_100%)]" />
+                    </div>
+                    <div
+                      aria-hidden
+                      className="absolute -top-3 end-6 flex h-13 w-13 items-center justify-center rounded-full bg-white p-3.5 text-[#0088FF] shadow-[0_12px_30px_rgba(0,136,255,0.25)] ring-4 ring-[#EEF6FF] sm:end-8"
+                    >
+                      <MapPin className="h-6 w-6" />
+                    </div>
+                  </motion.div>
                 ) : null}
               </div>
             </div>
