@@ -50,6 +50,18 @@ const hasText = (v) => typeof v === "string" && v.trim().length > 0;
 const jt = (post, key, language) =>
   language === "ar" ? post?.ar?.[key] ?? "" : post?.[key] ?? "";
 
+// Pastel card tones cycled across the Opportunities cards (bg, photo wash,
+// accent for the icon disc / badge / roles label, box = the slightly darker
+// shade of the same tone used for the "Opportunities:" container).
+const OPP_TONES = [
+  { bg: "#EAF4FF", wash: "rgba(234,244,255,0.35)", accent: "#0088FF", box: "rgba(0,136,255,0.10)" },
+  { bg: "#FFF3E6", wash: "rgba(255,243,230,0.35)", accent: "#FF8A1F", box: "rgba(255,138,31,0.12)" },
+  { bg: "#F1ECFF", wash: "rgba(241,236,255,0.35)", accent: "#8B5CF6", box: "rgba(139,92,246,0.10)" },
+  { bg: "#E8FBF1", wash: "rgba(232,251,241,0.35)", accent: "#19B37B", box: "rgba(25,179,123,0.12)" },
+  { bg: "#E9F2FF", wash: "rgba(233,242,255,0.35)", accent: "#1A7CFF", box: "rgba(26,124,255,0.10)" },
+  { bg: "#FFECEF", wash: "rgba(255,236,239,0.35)", accent: "#F05A6A", box: "rgba(240,90,106,0.10)" },
+];
+
 const opportunityIcons = {
   Briefcase,
   Headset,
@@ -307,6 +319,8 @@ function OpportunitiesSection({ opportunities, header }) {
   const reduced = useReducedMotion();
   const { language } = useLanguage();
   const heading = t(header, "heading", language);
+  // Label above the roles list inside each card (e.g. "Opportunities:").
+  const rolesLabel = t(header, "rolesLabel", language);
   // Only items with real text in the current language render.
   const items = (Array.isArray(opportunities) ? opportunities : []).filter(
     (item) =>
@@ -339,44 +353,73 @@ function OpportunitiesSection({ opportunities, header }) {
         ) : null}
 
         {items.length > 0 ? (
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {items.map((item, i) => {
               const Icon = opportunityIcons[item.icon] ?? Sparkles;
               const itemTitle = t(item, "title", language);
               const itemDescription = t(item, "description", language);
               const itemBadge = t(item, "badge", language);
+              const itemRoles = t(item, "roles", language);
+              const image = (item.image || "").trim();
+              const tone = OPP_TONES[i % OPP_TONES.length];
               return (
                 <motion.article
                   key={`${item.title}-${i}`}
                   initial={reduced ? false : { opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, ease, delay: i * 0.08 }}
-                  className="flex h-full flex-col rounded-[22px] border border-[#E7EAF0] bg-white p-7 shadow-[0_4px_24px_rgba(6,6,22,0.06)] transition hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(6,6,22,0.10)]"
+                  className="relative flex h-full flex-col overflow-hidden rounded-[22px] border border-white shadow-[0_4px_24px_rgba(6,6,22,0.06)] transition hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(6,6,22,0.10)]"
+                  style={{ backgroundColor: tone.bg }}
                   dir={language === "ar" ? "rtl" : "ltr"}
                 >
-                  <div className="flex items-center justify-between">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-[14px] bg-[#EEF6FF]">
-                      {hasText(item.iconImage) ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={item.iconImage} alt="" className="h-9 w-9 object-contain" />
-                      ) : (
-                        <Icon className="h-6 w-6 text-[#0088FF]" strokeWidth={1.8} aria-hidden />
-                      )}
+                  {/* Faded photo: anchored to the end side, dissolving into the
+                      pastel card background toward the copy. No hard edge. */}
+                  {image ? (
+                    <div
+                      aria-hidden="true"
+                      className="pointer-events-none absolute inset-y-0 end-0 w-[62%] [mask-image:linear-gradient(90deg,transparent_0%,rgba(0,0,0,0.45)_30%,#000_58%,#000_100%)] max-sm:w-[58%] max-sm:[mask-image:linear-gradient(90deg,transparent_0%,rgba(0,0,0,0.3)_35%,#000_68%,#000_100%)] rtl:[mask-image:linear-gradient(270deg,transparent_0%,rgba(0,0,0,0.45)_30%,#000_58%,#000_100%)] rtl:max-sm:[mask-image:linear-gradient(270deg,transparent_0%,rgba(0,0,0,0.3)_35%,#000_68%,#000_100%)]"
+                    >
+                      <Image src={image} alt="" fill sizes="(min-width: 1280px) 28vw, (min-width: 768px) 40vw, 80vw" className="object-cover object-center" />
+                      {/* Pastel wash over the photo so it sits inside the card tone */}
+                      <div className="absolute inset-0" style={{ background: `linear-gradient(90deg, ${tone.bg} 0%, ${tone.wash} 30%, transparent 52%)` }} />
                     </div>
-                    {hasText(itemBadge) ? (
-                      <span className="rounded-full bg-[#EEF6FF] px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-wider text-[#0088FF] [overflow-wrap:anywhere]">
-                        {itemBadge}
-                      </span>
+                  ) : null}
+
+                  <div className={`relative flex h-full flex-col p-5 sm:p-6 ${image ? "pe-[28%] sm:pe-[34%]" : ""}`}>
+                    <div className="flex flex-wrap items-center gap-3">
+                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full shadow-[0_8px_18px_rgba(6,6,22,0.14)]" style={{ backgroundColor: tone.accent }}>
+                        {hasText(item.iconImage) ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={item.iconImage} alt="" className="h-7 w-7 object-contain" />
+                        ) : (
+                          <Icon className="h-6 w-6 text-white" strokeWidth={1.9} aria-hidden />
+                        )}
+                      </div>
+                      {hasText(itemBadge) ? (
+                        <span className="rounded-full bg-white/80 px-3 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.08em] shadow-[0_2px_8px_rgba(6,6,22,0.06)] backdrop-blur-sm [overflow-wrap:anywhere]" style={{ color: tone.accent }}>
+                          {itemBadge}
+                        </span>
+                      ) : null}
+                    </div>
+                    {hasText(itemTitle) ? (
+                      <h3 className="mt-4 text-[1.12rem] font-semibold leading-[1.2] tracking-[-0.02em] text-[#0A1B33] [overflow-wrap:anywhere]">
+                        {itemTitle}
+                      </h3>
+                    ) : null}
+                    {hasText(itemDescription) ? (
+                      <RichText text={itemDescription} className="mt-2.5 text-[0.86rem] leading-[1.45] text-[#3B4A5F] [overflow-wrap:anywhere] block" />
+                    ) : null}
+                    {hasText(itemRoles) ? (
+                      <div className="mt-auto pt-4">
+                        <div className="rounded-[14px] px-4 py-3 shadow-[0_2px_10px_rgba(6,6,22,0.05)] backdrop-blur-[2px]" style={{ backgroundColor: tone.box }}>
+                          {hasText(rolesLabel) ? (
+                            <p className="text-[0.82rem] font-semibold [overflow-wrap:anywhere]" style={{ color: tone.accent }}>{rolesLabel}</p>
+                          ) : null}
+                          <p className="mt-0.5 text-[0.84rem] leading-[1.45] text-[#0A1B33] [overflow-wrap:anywhere]">{itemRoles}</p>
+                        </div>
+                      </div>
                     ) : null}
                   </div>
-                  {hasText(itemTitle) ? (
-                    <h3 className="mt-5 text-[1.1rem] font-semibold tracking-[-0.02em] text-[#050A13] [overflow-wrap:anywhere]">
-                      {itemTitle}
-                    </h3>
-                  ) : null}
-                  {hasText(itemDescription) ? (
-                    <RichText text={itemDescription} className="mt-3 text-[0.9rem] leading-6 text-slate-500 [overflow-wrap:anywhere] block" />
-                  ) : null}
                 </motion.article>
               );
             })}
