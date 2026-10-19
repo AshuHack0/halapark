@@ -448,7 +448,7 @@ function OurVision({ vision }) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.15 }}
           transition={{ duration: 0.65, ease }}
-          className="group relative overflow-hidden rounded-[28px] bg-[#06111f] shadow-[0_26px_70px_rgba(6,17,31,0.32)] ring-1 ring-white/15"
+          className="group relative overflow-hidden rounded-[28px] bg-[#02376B] shadow-[0_26px_70px_rgba(2,55,107,0.32)] ring-1 ring-white/15"
         >
           {/* The whole panel is dark here — the page reads light · dark · light */}
           <div className="absolute inset-0">
@@ -457,7 +457,7 @@ function OurVision({ vision }) {
             ) : null}
             {/* Dark on the copy side, clearing toward the photo so the upload
                 is actually visible. Mirrors for Arabic. */}
-            <div className="absolute inset-0 max-lg:!bg-[linear-gradient(180deg,#071a33_0%,rgba(7,26,51,0.96)_52%,rgba(7,26,51,0.55)_78%,rgba(7,26,51,0.35)_100%)] bg-[linear-gradient(95deg,#071a33_0%,rgba(7,26,51,0.97)_30%,rgba(7,26,51,0.7)_46%,rgba(7,26,51,0.12)_62%,rgba(7,26,51,0)_100%)] rtl:bg-[linear-gradient(265deg,#071a33_0%,rgba(7,26,51,0.97)_30%,rgba(7,26,51,0.7)_46%,rgba(7,26,51,0.12)_62%,rgba(7,26,51,0)_100%)]" />
+            <div className="absolute inset-0 max-lg:!bg-[linear-gradient(180deg,#02376B_0%,rgba(1,48,94,0.96)_52%,rgba(1,48,94,0.55)_78%,rgba(1,48,94,0.35)_100%)] bg-[linear-gradient(95deg,#02376B_0%,rgba(1,49,95,0.97)_30%,rgba(0,45,88,0.72)_46%,rgba(0,45,88,0.12)_62%,rgba(0,45,88,0)_100%)] rtl:bg-[linear-gradient(265deg,#02376B_0%,rgba(1,49,95,0.97)_30%,rgba(0,45,88,0.72)_46%,rgba(0,45,88,0.12)_62%,rgba(0,45,88,0)_100%)]" />
             <div aria-hidden="true" className="absolute -left-20 top-0 h-64 w-64 rounded-full bg-[#0088FF]/20 blur-[90px]" />
             <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#1AB2FF]/50 to-transparent" />
           </div>
@@ -488,7 +488,7 @@ function OurVision({ vision }) {
             {/* Glass card floating on the dark panel */}
             {vision?.image || cardHasContent ? (
               <div className="relative p-6 sm:p-8 lg:p-10" dir={language === "ar" ? "rtl" : "ltr"}>
-                <div className="flex h-full flex-col justify-between gap-10 rounded-[22px] border border-white/25 bg-white/[0.08] p-7 shadow-[0_18px_44px_rgba(2,8,20,0.35)] backdrop-blur-[6px] sm:p-9">
+                <div className="flex h-full flex-col justify-between gap-10 rounded-[22px] border border-white/25 bg-[#02376B]/35 p-7 shadow-[0_18px_44px_rgba(2,8,20,0.35)] backdrop-blur-[1.5px] sm:p-9">
                   <div>
                     {hasText(card.badge) ? (
                       <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-3.5 py-1.5">
