@@ -9,6 +9,30 @@ import { ArrowRight, Cctv, BarChart3, Car, ShieldCheck } from "lucide-react";
 // Built-in marks for the ring nodes, used when no icon is uploaded.
 const BANNER_NODE_ICONS = [Cctv, Car, BarChart3, ShieldCheck];
 
+// Desktop geometry in SVG units (0–100 across the circle box). Dots sit on the
+// thin outer ring (r≈49) at the four 45° points; each line starts just outside
+// its icon (icon centres follow the `spot` offsets below, radius ≈ 6.3 units).
+const BANNER_NODE_GEOMETRY = (() => {
+  const dots = [
+    [15.4, 15.4],
+    [84.6, 15.4],
+    [15.4, 84.6],
+    [84.6, 84.6],
+  ];
+  const icons = [
+    [-0.6, 2.3],
+    [100.6, 2.3],
+    [-0.6, 98.3],
+    [100.6, 98.3],
+  ];
+  const R = 7.4; // icon radius + a little breathing room
+  return dots.map(([dx, dy], i) => {
+    const [ix, iy] = icons[i];
+    const len = Math.hypot(dx - ix, dy - iy) || 1;
+    return { x1: ix + ((dx - ix) / len) * R, y1: iy + ((dy - iy) / len) * R, x2: dx, y2: dy };
+  });
+})();
+
 export default function BlackBanner() {
   const { language } = useLanguage();
   const [featureCard, setFeatureCard] = useState({});
@@ -148,44 +172,29 @@ export default function BlackBanner() {
                 {/* ── RIGHT: circular image ringed by labelled feature nodes ── */}
                 {featureCard.image ? (
                   <div className="lg:col-span-5">
-                    <div className="relative mx-auto aspect-square w-full max-w-[300px] sm:max-w-[340px] lg:max-w-[380px]">
-                      {/* Connector lines from each node to a dot on the ring */}
+                    <div className="relative mx-auto aspect-square w-full max-w-[300px] sm:max-w-[340px] lg:my-10 lg:mb-20 lg:max-w-[380px]">
+                      {/* Connector lines: from each icon's edge to a dot that sits
+                          ON the thin outer ring (45° points), like the reference. */}
                       {(featureCard.features || []).length > 0 ? (
                         <svg
                           aria-hidden
                           viewBox="0 0 100 100"
                           className="pointer-events-none absolute inset-0 hidden h-full w-full overflow-visible lg:block"
                         >
-                          {[
-                            // Measured: the icons occupy 0–11.7 and 88.3–100
-                            // in these units, so each line starts just past
-                            // the icon's inner edge and never crosses it.
-                            { x1: 12.6, y1: 12.3, x2: 19.6, y2: 19.6 },
-                            { x1: 87.4, y1: 12.3, x2: 80.4, y2: 19.6 },
-                            { x1: 12.6, y1: 81.3, x2: 19.6, y2: 80.4 },
-                            { x1: 87.4, y1: 81.3, x2: 80.4, y2: 80.4 },
-                          ]
-                            .slice(0, (featureCard.features || []).length)
-                            .map((l, i) => (
-                              <g key={i}>
-                                <line
-                                  x1={l.x1}
-                                  y1={l.y1}
-                                  x2={l.x2}
-                                  y2={l.y2}
-                                  stroke="rgba(255,255,255,0.55)"
-                                  strokeWidth="0.4"
-                                />
-                                <circle cx={l.x2} cy={l.y2} r="1.4" fill="#ffffff" />
-                              </g>
-                            ))}
+                          {BANNER_NODE_GEOMETRY.slice(0, (featureCard.features || []).length).map((g, i) => (
+                            <g key={i}>
+                              <line x1={g.x1} y1={g.y1} x2={g.x2} y2={g.y2} stroke="rgba(255,255,255,0.7)" strokeWidth="0.35" />
+                              <circle cx={g.x2} cy={g.y2} r="1.5" fill="#ffffff" />
+                            </g>
+                          ))}
                         </svg>
                       ) : null}
 
-                      {/* Glowing ring around the photo */}
-                      <div aria-hidden className="absolute inset-0 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.28),transparent_62%)] blur-[2px]" />
-                      <div aria-hidden className="absolute inset-[3%] rounded-full border-[6px] border-[#4FB0FF]/70 shadow-[0_0_50px_rgba(79,176,255,0.45)]" />
-                      <div className="absolute inset-[7%] overflow-hidden rounded-full ring-1 ring-white/30">
+                      {/* Thin outer ring with clear space, then the glowing photo */}
+                      <div aria-hidden className="absolute inset-0 rounded-full border border-white/60" />
+                      <div aria-hidden className="absolute inset-[2%] rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.3),transparent_64%)] blur-[2px]" />
+                      <div aria-hidden className="absolute inset-[2%] rounded-full border-[5px] border-[#4FB0FF]/75 shadow-[0_0_44px_rgba(79,176,255,0.45)]" />
+                      <div className="absolute inset-[5%] overflow-hidden rounded-full ring-1 ring-white/30">
                         <img
                           src={featureCard.image}
                           alt="Banner visual"
@@ -196,11 +205,13 @@ export default function BlackBanner() {
                       {/* Nodes — placed at the four corners on desktop */}
                       {(featureCard.features || []).slice(0, 4).map((f, i) => {
                         const Icon = BANNER_NODE_ICONS[i % BANNER_NODE_ICONS.length];
+                        // Pushed out diagonally so each connector runs at ~45°
+                        // into its dot on the outer ring (see BANNER_NODE_GEOMETRY).
                         const spot = [
-                          "lg:-left-[22%] lg:top-[6%] lg:text-end lg:items-end",
-                          "lg:-right-[22%] lg:top-[6%] lg:text-start lg:items-start",
-                          "lg:-left-[22%] lg:bottom-[6%] lg:text-end lg:items-end",
-                          "lg:-right-[22%] lg:bottom-[6%] lg:text-start lg:items-start",
+                          "lg:-left-[28%] lg:-top-[4%] lg:text-end lg:items-end",
+                          "lg:-right-[28%] lg:-top-[4%] lg:text-start lg:items-start",
+                          "lg:-left-[28%] lg:-bottom-[16%] lg:text-end lg:items-end",
+                          "lg:-right-[28%] lg:-bottom-[16%] lg:text-start lg:items-start",
                         ][i];
                         return (
                           <div
