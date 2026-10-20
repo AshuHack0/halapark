@@ -9,6 +9,7 @@ import {
   Cpu, Leaf, Building2, Car, Network, CalendarCheck,
   Target, Eye, Globe, Users, TrendingUp, Sparkles,
 } from "lucide-react";
+import { fetchPage } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
 import RichText from "@/components/common/RichText";
 import { PARTNER_FORM_LINK } from "@/components/partners/PartnershipFormProvider";
@@ -1347,6 +1348,14 @@ function PoweringFutureCities() {
 function FinalCTA({ cta }) {
   const reduced = useReducedMotion();
   const { language } = useLanguage();
+  // Watermark logo: the site logo from global Settings (bundled fallback).
+  const [logo, setLogo] = useState("/logo-blue-11.svg");
+  useEffect(() => {
+    fetchPage("settings").then((page) => {
+      const img = (page?.sections?.logo?.image || "").trim();
+      if (img) setLogo(img);
+    });
+  }, []);
 
   if (cta?.enabled === false) return null;
 
@@ -1356,25 +1365,39 @@ function FinalCTA({ cta }) {
     hasText(cta?.title) || hasText(cta?.description) || hasPrimary || hasSecondary;
   if (!hasContent) return null;
 
+  const image = (cta?.image || "").trim();
+
   return (
     <section className="bg-white py-4 sm:py-5 lg:py-6">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="relative isolate overflow-hidden rounded-[28px] bg-[linear-gradient(118deg,#071327_0%,#0A1E3C_50%,#0B2E5E_100%)]">
-          {/* Depth: blueprint grid + a soft blue pool behind the copy */}
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:42px_42px] [mask-image:radial-gradient(ellipse_60%_80%_at_25%_50%,black,transparent)]"
-          />
+        <div className="relative isolate overflow-hidden rounded-[28px] bg-[linear-gradient(118deg,#071327_0%,#0A1E3C_50%,#0B2E5E_100%)] shadow-[0_28px_64px_rgba(7,19,39,0.3)] ring-1 ring-white/10">
+          {/* Depth: top hairline, soft blue pools, concentric ring arcs and a
+              faint logo on the right (logo only when there is no photo). */}
+          <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#1AB2FF]/60 to-transparent" />
           <div aria-hidden className="pointer-events-none absolute -bottom-28 -left-20 h-72 w-72 rounded-full bg-[#0088FF]/25 blur-[90px]" />
+          <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full bg-[#1AB2FF]/20 blur-[100px] rtl:right-auto rtl:-left-24" />
+          <div aria-hidden className="pointer-events-none absolute -right-[12%] top-1/2 h-[560px] w-[560px] -translate-y-1/2 rounded-full border border-white/[0.07] rtl:right-auto rtl:-left-[12%]" />
+          <div aria-hidden className="pointer-events-none absolute -right-[12%] top-1/2 h-[420px] w-[420px] -translate-y-1/2 rounded-full border border-white/[0.09] rtl:right-auto rtl:-left-[12%]" />
+          <div aria-hidden className="pointer-events-none absolute -right-[12%] top-1/2 h-[280px] w-[280px] -translate-y-1/2 rounded-full border border-[#1AB2FF]/20 rtl:right-auto rtl:-left-[12%]" />
+          {!image ? (
+            <div aria-hidden className="pointer-events-none absolute end-10 top-1/2 hidden w-[26%] -translate-y-1/2 select-none lg:block">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={logo} alt="" className="h-auto w-full opacity-[0.08] brightness-0 invert" />
+            </div>
+          ) : null}
 
-          {/* ── Image panel on the right: a tilted squircle with a blue ring
-                behind it, so it reads as artwork rather than a photo box. ── */}
-          {cta?.image ? (
-            <div aria-hidden className="pointer-events-none absolute inset-y-8 end-10 hidden w-[36%] lg:block">
-              <div className="absolute inset-0 -rotate-3 rounded-[64px] border border-[#1AB2FF]/40 rtl:rotate-3" />
-              <div className="absolute inset-0 rotate-2 overflow-hidden rounded-[64px] shadow-[0_30px_70px_rgba(3,10,20,0.5)] rtl:-rotate-2">
-                <Image src={cta.image} alt="" fill className="object-cover object-center" sizes="36vw" aria-hidden />
-                <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,19,39,0.6)_0%,rgba(7,19,39,0.1)_55%,transparent_100%)] rtl:bg-[linear-gradient(270deg,rgba(7,19,39,0.6)_0%,rgba(7,19,39,0.1)_55%,transparent_100%)]" />
+          {/* ── Image on the right: a tall "leaf" (big top-left / bottom-right
+                curves) with a blue outline echo behind it and a logo badge, so
+                it reads as artwork rather than a photo box. ── */}
+          {image ? (
+            <div aria-hidden className="pointer-events-none absolute inset-y-10 end-12 hidden w-[36%] lg:block">
+              <div className="absolute inset-0 translate-x-4 translate-y-4 rounded-[140px_32px_140px_32px] border border-[#1AB2FF]/45 rtl:-translate-x-4 rtl:rounded-[32px_140px_32px_140px]" />
+              <div className="absolute inset-0 overflow-hidden rounded-[140px_32px_140px_32px] shadow-[0_30px_70px_rgba(3,10,20,0.55)] ring-1 ring-white/15 rtl:rounded-[32px_140px_32px_140px]">
+                <Image src={image} alt="" fill className="object-cover object-center" sizes="36vw" aria-hidden />
+                <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,19,39,0.55)_0%,rgba(7,19,39,0.08)_50%,transparent_100%)] rtl:bg-[linear-gradient(270deg,rgba(7,19,39,0.55)_0%,rgba(7,19,39,0.08)_50%,transparent_100%)]" />
+              </div>
+              <div className="absolute -bottom-3 start-6 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-[#0A3F84] to-[#0088FF] shadow-[0_12px_30px_rgba(0,136,255,0.45)] ring-4 ring-[#0A1E3C]">
+                <Image src="/Layer_1.svg" alt="" width={22} height={28} className="h-7 w-auto" aria-hidden />
               </div>
             </div>
           ) : null}
@@ -1384,40 +1407,39 @@ function FinalCTA({ cta }) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.65, ease }}
-            className={`relative z-10 px-8 py-14 text-center sm:px-12 sm:py-16 lg:py-20 ${
-              cta?.image
-                ? "lg:max-w-[56%] lg:ps-16 lg:pe-6 lg:text-start"
-                : "mx-auto max-w-3xl lg:px-16"
+            className={`relative z-10 px-8 py-14 text-center sm:px-12 sm:py-16 lg:py-24 lg:ps-16 lg:pe-6 lg:text-start ${
+              image ? "lg:max-w-[56%]" : "lg:max-w-[62%]"
             }`}
             dir={language === "ar" ? "rtl" : "ltr"}
           >
             {hasText(cta?.title) ? (
-              <h2 className="text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-[1.05] tracking-[-0.05em] text-white [overflow-wrap:anywhere]">
+              <h2 className="text-[clamp(2.1rem,4.2vw,3.5rem)] font-semibold leading-[1.04] tracking-[-0.05em] text-white [overflow-wrap:anywhere]">
                 {t(cta, "title", language)}
               </h2>
             ) : null}
+            <span aria-hidden className="mx-auto mt-6 block h-[3px] w-16 rounded-full bg-[linear-gradient(90deg,#0088FF,#1AB2FF)] lg:mx-0" />
             {hasText(cta?.description) ? (
               <RichText
                 text={t(cta, "description", language)}
-                className={`mt-5 max-w-xl text-sm leading-7 text-white/80 sm:text-base [overflow-wrap:anywhere] block ${cta?.image ? "lg:mx-0" : "mx-auto"}`}
+                className="mx-auto mt-5 max-w-xl text-sm leading-7 text-white/80 sm:text-base [overflow-wrap:anywhere] block lg:mx-0"
               />
             ) : null}
             {hasPrimary || hasSecondary ? (
-              <div className={`mt-8 flex flex-wrap items-center gap-3 ${cta?.image ? "justify-center lg:justify-start" : "justify-center"}`}>
+              <div className="mt-9 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
                 {hasPrimary ? (
                   <Link
                     href={cta?.primaryCtaPopup ? PARTNER_FORM_LINK : cta?.primaryCtaLink || "/contact"}
                     data-partner-source="About · CTA"
-                    className="inline-flex items-center gap-2 rounded-full bg-[#0088FF] px-8 py-3.5 text-sm font-semibold text-white shadow-[0_8px_28px_rgba(0,136,255,0.45)] transition hover:brightness-110"
+                    className="group inline-flex items-center gap-2 rounded-full bg-[#0088FF] px-8 py-3.5 text-sm font-semibold text-white shadow-[0_14px_36px_rgba(0,136,255,0.45)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#1AB2FF] hover:shadow-[0_18px_44px_rgba(26,178,255,0.5)]"
                   >
-                    {t(cta, "primaryCtaText", language)} <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
+                    {t(cta, "primaryCtaText", language)} <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5" aria-hidden />
                   </Link>
                 ) : null}
                 {hasSecondary ? (
                   <Link
                     href={cta?.secondaryCtaPopup ? PARTNER_FORM_LINK : cta?.secondaryCtaLink || "/contact"}
                     data-partner-source="About · CTA"
-                    className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-8 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/15"
+                    className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-8 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-[#1AB2FF]/60 hover:bg-white/15"
                   >
                     {t(cta, "secondaryCtaText", language)}
                   </Link>
