@@ -26,11 +26,12 @@ const COPY = {
     phonePh: "50 000 0000",
     help: "How Can We Help?",
     helpPh: "Tell us about your partnership opportunity",
-    doc: "Supporting Document",
-    optional: "(Optional)",
-    docDrop: "Drag & drop a file here, or",
+    doc: "Supporting Documents",
+    optional: "(Optional — up to 5)",
+    docDrop: "Drag & drop files here, or",
     docBrowse: "browse",
-    docHint: "PDF, Word, PowerPoint, Excel or image — max 10MB",
+    docHint: "PDF, Word, PowerPoint, Excel or image — up to 5 files, max 10MB each",
+    docAddMore: "Add another file",
     uploading: "Uploading",
     remove: "Remove",
     submit: "Submit Request",
@@ -44,7 +45,8 @@ const COPY = {
     errDocType: "Unsupported file type. Upload a PDF, Word, PowerPoint, Excel or image file.",
     errDocSize: "File is too large (max 10MB).",
     errDocUpload: "Document upload failed. Please try again.",
-    errWait: "Please wait for the document to finish uploading.",
+    errWait: "Please wait for the documents to finish uploading.",
+    errDocCount: "You can upload up to 5 documents.",
     errGeneric: "Something went wrong. Please try again.",
     errNetwork: "Network error. Please try again.",
   },
@@ -63,11 +65,12 @@ const COPY = {
     phonePh: "50 000 0000",
     help: "كيف يمكننا مساعدتك؟",
     helpPh: "أخبرنا عن فرصة الشراكة",
-    doc: "مستند داعم",
-    optional: "(اختياري)",
-    docDrop: "اسحب الملف وأفلته هنا، أو",
+    doc: "مستندات داعمة",
+    optional: "(اختياري — حتى 5 ملفات)",
+    docDrop: "اسحب الملفات وأفلتها هنا، أو",
     docBrowse: "تصفّح",
-    docHint: "PDF أو Word أو PowerPoint أو Excel أو صورة — بحد أقصى 10 ميجابايت",
+    docHint: "PDF أو Word أو PowerPoint أو Excel أو صورة — حتى 5 ملفات، بحد أقصى 10 ميجابايت لكل ملف",
+    docAddMore: "إضافة ملف آخر",
     uploading: "جارٍ الرفع",
     remove: "إزالة",
     submit: "إرسال الطلب",
@@ -82,12 +85,14 @@ const COPY = {
     errDocSize: "حجم الملف كبير جدًا (بحد أقصى 10 ميجابايت).",
     errDocUpload: "فشل رفع المستند. يرجى المحاولة مرة أخرى.",
     errWait: "يرجى الانتظار حتى يكتمل رفع المستند.",
+    errDocCount: "يمكنك رفع حتى 5 مستندات.",
     errGeneric: "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
     errNetwork: "خطأ في الشبكة. يرجى المحاولة مرة أخرى.",
   },
 };
 
 const BLANK = { fullName: "", companyName: "", email: "", phone: "", message: "" };
+const DOC_MAX_COUNT = 5;
 const BLANK_DOC = { status: "idle", name: "", type: "", url: "", progress: 0, error: "" };
 
 // UAE numbers are entered after the fixed +971 prefix. A leading 0 (common
@@ -137,7 +142,9 @@ export default function PartnershipModal({ isOpen, onClose, config, source }) {
   const dir = isAr ? "rtl" : "ltr";
 
   const [form, setForm] = useState(BLANK);
-  const [doc, setDoc] = useState(BLANK_DOC);
+  // Up to DOC_MAX_COUNT files, each uploaded independently with its own progress.
+  const [docs, setDocs] = useState([]);
+  const [docError, setDocError] = useState("");
   const [dragOver, setDragOver] = useState(false);
   const [done, setDone] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -153,7 +160,8 @@ export default function PartnershipModal({ isOpen, onClose, config, source }) {
 
   const close = () => {
     setForm(BLANK);
-    setDoc(BLANK_DOC);
+    setDocs([]);
+    setDocError("");
     setDragOver(false);
     setDone(false);
     setError("");
@@ -161,33 +169,37 @@ export default function PartnershipModal({ isOpen, onClose, config, source }) {
     onClose();
   };
 
-  async function handleFile(file) {
-    if (!file) return;
+  function handleFiles(fileList) {
+    const files = Array.from(fileList || []);
+    if (files.length === 0) return;
+    setDocError("");
+    const room = DOC_MAX_COUNT - docs.length;
+    if (files.length > room) setDocError(c.errDocCount);
+    files.slice(0, Math.max(room, 0)).forEach((file) => void uploadOne(file));
+  }
+
+  async function uploadOne(file) {
+    const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
     const lower = file.name.toLowerCase();
-    if (!DOC_EXTENSIONS.some((ext) => lower.endsWith(ext))) {
-      setDoc({ ...BLANK_DOC, status: "error", error: c.errDocType });
-      return;
-    }
-    if (file.size > DOC_MAX_BYTES) {
-      setDoc({ ...BLANK_DOC, status: "error", error: c.errDocSize });
-      return;
-    }
-    setDoc({ ...BLANK_DOC, status: "uploading", name: file.name, type: file.type });
+    if (!DOC_EXTENSIONS.some((ext) => lower.endsWith(ext))) return setDocError(c.errDocType);
+    if (file.size > DOC_MAX_BYTES) return setDocError(c.errDocSize);
+    const patch = (next) => setDocs((p) => p.map((d) => (d.id === id ? { ...d, ...next } : d)));
+    setDocs((p) => [...p, { ...BLANK_DOC, id, status: "uploading", name: file.name, type: file.type }]);
     try {
       const sigRes = await fetch(`${API}/api/partner-requests/document-signature`);
       const sig = await sigRes.json().catch(() => ({}));
       if (!sigRes.ok || !sig?.signature || !sig?.cloudName) throw new Error("signature");
-      const url = await uploadToCloudinary(file, sig, (progress) =>
-        setDoc((p) => (p.status === "uploading" ? { ...p, progress } : p)),
-      );
-      setDoc({ status: "done", name: file.name, type: file.type, url, progress: 100, error: "" });
+      const url = await uploadToCloudinary(file, sig, (progress) => patch({ progress }));
+      patch({ status: "done", url, progress: 100 });
     } catch {
-      setDoc({ ...BLANK_DOC, status: "error", error: c.errDocUpload });
+      setDocs((p) => p.filter((d) => d.id !== id));
+      setDocError(c.errDocUpload);
     }
   }
 
-  function removeDoc() {
-    setDoc(BLANK_DOC);
+  function removeDoc(id) {
+    setDocs((p) => p.filter((d) => d.id !== id));
+    setDocError("");
     if (fileRef.current) fileRef.current.value = "";
   }
 
@@ -199,7 +211,7 @@ export default function PartnershipModal({ isOpen, onClose, config, source }) {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) return setError(c.errEmail);
     if (!/^\d{8,9}$/.test(form.phone)) return setError(c.errPhone);
     if (!form.message.trim()) return setError(c.errHelp);
-    if (doc.status === "uploading") return setError(c.errWait);
+    if (docs.some((d) => d.status === "uploading")) return setError(c.errWait);
 
     setSubmitting(true);
     try {
@@ -212,9 +224,9 @@ export default function PartnershipModal({ isOpen, onClose, config, source }) {
           email: form.email.trim(),
           phone: `+971 ${form.phone}`,
           message: form.message.trim(),
-          ...(doc.status === "done" && doc.url
-            ? { document: { url: doc.url, name: doc.name, type: doc.type } }
-            : {}),
+          documents: docs
+            .filter((d) => d.status === "done" && d.url)
+            .map((d) => ({ url: d.url, name: d.name, type: d.type })),
           source: source || "website",
         }),
       });
@@ -320,38 +332,48 @@ export default function PartnershipModal({ isOpen, onClose, config, source }) {
           <input
             ref={fileRef}
             type="file"
+            multiple
             accept={DOC_EXTENSIONS.join(",")}
             className="hidden"
             onChange={(e) => {
-              const file = e.target.files?.[0];
+              const files = e.target.files;
+              handleFiles(files);
               e.target.value = "";
-              handleFile(file);
             }}
           />
-          {doc.status === "uploading" ? (
-            <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
-              <div className="flex items-center gap-2 text-xs text-slate-600">
-                <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin text-[#0088FF]" aria-hidden />
-                <span className="truncate">{c.uploading} — {doc.name} ({doc.progress}%)</span>
-              </div>
-              <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-slate-200">
-                <div className="h-full rounded-full bg-[#0088FF] transition-[width] duration-200" style={{ width: `${doc.progress}%` }} />
-              </div>
-            </div>
-          ) : doc.status === "done" ? (
-            <div className="flex items-center justify-between gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
-              <span className="flex min-w-0 items-center gap-2 text-xs text-slate-700">
-                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[rgba(0,136,255,0.12)]">
-                  <Check className="h-3 w-3 text-[#0088FF]" strokeWidth={3} aria-hidden />
-                </span>
-                <FileText className="h-3.5 w-3.5 shrink-0 text-slate-400" aria-hidden />
-                <span className="truncate">{doc.name}</span>
-              </span>
-              <button type="button" onClick={removeDoc} className="shrink-0 text-xs font-medium text-slate-400 transition hover:text-red-500">
-                {c.remove}
-              </button>
-            </div>
-          ) : (
+          {docs.length > 0 ? (
+            <ul className="mb-2 space-y-2">
+              {docs.map((d) => (
+                <li key={d.id} className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="flex min-w-0 items-center gap-2 text-xs text-slate-700">
+                      {d.status === "uploading" ? (
+                        <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin text-[#0088FF]" aria-hidden />
+                      ) : (
+                        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[rgba(0,136,255,0.12)]">
+                          <Check className="h-3 w-3 text-[#0088FF]" strokeWidth={3} aria-hidden />
+                        </span>
+                      )}
+                      <FileText className="h-3.5 w-3.5 shrink-0 text-slate-400" aria-hidden />
+                      <span className="truncate">
+                        {d.name}
+                        {d.status === "uploading" ? ` — ${c.uploading} ${d.progress}%` : ""}
+                      </span>
+                    </span>
+                    <button type="button" onClick={() => removeDoc(d.id)} className="shrink-0 text-xs font-medium text-slate-400 transition hover:text-red-500">
+                      {c.remove}
+                    </button>
+                  </div>
+                  {d.status === "uploading" ? (
+                    <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-slate-200">
+                      <div className="h-full rounded-full bg-[#0088FF] transition-[width] duration-200" style={{ width: `${d.progress}%` }} />
+                    </div>
+                  ) : null}
+                </li>
+              ))}
+            </ul>
+          ) : null}
+          {docs.length < DOC_MAX_COUNT ? (
             <div
               role="button"
               tabIndex={0}
@@ -370,21 +392,22 @@ export default function PartnershipModal({ isOpen, onClose, config, source }) {
               onDrop={(e) => {
                 e.preventDefault();
                 setDragOver(false);
-                handleFile(e.dataTransfer?.files?.[0]);
+                handleFiles(e.dataTransfer?.files);
               }}
-              className={`flex cursor-pointer flex-col items-center gap-1.5 rounded-xl border-2 border-dashed px-4 py-5 text-center transition ${
-                dragOver ? "border-[#0088FF] bg-[#EEF6FF]" : "border-slate-300 bg-slate-50 hover:border-[#0088FF]/60 hover:bg-[#F6FAFF]"
-              }`}
+              className={`flex cursor-pointer flex-col items-center gap-1.5 rounded-xl border-2 border-dashed px-4 text-center transition ${
+                docs.length > 0 ? "py-3" : "py-5"
+              } ${dragOver ? "border-[#0088FF] bg-[#EEF6FF]" : "border-slate-300 bg-slate-50 hover:border-[#0088FF]/60 hover:bg-[#F6FAFF]"}`}
             >
               <CloudUpload className={`h-6 w-6 ${dragOver ? "text-[#0088FF]" : "text-slate-400"}`} aria-hidden />
               <p className="text-xs font-medium text-slate-600">
-                {c.docDrop} <span className="font-semibold text-[#0088FF]">{c.docBrowse}</span>
+                {docs.length > 0 ? c.docAddMore : c.docDrop}{" "}
+                {docs.length > 0 ? null : <span className="font-semibold text-[#0088FF]">{c.docBrowse}</span>}
               </p>
               <p className="text-[10px] text-slate-400">{c.docHint}</p>
             </div>
-          )}
-          {doc.status === "error" && doc.error ? (
-            <p className="mt-1.5 text-xs text-red-600" role="alert">{doc.error}</p>
+          ) : null}
+          {docError ? (
+            <p className="mt-1.5 text-xs text-red-600" role="alert">{docError}</p>
           ) : null}
         </div>
 
@@ -392,7 +415,7 @@ export default function PartnershipModal({ isOpen, onClose, config, source }) {
 
         <button
           type="submit"
-          disabled={submitting || doc.status === "uploading"}
+          disabled={submitting || docs.some((d) => d.status === "uploading")}
           className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#0088FF] py-3 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(0,136,255,0.22)] transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
