@@ -60,8 +60,6 @@ function AboutVisual({ slides, language, reduced, hero }) {
   if (count === 0) return null;
 
   const index = active % count;
-  const current = slides[index];
-  const currentLabel = language === "ar" ? (current.ar?.label ?? "") : (current.label ?? "");
 
   // Floating badges — CMS-driven; each hides entirely when its text is blank.
   const badge1Title = t(hero, "badge1Title", language);
@@ -70,20 +68,21 @@ function AboutVisual({ slides, language, reduced, hero }) {
   const badge2Label = t(hero, "badge2Label", language);
 
   return (
-    <div className="relative">
-      {/* Soft wash behind the frame */}
-      <div className="pointer-events-none absolute -inset-6 rounded-[44px] bg-[radial-gradient(60%_55%_at_45%_40%,rgba(0,136,255,0.14),transparent_72%)] blur-xl" />
+    <div className="relative w-full max-w-[720px]">
+      {/* Pale blob behind the panel's upper-left, and the deep-blue sweep that
+          runs out past the bottom-right — straight from the reference */}
+      <div aria-hidden className="pointer-events-none absolute -left-[8%] -top-[12%] h-[72%] w-[78%] rounded-[50%] bg-[#BFE0FF] opacity-90 blur-[2px] rtl:left-auto rtl:-right-[8%]" />
+      <div aria-hidden className="pointer-events-none absolute -bottom-[16%] -right-[28%] left-[16%] top-[30%] -rotate-[8deg] rounded-[55%_45%_50%_50%/60%_40%_60%_40%] bg-[linear-gradient(120deg,#8CC4FF_0%,#3F9BFF_55%,#1A7CFF_100%)] rtl:right-auto rtl:-left-[28%] rtl:rotate-[8deg]" />
+      <div aria-hidden className="pointer-events-none absolute -right-[4%] -top-[14%] h-16 w-36 bg-[radial-gradient(rgba(0,136,255,0.35)_2px,transparent_2.2px)] bg-[size:16px_16px] rtl:right-auto rtl:-left-[4%]" />
 
-      {/* Editorial filmstrip: one tall feature frame + a rail of the other shots.
-          Deliberately different from the tilted photo decks used elsewhere. */}
       <motion.div
         initial={reduced ? false : { opacity: 0, y: 22 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, ease, delay: 0.1 }}
-        className="relative z-20 grid gap-3 sm:grid-cols-[1fr_96px]"
+        className="relative z-20 grid gap-4 sm:grid-cols-[1fr_150px] sm:gap-6"
       >
-        {/* Feature frame */}
-        <div className="relative aspect-[4/5] overflow-hidden rounded-[26px] bg-slate-100 shadow-[0_26px_60px_rgba(15,23,42,0.2)] ring-1 ring-black/5 sm:aspect-[5/6]">
+        {/* Main panel: landscape, tilted, thick white rim, crossfading slides */}
+        <div className="relative aspect-[5/4] rotate-[4deg] overflow-hidden rounded-[30px] bg-slate-100 shadow-[0_34px_70px_rgba(15,23,42,0.26)] ring-[6px] ring-white rtl:-rotate-[4deg]">
           {slides.map((slide, i) => {
             const isActive = i === index;
             const label = language === "ar" ? (slide.ar?.label ?? "") : (slide.label ?? "");
@@ -98,64 +97,49 @@ function AboutVisual({ slides, language, reduced, hero }) {
                 <SlideMedia
                   src={slide.img}
                   alt={label}
-                  sizes="(min-width: 1024px) 420px, (min-width: 640px) 60vw, 92vw"
+                  sizes="(min-width: 1024px) 560px, (min-width: 640px) 70vw, 92vw"
                   priority={i === 0}
                 />
               </motion.div>
             );
           })}
-          <div className="pointer-events-none absolute inset-0 z-[3] bg-gradient-to-t from-[#050A13]/78 via-[#050A13]/10 to-transparent" />
+        </div>
 
-          {/* Counter */}
-          <div className="absolute right-4 top-4 z-[4] rounded-full bg-black/35 px-2.5 py-1 text-[10px] font-bold text-white backdrop-blur-sm">
-            {String(index + 1).padStart(2, "0")} / {String(count).padStart(2, "0")}
-          </div>
-
-          {/* Caption */}
-          <div className="absolute inset-x-0 bottom-0 z-[4] p-6" dir={language === "ar" ? "rtl" : "ltr"}>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-white backdrop-blur-sm">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#5BE49B] animate-pulse" /> About HalaPark
-            </span>
-            {hasText(currentLabel) ? (
-              <p className="mt-2 text-[1.25rem] font-semibold leading-tight tracking-[-0.03em] text-white [overflow-wrap:anywhere]">
-                {currentLabel}
-              </p>
-            ) : null}
-          </div>
-
-          {/* Progress bars along the bottom edge */}
-          <div className="absolute inset-x-6 bottom-2 z-[4] flex gap-1.5">
+        {/* Thumbnail rail: stacked on a thin connector; the active one gets a
+            hollow blue dot, the others a filled dot. */}
+        {count > 1 ? (
+          <div className="relative flex flex-row gap-3 sm:flex-col sm:justify-center sm:gap-5 sm:ps-5">
+            <span aria-hidden className="absolute inset-y-4 start-[6px] hidden w-px bg-[#0088FF]/35 sm:block" />
             {slides.map((s, i) => (
-              <span
-                key={`bar-${s.img}-${i}`}
-                className={`h-1 flex-1 rounded-full transition-all duration-500 ${i === index ? "bg-[#0088FF]" : "bg-white/35"}`}
-              />
+              <button
+                key={`rail-${s.img}-${i}`}
+                type="button"
+                aria-label={`Show image ${i + 1}`}
+                aria-current={i === index}
+                onClick={() => setActive(i)}
+                className="group relative flex items-center"
+              >
+                <span
+                  aria-hidden
+                  className={`absolute -start-[14px] top-1/2 hidden -translate-x-1/2 -translate-y-1/2 rounded-full transition-all duration-300 sm:block ${
+                    i === index ? "h-3.5 w-3.5 border-[3px] border-[#0088FF] bg-white" : "h-2.5 w-2.5 bg-[#2F8FEF]"
+                  }`}
+                />
+                <span
+                  className={`relative block aspect-[4/3] w-20 overflow-hidden rounded-[16px] shadow-[0_10px_24px_rgba(15,23,42,0.16)] ring-[3px] transition-all duration-300 sm:w-full ${
+                    i === index ? "ring-[#0088FF]" : "ring-white group-hover:ring-[#0088FF]/50"
+                  }`}
+                >
+                  {isVideoSrc(s.img) ? (
+                    <video src={s.img} muted preload="metadata" playsInline className="absolute inset-0 h-full w-full object-cover object-center" />
+                  ) : (
+                    <Image src={s.img} alt="" fill sizes="150px" className="object-cover object-center" />
+                  )}
+                </span>
+              </button>
             ))}
           </div>
-        </div>
-
-        {/* Side rail — the other frames, straight and stacked (no tilt) */}
-        <div className="grid grid-cols-4 gap-3 sm:grid-cols-1 sm:content-start">
-          {slides.map((s, i) => (
-            <button
-              key={`rail-${s.img}-${i}`}
-              type="button"
-              aria-label={`Show image ${i + 1}`}
-              onClick={() => setActive(i)}
-              className={`relative aspect-square overflow-hidden rounded-[18px] ring-1 transition-all duration-300 sm:aspect-[4/5] ${
-                i === index
-                  ? "ring-2 ring-[#0088FF] shadow-[0_10px_26px_rgba(0,136,255,0.28)]"
-                  : "opacity-65 ring-black/5 hover:opacity-100"
-              }`}
-            >
-              {isVideoSrc(s.img) ? (
-                <video src={s.img} muted preload="metadata" playsInline className="absolute inset-0 h-full w-full object-cover object-center" />
-              ) : (
-                <Image src={s.img} alt="" fill sizes="96px" className="object-cover object-center" />
-              )}
-            </button>
-          ))}
-        </div>
+        ) : null}
       </motion.div>
       {/* Floating stat ribbon (top-left) — CMS-driven, hidden when blank */}
       {hasText(badge1Title) || hasText(badge1Subtitle) ? (
@@ -226,8 +210,25 @@ function AboutHero({ hero }) {
       <div aria-hidden className="pointer-events-none absolute -right-28 bottom-[4%] h-[420px] w-[420px] rounded-full bg-[radial-gradient(circle,rgba(37,99,235,0.10),transparent_66%)] blur-2xl" />
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#0088FF]/20 to-transparent" />
 
-      <div className="relative z-[2] mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
-        <div className="lg:grid lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-14 xl:gap-20">
+      {/* Faint city skyline along the bottom (reference), drawn inline so no asset is needed */}
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[120px] sm:h-[150px] lg:h-[180px]">
+        <svg viewBox="0 0 1600 180" preserveAspectRatio="none" className="h-full w-full" fill="none">
+          <defs>
+            <linearGradient id="about-skyline" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stopColor="#9CC9FF" stopOpacity="0.55" />
+              <stop offset="1" stopColor="#CFE4FF" stopOpacity="0.95" />
+            </linearGradient>
+          </defs>
+          <path
+            fill="url(#about-skyline)"
+            d="M0 180V120h40v-18h22v18h30V84h26v36h34V70h18V50h10v20h18v50h30V96h24v24h26V60h22v60h30V88h28v32h36V74h22v46h40V96h26v24h22V40h12l4-22 4 22h12v80h30V70h20V48h18v22h22v50h34V92h26v28h26V56h24v64h34V104h28v16h44V78h18V60h14v18h18v42h30V98h24v22h30V68h26v52h36V86h28v34h40V98h26v22h24V34h8l3-26 3 26h8v86h30V72h22v48h30V94h24v26h28V58h22v62h34V104h24v16h30V74h24v46h26V90h22v30h30V66h22v54h40V100h24v20h28V80h20v40h34V96h22v24h26V72h22v48h22V180H0Z"
+          />
+          <rect x="0" y="150" width="1600" height="30" fill="#DCEBFF" opacity="0.8" />
+        </svg>
+      </div>
+
+      <div className="relative z-[2] mx-auto w-full max-w-7xl px-4 pb-44 pt-16 sm:px-6 sm:pb-44 sm:pt-20 lg:px-8 lg:pb-48 lg:pt-24">
+        <div className="lg:grid lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-10 xl:gap-14">
 
           {/* LEFT — text */}
           <motion.div
@@ -236,14 +237,18 @@ function AboutHero({ hero }) {
             transition={{ duration: 0.65, ease }}
             dir={language === "ar" ? "rtl" : "ltr"}
           >
-            {hasText(hero?.title) ? (
-              <h1 className="max-w-[600px] text-[clamp(2.4rem,4.8vw,4.2rem)] font-semibold leading-[1.02] tracking-[-0.055em] text-[#050A13] [overflow-wrap:anywhere]">
-                {t(hero, "title", language)}
+            {hasText(hero?.title) || hasText(t(hero, "titleAccent", language)) ? (
+              <h1 className="max-w-[640px] text-[clamp(2.4rem,4.8vw,4.2rem)] font-semibold leading-[1.02] tracking-[-0.055em] text-[#050A13] [overflow-wrap:anywhere]">
+                {hasText(hero?.title) ? <span className="block">{t(hero, "title", language)}</span> : null}
+                {/* Accent line in brand blue (admin "Title Accent"; hidden when blank) */}
+                {hasText(t(hero, "titleAccent", language)) ? (
+                  <span className="block text-[#0088FF]">{t(hero, "titleAccent", language)}</span>
+                ) : null}
               </h1>
             ) : null}
 
             {t(hero, "tagline", language) ? (
-              <p className="mt-4 text-[1rem] font-semibold text-[#0088FF] [overflow-wrap:anywhere]">
+              <p className="mt-5 text-[clamp(1.05rem,1.5vw,1.35rem)] font-medium tracking-[-0.02em] text-[#0A1B33] [overflow-wrap:anywhere]">
                 {t(hero, "tagline", language)}
               </p>
             ) : null}
@@ -270,7 +275,7 @@ function AboutHero({ hero }) {
               {t(hero, "secondaryCtaText", language) ? (
                 <Link
                   href={hero?.secondaryCtaLink || "/contact"}
-                  className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-7 py-3.5 text-sm font-semibold text-slate-700 shadow-[0_2px_12px_rgba(6,6,22,0.07)] transition hover:border-[#0088FF]/50 hover:text-[#0088FF]"
+                  className="inline-flex items-center gap-2 rounded-full border-2 border-[#0088FF] bg-white px-7 py-3 text-sm font-semibold text-[#0A1B33] transition hover:bg-[#EEF6FF]"
                 >
                   {t(hero, "secondaryCtaText", language)}
                 </Link>
@@ -284,7 +289,7 @@ function AboutHero({ hero }) {
               initial={reduced ? false : { opacity: 0, x: 32 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.75, ease, delay: 0.1 }}
-              className="relative mt-16 flex min-h-[420px] items-center justify-center lg:mt-0 lg:min-h-[560px]"
+              className="relative mt-16 flex min-h-[380px] items-center justify-center lg:mt-0 lg:min-h-[520px]"
             >
               <AboutVisual slides={heroSlides} language={language} reduced={reduced} hero={hero} />
             </motion.div>
