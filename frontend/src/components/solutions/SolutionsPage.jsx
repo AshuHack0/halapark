@@ -1569,15 +1569,6 @@ function FeatureHighlightsSection() {
       {/* Industries / Environments */}
       {!featuresEmpty ? (
         <section className="relative overflow-hidden bg-[#06111f] py-16 sm:py-20 lg:py-24">
-          {featImage ? (
-            <div className="pointer-events-none absolute inset-0" aria-hidden>
-              {/* contain, not cover: wide banner uploads (e.g. 1440x458) were
-                  being scaled up to fill the taller band, clipping the top and
-                  bottom. Any space left over is the section's own dark navy. */}
-              <Image src={featImage} alt="" fill className="object-contain object-center opacity-40" />
-              <div className="absolute inset-0 bg-gradient-to-b from-[#06111f]/50 via-[#06111f]/30 to-[#06111f]/70" />
-            </div>
-          ) : null}
           <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             {featHeading || featGradient || featSubtitle ? (
               <div dir={language === "ar" ? "rtl" : "ltr"} className="mx-auto mb-12 max-w-4xl text-center">
@@ -1595,6 +1586,22 @@ function FeatureHighlightsSection() {
                     {featSubtitle}
                   </p>
                 ) : null}
+              </div>
+            ) : null}
+
+            {/* The uploaded image is its own framed block, not a stretched
+                background: it keeps its own aspect ratio (never cropped) and
+                shows at full brightness. */}
+            {featImage ? (
+              <div className="mx-auto mb-12 max-w-5xl overflow-hidden rounded-[24px] shadow-[0_30px_70px_rgba(0,0,0,0.45)] ring-1 ring-white/15 sm:rounded-[28px]">
+                <Image
+                  src={featImage}
+                  alt={featHeading || ""}
+                  width={1600}
+                  height={900}
+                  sizes="(min-width: 1024px) 1024px, 100vw"
+                  className="h-auto w-full"
+                />
               </div>
             ) : null}
 
