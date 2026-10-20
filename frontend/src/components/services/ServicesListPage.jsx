@@ -1780,15 +1780,6 @@ function LongTermCTA({ onGetQuote, cta }) {
   const reduced = useReducedMotion();
   // Unique id for the SVG clipPath (the component can render more than once).
   const leafClipId = `lt-leaf-${useId().replace(/:/g, "")}`;
-  // Watermark logo: the site logo from global Settings, bundled asset as fallback
-  // (same source the navbar uses).
-  const [logo, setLogo] = useState("/logo-blue-11.svg");
-  useEffect(() => {
-    fetchPage("settings").then((page) => {
-      const img = (page?.sections?.logo?.image || "").trim();
-      if (img) setLogo(img);
-    });
-  }, []);
   const { language } = useLanguage();
   const heading = (t(cta, "heading", language) || "").trim();
   const headingGradient = (t(cta, "headingGradient", language) || "").trim();
@@ -1816,19 +1807,6 @@ function LongTermCTA({ onGetQuote, cta }) {
             aria-hidden="true"
             className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#1AB2FF]/60 to-transparent"
           />
-
-          {/* Faint HalaPark logo watermark (white, very low opacity) */}
-          <div
-            aria-hidden="true"
-            className={`pointer-events-none absolute select-none ${
-              image
-                ? "left-[30%] top-1/2 w-[30%] -translate-y-1/2 lg:left-[33%]"
-                : "bottom-6 end-8 w-[28%]"
-            }`}
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={logo} alt="" className="h-auto w-full opacity-[0.07] brightness-0 invert" />
-          </div>
 
           {/* ── Leaf-shaped image cutout on the right (matches the reference) ──
               One SVG path in bounding-box units clips the photo, so the same
