@@ -48,18 +48,18 @@ export default function FAQHeroSection() {
   return (
     <section className="bg-white py-4 sm:py-5 lg:py-6">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="relative overflow-hidden rounded-[24px] bg-[#06111f] text-white">
+        <div className="relative overflow-hidden rounded-[24px] bg-[#02376B] text-white">
           <div className="absolute inset-0">
             {image ? (
               <Image
                 src={image}
                 alt=""
                 fill
-                className="object-cover object-center opacity-30"
+                className="object-cover object-center"
                 aria-hidden
               />
             ) : null}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#06111f]/90 via-[#06111f]/70 to-[#06111f]/40" />
+            <div className="absolute inset-0 bg-[linear-gradient(90deg,#02376B_0%,rgba(2,55,107,0.92)_30%,rgba(10,76,148,0.45)_60%,transparent_100%)] rtl:bg-[linear-gradient(270deg,#02376B_0%,rgba(2,55,107,0.92)_30%,rgba(10,76,148,0.45)_60%,transparent_100%)]" />
           </div>
           <div className="relative flex min-h-[320px] w-full flex-col justify-center px-8 py-14 sm:px-12 md:min-h-[380px] lg:px-20">
             <div className="relative z-10 w-full max-w-xl">
