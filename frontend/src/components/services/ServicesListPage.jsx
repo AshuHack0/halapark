@@ -1355,16 +1355,24 @@ const SLUG_CATEGORY = {
   "battery-replacement": "care",   "jump-start": "care",
 };
 
-const FILTERS = [
-  { id: "all",     label: "All Services",   labelAr: "كل الخدمات",     emoji: "✦" },
-  { id: "parking", label: "Parking",        labelAr: "ركن السيارات",   emoji: "🅿" },
-  { id: "valet",   label: "Valet & Access", labelAr: "صف السيارات والدخول", emoji: "🚗" },
-  { id: "care",    label: "Vehicle Care",   labelAr: "العناية بالمركبة", emoji: "🔧" },
-  { id: "technical", label: "Technical Service", labelAr: "الخدمات الفنية", emoji: "🛠" },
-];
+// The "All" tab is fixed UI chrome; every other tab comes from the CMS
+// (Admin → Services → Tab Bar Categories) via `categories`.
+const ALL_FILTER = { id: "all", label: "All Services", labelAr: "كل الخدمات" };
 
-function ServicesGrid({ onServiceClick, cmsServices, gridHeader, detailSlugs }) {
+function ServicesGrid({ onServiceClick, cmsServices, gridHeader, detailSlugs, categories }) {
   const { language } = useLanguage();
+  // Tab definitions from the CMS list: key → id, label / Arabic label. A
+  // category with a blank Arabic label has no tab in Arabic (strict Arabic).
+  const filters = useMemo(() => {
+    const cats = (Array.isArray(categories) ? categories : [])
+      .map((c) => ({
+        id: (typeof c?.key === "string" ? c.key : "").trim(),
+        label: (typeof c?.label === "string" ? c.label : "").trim(),
+        labelAr: (typeof c?.ar?.label === "string" ? c.ar.label : "").trim(),
+      }))
+      .filter((c) => c.id && c.label);
+    return [ALL_FILTER, ...cats];
+  }, [categories]);
   const [activeFilter, setActiveFilter] = useState("all");
   const reduced  = useReducedMotion();
   // Register the scroll target only once the <section> actually mounts. This
@@ -1409,9 +1417,11 @@ function ServicesGrid({ onServiceClick, cmsServices, gridHeader, detailSlugs }) 
   // tabs that actually have at least one service. Add one service → 2 tabs.
   const visibleFilters = useMemo(() => {
     const present = new Set(services.map((s) => s._category));
-    const catTabs = FILTERS.filter((f) => f.id !== "all" && present.has(f.id));
-    return [FILTERS[0], ...catTabs];
-  }, [services]);
+    const catTabs = filters.filter(
+      (f) => f.id !== "all" && present.has(f.id) && (language === "ar" ? f.labelAr : f.label),
+    );
+    return [ALL_FILTER, ...catTabs];
+  }, [services, filters, language]);
 
   // If the active category tab is no longer visible (e.g. all its services were
   // deleted), fall back to "All Services" — derived during render, so we never
@@ -1486,8 +1496,8 @@ function ServicesGrid({ onServiceClick, cmsServices, gridHeader, detailSlugs }) 
               {effectiveFilter === "all"
                 ? (language === "ar" ? "خدمة متاحة" : "Services available")
                 : language === "ar"
-                  ? `خدمات ${FILTERS.find(f=>f.id===effectiveFilter)?.labelAr}`
-                  : `${FILTERS.find(f=>f.id===effectiveFilter)?.label} services`}
+                  ? `خدمات ${filters.find(f=>f.id===effectiveFilter)?.labelAr ?? ""}`
+                  : `${filters.find(f=>f.id===effectiveFilter)?.label ?? ""} services`}
             </p>
           </div>
         </motion.div>
@@ -2001,7 +2011,7 @@ export default function ServicesListPage() {
           <HeroSection    onGetQuote={() => setQuoteOpen(true)} hero={cms?.hero} />
         )}
         {cms?.servicesGridHeader?.enabled !== false && (
-          <ServicesGrid   onServiceClick={handleServiceClick} cmsServices={cms?.services} gridHeader={cms?.servicesGridHeader} detailSlugs={detailSlugs} />
+          <ServicesGrid   onServiceClick={handleServiceClick} cmsServices={cms?.services} gridHeader={cms?.servicesGridHeader} detailSlugs={detailSlugs} categories={cms?.serviceCategories} />
         )}
         {cms?.partnersSection?.enabled !== false && (
           <PartnersSection partners={cms?.partnersSection} />
