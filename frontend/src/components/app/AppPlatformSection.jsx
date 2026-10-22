@@ -430,7 +430,7 @@ export default function AppPlatformSection() {
             transition={{ duration: 0.55, ease: "easeOut" }}
             className="relative overflow-hidden rounded-[16px] border border-[#E4EAF2] bg-[linear-gradient(135deg,#FFFFFF_0%,#F8FBFF_52%,#EEF6FF_100%)] p-6 shadow-[0_18px_46px_rgba(15,23,42,0.06)] sm:rounded-[28px] sm:p-10"
           >
-            <div className="grid items-center gap-8 md:grid-cols-[1.05fr_0.95fr] z-[99]">
+            <div className="grid items-center gap-8 md:grid-cols-[1.05fr_0.95fr] lg:grid-cols-1 2xl:grid-cols-[1.05fr_0.95fr] z-[99]">
               <div dir={dir}>
                 <SectionHeading brand={appBrand} accent={appBrandAccent} />
 
@@ -537,7 +537,7 @@ export default function AppPlatformSection() {
             transition={{ duration: 0.55, ease: "easeOut", delay: 0.08 }}
             className="relative overflow-hidden rounded-[16px] border border-[#E4EAF2] bg-[linear-gradient(135deg,#FFFFFF_0%,#FBFDFF_48%,#F3F8FF_100%)] p-6 shadow-[0_18px_46px_rgba(15,23,42,0.06)] sm:rounded-[28px] sm:p-10"
           >
-            <div className="grid items-center gap-8 md:grid-cols-[1fr_1.05fr]">
+            <div className="grid items-center gap-8 md:grid-cols-[1fr_1.05fr] lg:grid-cols-1 2xl:grid-cols-[1fr_1.05fr]">
               <div dir={dir}>
                 <SectionHeading brand={webBrand} accent={webBrandAccent} />
 
