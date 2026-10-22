@@ -1808,6 +1808,24 @@ function LongTermCTA({ onGetQuote, cta }) {
     <section className="bg-white px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
       <div className="mx-auto max-w-7xl">
         <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[linear-gradient(118deg,#071327_0%,#0A1E3C_46%,#0B2E5E_100%)] shadow-[0_28px_64px_rgba(15,23,42,0.28)]">
+          {/* Clip paths for the leaf-cut photo (shared by the desktop panel and
+              the mobile stack). Kept outside any display:none subtree so the
+              url(#id) references resolve at every width. */}
+          <svg className="absolute h-0 w-0" aria-hidden="true">
+            <defs>
+              <clipPath id={leafClipId} clipPathUnits="objectBoundingBox">
+                <path d="M0.16 0 C0.03 0.18 -0.03 0.42 0.01 0.62 C0.04 0.8 0.13 0.94 0.26 1 L1 1 L1 0 Z" />
+              </clipPath>
+              {/* Two smooth waves for the blue band along the bottom-right */}
+              <clipPath id={`${leafClipId}-w1`} clipPathUnits="objectBoundingBox">
+                <path d="M0.18 1 C0.45 0.92 0.7 0.76 1 0.6 L1 1 Z" />
+              </clipPath>
+              <clipPath id={`${leafClipId}-w2`} clipPathUnits="objectBoundingBox">
+                <path d="M0.3 1 C0.55 0.96 0.78 0.86 1 0.77 L1 1 Z" />
+              </clipPath>
+            </defs>
+          </svg>
+
           {/* Decorative layers: soft glows + top hairline */}
           <div
             aria-hidden="true"
@@ -1827,20 +1845,6 @@ function LongTermCTA({ onGetQuote, cta }) {
               aria-hidden="true"
               className="pointer-events-none absolute inset-y-0 end-0 hidden w-[54%] md:block rtl:-scale-x-100"
             >
-              <svg className="absolute h-0 w-0" aria-hidden="true">
-                <defs>
-                  <clipPath id={leafClipId} clipPathUnits="objectBoundingBox">
-                    <path d="M0.16 0 C0.03 0.18 -0.03 0.42 0.01 0.62 C0.04 0.8 0.13 0.94 0.26 1 L1 1 L1 0 Z" />
-                  </clipPath>
-                  {/* Two smooth waves for the blue band along the bottom-right */}
-                  <clipPath id={`${leafClipId}-w1`} clipPathUnits="objectBoundingBox">
-                    <path d="M0.18 1 C0.45 0.92 0.7 0.76 1 0.6 L1 1 Z" />
-                  </clipPath>
-                  <clipPath id={`${leafClipId}-w2`} clipPathUnits="objectBoundingBox">
-                    <path d="M0.3 1 C0.55 0.96 0.78 0.86 1 0.77 L1 1 Z" />
-                  </clipPath>
-                </defs>
-              </svg>
               {/* Blue rim behind the photo */}
               <div
                 className="absolute inset-0 -translate-x-3 translate-y-1 bg-[linear-gradient(160deg,#1AB2FF_0%,#0A66FF_55%,#0B2E5E_100%)] opacity-90"
@@ -1878,7 +1882,7 @@ function LongTermCTA({ onGetQuote, cta }) {
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.6, ease }}
             className={`relative px-6 py-14 sm:px-10 sm:py-20 lg:py-24 lg:ps-16 ${
-              image ? "text-center md:max-w-[47%] md:pe-4 md:text-start lg:ps-16" : "mx-auto max-w-3xl text-center lg:px-16"
+              image ? "pb-6 text-center sm:pb-8 md:max-w-[47%] md:pb-20 md:pe-4 md:text-start lg:ps-16 lg:pb-24" : "mx-auto max-w-3xl text-center lg:px-16"
             }`}
           >
             {eyebrow ? (
@@ -1941,6 +1945,30 @@ function LongTermCTA({ onGetQuote, cta }) {
               </div>
             ) : null}
           </motion.div>
+
+          {/* Phones/tablets: the leaf-cut photo stacked under the copy, with the
+              same rim and wave band (the absolute panel above is md+ only). */}
+          {image ? (
+            <div aria-hidden="true" className="relative px-6 pb-8 md:hidden">
+              <div className="relative mx-auto aspect-[4/3] w-full max-w-[440px] rtl:-scale-x-100">
+                <div
+                  className="absolute inset-0 -translate-x-2 translate-y-1 bg-[linear-gradient(160deg,#1AB2FF_0%,#0A66FF_55%,#0B2E5E_100%)] opacity-90"
+                  style={{ clipPath: `url(#${leafClipId})` }}
+                />
+                <div className="absolute inset-0" style={{ clipPath: `url(#${leafClipId})` }}>
+                  <Image src={image} alt="" fill className="object-cover object-center rtl:-scale-x-100" sizes="100vw" />
+                  <div
+                    className="absolute inset-0 bg-[linear-gradient(90deg,#0A3F9E_0%,#1270F0_55%,#1AB2FF_100%)] opacity-95"
+                    style={{ clipPath: `url(#${leafClipId}-w1)` }}
+                  />
+                  <div
+                    className="absolute inset-0 bg-[linear-gradient(90deg,#071B3F_0%,#0A2F72_60%,#0E4CB8_100%)]"
+                    style={{ clipPath: `url(#${leafClipId}-w2)` }}
+                  />
+                </div>
+              </div>
+            </div>
+          ) : null}
         </div>
       </div>
     </section>
