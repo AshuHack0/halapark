@@ -457,22 +457,26 @@ function OurVision({ vision }) {
           className="group relative overflow-hidden rounded-[28px] bg-[#02376B] shadow-[0_26px_70px_rgba(2,55,107,0.32)] ring-1 ring-white/15"
         >
           {/* The whole panel is dark here — the page reads light · dark · light */}
-          <div className="absolute inset-0">
+          {/* Phones/tablets: the photo is a full-width strip at its own aspect
+              ratio across the top (shown whole — a wide upload was being cropped
+              to a sliver by the tall panel), fading into the blue. lg+: the
+              full-bleed background behind the copy, as before. */}
+          <div className="relative lg:absolute lg:inset-0">
             {vision?.image ? (
-              <Image src={vision.image} alt="" fill className="object-cover object-center transition duration-700 group-hover:scale-[1.03]" sizes="100vw" aria-hidden />
+              <Image src={vision.image} alt="" width={1600} height={640} sizes="(min-width: 1024px) 1280px, 100vw" className="block h-auto w-full object-cover object-center transition duration-700 group-hover:scale-[1.03] lg:absolute lg:inset-0 lg:h-full" aria-hidden />
             ) : null}
             {/* Dark on the copy side, clearing toward the photo so the upload
                 is actually visible. Mirrors for Arabic. */}
-            <div className="absolute inset-0 max-lg:!bg-[linear-gradient(180deg,#02376B_0%,rgba(1,48,94,0.96)_52%,rgba(1,48,94,0.55)_78%,rgba(1,48,94,0.35)_100%)] bg-[linear-gradient(95deg,#02376B_0%,rgba(1,49,95,0.97)_30%,rgba(0,45,88,0.72)_46%,rgba(0,45,88,0.12)_62%,rgba(0,45,88,0)_100%)] rtl:bg-[linear-gradient(265deg,#02376B_0%,rgba(1,49,95,0.97)_30%,rgba(0,45,88,0.72)_46%,rgba(0,45,88,0.12)_62%,rgba(0,45,88,0)_100%)]" />
+            <div className="absolute inset-0 max-lg:!bg-[linear-gradient(180deg,rgba(2,55,107,0.15)_0%,rgba(2,55,107,0)_35%,rgba(2,55,107,0.55)_75%,#02376B_100%)] bg-[linear-gradient(95deg,#02376B_0%,rgba(1,49,95,0.97)_30%,rgba(0,45,88,0.72)_46%,rgba(0,45,88,0.12)_62%,rgba(0,45,88,0)_100%)] rtl:bg-[linear-gradient(265deg,#02376B_0%,rgba(1,49,95,0.97)_30%,rgba(0,45,88,0.72)_46%,rgba(0,45,88,0.12)_62%,rgba(0,45,88,0)_100%)]" />
             <div aria-hidden="true" className="absolute -left-20 top-0 h-64 w-64 rounded-full bg-[#0088FF]/20 blur-[90px]" />
             <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#1AB2FF]/50 to-transparent" />
           </div>
 
           <div className="relative grid lg:grid-cols-[1.05fr_0.95fr]">
             {/* Copy half */}
-            <div className="relative flex flex-col justify-center p-8 sm:p-12 lg:py-16 lg:ps-16 lg:pe-10" dir={language === "ar" ? "rtl" : "ltr"}>
+            <div className="relative -mt-8 flex flex-col justify-center px-6 pb-6 pt-2 sm:-mt-10 sm:px-10 sm:pb-8 lg:mt-0 lg:py-16 lg:ps-16 lg:pe-10" dir={language === "ar" ? "rtl" : "ltr"}>
               {hasText(vision?.title) ? (
-                <h2 className="mb-4 text-[clamp(2.4rem,3.9vw,3.5rem)] font-semibold leading-[1.02] tracking-[-0.05em] text-white [overflow-wrap:anywhere]">
+                <h2 className="mb-4 text-[2.1rem] font-semibold leading-[1.05] tracking-[-0.04em] text-white [overflow-wrap:anywhere] sm:text-[clamp(2.4rem,3.9vw,3.5rem)] sm:leading-[1.02] sm:tracking-[-0.05em]">
                   {t(vision, "title", language)}
                 </h2>
               ) : null}
@@ -493,7 +497,7 @@ function OurVision({ vision }) {
 
             {/* Glass card floating on the dark panel */}
             {vision?.image || cardHasContent ? (
-              <div className="relative p-6 sm:p-8 lg:p-10" dir={language === "ar" ? "rtl" : "ltr"}>
+              <div className="relative px-6 pb-8 pt-2 sm:px-10 sm:pb-10 lg:p-10" dir={language === "ar" ? "rtl" : "ltr"}>
                 <div className="flex h-full flex-col justify-between gap-10 rounded-[22px] border border-white/25 bg-[#02376B]/35 p-7 shadow-[0_18px_44px_rgba(2,8,20,0.35)] backdrop-blur-[1.5px] sm:p-9">
                   <div>
                     {hasText(card.badge) ? (
@@ -514,9 +518,9 @@ function OurVision({ vision }) {
                     ) : null}
                   </div>
                   {highlights.length > 0 ? (
-                    <div className="grid grid-cols-3 gap-3 divide-x divide-white/25 rtl:divide-x-reverse">
+                    <div className="grid grid-cols-1 divide-y divide-white/25 sm:grid-cols-3 sm:gap-3 sm:divide-x sm:divide-y-0 rtl:sm:divide-x-reverse">
                       {highlights.map((item, i) => (
-                        <div key={`${i}-${item.line1}-${item.line2}`} className="text-center">
+                        <div key={`${i}-${item.line1}-${item.line2}`} className="py-2.5 text-center sm:py-0">
                           <p className="text-[0.95rem] font-semibold text-white [overflow-wrap:anywhere]">{item.line1}</p>
                           <p className="mt-0.5 text-[0.85rem] text-white/80 [overflow-wrap:anywhere]">{item.line2}</p>
                         </div>
