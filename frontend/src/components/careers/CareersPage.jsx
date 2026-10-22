@@ -882,20 +882,27 @@ function CareersCTA({ cta, hasOpenPositions }) {
     <section className="bg-white py-4 sm:py-5 lg:py-6">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="relative overflow-hidden rounded-[28px] bg-[#06111f]">
-          <div className="absolute inset-0">
+          {/* Phones: the photo is a full-width strip at its own aspect ratio
+              above the copy (shown whole — a wide upload was being cropped to
+              a narrow slice by the tall band). md+: full-bleed cover background. */}
+          <div className="relative md:absolute md:inset-0">
             {background ? (
               <Image
                 src={background}
                 alt=""
-                fill
-                className="object-cover object-center"
+                width={1600}
+                height={640}
+                sizes="(min-width: 768px) 1280px, 100vw"
+                className="block h-auto w-full object-cover object-center md:absolute md:inset-0 md:h-full"
                 aria-hidden
               />
             ) : null}
-            {/* Lighter scrims so the photo reads brightly; the text keeps its
-                contrast from a soft shadow rather than a heavy black wash. */}
-            <div className="absolute inset-0 bg-black/28" />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/40" />
+            {/* Phones: fade the strip's bottom into the navy copy area */}
+            <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-b from-transparent to-[#06111f] md:hidden" />
+            {/* md+: lighter scrims so the photo reads brightly; the text keeps
+                its contrast from a soft shadow rather than a heavy black wash. */}
+            <div className="absolute inset-0 hidden bg-black/28 md:block" />
+            <div className="absolute inset-0 hidden bg-gradient-to-b from-black/10 via-transparent to-black/40 md:block" />
           </div>
 
           <motion.div
@@ -903,7 +910,7 @@ function CareersCTA({ cta, hasOpenPositions }) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.65, ease }}
-            className="relative z-10 flex flex-col items-center px-6 py-16 text-center sm:px-10 sm:py-20 lg:py-24"
+            className="relative z-10 -mt-6 flex flex-col items-center px-6 pb-12 pt-4 text-center sm:px-10 md:mt-0 md:py-20 lg:py-24"
             dir={language === "ar" ? "rtl" : "ltr"}
           >
             {hasText(title) ? (
