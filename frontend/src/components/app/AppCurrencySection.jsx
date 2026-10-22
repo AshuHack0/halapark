@@ -56,7 +56,7 @@ function PhonePreview({ image, video }) {
       />
       <div className="absolute inset-x-[18%] bottom-3 h-12 rounded-full bg-[#0F172A]/14 blur-[28px]" />
       <div className="relative isolate aspect-[1439/2920] drop-shadow-[0_28px_58px_rgba(15,23,42,0.2)]">
-        <div className="absolute left-[4.1%] right-[4.1%] top-[1%] bottom-[1.2%] z-30 translate-y-[2px] overflow-hidden rounded-[3rem] bg-white">
+        <div className="absolute left-[4.2%] right-[4.2%] top-[1.05%] bottom-[1.05%] z-30 overflow-hidden bg-white [border-radius:16.4%/7.6%]">
           {/* A video wins when one is uploaded; the image becomes its poster.
               Muted + playsInline so it autoplays on phones too. */}
           {clip ? (
