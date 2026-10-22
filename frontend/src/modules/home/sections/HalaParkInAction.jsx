@@ -264,14 +264,14 @@ export default function HalaParkInAction({ cmsKey = "halaParkInAction", pageSlug
           {storeLinks.length > 0 ? (
             <motion.div
               variants={prefersReducedMotion ? undefined : copyItemVariants}
-              className="mt-8 inline-flex w-full flex-col gap-3 rounded-[18px] bg-[#E8F3FF]/80 p-3 ring-1 ring-white sm:w-auto sm:flex-row sm:items-center sm:gap-4 sm:p-3.5"
+              className="mt-7 inline-flex w-full max-w-full flex-col gap-3 rounded-[18px] bg-[#E8F3FF]/80 p-3 ring-1 ring-white sm:w-auto sm:flex-row sm:items-center sm:gap-4 sm:p-3.5"
             >
               {downloadLabel ? (
                 <p className="max-w-[120px] shrink-0 text-[0.85rem] font-semibold leading-tight tracking-[-0.02em] text-[#0A1B33] [overflow-wrap:anywhere]">
                   {downloadLabel}
                 </p>
               ) : null}
-              <div className="flex flex-nowrap items-center gap-2 overflow-x-auto sm:gap-2.5 sm:overflow-visible">
+              <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap sm:gap-2.5">
                 {storeLinks.map((store, index) => (
                   <StoreBadge
                     key={store.label || index}
