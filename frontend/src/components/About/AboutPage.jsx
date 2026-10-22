@@ -68,7 +68,7 @@ function AboutVisual({ slides, language, reduced, hero }) {
   const badge2Label = t(hero, "badge2Label", language);
 
   return (
-    <div className="relative w-full max-w-[720px]">
+    <div className="relative w-full max-w-[720px] pb-6 sm:pb-0">
       {/* Pale blob behind the panel's upper-left, and the deep-blue sweep that
           runs out past the bottom-right — straight from the reference */}
       <div aria-hidden className="pointer-events-none absolute -left-[8%] -top-[12%] h-[72%] w-[78%] rounded-[50%] bg-[#BFE0FF] opacity-90 blur-[2px] rtl:left-auto rtl:-right-[8%]" />
@@ -82,7 +82,7 @@ function AboutVisual({ slides, language, reduced, hero }) {
         className="relative z-20 grid gap-4 sm:grid-cols-[1fr_150px] sm:gap-6"
       >
         {/* Main panel: landscape, tilted, thick white rim, crossfading slides */}
-        <div className="relative aspect-[5/4] rotate-[4deg] overflow-hidden rounded-[30px] bg-slate-100 shadow-[0_34px_70px_rgba(15,23,42,0.26)] ring-[6px] ring-white rtl:-rotate-[4deg]">
+        <div className="relative mx-3 aspect-[5/4] rotate-[2deg] overflow-hidden rounded-[22px] bg-slate-100 shadow-[0_34px_70px_rgba(15,23,42,0.26)] ring-4 ring-white sm:mx-0 sm:rotate-[4deg] sm:rounded-[30px] sm:ring-[6px] rtl:-rotate-[2deg] rtl:sm:-rotate-[4deg]">
           {slides.map((slide, i) => {
             const isActive = i === index;
             const label = language === "ar" ? (slide.ar?.label ?? "") : (slide.label ?? "");
@@ -108,7 +108,7 @@ function AboutVisual({ slides, language, reduced, hero }) {
         {/* Thumbnail rail: stacked on a thin connector; the active one gets a
             hollow blue dot, the others a filled dot. */}
         {count > 1 ? (
-          <div className="relative flex flex-row gap-3 sm:flex-col sm:justify-center sm:gap-5 sm:ps-5">
+          <div className="relative flex flex-row justify-center gap-2.5 px-3 sm:flex-col sm:justify-center sm:gap-5 sm:px-0 sm:ps-5">
             <span aria-hidden className="absolute inset-y-4 start-[6px] hidden w-px bg-[#0088FF]/35 sm:block" />
             {slides.map((s, i) => (
               <button
@@ -117,7 +117,7 @@ function AboutVisual({ slides, language, reduced, hero }) {
                 aria-label={`Show image ${i + 1}`}
                 aria-current={i === index}
                 onClick={() => setActive(i)}
-                className="group relative flex items-center"
+                className="group relative flex w-[calc(25%-8px)] max-w-[80px] items-center sm:w-auto sm:max-w-none"
               >
                 <span
                   aria-hidden
@@ -126,7 +126,7 @@ function AboutVisual({ slides, language, reduced, hero }) {
                   }`}
                 />
                 <span
-                  className={`relative block aspect-[4/3] w-20 overflow-hidden rounded-[16px] shadow-[0_10px_24px_rgba(15,23,42,0.16)] ring-[3px] transition-all duration-300 sm:w-full ${
+                  className={`relative block aspect-[4/3] w-full overflow-hidden rounded-[14px] shadow-[0_10px_24px_rgba(15,23,42,0.16)] ring-[3px] transition-all duration-300 sm:rounded-[16px] ${
                     i === index ? "ring-[#0088FF]" : "ring-white group-hover:ring-[#0088FF]/50"
                   }`}
                 >
