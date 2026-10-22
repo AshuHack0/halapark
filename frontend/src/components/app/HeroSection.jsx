@@ -60,8 +60,8 @@ function StatStrip({ stats, language }) {
   if (visible.length === 0) return null;
 
   return (
-    <div className="mt-7 w-full min-w-0 max-w-[620px] rounded-[24px] bg-white/92 px-4 py-3.5 shadow-[0_14px_38px_rgba(15,23,42,0.08)] backdrop-blur sm:px-5 lg:absolute lg:bottom-8 lg:left-8 lg:mt-0 rtl:lg:left-auto rtl:lg:right-8">
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:divide-x sm:divide-[#E4EAF2] rtl:sm:divide-x-reverse">
+    <div className="mt-2 w-full min-w-0 max-w-[620px] rounded-[20px] bg-white/92 px-4 py-2 shadow-[0_14px_38px_rgba(15,23,42,0.08)] backdrop-blur sm:mt-7 sm:rounded-[24px] sm:px-5 sm:py-3.5 lg:absolute lg:bottom-8 lg:left-8 lg:mt-0 rtl:lg:left-auto rtl:lg:right-8">
+      <div className="grid grid-cols-1 divide-y divide-[#E4EAF2] sm:grid-cols-3 sm:gap-4 sm:divide-x sm:divide-y-0 rtl:sm:divide-x-reverse">
         {visible.map((item, index) => {
           const Icon = STAT_ICONS[item.icon];
           // Custom uploaded icon image overrides the built-in named icon.
@@ -74,7 +74,7 @@ function StatStrip({ stats, language }) {
           return (
             <div
               key={`${value}-${label}-${index}`}
-              className="flex items-center gap-3 sm:px-3 first:sm:pl-0 last:sm:pr-0"
+              className="flex items-center gap-3 py-2.5 sm:px-3 sm:py-0 first:sm:pl-0 last:sm:pr-0"
             >
               {iconImage ? (
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#EAF3FF]">
@@ -408,7 +408,7 @@ export default function HeroSection() {
       {/* grid-cols-1 + min-w-0 children: the mobile track is clamped to the
           viewport so wide content (cards row, stats) can never push the layout
           past the right edge on small phones. */}
-      <div className="relative mx-auto grid min-h-screen max-w-7xl grid-cols-1 items-center gap-8 px-4 pb-8 pt-10 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8 lg:pb-28 lg:pt-12">
+      <div className="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-6 px-4 pb-8 pt-8 sm:gap-8 sm:px-6 lg:min-h-screen lg:grid-cols-[0.9fr_1.1fr] lg:px-8 lg:pb-28 lg:pt-12">
         <motion.div
           dir={dir}
           initial={prefersReducedMotion ? false : { opacity: 0, x: -24 }}
@@ -423,7 +423,7 @@ export default function HeroSection() {
           ) : null}
 
           {title || titleGradient ? (
-            <h1 className="max-w-[580px] text-[clamp(2.7rem,6vw,4.9rem)] font-semibold leading-[1.04] tracking-tight text-[#050A13] [overflow-wrap:anywhere]">
+            <h1 className="max-w-[580px] text-[2.4rem] font-semibold leading-[1.06] tracking-tight text-[#050A13] [overflow-wrap:anywhere] sm:text-[clamp(2.7rem,6vw,4.9rem)] sm:leading-[1.04]">
               {title}
               {titleGradient ? (
                 <span className="block bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-transparent">
@@ -475,7 +475,7 @@ export default function HeroSection() {
           initial={prefersReducedMotion ? false : { opacity: 0, x: 32 }}
           animate={prefersReducedMotion ? undefined : { opacity: 1, x: 0 }}
           transition={{ duration: 0.7, ease: "easeOut", delay: 0.08 }}
-          className="relative z-10 flex min-h-[430px] w-full min-w-0 flex-col items-center justify-center gap-5 lg:min-h-[570px]"
+          className="relative z-10 flex w-full min-w-0 flex-col items-center justify-center gap-5 sm:min-h-[430px] lg:min-h-[570px]"
         >
           <FloatingCards
             cards={cards}
