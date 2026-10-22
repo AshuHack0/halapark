@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { fetchBusinessContent } from "@/lib/cms";
