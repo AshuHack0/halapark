@@ -131,6 +131,21 @@ export default function FAQBottomCTA() {
               </div>
             ) : null}
           </div>
+
+          {/* Phones/tablets: the arch photo stacked under the buttons (the
+              absolute panel above is lg+ only). */}
+          {image ? (
+            <div aria-hidden className="relative mt-8 lg:hidden">
+              <div className="relative mx-auto aspect-[4/3] w-full max-w-[440px]">
+                <div className="absolute inset-0 translate-x-3 translate-y-3 rounded-[110px_22px_110px_22px] border border-white/35 rtl:-translate-x-3 rtl:rounded-[22px_110px_22px_110px]" />
+                <div className="absolute inset-0 overflow-hidden rounded-[110px_22px_110px_22px] shadow-[0_20px_48px_rgba(0,60,140,0.35)] rtl:rounded-[22px_110px_22px_110px]">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={image} alt="" className="h-full w-full object-cover object-center" />
+                  <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,110,214,0.35)_0%,transparent_45%)]" />
+                </div>
+              </div>
+            </div>
+          ) : null}
         </div>
       </div>
     </section>

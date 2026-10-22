@@ -1413,7 +1413,7 @@ function FinalCTA({ cta }) {
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.65, ease }}
             className={`relative z-10 px-8 py-14 text-center sm:px-12 sm:py-16 lg:py-24 lg:ps-16 lg:pe-6 lg:text-start ${
-              image ? "lg:max-w-[56%]" : "lg:max-w-[62%]"
+              image ? "pb-6 sm:pb-8 lg:max-w-[56%] lg:pb-24" : "lg:max-w-[62%]"
             }`}
             dir={language === "ar" ? "rtl" : "ltr"}
           >
@@ -1452,6 +1452,23 @@ function FinalCTA({ cta }) {
               </div>
             ) : null}
           </motion.div>
+
+          {/* Phones/tablets: the leaf-cut photo stacked under the buttons (the
+              absolute panel above is lg+ only). */}
+          {image ? (
+            <div aria-hidden className="relative z-10 px-6 pb-8 sm:px-10 lg:hidden">
+              <div className="relative mx-auto aspect-[4/3] w-full max-w-[440px]">
+                <div className="absolute inset-0 translate-x-3 translate-y-3 rounded-[110px_24px_110px_24px] border border-[#1AB2FF]/45 rtl:-translate-x-3 rtl:rounded-[24px_110px_24px_110px]" />
+                <div className="absolute inset-0 overflow-hidden rounded-[110px_24px_110px_24px] shadow-[0_24px_56px_rgba(3,10,20,0.5)] ring-1 ring-white/15 rtl:rounded-[24px_110px_24px_110px]">
+                  <Image src={image} alt="" fill className="object-cover object-center" sizes="100vw" aria-hidden />
+                  <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,19,39,0.35)_0%,transparent_45%)]" />
+                </div>
+                <div className="absolute -bottom-3 start-5 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-[#0A3F84] to-[#0088FF] shadow-[0_12px_30px_rgba(0,136,255,0.45)] ring-4 ring-[#0A1E3C]">
+                  <Image src="/Layer_1.svg" alt="" width={20} height={26} className="h-6 w-auto" aria-hidden />
+                </div>
+              </div>
+            </div>
+          ) : null}
         </div>
       </div>
     </section>
