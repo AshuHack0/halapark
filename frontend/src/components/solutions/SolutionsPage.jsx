@@ -1967,7 +1967,7 @@ function NewFinalCTA() {
 
           <motion.div dir={language === "ar" ? "rtl" : "ltr"} initial={reduced ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.65, ease }} className={`relative z-10 flex flex-col px-6 py-12 sm:px-10 sm:py-14 lg:py-20 ${
               image
-                ? "items-center text-center md:max-w-[54%] md:items-start md:pe-4 md:text-start lg:ps-14"
+                ? "items-center pb-6 text-center md:max-w-[54%] md:items-start md:pb-14 md:pe-4 md:text-start lg:ps-14 lg:pb-20"
                 : "items-center text-center"
             }`}>
             {heading || gradient ? (
@@ -2009,6 +2009,20 @@ function NewFinalCTA() {
               </div>
             ) : null}
           </motion.div>
+
+          {/* Phones/tablets: the same arch-shaped photo stacked under the copy
+              (the absolute panel above is desktop-only). */}
+          {image ? (
+            <div aria-hidden className="relative z-10 px-6 pb-8 md:hidden">
+              <div className="relative mx-auto aspect-[4/3] w-full max-w-[420px]">
+                <div className="absolute inset-0 translate-x-2 translate-y-2 rounded-[110px_22px_110px_22px] border border-[#1AB2FF]/35 rtl:-translate-x-2 rtl:rounded-[22px_110px_22px_110px]" />
+                <div className="absolute inset-0 overflow-hidden rounded-[110px_22px_110px_22px] rtl:rounded-[22px_110px_22px_110px]">
+                  <Image src={image} alt="" fill className="object-cover object-center" sizes="100vw" />
+                  <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,19,39,0.35)_0%,transparent_45%)]" />
+                </div>
+              </div>
+            </div>
+          ) : null}
         </div>
       </div>
     </section>
