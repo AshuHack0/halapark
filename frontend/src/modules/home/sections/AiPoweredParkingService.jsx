@@ -74,7 +74,7 @@ function AudienceCard({
   return (
     <motion.article
       layout={!prefersReducedMotion}
-      className="relative isolate flex min-h-[360px] overflow-hidden rounded-[20px] border border-white/60 bg-white p-3.5 ring-1 ring-[#cfe5ff] will-change-transform sm:min-h-[430px] lg:min-h-[520px] lg:basis-0 lg:rounded-[16px] lg:p-3.5"
+      className="relative isolate flex min-h-[400px] flex-col overflow-hidden rounded-[20px] border border-white/60 bg-white p-3.5 ring-1 ring-[#cfe5ff] will-change-transform sm:min-h-[430px] lg:min-h-[520px] lg:basis-0 lg:rounded-[16px] lg:p-3.5"
       style={{ backgroundColor }}
       animate={
         prefersReducedMotion
@@ -140,13 +140,13 @@ function AudienceCard({
         transition={prefersReducedMotion ? { duration: 0 } : gentleEase}
       />
 
-      <div className="relative z-10 flex h-full w-full flex-col justify-between">
+      <div className="relative z-10 flex w-full flex-1 flex-col justify-between">
         <div className="flex flex-col gap-2">
           <span className="inline-flex w-fit items-center rounded-full border border-[#b9d9ff] bg-white/85 px-3 py-1 text-[10px] font-semibold tracking-[0.13em] text-[#006fd2] backdrop-blur-sm sm:text-[11px]">
             {audienceTag}
           </span>
           <motion.h3
-            className="whitespace-pre-line pr-6 text-[clamp(2.2rem,2.7vw,3rem)] font-semibold leading-[1.05] tracking-[-0.045em] text-[#071221] lg:pr-8"
+            className="whitespace-pre-line pr-6 text-[1.75rem] font-semibold leading-[1.05] tracking-[-0.045em] text-[#071221] sm:text-[clamp(2.2rem,2.7vw,3rem)] lg:pr-8"
             animate={
               prefersReducedMotion
                 ? undefined
@@ -185,7 +185,7 @@ function AudienceCard({
             pointerEvents: !isDesktop || active ? "auto" : "none",
           }}
         >
-          <RichText text={description} className="max-w-[31ch] text-[0.82rem] leading-[1.42] tracking-[-0.015em] text-black [overflow-wrap:anywhere] line-clamp-5 sm:text-[0.88rem] lg:max-w-[420px] lg:text-[14px] lg:leading-[1.38] block" />
+          <RichText text={description} className="max-w-none text-[0.84rem] leading-[1.45] tracking-[-0.015em] text-black [overflow-wrap:anywhere] sm:max-w-[31ch] sm:text-[0.88rem] sm:line-clamp-5 lg:max-w-[420px] lg:text-[14px] lg:leading-[1.38] block" />
 
           <Link
             href={href}
@@ -295,23 +295,23 @@ export default function AiPoweredParkingService() {
         <div className="mx-auto max-w-[980px] text-center">
           <h2
             id="ai-powered-parking-service-title"
-            className="mx-auto mt-4 max-w-[940px] text-[clamp(2.65rem,4.5vw,4rem)] font-semibold uppercase leading-[1.01] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]"
+            className="mx-auto mt-2 max-w-[940px] text-[2rem] font-semibold uppercase leading-[1.05] tracking-[-0.05em] text-[#050A13] [overflow-wrap:anywhere] sm:mt-4 sm:text-[clamp(2.65rem,4.5vw,4rem)] sm:leading-[1.01] sm:tracking-[-0.06em]"
           >
             {/* Heading on line 1; the gradient accent drops to a second line. */}
             <span className="block">{t(copy, "heading", language)}</span>
             {t(copy, "headingGradient", language) ? (
-              <span className="mt-2 block bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-[clamp(1.75rem,3vw,2.6rem)] leading-[1.15] tracking-[-0.04em] text-transparent">
+              <span className="mt-1.5 block bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-[1.25rem] leading-[1.2] tracking-[-0.03em] text-transparent sm:mt-2 sm:text-[clamp(1.75rem,3vw,2.6rem)] sm:leading-[1.15] sm:tracking-[-0.04em]">
                 {t(copy, "headingGradient", language)}
               </span>
             ) : null}
           </h2>
-          <p className="mx-auto mt-3 max-w-[650px] text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem] [overflow-wrap:anywhere]">
+          <p className="mx-auto mt-3 max-w-[650px] text-[0.86rem] leading-[1.6] text-slate-600 sm:text-[0.94rem] sm:leading-6 [overflow-wrap:anywhere]">
             <RichText text={t(copy, "description", language)} />
           </p>
         </div>
 
         <div
-          className={`mx-auto mt-8 max-w-[1417px] rounded-[22px] border border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.88),rgba(246,251,255,0.84))] p-3.5 backdrop-blur-sm ${shellShadowClass} sm:p-4 lg:mt-10 lg:rounded-[24px] lg:px-4 lg:py-4`}
+          className={`mx-auto mt-8 max-w-[1417px] rounded-[22px] border border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.88),rgba(246,251,255,0.84))] p-2.5 backdrop-blur-sm ${shellShadowClass} sm:p-4 lg:mt-10 lg:rounded-[24px] lg:px-4 lg:py-4`}
         >
           <div
             className="flex flex-col gap-3 lg:flex-row"
