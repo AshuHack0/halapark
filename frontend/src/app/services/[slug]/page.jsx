@@ -35,16 +35,17 @@ export default async function ServiceDetailPage({ params }) {
     notFound();
   }
 
-  // The service card's media (managed via CMS "Services") is the source of
-  // truth for this service's hero image — but only when it IS an image. Falls
-  // back to the detail's own image; with neither, the hero renders without one.
+  // The detail page's own "Hero / Banner Image" (admin → Service Details) is
+  // the source of truth here, so the card image on the Services list and the
+  // detail hero can be changed independently. Only when the detail has no
+  // image of its own does the card's media fill in (and only if it's an image).
   const service = services.find((s) => (s?.slug || "").trim() === slug);
   const serviceImage =
     service && service.mediaType !== "video" && (service.mediaSrc || "").trim()
       ? service.mediaSrc
       : "";
   const detailImage = detail.image && detail.image !== "/image.png" ? detail.image : "";
-  const heroImage = serviceImage || detailImage || null;
+  const heroImage = detailImage || serviceImage || null;
 
   // `details` is passed as relatedList so "Other Related Services" can resolve
   // each related slug to a live service title + link. `services` provides the
