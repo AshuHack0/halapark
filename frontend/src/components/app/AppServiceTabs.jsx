@@ -128,21 +128,31 @@ export default function AppServiceTabs() {
         if (section && typeof section === "object") setContent(section);
         const cmsTabs = section?.tabs;
         // Keep only CMS tabs that carry a real label (either language) and steps.
+        // Keep only CMS tabs with a real label. Blank step entries (the admin
+        // saves [""] when the field is cleared) are dropped, so a tab may have
+        // zero steps — it then shows its copy and screen with no step row.
         const validTabs = Array.isArray(cmsTabs)
-          ? cmsTabs.filter(
-              (tab) =>
-                tab &&
-                typeof tab === "object" &&
-                ((typeof tab.label === "string" && tab.label.trim()) ||
-                  (typeof tab.ar?.label === "string" && tab.ar.label.trim())) &&
-                Array.isArray(tab.steps) &&
-                tab.steps.length > 0,
-            )
+          ? cmsTabs
+              .filter(
+                (tab) =>
+                  tab &&
+                  typeof tab === "object" &&
+                  ((typeof tab.label === "string" && tab.label.trim()) ||
+                    (typeof tab.ar?.label === "string" && tab.ar.label.trim())),
+              )
+              .map((tab) => {
+                const keep = (Array.isArray(tab.steps) ? tab.steps : []).map((st, i) => [st, i]).filter(([st]) => typeof st === "string" && st.trim());
+                return {
+                  ...tab,
+                  steps: keep.map(([st]) => st),
+                  ar: { ...(tab.ar ?? {}), steps: keep.map(([, i]) => tab.ar?.steps?.[i] ?? "") },
+                };
+              })
           : [];
         setTabs(validTabs);
         if (validTabs.length) {
           setActiveTab(validTabs[0].key);
-          setActiveStep(validTabs[0].steps[0]);
+          setActiveStep(validTabs[0].steps[0] ?? null);
         }
       })
       .finally(() => setResolved(true));
@@ -175,6 +185,13 @@ export default function AppServiceTabs() {
         );
         const safeTabIndex = currentTabIndex >= 0 ? currentTabIndex : 0;
         const currentService = tabs[safeTabIndex];
+        if (currentService.steps.length === 0) {
+          const nextTab = tabs[(safeTabIndex + 1) % tabs.length];
+          setShowLastStepTick(false);
+          setActiveTab(nextTab.key);
+          setActiveStep(nextTab.steps[0] ?? null);
+          return;
+        }
         const currentStepIndex = currentService.steps.indexOf(activeStep);
         const safeStepIndex = currentStepIndex >= 0 ? currentStepIndex : 0;
         const isLastStep = safeStepIndex >= currentService.steps.length - 1;
@@ -187,7 +204,7 @@ export default function AppServiceTabs() {
           const nextTab = tabs[(safeTabIndex + 1) % tabs.length];
           setShowLastStepTick(false);
           setActiveTab(nextTab.key);
-          setActiveStep(nextTab.steps[0]);
+          setActiveStep(nextTab.steps[0] ?? null);
           return;
         }
 
@@ -374,6 +391,7 @@ export default function AppServiceTabs() {
                 );
               })()
             ) : null}
+            {activeService.steps.length > 0 ? (
             <div className="mt-8 rounded-[36px] border border-[#E5E7EB] bg-[linear-gradient(180deg,#FFFFFF_0%,#F8FAFC_100%)] p-4  sm:p-5">
               <div className="flex gap-3">
                 {activeService.steps.map((step, index) => {
@@ -436,12 +454,13 @@ export default function AppServiceTabs() {
                 })}
               </div>
             </div>
+            ) : null}
           </div>
 
           <div className="mt-2 flex h-full w-full justify-center md:mt-8 md:w-[44%] md:flex-none md:justify-end lg:mt-10">
             <PhonePreview
               screen={activeScreen}
-              label={`${t(activeService, "label", language)} ${safeActiveStep}`}
+              label={`${t(activeService, "label", language)} ${safeActiveStep ?? ""}`.trim()}
             />
           </div>
         </div>
