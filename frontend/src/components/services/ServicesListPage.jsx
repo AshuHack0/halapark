@@ -953,7 +953,7 @@ function SvcHeroVisual({ reduced, slides }) {
                   onError={count > 1 ? next : undefined}
                   onContextMenu={(e) => e.preventDefault()}
                   aria-label={slide.name || "Service"}
-                  className="h-full w-full object-cover object-center"
+                  className="h-full w-full scale-[1.035] object-cover object-center"
                 />
               ) : slide.img ? (
                 <Image
@@ -973,7 +973,7 @@ function SvcHeroVisual({ reduced, slides }) {
                   playsInline
                   preload="metadata"
                   aria-hidden
-                  className="h-full w-full object-cover object-center"
+                  className="h-full w-full scale-[1.035] object-cover object-center"
                 />
               ) : (
                 <div className="h-full w-full bg-slate-200" />
