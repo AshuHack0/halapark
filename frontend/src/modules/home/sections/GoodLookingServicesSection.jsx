@@ -98,11 +98,11 @@ function ServiceCard({ service, index, cardRef, isActive, language }) {
           "block overflow-hidden rounded-[22px] bg-[#fbfdff] shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_1px_4px_rgba(6,6,22,0.1),0_10px_24px_-6px_rgba(6,6,22,0.14)] transition-[transform,box-shadow] duration-300 ease-out sm:rounded-[26px] lg:rounded-[30px]";
         const inner = (
         <>
-        <div className="relative h-[190px] w-full bg-[#d2dae2] sm:h-[230px] lg:h-[260px]">
+        <div className="relative w-full bg-[#d2dae2] lg:h-[260px]">
           {/* Scroll focus effect: the in-focus service's media is sharp; others
               blur + dim. Reduced-motion users always see it sharp. */}
           <div
-            className={`absolute inset-0 transition-[filter,opacity,transform] duration-500 ease-out ${
+            className={`relative transition-[filter,opacity,transform] duration-500 ease-out lg:absolute lg:inset-0 ${
               noMotion || isActive
                 ? "opacity-100 blur-0 scale-100"
                 : "opacity-70 blur-[6px] scale-[1.02]"
@@ -116,15 +116,19 @@ function ServiceCard({ service, index, cardRef, isActive, language }) {
                 muted
                 playsInline
                 preload="metadata"
-                className="h-full w-full object-cover"
+                className="block h-auto w-full object-cover lg:h-full"
               />
             ) : service.mediaSrc ? (
+              /* Phones/tablets: the image keeps its own aspect ratio (shown
+                 whole — no crop/zoom); lg+ fills the fixed-height box with a
+                 cover crop, where the card is wide enough for it. */
               <Image
                 src={service.mediaSrc}
                 alt={service.name}
-                fill
+                width={1600}
+                height={900}
                 sizes="(min-width: 1024px) 50vw, 100vw"
-                className="object-cover object-center"
+                className="block h-auto w-full object-cover object-center lg:absolute lg:inset-0 lg:h-full"
               />
             ) : null}
           </div>
