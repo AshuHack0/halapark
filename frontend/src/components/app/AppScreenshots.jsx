@@ -87,16 +87,11 @@ function StepConnector({ index, prefersReducedMotion }) {
 }
 
 function PhoneFrame({ screen, index, prefersReducedMotion }) {
-  let screenBounds =
-    "left-[4.4%] right-[4.4%] top-[1.2%] bottom-[1.45%] rounded-[2.55rem]";
-
-  if (index === 0 || index === 4) {
-    screenBounds =
-      "left-[3.2%] right-[3.2%] top-[0.8%] bottom-[1%] rounded-[2.35rem]";
-  } else if (index === 1 || index === 3) {
-    screenBounds =
-      "left-[3.7%] right-[3.7%] top-[1%] bottom-[1.2%] rounded-[2.45rem]";
-  }
+  // Screen box measured from /mobileframe.png (inset 4.48% / 1.19%, corner
+  // r = 17.8% of the screen width) with a hair of overlap, expressed in
+  // percentages so it fits the frame at every phone size.
+  const screenBounds = "left-[4.2%] right-[4.2%] top-[1.05%] bottom-[1.05%] [border-radius:16.4%/7.6%]";
+  void index;
 
   return (
     <motion.div
@@ -110,7 +105,7 @@ function PhoneFrame({ screen, index, prefersReducedMotion }) {
 
       <div className="relative isolate aspect-[1439/2920] drop-shadow-[0_26px_52px_rgba(15,23,42,0.18)]">
         <div
-          className={`absolute z-30 translate-y-[1px] overflow-hidden bg-white ${screenBounds}`}
+          className={`absolute z-30 overflow-hidden bg-white ${screenBounds}`}
         >
           <Image
             src={screen.image || phoneFrameSrc}

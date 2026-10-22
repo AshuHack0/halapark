@@ -14,7 +14,7 @@ function PhoneCard({ image, alt, className }) {
     >
       <div className="absolute inset-x-[19%] bottom-3 h-10 rounded-full bg-black/35 blur-2xl" />
       <div className="relative isolate aspect-[1439/2920] drop-shadow-[0_24px_44px_rgba(2,8,23,0.5)]">
-        <div className="absolute left-[4.4%] right-[4.4%] top-[1.2%] bottom-[1.45%] z-10 translate-y-[1px] overflow-hidden rounded-[1.7rem] bg-black">
+        <div className="absolute left-[4.2%] right-[4.2%] top-[1.05%] bottom-[1.05%] z-10 overflow-hidden bg-black [border-radius:16.4%/7.6%]">
           <div className="absolute top-0 -bottom-[2.5%] left-0 right-0">
             <Image src={image} alt={alt} fill sizes="220px" className="object-cover object-center" />
           </div>

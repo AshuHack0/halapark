@@ -20,7 +20,7 @@ function PhonePreview({ screen, label }) {
 
       <div className="relative isolate aspect-[1439/2920] drop-shadow-[0_28px_60px_-28px_rgba(15,23,42,0.45)]">
         {screen ? (
-          <div className="absolute left-[4.4%] right-[4.4%] top-[1.2%] bottom-[1.45%] z-10 translate-y-[1px] overflow-hidden rounded-[1.3rem] bg-white sm:rounded-[2.2rem] lg:rounded-[2.7rem]">
+          <div className="absolute left-[4.2%] right-[4.2%] top-[1.05%] bottom-[1.05%] z-10 overflow-hidden bg-white [border-radius:16.4%/7.6%]">
             <AnimatePresence mode="wait">
               <motion.div
                 key={`${label}-${screen}`}
@@ -42,7 +42,7 @@ function PhonePreview({ screen, label }) {
             </AnimatePresence>
           </div>
         ) : (
-          <div className="absolute left-[4.4%] right-[4.4%] top-[1.2%] bottom-[1.45%] z-10 translate-y-[1px] overflow-hidden rounded-[1.3rem] bg-[linear-gradient(170deg,#F2F8FF,#E3EFFC)] sm:rounded-[2.2rem] lg:rounded-[2.7rem]" />
+          <div className="absolute left-[4.2%] right-[4.2%] top-[1.05%] bottom-[1.05%] z-10 overflow-hidden bg-[linear-gradient(170deg,#F2F8FF,#E3EFFC)] [border-radius:16.4%/7.6%]" />
         )}
 
         <div className="pointer-events-none absolute inset-0 z-0">
