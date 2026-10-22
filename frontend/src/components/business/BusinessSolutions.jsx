@@ -27,7 +27,6 @@ function useIsMobileViewport() {
 }
 
 export default function BusinessSolutions() {
-  const reduced = useReducedMotion();
   const isMobile = useIsMobileViewport();
   const { language } = useLanguage();
   const [solutions, setSolutions] = useState([]);
@@ -67,12 +66,7 @@ export default function BusinessSolutions() {
 
           {/* LEFT: Sticky Heading & Description */}
           <div className="lg:sticky lg:top-20 lg:h-fit">
-            <motion.div
-              initial={reduced || isMobile ? false : { opacity: 0, y: 24 }}
-              whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.65, ease }}
-            >
+            <div>
               <h2 className="text-[2rem] sm:text-5xl lg:text-6xl font-bold leading-[1.1] sm:leading-tight tracking-[-0.05em] sm:tracking-[-0.06em] text-[#050A13] mb-5 sm:mb-6 [overflow-wrap:anywhere]">
                 {t(header, "heading", language)}
                 {t(header, "headingAccent", language) ? (
@@ -103,7 +97,7 @@ export default function BusinessSolutions() {
                   </motion.button>
                 </Link>
               ) : null}
-            </motion.div>
+            </div>
           </div>
 
           {/* RIGHT: 2-Column Grid of Cards */}
@@ -117,10 +111,6 @@ export default function BusinessSolutions() {
               return (
               <motion.article
                 key={card.title || i}
-                initial={reduced || isMobile ? false : { opacity: 0, y: 20 }}
-                whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.1 }}
-                transition={{ duration: 0.5, ease, delay: i * 0.05 }}
                 whileHover={isMobile ? undefined : { y: -8 }}
                 className="group overflow-hidden rounded-[24px] bg-white border border-[#E7EAF0] shadow-[0_4px_24px_rgba(6,6,22,0.06)] transition hover:border-[rgba(0,136,255,0.3)] hover:shadow-[0_20px_50px_rgba(0,136,255,0.15)]"
               >

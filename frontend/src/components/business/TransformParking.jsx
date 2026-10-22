@@ -73,12 +73,12 @@ export default function TransformParking() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.65, ease }}
-          className="mx-auto mb-14 max-w-[980px] text-center"
+          className="mx-auto mb-10 max-w-[980px] text-center sm:mb-14"
         >
-          <h2 className="text-[clamp(3rem,5.5vw,5rem)] font-semibold leading-[1.01] tracking-[-0.06em] text-[#050A13] [overflow-wrap:anywhere]">
+          <h2 className="text-[2.1rem] font-semibold leading-[1.06] tracking-[-0.05em] text-[#050A13] [overflow-wrap:anywhere] sm:text-[clamp(3rem,5.5vw,5rem)] sm:leading-[1.01] sm:tracking-[-0.06em]">
             <span className="block">{t(transformData, "title", language)}</span>
             {(t(transformData, "titleAccent", language) || "").trim() ? (
-              <span className="mt-2 block bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-[clamp(1.75rem,3vw,2.6rem)] leading-[1.15] tracking-[-0.04em] text-transparent">
+              <span className="mt-1.5 block bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] bg-clip-text text-[1.35rem] leading-[1.2] tracking-[-0.03em] text-transparent sm:mt-2 sm:text-[clamp(1.75rem,3vw,2.6rem)] sm:leading-[1.15] sm:tracking-[-0.04em]">
                 {t(transformData, "titleAccent", language)}
               </span>
             ) : null}
@@ -95,11 +95,22 @@ export default function TransformParking() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, amount: 0.15 }}
             transition={{ duration: 0.65, ease }}
-            className={`relative isolate flex flex-col overflow-hidden rounded-[28px] border border-[#E7EAF0] bg-white p-8 shadow-[0_4px_24px_rgba(6,6,22,0.06)] sm:p-10 ${parkingHasBg ? "sm:pe-[36%]" : ""}`}
+            className={`relative isolate flex flex-col overflow-hidden rounded-[28px] border border-[#E7EAF0] bg-white p-6 shadow-[0_4px_24px_rgba(6,6,22,0.06)] sm:p-10 ${parkingHasBg ? "pt-[calc(56%+1.25rem)] sm:pe-[36%] sm:pt-10" : ""}`}
           >
             {/* Background photo in a triangular wedge (admin-set); falls back to
                 subtle CSS triangles when no image is uploaded. */}
             {(transformData.parkingPartnerBgImage || "").trim() ? (
+              <>
+              {/* Phones: photo strip across the top of the card with a chevron
+                  edge along the bottom (the side wedge below is sm+ only). */}
+              <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 -z-10 aspect-[16/9] sm:hidden">
+                <div className="absolute inset-0 bg-[#1AB2FF]/25 [clip-path:polygon(0_0,100%_0,100%_78%,50%_100%,0_78%)]" />
+                <div className="absolute inset-0 overflow-hidden [clip-path:polygon(0_0,100%_0,100%_74%,50%_96%,0_74%)]">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={transformData.parkingPartnerBgImage} alt="" className="h-full w-full object-cover" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-white/80 via-white/10 to-transparent" />
+                </div>
+              </div>
               <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 hidden sm:block">
                 {/* Chevron accent stripes echoing the photo's diagonal edge */}
                 <div className="absolute inset-y-0 right-0 w-[48%] bg-[#0088FF]/15 [clip-path:polygon(26%_0,100%_0,100%_100%,26%_100%,0_50%)]" />
@@ -116,6 +127,7 @@ export default function TransformParking() {
                   <div className="absolute inset-0 bg-gradient-to-r from-white/90 via-white/35 to-transparent" />
                 </div>
               </div>
+              </>
             ) : (
               <>
                 <div
@@ -182,11 +194,21 @@ export default function TransformParking() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, amount: 0.15 }}
             transition={{ duration: 0.65, ease, delay: 0.1 }}
-            className={`relative isolate flex flex-col overflow-hidden rounded-[28px] bg-[#06111f] p-8 shadow-[0_4px_24px_rgba(6,6,22,0.12)] sm:p-10 ${serviceHasBg ? "sm:pe-[36%]" : ""}`}
+            className={`relative isolate flex flex-col overflow-hidden rounded-[28px] bg-[#06111f] p-6 shadow-[0_4px_24px_rgba(6,6,22,0.12)] sm:p-10 ${serviceHasBg ? "pt-[calc(56%+1.25rem)] sm:pe-[36%] sm:pt-10" : ""}`}
           >
             {/* Background photo in a triangular wedge (admin-set); falls back to
                 subtle CSS triangles when no image is uploaded. */}
             {(transformData.servicePartnerBgImage || "").trim() ? (
+              <>
+              <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 -z-10 aspect-[16/9] sm:hidden">
+                <div className="absolute inset-0 bg-[#1AB2FF]/35 [clip-path:polygon(0_0,100%_0,100%_78%,50%_100%,0_78%)]" />
+                <div className="absolute inset-0 overflow-hidden [clip-path:polygon(0_0,100%_0,100%_74%,50%_96%,0_74%)]">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={transformData.servicePartnerBgImage} alt="" className="h-full w-full object-cover" />
+                  <div className="absolute inset-0 bg-[#0044AA]/30 mix-blend-multiply" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#06111f]/90 via-[#06111f]/20 to-transparent" />
+                </div>
+              </div>
               <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 hidden sm:block">
                 {/* Chevron accent stripes echoing the photo's diagonal edge */}
                 <div className="absolute inset-y-0 right-0 w-[48%] bg-[#0088FF]/30 [clip-path:polygon(26%_0,100%_0,100%_100%,26%_100%,0_50%)]" />
@@ -204,6 +226,7 @@ export default function TransformParking() {
                   <div className="absolute inset-0 bg-gradient-to-r from-[#06111f]/95 via-[#06111f]/40 to-transparent" />
                 </div>
               </div>
+              </>
             ) : (
               <>
                 <div
