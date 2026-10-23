@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useLayoutEffect, useEffect, useMemo, useCallback, useId } from "react";
+import { useState, useRef, useLayoutEffect, useEffect, useMemo, useCallback, useId, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import { createPortal } from "react-dom";
 import ReCAPTCHA from "react-google-recaptcha";
@@ -882,9 +882,25 @@ function ServiceCard({ service, index, onClick, category, clickable = false, hre
 // one clip running. A video hands over when it ends; a still holds briefly.
 const SVC_IMAGE_HOLD_MS = 5000;
 
+// True below the `sm` breakpoint (phones). Reads matchMedia directly so the
+// fanned-card geometry can differ on small screens.
+const NARROW_QUERY = "(max-width: 639px)";
+function useIsNarrowViewport() {
+  return useSyncExternalStore(
+    (onChange) => {
+      const mq = window.matchMedia(NARROW_QUERY);
+      mq.addEventListener("change", onChange);
+      return () => mq.removeEventListener("change", onChange);
+    },
+    () => window.matchMedia(NARROW_QUERY).matches,
+    () => false,
+  );
+}
+
 function SvcHeroVisual({ reduced, slides }) {
   const [active, setActive] = useState(0);
   const count = slides.length;
+  const narrow = useIsNarrowViewport();
 
   const next = useCallback(() => {
     setActive((p) => (p + 1) % Math.max(count, 1));
@@ -916,10 +932,14 @@ function SvcHeroVisual({ reduced, slides }) {
     return 2; // not one of the three visible positions
   };
 
+  // Phones: the side cards sit closer and smaller so the whole fan fits the
+  // viewport (at ±62% they were clipped by the section's edges).
+  const sideX = narrow ? "46%" : "62%";
+  const sideScale = narrow ? 0.76 : 0.82;
   const layoutFor = (offset) => {
     if (offset === 0) return { x: "0%", scale: 1, rotate: 0, opacity: 1, zIndex: 30 };
-    if (offset === 1) return { x: "62%", scale: 0.82, rotate: 7, opacity: 0.9, zIndex: 20 };
-    if (offset === -1) return { x: "-62%", scale: 0.82, rotate: -7, opacity: 0.9, zIndex: 20 };
+    if (offset === 1) return { x: sideX, scale: sideScale, rotate: 7, opacity: 0.9, zIndex: 20 };
+    if (offset === -1) return { x: `-${sideX}`, scale: sideScale, rotate: -7, opacity: 0.9, zIndex: 20 };
     return { x: "0%", scale: 0.7, rotate: 0, opacity: 0, zIndex: 10 };
   };
 
