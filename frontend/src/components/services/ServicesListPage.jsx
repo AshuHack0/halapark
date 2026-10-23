@@ -750,7 +750,7 @@ const CAT_META = {
   technical: { label: "Technical Service", color: "#0088FF", bg: "rgba(0,136,255,0.12)" },
 };
 
-function ServiceCard({ service, index, onClick, category, clickable = false }) {
+function ServiceCard({ service, index, onClick, category, clickable = false, href = "" }) {
   // Muted background video keeps playing on phones; only a real OS
   // "reduce motion" setting stops it.
   const osReducedMotion = usePrefersReducedMotionOS();
@@ -770,8 +770,19 @@ function ServiceCard({ service, index, onClick, category, clickable = false }) {
       whileHover={reduced ? undefined : { y: -8, scale: 1.02, transition: springSoft }}
       style={{ transformPerspective: 1200 }}
       className={`group/card relative h-full ${clickable ? "cursor-pointer" : "cursor-default"}`}
-      onClick={clickable ? () => onClick(service) : undefined}
+      onClick={clickable && !href ? () => onClick(service) : undefined}
     >
+      {/* A real link to the detail page (when one exists) so right-click →
+          "Open link in new tab", middle-click and cmd/ctrl-click all work;
+          the image inside is just a background, never the link target. */}
+      {href ? (
+        <Link
+          href={href}
+          aria-label={service.name}
+          className="absolute inset-0 z-30 rounded-[20px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#0088FF]"
+          draggable={false}
+        />
+      ) : null}
       {/* Card shell — full height + column layout so every card in a row is
           the same height regardless of content length. */}
       <div className="relative flex h-full flex-col overflow-hidden rounded-[20px] border border-white/80 bg-white shadow-[0_1px_3px_rgba(6,6,22,0.06),0_8px_32px_-8px_rgba(0,136,255,0.08)] transition-shadow duration-300 group-hover/card:shadow-[0_4px_8px_rgba(6,6,22,0.06),0_20px_48px_-8px_rgba(0,136,255,0.18)]">
@@ -1554,6 +1565,7 @@ function ServicesGrid({ onServiceClick, cmsServices, gridHeader, detailSlugs, ca
                 service={service}
                 index={index}
                 onClick={onServiceClick}
+                href={detailSlugs?.has((service.slug || "").trim()) ? `/services/${(service.slug || "").trim()}` : ""}
                 category={service._category}
                 // Clickable ONLY when this service has its own detail page —
                 // same rule as the Solutions grid (no popup, no dead clicks).
