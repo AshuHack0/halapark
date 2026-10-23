@@ -53,7 +53,7 @@ export default function SupportContactCTA() {
 
           <div className="relative grid min-h-[520px] gap-6 p-4 sm:p-6 lg:grid-cols-[minmax(0,560px)_1fr] lg:gap-10 lg:p-7">
             <div className="flex items-start">
-              <div className="w-full max-w-[560px] rounded-[1.75rem] border border-white/60 bg-white/55 p-6 shadow-[0_30px_60px_rgba(15,23,42,0.12)] backdrop-blur-md sm:p-8 lg:mt-10" dir={dir}>
+              <div className="w-full max-w-[560px] rounded-[1.75rem] border border-white/60 bg-white/35 p-6 shadow-[0_30px_60px_rgba(15,23,42,0.12)] backdrop-blur-[3px] sm:p-8 lg:mt-10" dir={dir}>
                 {t(data, "eyebrow", language) ? (
                   <p className="text-[13px] font-medium uppercase tracking-[0.08em] text-[#0088FF] sm:text-[14px] [overflow-wrap:anywhere]">
                     {t(data, "eyebrow", language)}
@@ -106,7 +106,7 @@ export default function SupportContactCTA() {
                         <a
                           key={item.label}
                           href={item.href}
-                          className="flex items-center gap-4 rounded-2xl border border-white/60 bg-white/40 px-4 py-4 transition hover:border-[rgba(0,136,255,0.16)] hover:bg-white"
+                          className="flex items-center gap-4 rounded-2xl border border-white/60 bg-white/30 px-4 py-4 transition hover:border-[rgba(0,136,255,0.16)] hover:bg-white"
                         >
                           <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[rgba(0,136,255,0.08)] text-[#0088FF]">
                             <Icon className="h-5 w-5" aria-hidden="true" />
@@ -124,10 +124,10 @@ export default function SupportContactCTA() {
             </div>
 
             <div className="flex items-end justify-end">
-              <div className="w-full max-w-sm rounded-[1.75rem] border border-white/30 bg-slate-950/25 p-5 text-white shadow-[0_24px_60px_rgba(15,23,42,0.26)] backdrop-blur-md sm:p-6 lg:mb-6" dir={dir}>
+              <div className="w-full max-w-sm rounded-[1.75rem] border border-white/30 bg-slate-950/15 p-5 text-white shadow-[0_24px_60px_rgba(15,23,42,0.26)] backdrop-blur-[3px] sm:p-6 lg:mb-6" dir={dir}>
                 <div className="flex items-center justify-between gap-3">
                   <div>
-                    <p className="text-xs uppercase tracking-[0.28em] text-cyan-100/80 [overflow-wrap:anywhere]">
+                    <p className="text-xs uppercase tracking-[0.28em] text-cyan-100/90 [text-shadow:0_1px_8px_rgba(0,0,0,0.5)] [overflow-wrap:anywhere]">
                       {t(data, "supportEyebrow", language) || (language === "ar" ? "" : "Support")}
                     </p>
                     <p className="mt-2 text-2xl font-semibold tracking-tight text-white sm:text-3xl [overflow-wrap:anywhere]">
