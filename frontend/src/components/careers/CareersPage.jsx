@@ -573,23 +573,39 @@ function JobsCarousel({ posts, language, reduced, renderCard }) {
   const measure = useCallback(() => {
     const el = trackRef.current;
     if (!el) return;
+    const pos = Math.abs(el.scrollLeft);
+    const first = el.firstElementChild;
+    if (window.matchMedia("(max-width: 639px)").matches && first) {
+      // Phones: one centred card per "page".
+      const step = first.getBoundingClientRect().width + 16;
+      setPageCount(posts.length);
+      setPage(Math.min(posts.length - 1, Math.round(pos / step)));
+      return;
+    }
     const perPage = Math.max(1, Math.round(el.clientWidth / (el.scrollWidth / posts.length || 1)));
     setPageCount(Math.max(1, Math.ceil(posts.length / perPage)));
-    const pos = Math.abs(el.scrollLeft);
     setPage(el.clientWidth ? Math.round(pos / el.clientWidth) : 0);
   }, [posts.length]);
 
   useEffect(() => {
-    measure();
+    const raf = window.requestAnimationFrame(measure);
     const onResize = () => measure();
     window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
+    return () => {
+      window.cancelAnimationFrame(raf);
+      window.removeEventListener("resize", onResize);
+    };
   }, [measure]);
 
   const scrollByPage = (dir) => {
     const el = trackRef.current;
     if (!el) return;
-    el.scrollBy({ left: dir * el.clientWidth * (rtl ? -1 : 1), behavior: reduced ? "auto" : "smooth" });
+    // Phones show one centred card at a time, so step by one card (card +
+    // gap) rather than a full viewport, which would skip past the next card.
+    const first = el.firstElementChild;
+    const narrow = window.matchMedia("(max-width: 639px)").matches;
+    const step = narrow && first ? first.getBoundingClientRect().width + 16 : el.clientWidth;
+    el.scrollBy({ left: dir * step * (rtl ? -1 : 1), behavior: reduced ? "auto" : "smooth" });
   };
 
   // A single job centers itself instead of hugging the start of the track.
@@ -611,13 +627,13 @@ function JobsCarousel({ posts, language, reduced, renderCard }) {
       <div
         ref={trackRef}
         onScroll={measure}
-        className="flex snap-x snap-mandatory gap-5 overflow-x-auto px-1 pb-3 pt-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="flex snap-x snap-mandatory gap-4 overflow-x-auto px-[11%] pb-3 pt-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:gap-5 sm:px-1"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
         {posts.map((post, i) => (
           <div
             key={`${post.title}-${i}`}
-            className="w-[86%] shrink-0 snap-start sm:w-[calc(50%-10px)] lg:w-[calc(33.333%-14px)] xl:w-[calc(25%-15px)]"
+            className="w-full shrink-0 snap-center sm:w-[calc(50%-10px)] sm:snap-start lg:w-[calc(33.333%-14px)] xl:w-[calc(25%-15px)]"
           >
             {renderCard(post, i)}
           </div>
@@ -751,14 +767,14 @@ function JobOpenings({ openPositions }) {
 
                   {/* Buttons side by side under a divider */}
                   <div className="mt-auto flex items-center gap-2.5 border-t border-slate-100 pt-4">
-                    <span className="inline-flex flex-1 items-center justify-center rounded-full border border-[#0088FF]/45 px-3 py-2 text-[0.8rem] font-semibold text-[#0088FF] transition hover:bg-[#EEF6FF]">
+                    <span className="inline-flex flex-1 items-center justify-center whitespace-nowrap rounded-full border border-[#0088FF]/45 px-2 py-2 text-[0.78rem] font-semibold text-[#0088FF] transition hover:bg-[#EEF6FF] sm:px-3 sm:text-[0.8rem]">
                       {ct("viewDetails", language)}
                     </span>
                     <span onClick={(e) => e.stopPropagation()} className="flex-1">
                       <JobApplyButton
                         post={post}
                         onApply={setApplyJob}
-                        className="inline-flex w-full items-center justify-center rounded-full bg-[#0088FF] px-3 py-2 text-[0.8rem] font-semibold text-white transition hover:brightness-110"
+                        className="inline-flex w-full items-center justify-center whitespace-nowrap rounded-full bg-[#0088FF] px-2 py-2 text-[0.78rem] font-semibold text-white transition hover:brightness-110 sm:px-3 sm:text-[0.8rem] [&_svg]:h-3.5 [&_svg]:w-3.5"
                       />
                     </span>
                   </div>

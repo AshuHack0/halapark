@@ -41,19 +41,24 @@ export default function SupportContactCTA() {
     <section className="bg-white py-10 sm:py-12 md:py-14">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="relative overflow-hidden rounded-[2rem] border border-slate-200 bg-[#e9eef3] shadow-[0_28px_64px_rgba(15,23,42,0.16)]">
+          {/* Phones/tablets: the photo is a strip at its own shape above the
+              cards (it was cropped to a sliver behind tall stacked cards).
+              lg+: full-bleed background behind the glass cards. */}
           {data.image ? (
-            <Image
-              src={data.image}
-              alt=""
-              fill
-              sizes="(min-width: 1024px) 1200px, 100vw"
-              className="object-cover object-center"
-            />
+            <div className="relative aspect-[16/10] w-full lg:absolute lg:inset-0 lg:aspect-auto">
+              <Image
+                src={data.image}
+                alt=""
+                fill
+                sizes="(min-width: 1024px) 1200px, 100vw"
+                className="object-cover object-center"
+              />
+            </div>
           ) : null}
 
-          <div className="relative grid min-h-[520px] gap-6 p-4 sm:p-6 lg:grid-cols-[minmax(0,560px)_1fr] lg:gap-10 lg:p-7">
+          <div className="relative -mt-12 grid gap-5 p-4 sm:p-6 lg:mt-0 lg:min-h-[520px] lg:grid-cols-[minmax(0,560px)_1fr] lg:gap-10 lg:p-7">
             <div className="flex items-start">
-              <div className="w-full max-w-[560px] rounded-[1.75rem] border border-white/60 bg-white/35 p-6 shadow-[0_30px_60px_rgba(15,23,42,0.12)] backdrop-blur-[3px] sm:p-8 lg:mt-10" dir={dir}>
+              <div className="w-full max-w-[560px] rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-[0_18px_40px_rgba(15,23,42,0.12)] sm:p-8 lg:mt-10 lg:border-white/60 lg:bg-white/35 lg:shadow-[0_30px_60px_rgba(15,23,42,0.12)] lg:backdrop-blur-[3px]" dir={dir}>
                 {t(data, "eyebrow", language) ? (
                   <p className="text-[13px] font-medium uppercase tracking-[0.08em] text-[#0088FF] sm:text-[14px] [overflow-wrap:anywhere]">
                     {t(data, "eyebrow", language)}
@@ -113,7 +118,7 @@ export default function SupportContactCTA() {
                           </span>
                           <span className="min-w-0">
                             <span className="block text-xs uppercase tracking-[0.22em] text-slate-400">{item.label}</span>
-                            <span className="mt-1 block break-all text-base font-medium text-slate-900">{item.value}</span>
+                            <span className="mt-1 block text-[15px] font-medium text-slate-900 [overflow-wrap:anywhere] sm:text-base">{item.value}</span>
                           </span>
                         </a>
                       );
@@ -123,8 +128,8 @@ export default function SupportContactCTA() {
               </div>
             </div>
 
-            <div className="flex items-end justify-end">
-              <div className="w-full max-w-sm rounded-[1.75rem] border border-white/30 bg-slate-950/15 p-5 text-white shadow-[0_24px_60px_rgba(15,23,42,0.26)] backdrop-blur-[3px] sm:p-6 lg:mb-6" dir={dir}>
+            <div className="flex items-end lg:justify-end">
+              <div className="w-full rounded-[1.75rem] border border-white/10 bg-[#0A1B33] p-5 text-white shadow-[0_24px_60px_rgba(15,23,42,0.26)] sm:p-6 lg:mb-6 lg:max-w-sm lg:border-white/30 lg:bg-slate-950/15 lg:backdrop-blur-[3px]" dir={dir}>
                 <div className="flex items-center justify-between gap-3">
                   <div>
                     <p className="text-xs uppercase tracking-[0.28em] text-cyan-100/90 [text-shadow:0_1px_8px_rgba(0,0,0,0.5)] [overflow-wrap:anywhere]">
@@ -154,7 +159,7 @@ export default function SupportContactCTA() {
                           </span>
                           <span className="min-w-0">
                             <span className="block text-xs uppercase tracking-[0.22em] text-slate-300">{item.label}</span>
-                            <span className="mt-1 block break-all text-base font-medium text-white sm:text-lg">{item.value}</span>
+                            <span className="mt-1 block text-[15px] font-medium text-white [overflow-wrap:anywhere] sm:text-lg">{item.value}</span>
                           </span>
                         </a>
                       );
