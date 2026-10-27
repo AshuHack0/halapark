@@ -816,7 +816,7 @@ function StatsSection() {
             }}
             className="mt-6 inline-flex items-center gap-2 rounded-full border border-[#0088FF] px-6 py-2.5 text-[0.9rem] font-semibold text-[#0088FF] transition hover:bg-[#0088FF] hover:text-white"
           >
-            Explore Our Solutions ↓
+            {language === "ar" ? "استكشف حلولنا ↓" : "Explore Our Solutions ↓"}
           </button>
         </div>
 

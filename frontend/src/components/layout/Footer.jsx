@@ -111,7 +111,7 @@ export default function Footer() {
           </div>
         </div> */}
 
-        <div className="mt-8 grid items-start gap-8 border-b border-[#E4EAF2] pb-10 md:grid-cols-3 md:gap-8 lg:grid-cols-[1fr_1fr_1fr] lg:gap-10">
+        <div className="mt-8 grid items-start gap-8 border-b border-[#E4EAF2] pb-10 md:grid-cols-2 md:gap-8 lg:grid-cols-[1fr_1fr_1fr] lg:gap-10">
           <div className="flex h-full max-w-[22.5rem] flex-col md:justify-self-start">
             <div>
               <Link href="/" className="inline-flex items-center gap-1">
@@ -199,19 +199,19 @@ export default function Footer() {
           ) : null}
 
           {appHeading || appText || appDownloadUrl || hasStoreLinks ? (
-            <div className="w-full md:max-w-[22.5rem] md:justify-self-end md:text-right rtl:md:text-left">
+            <div className="w-full md:col-span-2 lg:col-span-1 lg:max-w-[22.5rem] lg:justify-self-end lg:text-right rtl:lg:text-left">
               {appHeading ? (
-                <h4 className="text-sm font-semibold uppercase tracking-[0.1em] text-[#050A13] md:text-right rtl:md:text-left" dir={language === "ar" ? "rtl" : "ltr"}>
+                <h4 className="text-sm font-semibold uppercase tracking-[0.1em] text-[#050A13] lg:text-right rtl:lg:text-left" dir={language === "ar" ? "rtl" : "ltr"}>
                   {appHeading}
                 </h4>
               ) : null}
               {appText ? (
-                <p className="mt-3 max-w-sm text-sm leading-6 text-[#667085] md:ml-auto md:text-right rtl:md:ml-0 rtl:md:mr-auto rtl:md:text-left [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
+                <p className="mt-3 max-w-sm text-sm leading-6 text-[#667085] lg:ml-auto lg:text-right rtl:lg:ml-0 rtl:lg:mr-auto rtl:lg:text-left [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
                   {appText}
                 </p>
               ) : null}
               {appDownloadUrl || hasStoreLinks ? (
-                <div className="mt-4 flex flex-col gap-4 min-[420px]:flex-row min-[420px]:items-start md:justify-end">
+                <div className="mt-4 flex flex-col gap-4 min-[420px]:flex-row min-[420px]:items-start lg:justify-end">
                   {appDownloadUrl && qrCodeSrc ? (
                     <Link
                       href={appDownloadUrl}
@@ -227,7 +227,7 @@ export default function Footer() {
                     </Link>
                   ) : null}
                   {hasStoreLinks ? (
-                    <div className="flex w-[6.75rem] flex-col items-start gap-2 md:items-end">
+                    <div className="flex w-[6.75rem] flex-col items-start gap-2 lg:items-end">
                       {playStoreUrl ? (
                         <Link href={playStoreUrl} target="_blank" rel="noopener noreferrer" aria-label="Get it on Google Play">
                           <img

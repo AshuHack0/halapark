@@ -185,7 +185,7 @@ function AudienceCard({
             pointerEvents: !isDesktop || active ? "auto" : "none",
           }}
         >
-          <RichText text={description} className="max-w-none text-[0.84rem] leading-[1.45] tracking-[-0.015em] text-black [overflow-wrap:anywhere] sm:max-w-[31ch] sm:text-[0.88rem] sm:line-clamp-5 lg:max-w-[420px] lg:text-[14px] lg:leading-[1.38] block" />
+          <RichText text={description} className="max-w-none text-[0.84rem] leading-[1.45] tracking-[-0.015em] text-black [overflow-wrap:anywhere] sm:text-[0.88rem] lg:max-w-[420px] lg:text-[14px] lg:leading-[1.38] block" />
 
           <Link
             href={href}
@@ -254,7 +254,9 @@ export default function AiPoweredParkingService() {
   }, []);
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia("(min-width: 1024px)");
+    // Hover-reveal layout only on wide screens WITH a mouse — touch tablets
+    // (iPad Pro) can't hover, so they keep the always-visible card text.
+    const mediaQuery = window.matchMedia("(min-width: 1024px) and (hover: hover) and (pointer: fine)");
 
     const syncDesktopState = () => {
       setIsDesktop(mediaQuery.matches);

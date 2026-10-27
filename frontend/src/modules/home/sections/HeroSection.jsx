@@ -84,13 +84,14 @@ function HeroBackgroundMedia({ slide, isActive, onVideoEnd }) {
 
   if (!imageSrc) return null;
 
-  // Stretch to fit: the whole image fills the banner exactly — nothing cropped,
-  // no empty bars (the image is scaled to the banner's shape).
+  // Cover, not fill: keep the photo's real proportions at every screen size
+  // (object-fill squashed/stretched it into the banner's shape). The edges are
+  // trimmed instead; on narrow phones the focus stays on the centre.
   return (
     <img
       src={imageSrc}
       alt={slide.title}
-      className="h-full w-full object-fill"
+      className="h-full w-full object-cover object-center"
     />
   );
 }
@@ -183,7 +184,7 @@ export default function HeroSection() {
                 type="button"
                 onClick={showPreviousSlide}
                 aria-label="Previous slide"
-                className="absolute start-3 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-sm transition hover:bg-white/30 sm:start-5 sm:h-11 sm:w-11"
+                className="absolute bottom-5 end-[4.25rem] z-20 flex h-10 w-10 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-sm transition hover:bg-white/30 sm:bottom-auto sm:end-auto sm:start-5 sm:top-1/2 sm:h-11 sm:w-11 sm:-translate-y-1/2"
               >
                 <span className="rtl:rotate-180">
                   <ArrowLeftIcon />
@@ -193,7 +194,7 @@ export default function HeroSection() {
                 type="button"
                 onClick={showNextSlide}
                 aria-label="Next slide"
-                className="absolute end-3 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-sm transition hover:bg-white/30 sm:end-5 sm:h-11 sm:w-11"
+                className="absolute bottom-5 end-5 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-sm transition hover:bg-white/30 sm:bottom-auto sm:top-1/2 sm:h-11 sm:w-11 sm:-translate-y-1/2"
               >
                 <span className="rtl:rotate-180">
                   <ArrowRightIcon />
