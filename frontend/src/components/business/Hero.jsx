@@ -17,13 +17,6 @@ const ease = [0.22, 1, 0.36, 1];
 // cycles to the back on a timer, rotating the deck through the imagery.
 // Distinct from the other heroes' single-card / dashboard / mosaic layouts.
 
-const BIZ_SLIDES = [
-  { img: "/Maximize Parking Value dekhna ye.jpeg", label: "Maximize Value" },
-  { img: "/AI-Driven Parking Intelligence.jpeg",   label: "AI Intelligence" },
-  { img: "/Smart & Seamless Experience.jpeg",      label: "Seamless Ops" },
-  { img: "/Smart Public Parking.jpeg",             label: "Scalable Growth" },
-];
-
 // Per-depth transform for the fanned deck (index 0 = front).
 const DECK_LAYOUT = [
   { x: 0,   y: 0,   rotate: -4, scale: 1,    opacity: 1,    z: 40 },
@@ -32,9 +25,10 @@ const DECK_LAYOUT = [
   { x: 18,  y: 50,  rotate: 9,  scale: 0.86, opacity: 0.7,  z: 10 },
 ];
 
-function BusinessGrowthPanel({ reduced, slides }) {
-  // CMS-driven deck images with a fallback so the hero never renders empty.
-  const deck = Array.isArray(slides) && slides.length > 0 ? slides : BIZ_SLIDES;
+function BusinessGrowthPanel({ reduced, slides, loading = false }) {
+  // CMS images only — no bundled defaults (they flashed before the real
+  // images arrived). Skeleton while loading; nothing if none are set.
+  const deck = Array.isArray(slides) ? slides : [];
   const [active, setActive] = useState(0);
 
   useEffect(() => {
@@ -44,6 +38,18 @@ function BusinessGrowthPanel({ reduced, slides }) {
   }, [reduced, deck.length]);
 
   const current = deck[active] ?? deck[0];
+
+  if (loading) {
+    return (
+      <div className="relative flex items-center justify-center" aria-hidden>
+        <div className="relative h-[330px] w-[250px] sm:h-[380px] sm:w-[290px] lg:h-[430px] lg:w-[330px]">
+          <div className="absolute inset-0 translate-x-5 translate-y-4 rotate-[4deg] animate-pulse rounded-[28px] border-[5px] border-white bg-[#DCE8F6]" />
+          <div className="absolute inset-0 -rotate-[4deg] animate-pulse rounded-[28px] border-[5px] border-white bg-[linear-gradient(180deg,#E6F0FB_0%,#D6E6F7_100%)] shadow-[0_30px_70px_rgba(15,23,42,0.12)]" />
+        </div>
+      </div>
+    );
+  }
+  if (deck.length === 0) return null;
 
   return (
     <div className="relative flex items-center justify-center">
@@ -198,19 +204,23 @@ export default function BusinessHero() {
   const reduced = useReducedMotion();
   const { language } = useLanguage();
   const [hero, setHero] = useState({});
+  // True until the CMS answers — drives the image-deck skeleton.
+  const [heroLoading, setHeroLoading] = useState(true);
   const [proposalOpen, setProposalOpen] = useState(false);
   const [consultOpen, setConsultOpen] = useState(false);
 
   useEffect(() => {
-    fetchBusinessSection("hero").then((section) => {
-      if (section) {
-        setHero(section);
-      }
-    });
+    fetchBusinessSection("hero")
+      .then((section) => {
+        if (section) {
+          setHero(section);
+        }
+      })
+      .finally(() => setHeroLoading(false));
   }, []);
 
-  // CMS deck images: array of { img, label } (label optional). Falls back to the
-  // built-in slides when the admin hasn't set any.
+  // CMS deck images: array of { img, label } (label optional). No built-in
+  // fallback — with none set, the right side stays empty.
   const deckImages = (Array.isArray(hero.deckImages) ? hero.deckImages : [])
     .map((d) => (typeof d === "string" ? { img: d, label: "" } : d))
     .filter((d) => d && (d.img || "").trim());
@@ -349,7 +359,7 @@ export default function BusinessHero() {
             transition={{ duration: 0.75, ease, delay: 0.1 }}
             className="relative mt-16 flex min-h-[420px] items-center justify-center lg:mt-0 lg:min-h-[560px]"
           >
-            <BusinessGrowthPanel reduced={reduced} slides={deckImages} />
+            <BusinessGrowthPanel reduced={reduced} slides={deckImages} loading={heroLoading} />
           </motion.div>
         </div>
       </div>
