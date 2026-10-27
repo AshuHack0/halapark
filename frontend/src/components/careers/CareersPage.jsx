@@ -387,7 +387,7 @@ function OpportunitiesSection({ opportunities, header }) {
                       <Image src={image} alt="" fill sizes="(min-width: 1280px) 28vw, (min-width: 768px) 40vw, 100vw" className="object-cover object-center" />
                       {/* Pastel wash over the photo so it sits inside the card tone */}
                       <div className="absolute inset-0 sm:hidden" style={{ background: `linear-gradient(180deg, transparent 40%, ${tone.wash} 75%, ${tone.bg} 100%)` }} />
-                      <div className="absolute inset-0 hidden sm:block" style={{ background: `linear-gradient(90deg, ${tone.bg} 0%, ${tone.wash} 30%, transparent 52%)` }} />
+                      <div className="absolute inset-0 hidden sm:block" style={{ background: `linear-gradient(${language === "ar" ? "270deg" : "90deg"}, ${tone.bg} 0%, ${tone.wash} 30%, transparent 52%)` }} />
                     </div>
                   ) : null}
 
