@@ -326,6 +326,7 @@ function SolutionCardsCarousel({ cards, language }) {
           : ""
       }`}
       aria-label="Solution integrations, scrolling"
+      dir="ltr"
     >
       <style>{`
         @keyframes solutionMarquee {
@@ -336,8 +337,19 @@ function SolutionCardsCarousel({ cards, language }) {
             transform: translateX(-50%);
           }
         }
+        @keyframes solutionMarqueeRtl {
+          0% {
+            transform: translateX(-50%);
+          }
+          100% {
+            transform: translateX(0);
+          }
+        }
         .solution-cards-marquee {
           animation: solutionMarquee 45s linear infinite;
+        }
+        .solution-cards-marquee.is-rtl {
+          animation-name: solutionMarqueeRtl;
         }
         @media (prefers-reduced-motion: reduce) {
           .solution-cards-marquee {
@@ -345,10 +357,18 @@ function SolutionCardsCarousel({ cards, language }) {
           }
         }
       `}</style>
-      <div className={marquee ? "flex w-max gap-4 sm:gap-5 md:gap-6 solution-cards-marquee" : "flex flex-wrap justify-center gap-4 sm:gap-5 md:gap-6"}>
+      {/* The track always lays out left-to-right so the looping translate
+          works in both languages (in RTL a w-max row starts off-screen to the
+          left and the strip drifts away empty); each card keeps its own text
+          direction, and Arabic scrolls the other way. */}
+      <div
+        dir="ltr"
+        className={marquee ? `flex w-max gap-4 sm:gap-5 md:gap-6 solution-cards-marquee${language === "ar" ? " is-rtl" : ""}` : "flex flex-wrap justify-center gap-4 sm:gap-5 md:gap-6"}
+      >
         {loop.map((card, index) => (
           <div
             key={`${card.id}-${index}`}
+            dir={language === "ar" ? "rtl" : "ltr"}
             className="w-[min(88vw,380px)] shrink-0 sm:w-[min(45vw,420px)] md:w-[min(38vw,440px)] lg:w-[360px]"
           >
             <SolutionCard {...card} />
