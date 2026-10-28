@@ -98,11 +98,11 @@ function ServiceCard({ service, index, cardRef, isActive, language }) {
           "block overflow-hidden rounded-[22px] bg-[#fbfdff] shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_1px_4px_rgba(6,6,22,0.1),0_10px_24px_-6px_rgba(6,6,22,0.14)] transition-[transform,box-shadow] duration-300 ease-out sm:rounded-[26px] lg:rounded-[30px]";
         const inner = (
         <>
-        <div className="relative w-full bg-[#d2dae2] sm:aspect-[16/10] lg:aspect-auto lg:h-[260px]">
+        <div className="relative w-full aspect-[16/10] bg-[#d2dae2] lg:aspect-auto lg:h-[260px]">
           {/* Scroll focus effect: the in-focus service's media is sharp; others
               blur + dim. Reduced-motion users always see it sharp. */}
           <div
-            className={`relative transition-[filter,opacity,transform] duration-500 ease-out sm:absolute sm:inset-0 ${
+            className={`absolute inset-0 transition-[filter,opacity,transform] duration-500 ease-out ${
               noMotion || isActive
                 ? "opacity-100 blur-0 scale-100"
                 : "opacity-70 blur-[6px] scale-[1.02]"
@@ -116,19 +116,18 @@ function ServiceCard({ service, index, cardRef, isActive, language }) {
                 muted
                 playsInline
                 preload="metadata"
-                className="block h-auto w-full object-cover sm:h-full"
+                className="block h-full w-full object-cover"
               />
             ) : service.mediaSrc ? (
-              /* Single-column phones: the image keeps its own aspect ratio (shown
-                 whole). Two-column tablets and desktop: a uniform box with a
-                 cover crop so every card in a row lines up. */
+              /* Every size: a uniform box with a centred cover crop, so all
+                 service cards have the same image height. */
               <Image
                 src={service.mediaSrc}
                 alt={service.name}
                 width={1600}
                 height={900}
                 sizes="(min-width: 1024px) 50vw, 100vw"
-                className="block h-auto w-full object-cover object-center sm:absolute sm:inset-0 sm:h-full"
+                className="absolute inset-0 block h-full w-full object-cover object-center"
               />
             ) : null}
           </div>
