@@ -251,54 +251,53 @@ export default function AppServiceTabs() {
   return (
     <section className="w-full bg-white px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
       <div className="max-w-7xl mx-auto overflow-hidden">
-        <div className="relative -mx-4 overflow-x-auto px-4 sm:mx-0 sm:overflow-visible sm:px-0">
-          <div
-            role="tablist"
-            aria-label="App services"
-            className="grid min-w-max border-b border-[#D8DDE5] sm:min-w-0"
-            style={{
-              gridTemplateColumns: `repeat(${tabs.length}, minmax(180px, 1fr))`,
-            }}
-          >
-            {tabs.map((service) => {
-              const isActive = service.key === activeService.key;
+        {/* Phones: 2-column grid of pill tabs (all visible, no sideways scroll,
+            so the auto-advancing tab never slides off-screen). From sm up: the
+            single underlined row, one equal column per tab. */}
+        <div
+          role="tablist"
+          aria-label="App services"
+          className="mb-8 grid grid-cols-2 gap-2 sm:mb-0 sm:gap-0 sm:border-b sm:border-[#D8DDE5] sm:[grid-template-columns:repeat(var(--tab-cols),minmax(0,1fr))]"
+          style={{ "--tab-cols": tabs.length }}
+        >
+          {tabs.map((service) => {
+            const isActive = service.key === activeService.key;
 
-              return (
-                <button
-                  key={service.key}
-                  type="button"
-                  role="tab"
-                  aria-selected={isActive}
-                  onClick={() => {
-                    setShowLastStepTick(false);
-                    setActiveTab(service.key);
-                    setActiveStep(service.steps[0]);
-                  }}
-                  className={`relative px-6 pb-6 pt-1 text-[15px] flex items-center gap-2 text-center justify-center font-medium transition-colors duration-300 md:text-[17px] ${
-                    isActive
-                      ? "text-[#1F2940]"
-                      : "text-[#D2D6DD] hover:text-[#7C8596]"
-                  }`}
-                >
-                  {service.iconImage ? (
-                    <Image
-                      src={service.iconImage}
-                      alt=""
-                      width={22}
-                      height={22}
-                      className="h-7 w-7 shrink-0 object-contain"
-                    />
-                  ) : null}
-                  <span className="whitespace-nowrap [overflow-wrap:anywhere]">{t(service, "label", language)}</span>
-                  <span
-                    className={`absolute bottom-[-1px] left-0 h-0.5 bg-[#0088FF]/70 transition-all duration-300 ${
-                      isActive ? "w-full opacity-100" : "w-0 opacity-0"
-                    }`}
+            return (
+              <button
+                key={service.key}
+                type="button"
+                role="tab"
+                aria-selected={isActive}
+                onClick={() => {
+                  setShowLastStepTick(false);
+                  setActiveTab(service.key);
+                  setActiveStep(service.steps[0]);
+                }}
+                className={`relative flex min-w-0 items-center justify-center gap-2 rounded-xl border px-3 py-2.5 text-center text-[14px] font-medium transition-colors duration-300 odd:last:col-span-2 sm:odd:last:col-span-1 sm:rounded-none sm:border-0 sm:bg-transparent sm:px-2 sm:pb-6 lg:px-6 sm:pt-1 sm:text-[15px] md:text-[17px] ${
+                  isActive
+                    ? "border-[#0088FF]/40 bg-[#F3F8FF] text-[#1F2940]"
+                    : "border-[#E4E7EC] bg-white text-[#7C8596] sm:text-[#D2D6DD] hover:text-[#7C8596]"
+                }`}
+              >
+                {service.iconImage ? (
+                  <Image
+                    src={service.iconImage}
+                    alt=""
+                    width={22}
+                    height={22}
+                    className="h-6 w-6 shrink-0 object-contain sm:h-7 sm:w-7"
                   />
-                </button>
-              );
-            })}
-          </div>
+                ) : null}
+                <span className="min-w-0 leading-tight [overflow-wrap:anywhere] lg:whitespace-nowrap">{t(service, "label", language)}</span>
+                <span
+                  className={`absolute bottom-[-1px] start-0 hidden h-0.5 bg-[#0088FF]/70 transition-all duration-300 sm:block ${
+                    isActive ? "w-full opacity-100" : "w-0 opacity-0"
+                  }`}
+                />
+              </button>
+            );
+          })}
         </div>
 
         <div className="flex flex-col items-center gap-10 text-center md:flex-row md:items-center md:justify-between md:text-start">
