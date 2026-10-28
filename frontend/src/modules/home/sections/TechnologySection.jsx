@@ -207,80 +207,66 @@ export default function TechnologySection() {
           </div>
 
           <div className="flex flex-col items-center justify-center gap-6 sm:gap-8 md:gap-10 lg:gap-12 w-full">
-            <div className="overflow-x-hidden w-full">
-              <style>{`
-                @keyframes scrollLeft {
-                  0% {
-                    transform: translateX(0);
-                  }
-                  100% {
-                    transform: translateX(-50%);
-                  }
-                }
-                .animate-scroll-left {
-                  animation: scrollLeft 20s linear infinite;
-                }
-              `}</style>
-              <div className="flex items-center gap-2 sm:gap-3 md:gap-4 animate-scroll-left">
-                {[...loop1, ...loop1].map((item, index) =>
-                  item.img === false ? (
-                    <EasyIntegrationCard
-                      key={`${item.id}-${index}`}
-                      title={item.title}
-                      imgSrc={item.image}
-                    />
-                  ) : (
+            {/* Seamless loop: the track is max-content wide and holds the list
+                twice, each item carrying its own trailing space (no flex gap),
+                so -50% lands exactly on the start of the second copy. */}
+            <style>{`
+              @keyframes techMarqueeLeft {
+                from { transform: translate3d(0, 0, 0); }
+                to { transform: translate3d(-50%, 0, 0); }
+              }
+              @keyframes techMarqueeRight {
+                from { transform: translate3d(-50%, 0, 0); }
+                to { transform: translate3d(0, 0, 0); }
+              }
+              .tech-marquee {
+                display: flex;
+                align-items: center;
+                width: max-content;
+                will-change: transform;
+                backface-visibility: hidden;
+              }
+              .tech-marquee.is-left { animation: techMarqueeLeft 48s linear infinite; }
+              .tech-marquee.is-right { animation: techMarqueeRight 54s linear infinite; }
+              /* Phone tracks are ~1/3 as long — shorter loop keeps the same pace. */
+              @media (max-width: 639px) {
+                .tech-marquee.is-left { animation-duration: 18s; }
+                .tech-marquee.is-right { animation-duration: 20s; }
+              }
+              @media (prefers-reduced-motion: reduce) {
+                .tech-marquee { animation: none; }
+              }
+            `}</style>
+            {[
+              { items: loop1, dirClass: "is-left" },
+              { items: loop2, dirClass: "is-right" },
+            ].map(({ items, dirClass }) => (
+              <div key={dirClass} dir="ltr" className="overflow-hidden w-full">
+                <div className={`tech-marquee ${dirClass}`}>
+                  {[...items, ...items].map((item, index) => (
                     <div
                       key={`${item.id}-${index}`}
-                      className="w-[50px] h-[50px] sm:w-[120px] sm:h-[130px] md:w-[150px] md:h-[160px] lg:w-[170px] lg:h-[180px] object-cover overflow-hidden rounded-xl sm:rounded-2xl shadow-lg shrink-0"
+                      className="shrink-0 pr-2 sm:pr-3 md:pr-4"
+                      aria-hidden={index >= items.length ? true : undefined}
                     >
-                      <img
-                        src={item.image}
-                        alt={item.title}
-                        className="w-full h-full object-cover"
-                      />
+                      {item.img === false ? (
+                        <EasyIntegrationCard title={item.title} imgSrc={item.image} />
+                      ) : (
+                        <div className="w-[50px] h-[50px] sm:w-[120px] sm:h-[130px] md:w-[150px] md:h-[160px] lg:w-[170px] lg:h-[180px] overflow-hidden rounded-xl sm:rounded-2xl shadow-lg">
+                          <img
+                            src={item.image}
+                            alt={item.title}
+                            decoding="async"
+                            draggable={false}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      )}
                     </div>
-                  ),
-                )}
+                  ))}
+                </div>
               </div>
-            </div>
-            <div className="overflow-x-hidden w-full">
-              <style>{`
-                @keyframes scrollRight {
-                  0% {
-                    transform: translateX(-50%);
-                  }
-                  100% {
-                    transform: translateX(0);
-                  }
-                }
-                .animate-scroll-right {
-                  animation: scrollRight 25s linear infinite;
-                }
-              `}</style>
-              <div className="flex items-center gap-2 sm:gap-3 md:gap-4 animate-scroll-right">
-                {[...loop2, ...loop2].map((item, index) =>
-                  item.img === false ? (
-                    <EasyIntegrationCard
-                      key={`${item.id}-${index}`}
-                      title={item.title}
-                      imgSrc={item.image}
-                    />
-                  ) : (
-                    <div
-                      key={`${item.id}-${index}`}
-                      className="w-[50px] h-[50px] sm:w-[120px] sm:h-[130px] md:w-[150px] md:h-[160px] lg:w-[170px] lg:h-[180px] object-cover overflow-hidden rounded-xl sm:rounded-2xl shadow-lg shrink-0"
-                    >
-                      <img
-                        src={item.image}
-                        alt={item.title}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  ),
-                )}
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>
