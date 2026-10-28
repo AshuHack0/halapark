@@ -56,9 +56,11 @@ export default function SupportContactCTA() {
             </div>
           ) : null}
 
-          <div className="relative -mt-12 grid gap-5 p-4 sm:p-6 lg:mt-0 lg:min-h-[520px] lg:grid-cols-[minmax(0,560px)_1fr] lg:gap-10 lg:p-7">
+          {/* Phones/tablets: photo, white panel and dark panel are one flush stack
+              (no floating cards). lg+: glass cards over the full-bleed photo. */}
+          <div className="relative grid lg:min-h-[520px] lg:grid-cols-[minmax(0,560px)_1fr] lg:gap-10 lg:p-7">
             <div className="flex items-start">
-              <div className="w-full max-w-[560px] rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-[0_18px_40px_rgba(15,23,42,0.12)] sm:p-8 lg:mt-10 lg:border-white/60 lg:bg-white/35 lg:shadow-[0_30px_60px_rgba(15,23,42,0.12)] lg:backdrop-blur-[3px]" dir={dir}>
+              <div className="w-full bg-white p-6 sm:p-8 lg:mt-10 lg:max-w-[560px] lg:rounded-[1.75rem] lg:border lg:border-white/60 lg:bg-white/35 lg:shadow-[0_30px_60px_rgba(15,23,42,0.12)] lg:backdrop-blur-[3px]" dir={dir}>
                 {t(data, "eyebrow", language) ? (
                   <p className="text-[13px] font-medium uppercase tracking-[0.08em] text-[#0088FF] sm:text-[14px] [overflow-wrap:anywhere]">
                     {t(data, "eyebrow", language)}
@@ -111,7 +113,7 @@ export default function SupportContactCTA() {
                         <a
                           key={item.label}
                           href={item.href}
-                          className="flex items-center gap-4 rounded-2xl border border-white/60 bg-white/30 px-4 py-4 transition hover:border-[rgba(0,136,255,0.16)] hover:bg-white"
+                          className="flex items-center gap-4 rounded-2xl border border-slate-200 bg-slate-50/70 px-4 py-4 transition hover:border-[rgba(0,136,255,0.16)] hover:bg-white lg:border-white/60 lg:bg-white/30"
                         >
                           <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[rgba(0,136,255,0.08)] text-[#0088FF]">
                             <Icon className="h-5 w-5" aria-hidden="true" />
@@ -129,7 +131,7 @@ export default function SupportContactCTA() {
             </div>
 
             <div className="flex items-end lg:justify-end">
-              <div className="w-full rounded-[1.75rem] border border-white/10 bg-[#0A1B33] p-5 text-white shadow-[0_24px_60px_rgba(15,23,42,0.26)] sm:p-6 lg:mb-6 lg:max-w-sm lg:border-white/30 lg:bg-slate-950/15 lg:backdrop-blur-[3px]" dir={dir}>
+              <div className="w-full bg-[#0A1B33] p-6 text-white sm:p-8 lg:mb-6 lg:max-w-sm lg:rounded-[1.75rem] lg:border lg:border-white/30 lg:bg-slate-950/15 lg:p-6 lg:shadow-[0_24px_60px_rgba(15,23,42,0.26)] lg:backdrop-blur-[3px]" dir={dir}>
                 <div className="flex items-center justify-between gap-3">
                   <div>
                     <p className="text-xs uppercase tracking-[0.28em] text-cyan-100/90 [text-shadow:0_1px_8px_rgba(0,0,0,0.5)] [overflow-wrap:anywhere]">
