@@ -322,7 +322,12 @@ export default function GlobalMobilityNetworkSection() {
             <div className="relative z-10 mt-4 isolate overflow-hidden lg:min-h-[500px]">
               <div className="relative flex flex-col lg:min-h-[500px]">
                 {hasMap ? (
-                  <div className="relative order-2 mt-4 h-[260px] w-full sm:h-[340px] lg:absolute lg:inset-0 lg:order-none lg:mt-0 lg:h-auto">
+                  /* Below lg the map keeps the desktop proportions (12:5), so the
+                     node/link % positions still land on the right countries.
+                     It's drawn wider than the screen and shifted so the UAE
+                     lens (x 64%) sits in the middle; the sides are clipped. */
+                  <div dir="ltr" className="relative order-2 mt-4 w-full overflow-hidden lg:absolute lg:inset-0 lg:order-none lg:mt-0">
+                  <div className="relative aspect-[12/5] w-[210%] -translate-x-[40%] sm:w-[150%] sm:-translate-x-[31%] lg:absolute lg:inset-0 lg:aspect-auto lg:w-full lg:translate-x-0">
                     <img
                       src="/map_6824dc8ea581a9958227b98c_map.svg"
                       alt="Global mobility map"
@@ -402,6 +407,7 @@ export default function GlobalMobilityNetworkSection() {
                       </div>
                     </div>
                   </div>
+                  </div>
                 ) : null}
                 {hasPanelText ? (
                   <div className="relative order-1 z-20 w-full px-4 sm:px-6 lg:absolute lg:start-0 lg:top-[10%] lg:max-w-[390px]">
@@ -452,7 +458,7 @@ export default function GlobalMobilityNetworkSection() {
           ) : null}
 
           {stats.length > 0 ? (
-            <div className="relative z-20 grid gap-2 border-t border-[#DCE9F8] bg-[linear-gradient(180deg,#F8FBFF_0%,#F3F9FF_100%)] px-1 py-3 sm:grid-cols-2 sm:px-3 lg:grid-cols-4 lg:gap-0 lg:py-4">
+            <div className="relative z-20 grid grid-cols-2 gap-x-2 gap-y-3 border-t border-[#DCE9F8] bg-[linear-gradient(180deg,#F8FBFF_0%,#F3F9FF_100%)] px-1 py-4 sm:px-3 lg:grid-cols-4 lg:gap-0 lg:py-4">
               {stats.map((item, index) => (
                 <div
                   key={`stat-${index}`}
@@ -472,7 +478,7 @@ export default function GlobalMobilityNetworkSection() {
                       <MetricIcon type={item.icon} />
                     )}
                   </div>
-                  <p className="text-[1.55rem] font-semibold leading-none tracking-[-0.02em] text-[#071221]">
+                  <p className="text-[1.3rem] font-semibold leading-none tracking-[-0.02em] text-[#071221] sm:text-[1.55rem]">
                     {t(item, "value", language)}
                   </p>
                   <p className="mt-1.5 text-[0.76rem] font-medium tracking-[0.06em] text-slate-500">
