@@ -28,9 +28,10 @@ export default function BusinessPage() {
       <SectionReveal delay={0.05}>
         <WhyChooseHalaPark />
       </SectionReveal>
-      <SectionReveal delay={0.055}>
-        <BusinessSolutions />
-      </SectionReveal>
+      {/* No scroll reveal: this section is tall, so a 20%-in-view trigger kept
+          it blank until well into the scroll. Render it immediately. */}
+      <BusinessSolutions />
+
       <SectionReveal delay={0.06}>
         <WhoWeWorkWith />
       </SectionReveal>
