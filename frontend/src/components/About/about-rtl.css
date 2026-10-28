@@ -1,0 +1,18 @@
+/* About page — Arabic typography.
+   Arabic letters join, so any letter-spacing (the English design's tight
+   negative tracking or wide uppercase badge tracking) breaks the joins.
+   Display headings also use very tight line-heights (~1.0) that make Arabic
+   ascenders/dots collide between lines. Neutralise both in RTL only. */
+
+html[dir="rtl"] .about-page [class*="tracking-"] {
+  letter-spacing: 0;
+}
+
+html[dir="rtl"] .about-page [class*="uppercase"] {
+  text-transform: none;
+}
+
+html[dir="rtl"] .about-page :is(h1, h2, h3),
+html[dir="rtl"] .about-page :is([class*="leading-[0."], [class*="leading-[1.0"], [class*="leading-[1.1"], [class*="leading-[1.2"], [class*="leading-none"], [class*="leading-tight"]) {
+  line-height: 1.4;
+}

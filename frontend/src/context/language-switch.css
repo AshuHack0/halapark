@@ -1,0 +1,7 @@
+/* EN ↔ AR switch: a short crossfade between the LTR and RTL layouts
+   (driven by document.startViewTransition in LanguageContext). */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 320ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}

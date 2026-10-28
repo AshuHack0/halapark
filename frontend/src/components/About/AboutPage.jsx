@@ -12,6 +12,7 @@ import {
 import { fetchPage } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
 import RichText from "@/components/common/RichText";
+import "./about-rtl.css";
 import { PARTNER_FORM_LINK } from "@/components/partners/PartnershipFormProvider";
 
 const ease = [0.22, 1, 0.36, 1];
@@ -468,7 +469,7 @@ function OurVision({ vision }) {
             {/* Dark on the copy side, clearing toward the photo so the upload
                 is actually visible. Mirrors for Arabic. */}
             <div className="absolute inset-0 max-lg:!bg-[linear-gradient(180deg,rgba(2,55,107,0.15)_0%,rgba(2,55,107,0)_35%,rgba(2,55,107,0.55)_75%,#02376B_100%)] bg-[linear-gradient(95deg,#02376B_0%,rgba(1,49,95,0.97)_30%,rgba(0,45,88,0.72)_46%,rgba(0,45,88,0.12)_62%,rgba(0,45,88,0)_100%)] rtl:bg-[linear-gradient(265deg,#02376B_0%,rgba(1,49,95,0.97)_30%,rgba(0,45,88,0.72)_46%,rgba(0,45,88,0.12)_62%,rgba(0,45,88,0)_100%)]" />
-            <div aria-hidden="true" className="absolute -left-20 top-0 h-64 w-64 rounded-full bg-[#0088FF]/20 blur-[90px]" />
+            <div aria-hidden="true" className="absolute -start-20 top-0 h-64 w-64 rounded-full bg-[#0088FF]/20 blur-[90px]" />
             <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#1AB2FF]/50 to-transparent" />
           </div>
 
@@ -1563,7 +1564,7 @@ export default function AboutPage({ content }) {
   }
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="about-page min-h-screen bg-white">
       <AboutHero hero={content.hero} />
       {/* <AboutIntro /> */}
       <OurMission mission={content.mission} />

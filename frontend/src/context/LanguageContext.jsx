@@ -1,6 +1,8 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
+import { flushSync } from "react-dom";
+import "./language-switch.css";
 
 const LANGUAGE_STORAGE_KEY = "halapark-language";
 const LANGUAGE_EVENT = "halapark-language-change";
@@ -39,11 +41,29 @@ export function LanguageProvider({ children }) {
 
   const setLanguage = (next) => {
     const value = SUPPORTED.includes(next) ? next : "en";
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem(LANGUAGE_STORAGE_KEY, value);
-      window.dispatchEvent(new Event(LANGUAGE_EVENT));
+    if (typeof window === "undefined") {
+      setLanguageState(value);
+      return;
     }
-    setLanguageState(value);
+    window.localStorage.setItem(LANGUAGE_STORAGE_KEY, value);
+
+    // Flip lang/dir and re-render in one synchronous step, so the browser never
+    // paints a half-switched frame (Arabic text in an LTR layout or vice versa).
+    const apply = () => {
+      document.documentElement.lang = value;
+      document.documentElement.dir = value === "ar" ? "rtl" : "ltr";
+      flushSync(() => setLanguageState(value));
+      window.dispatchEvent(new Event(LANGUAGE_EVENT));
+    };
+
+    // Crossfade the whole page between the two layouts where supported
+    // (View Transitions); otherwise, or with reduced motion, switch instantly.
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (typeof document.startViewTransition === "function" && !reduced && value !== language) {
+      document.startViewTransition(apply);
+    } else {
+      apply();
+    }
   };
 
   return (
