@@ -49,7 +49,9 @@ export default function LogoTicker({ heading, headingEnd, logos = [], placeholde
 
           {/* overflow-x-hidden (not overflow-hidden) so card top/bottom borders
               aren't clipped — fixes the "broken border" look. */}
-          <div className="relative mt-6 overflow-x-hidden py-5">
+          {/* dir="ltr": the -50% loop needs a left-anchored track; in Arabic an
+              RTL track starts off-screen and the row drifts away blank. */}
+          <div dir="ltr" className="relative mt-6 overflow-x-hidden py-5">
             <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-white via-white/90 to-transparent sm:w-24" />
             <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-white via-white/90 to-transparent sm:w-24" />
 
@@ -110,11 +112,6 @@ export default function LogoTicker({ heading, headingEnd, logos = [], placeholde
       <style jsx>{`
         .clients-ticker {
           animation: clients-ticker-scroll 45s linear infinite;
-        }
-
-        /* Ease off when the user hovers, so a logo can be read. */
-        .clients-ticker:hover {
-          animation-play-state: paused;
         }
 
         @media (prefers-reduced-motion: reduce) {
