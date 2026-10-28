@@ -462,14 +462,17 @@ function OurVision({ vision }) {
               ratio across the top (shown whole — a wide upload was being cropped
               to a sliver by the tall panel), fading into the blue. lg+: the
               full-bleed background behind the copy, as before. */}
-          <div className="relative lg:absolute lg:inset-0">
+          {/* Arabic: the whole background layer (photo + dark wash + glow) is
+              mirrored, so the photo faces the other way and the dark side
+              always sits behind the copy. */}
+          <div className="relative rtl:-scale-x-100 lg:absolute lg:inset-0">
             {vision?.image ? (
               <Image src={vision.image} alt="" width={1600} height={640} sizes="(min-width: 1024px) 1280px, 100vw" className="block h-auto w-full object-cover object-center transition duration-700 group-hover:scale-[1.03] lg:absolute lg:inset-0 lg:h-full" aria-hidden />
             ) : null}
             {/* Dark on the copy side, clearing toward the photo so the upload
-                is actually visible. Mirrors for Arabic. */}
-            <div className="absolute inset-0 max-lg:!bg-[linear-gradient(180deg,rgba(2,55,107,0.15)_0%,rgba(2,55,107,0)_35%,rgba(2,55,107,0.55)_75%,#02376B_100%)] bg-[linear-gradient(95deg,#02376B_0%,rgba(1,49,95,0.97)_30%,rgba(0,45,88,0.72)_46%,rgba(0,45,88,0.12)_62%,rgba(0,45,88,0)_100%)] rtl:bg-[linear-gradient(265deg,#02376B_0%,rgba(1,49,95,0.97)_30%,rgba(0,45,88,0.72)_46%,rgba(0,45,88,0.12)_62%,rgba(0,45,88,0)_100%)]" />
-            <div aria-hidden="true" className="absolute -start-20 top-0 h-64 w-64 rounded-full bg-[#0088FF]/20 blur-[90px]" />
+                is actually visible (mirrored with the layer for Arabic). */}
+            <div className="absolute inset-0 max-lg:!bg-[linear-gradient(180deg,rgba(2,55,107,0.15)_0%,rgba(2,55,107,0)_35%,rgba(2,55,107,0.55)_75%,#02376B_100%)] bg-[linear-gradient(95deg,#02376B_0%,rgba(1,49,95,0.97)_30%,rgba(0,45,88,0.72)_46%,rgba(0,45,88,0.12)_62%,rgba(0,45,88,0)_100%)]" />
+            <div aria-hidden="true" className="absolute -left-20 top-0 h-64 w-64 rounded-full bg-[#0088FF]/20 blur-[90px]" />
             <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#1AB2FF]/50 to-transparent" />
           </div>
 
