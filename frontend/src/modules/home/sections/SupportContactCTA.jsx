@@ -76,7 +76,7 @@ export default function SupportContactCTA() {
                 </div>
 
                 {t(data, "description", language) ? (
-                  <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-600 sm:text-base [overflow-wrap:anywhere]">
+                  <p className="mt-4 max-w-2xl text-sm font-medium leading-7 text-slate-700 sm:text-base lg:text-slate-900 lg:[text-shadow:0_1px_10px_rgba(255,255,255,0.85)] [overflow-wrap:anywhere]">
                     <RichText text={t(data, "description", language)} />
                   </p>
                 ) : null}
@@ -119,7 +119,7 @@ export default function SupportContactCTA() {
                             <Icon className="h-5 w-5" aria-hidden="true" />
                           </span>
                           <span className="min-w-0">
-                            <span className="block text-xs uppercase tracking-[0.22em] text-slate-400">{item.label}</span>
+                            <span className="block text-xs font-semibold uppercase tracking-[0.22em] text-slate-500 lg:text-slate-700">{item.label}</span>
                             <span className="mt-1 block text-[15px] font-medium text-slate-900 [overflow-wrap:anywhere] sm:text-base">{item.value}</span>
                           </span>
                         </a>
@@ -160,7 +160,7 @@ export default function SupportContactCTA() {
                             <Icon className="h-5 w-5" aria-hidden="true" />
                           </span>
                           <span className="min-w-0">
-                            <span className="block text-xs uppercase tracking-[0.22em] text-slate-300">{item.label}</span>
+                            <span className="block text-xs font-semibold uppercase tracking-[0.22em] text-white/90 [text-shadow:0_1px_8px_rgba(0,0,0,0.6)]">{item.label}</span>
                             <span className="mt-1 block text-[15px] font-medium text-white [overflow-wrap:anywhere] sm:text-lg">{item.value}</span>
                           </span>
                         </a>
