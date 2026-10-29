@@ -86,6 +86,8 @@ export default function PromoPopup() {
   const enabled = popup?.enabled !== false;
   const mediaType = popup?.mediaType === "video" ? "video" : "image";
   const image = (popup?.image || "").trim();
+  // Optional phone artwork; phones fall back to the desktop image when blank.
+  const mobileImage = (popup?.mobileImage || "").trim();
   const video = (popup?.video || "").trim();
   const hasMedia = mediaType === "video" ? Boolean(video) : Boolean(image);
   const eyebrow = t(popup, "eyebrow", language);
@@ -194,12 +196,17 @@ export default function PromoPopup() {
                 text column is taller than the artwork. */}
             {hasMedia ? (
               <div className="relative w-full shrink-0 overflow-hidden bg-slate-100 sm:flex sm:w-auto sm:min-w-0 sm:shrink sm:items-center sm:justify-center">
-                <img
-                  src={image || undefined}
-                  alt=""
-                  aria-hidden="true"
-                  className={`absolute inset-0 h-full w-full scale-110 object-cover blur-xl ${image ? "opacity-60" : "opacity-0"}`}
-                />
+                <picture>
+                  {mobileImage && mediaType !== "video" ? (
+                    <source media="(max-width: 639px)" srcSet={mobileImage} />
+                  ) : null}
+                  <img
+                    src={image || undefined}
+                    alt=""
+                    aria-hidden="true"
+                    className={`absolute inset-0 h-full w-full scale-110 object-cover blur-xl ${image ? "opacity-60" : "opacity-0"}`}
+                  />
+                </picture>
                 {mediaType === "video" ? (
                   <video onContextMenu={(e) => e.preventDefault()}
                     src={video}
@@ -212,14 +219,19 @@ export default function PromoPopup() {
                     className="relative block max-h-[42dvh] w-full object-contain sm:h-auto sm:max-h-[min(76dvh,600px)] sm:w-auto sm:max-w-full"
                   />
                 ) : (
-                  <motion.img
-                    src={image}
-                    alt={(heading || "Promotion").replace(/\{\{|\}\}/g, "")}
-                    className="relative block max-h-[42dvh] w-full object-contain sm:h-auto sm:max-h-[min(76dvh,600px)] sm:w-auto sm:max-w-full"
-                    initial={reduced ? false : { scale: 1.04 }}
-                    animate={{ scale: 1 }}
-                    transition={{ duration: 8, ease: "easeOut" }}
-                  />
+                  // Phones (below sm, where the card stacks) get the mobile artwork
+                  // when one is uploaded; otherwise the desktop image everywhere.
+                  <picture className="contents">
+                    {mobileImage ? <source media="(max-width: 639px)" srcSet={mobileImage} /> : null}
+                    <motion.img
+                      src={image}
+                      alt={(heading || "Promotion").replace(/\{\{|\}\}/g, "")}
+                      className="relative block max-h-[42dvh] w-full object-contain sm:h-auto sm:max-h-[min(76dvh,600px)] sm:w-auto sm:max-w-full"
+                      initial={reduced ? false : { scale: 1.04 }}
+                      animate={{ scale: 1 }}
+                      transition={{ duration: 8, ease: "easeOut" }}
+                    />
+                  </picture>
                 )}
               </div>
             ) : null}
