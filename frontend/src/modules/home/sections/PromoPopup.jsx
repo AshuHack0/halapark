@@ -71,9 +71,6 @@ export default function PromoPopup() {
   const reduced = !!useReducedMotion();
   const [popup, setPopup] = useState(null);
   const [open, setOpen] = useState(false);
-  // Artwork width/height. Drives the layout so the media panel is always the
-  // artwork's exact shape — full image/video visible, no letterbox strips.
-  const [ratio, setRatio] = useState(null);
 
   useEffect(() => {
     let active = true;
@@ -106,43 +103,12 @@ export default function PromoPopup() {
   // Nothing to show unless there is media or at least a heading.
   const hasContent = hasMedia || Boolean((heading || "").trim());
 
-  // Read the artwork's natural size before opening (falls back to 16:9).
-  useEffect(() => {
-    if (!hasMedia) return;
-    let active = true;
-    let settled = false;
-    const done = (w, h) => {
-      if (!active || settled) return;
-      settled = true;
-      setRatio(w > 0 && h > 0 ? w / h : 16 / 9);
-    };
-    if (mediaType === "video") {
-      const v = document.createElement("video");
-      v.preload = "metadata";
-      v.muted = true;
-      v.onloadedmetadata = () => done(v.videoWidth, v.videoHeight);
-      v.onerror = () => done(0, 0);
-      v.src = video;
-    } else {
-      const img = new window.Image();
-      img.onload = () => done(img.naturalWidth, img.naturalHeight);
-      img.onerror = () => done(0, 0);
-      img.src = image;
-    }
-    const fallback = setTimeout(() => done(0, 0), 4000);
-    return () => {
-      active = false;
-      clearTimeout(fallback);
-    };
-  }, [hasMedia, mediaType, image, video]);
-
   // Open on every load (small delay so it doesn't fight the first paint).
-  const ready = !hasMedia || ratio !== null;
   useEffect(() => {
-    if (!popup || !enabled || !hasContent || !ready) return;
+    if (!popup || !enabled || !hasContent) return;
     const id = setTimeout(() => setOpen(true), 1200);
     return () => clearTimeout(id);
-  }, [popup, enabled, hasContent, ready]);
+  }, [popup, enabled, hasContent]);
 
   // Lock body scroll + close on Escape while the modal is open.
   useEffect(() => {
@@ -161,10 +127,6 @@ export default function PromoPopup() {
 
   const dir = language === "ar" ? "rtl" : "ltr";
   const hasText = eyebrow || heading || description || (ctaLabel && ctaHref) || socials.length > 0;
-  const r = ratio || 16 / 9;
-  // Wide artwork (banners) stacks media over text at every size; portrait /
-  // square artwork sits beside the text from tablet up.
-  const sideBySide = hasMedia && hasText && r < 1.15;
 
   // Staggered reveal for the content panel.
   const container = {
@@ -200,21 +162,15 @@ export default function PromoPopup() {
             transition={{ duration: 0.3 }}
           />
 
-          {/* Card. Stacked: width is capped so artwork + text fit the
-              viewport height (r = artwork ratio, ~26rem reserved for text).
-              Side by side: the artwork sets the card height and the text
-              column scrolls inside it, so the media never letterboxes. */}
+          {/* Split card: media left, content right (stacks on mobile). Capped to
+              the viewport; the media column sizes itself to the artwork's own
+              aspect ratio (no dead side gaps), so the card width is dynamic. */}
           <motion.div
-            className={`relative z-[1] flex max-h-[calc(100dvh-2rem)] flex-col overflow-hidden rounded-[28px] bg-white shadow-[0_40px_120px_rgba(2,6,23,0.45)] ${
-              sideBySide ? "w-full max-w-md sm:w-fit sm:max-w-none sm:flex-row" : ""
+            className={`relative z-[1] flex max-h-[calc(100dvh-2rem)] w-full flex-col overflow-hidden rounded-[28px] bg-white shadow-[0_40px_120px_rgba(2,6,23,0.45)] ${
+              hasMedia
+                ? "max-w-3xl sm:w-fit sm:max-w-[min(92vw,70rem)] sm:flex-row"
+                : "max-w-xl"
             }`}
-            style={
-              hasMedia && !sideBySide
-                ? { width: `max(min(18rem, 100%), min(100%, 46rem, calc((100dvh - 2rem - 26rem) * ${r})))` }
-                : !hasMedia
-                ? { width: "100%", maxWidth: "36rem" }
-                : undefined
-            }
             dir={dir}
             initial={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.92, y: 24 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -231,20 +187,19 @@ export default function PromoPopup() {
               <X className="h-5 w-5" aria-hidden="true" />
             </button>
 
-            {/* Single scroll area (mobile fallback on very short screens). */}
-            <div className={`flex min-h-0 flex-1 flex-col overflow-y-auto ${sideBySide ? "sm:flex-row sm:overflow-visible" : ""}`}>
-            {/* Media panel — exactly the artwork's aspect ratio, full width of
-                its panel: the whole image/video shows, nothing cropped, no
-                strips or edges around it. */}
+            {/* Media panel (left) — sized BY the artwork: the media renders at
+                its natural aspect ratio (full artwork visible, never cropped)
+                and the panel hugs its width, so there are no dead side gaps.
+                A blurred self-backdrop covers any vertical remainder when the
+                text column is taller than the artwork. */}
             {hasMedia ? (
-              <div
-                className="relative w-full shrink-0 overflow-hidden"
-                style={
-                  sideBySide
-                    ? { "--media-w": `min(calc(min(80dvh, 640px) * ${r}), calc(92vw - 420px))` }
-                    : undefined
-                }
-              >
+              <div className="relative w-full shrink-0 overflow-hidden bg-slate-100 sm:flex sm:w-auto sm:min-w-0 sm:shrink sm:items-center sm:justify-center">
+                <img
+                  src={image || undefined}
+                  alt=""
+                  aria-hidden="true"
+                  className={`absolute inset-0 h-full w-full scale-110 object-cover blur-xl ${image ? "opacity-60" : "opacity-0"}`}
+                />
                 {mediaType === "video" ? (
                   <video onContextMenu={(e) => e.preventDefault()}
                     src={video}
@@ -254,26 +209,16 @@ export default function PromoPopup() {
                     loop
                     playsInline
                     preload="auto"
-                    onLoadedMetadata={(e) => {
-                      const { videoWidth: w, videoHeight: h } = e.currentTarget;
-                      if (w && h) setRatio(w / h);
-                    }}
-                    style={{ aspectRatio: r }}
-                    className={`block h-auto w-full object-contain ${sideBySide ? "sm:w-[var(--media-w)]" : ""}`}
+                    className="relative block max-h-[42dvh] w-full object-contain sm:h-auto sm:max-h-[min(76dvh,600px)] sm:w-auto sm:max-w-full"
                   />
                 ) : (
                   <motion.img
                     src={image}
                     alt={(heading || "Promotion").replace(/\{\{|\}\}/g, "")}
-                    onLoad={(e) => {
-                      const { naturalWidth: w, naturalHeight: h } = e.currentTarget;
-                      if (w && h) setRatio(w / h);
-                    }}
-                    style={{ aspectRatio: r }}
-                    className={`block h-auto w-full object-contain ${sideBySide ? "sm:w-[var(--media-w)]" : ""}`}
-                    initial={reduced ? false : { opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.6, ease }}
+                    className="relative block max-h-[42dvh] w-full object-contain sm:h-auto sm:max-h-[min(76dvh,600px)] sm:w-auto sm:max-w-full"
+                    initial={reduced ? false : { scale: 1.04 }}
+                    animate={{ scale: 1 }}
+                    transition={{ duration: 8, ease: "easeOut" }}
                   />
                 )}
               </div>
@@ -281,11 +226,10 @@ export default function PromoPopup() {
 
             {/* Content panel (right) — staggered reveal */}
             {hasText ? (
-              <div className={sideBySide ? "relative shrink-0 sm:w-[380px] md:w-[420px]" : "w-full"}>
               <motion.div
-                className={`flex flex-col items-center justify-center text-center ${
-                  hasMedia ? "px-6 py-7 sm:px-9 sm:py-8" : "px-7 py-10 sm:px-10 sm:py-12"
-                } ${sideBySide ? "sm:absolute sm:inset-0 sm:justify-start sm:overflow-y-auto sm:[&>:first-child]:mt-auto sm:[&>:last-child]:mb-auto" : ""}`}
+                className={`flex max-h-full flex-col items-center justify-center overflow-y-auto px-7 py-10 text-center sm:px-10 sm:py-12 ${
+                  hasMedia ? "sm:w-[380px] md:w-[420px] sm:shrink-0" : "w-full"
+                }`}
                 variants={container}
                 initial="hidden"
                 animate="visible"
@@ -301,7 +245,7 @@ export default function PromoPopup() {
                 {heading ? (
                   <motion.h2
                     variants={item}
-                    className="text-[1.6rem] font-semibold leading-[1.2] tracking-tight text-slate-950 sm:text-[2.1rem] [overflow-wrap:anywhere]"
+                    className="text-[1.9rem] font-semibold leading-[1.2] tracking-tight text-slate-950 sm:text-[2.3rem] [overflow-wrap:anywhere]"
                   >
                     <HeadingWithAccent text={heading} reduced={reduced} />
                   </motion.h2>
@@ -309,13 +253,13 @@ export default function PromoPopup() {
                 {description ? (
                   <motion.div
                     variants={item}
-                    className="order-last mt-5 text-sm leading-7 text-slate-400 sm:text-[0.95rem] [overflow-wrap:anywhere]"
+                    className="order-last mt-6 text-sm leading-7 text-slate-400 sm:text-[0.95rem] [overflow-wrap:anywhere]"
                   >
                     <RichText text={description} />
                   </motion.div>
                 ) : null}
                 {ctaLabel && ctaHref ? (
-                  <motion.div variants={item} className="mt-6 w-full max-w-sm">
+                  <motion.div variants={item} className="mt-7 w-full">
                     <Link
                       href={ctaHref}
                       onClick={() => setOpen(false)}
@@ -328,7 +272,7 @@ export default function PromoPopup() {
                 {socials.length > 0 ? (
                   <motion.div
                     variants={item}
-                    className="order-last mt-6 flex items-center justify-center gap-3.5"
+                    className="order-last mt-7 flex items-center justify-center gap-3.5"
                   >
                     {socials.map((s, i) => {
                       const Icon = SOCIAL_ICONS[s.platform];
@@ -348,9 +292,7 @@ export default function PromoPopup() {
                   </motion.div>
                 ) : null}
               </motion.div>
-              </div>
             ) : null}
-            </div>
           </motion.div>
         </motion.div>
       ) : null}
