@@ -164,13 +164,14 @@ export default function PromoPopup() {
             transition={{ duration: 0.3 }}
           />
 
-          {/* Split card: media left, content right (stacks on mobile). Capped to
+          {/* Split card: media left, content right from xl (wide banners need ~1280px to sit beside the text); stacked below. Capped to
               the viewport; the media column sizes itself to the artwork's own
-              aspect ratio (no dead side gaps), so the card width is dynamic. */}
+              aspect ratio, and the artwork sets the card height (the text
+              column fits inside it), so there are no strips above/below. */}
           <motion.div
-            className={`relative z-[1] flex max-h-[calc(100dvh-2rem)] w-full flex-col overflow-hidden rounded-[28px] bg-white shadow-[0_40px_120px_rgba(2,6,23,0.45)] ${
+            className={`relative z-[1] flex max-h-[calc(100dvh-2rem)] w-full flex-col overflow-y-auto overflow-x-hidden rounded-[28px] bg-white shadow-[0_40px_120px_rgba(2,6,23,0.45)] xl:overflow-hidden ${
               hasMedia
-                ? "max-w-3xl sm:w-fit sm:max-w-[min(92vw,70rem)] sm:flex-row"
+                ? "max-w-3xl lg:max-w-[max(30rem,min(48rem,calc((100dvh-28rem)*1.78)))] xl:w-fit xl:max-w-[min(94vw,76rem)] xl:flex-row"
                 : "max-w-xl"
             }`}
             dir={dir}
@@ -191,22 +192,9 @@ export default function PromoPopup() {
 
             {/* Media panel (left) — sized BY the artwork: the media renders at
                 its natural aspect ratio (full artwork visible, never cropped)
-                and the panel hugs its width, so there are no dead side gaps.
-                A blurred self-backdrop covers any vertical remainder when the
-                text column is taller than the artwork. */}
+                and the panel hugs it exactly — no backdrop, no strips. */}
             {hasMedia ? (
-              <div className="relative w-full shrink-0 overflow-hidden bg-slate-100 sm:flex sm:w-auto sm:min-w-0 sm:shrink sm:items-center sm:justify-center">
-                <picture>
-                  {mobileImage && mediaType !== "video" ? (
-                    <source media="(max-width: 639px)" srcSet={mobileImage} />
-                  ) : null}
-                  <img
-                    src={image || undefined}
-                    alt=""
-                    aria-hidden="true"
-                    className={`absolute inset-0 h-full w-full scale-110 object-cover blur-xl ${image ? "opacity-60" : "opacity-0"}`}
-                  />
-                </picture>
+              <div className="relative w-full shrink-0 overflow-hidden xl:w-auto xl:min-w-0 xl:shrink">
                 {mediaType === "video" ? (
                   <video onContextMenu={(e) => e.preventDefault()}
                     src={video}
@@ -216,7 +204,7 @@ export default function PromoPopup() {
                     loop
                     playsInline
                     preload="auto"
-                    className="relative block max-h-[42dvh] w-full object-contain sm:h-auto sm:max-h-[min(76dvh,600px)] sm:w-auto sm:max-w-full"
+                    className="relative block h-auto w-full xl:max-h-[min(86dvh,680px)] xl:w-auto xl:max-w-full"
                   />
                 ) : (
                   // Phones (below sm, where the card stacks) get the mobile artwork
@@ -226,10 +214,10 @@ export default function PromoPopup() {
                     <motion.img
                       src={image}
                       alt={(heading || "Promotion").replace(/\{\{|\}\}/g, "")}
-                      className="relative block max-h-[42dvh] w-full object-contain sm:h-auto sm:max-h-[min(76dvh,600px)] sm:w-auto sm:max-w-full"
-                      initial={reduced ? false : { scale: 1.04 }}
-                      animate={{ scale: 1 }}
-                      transition={{ duration: 8, ease: "easeOut" }}
+                      className="relative block h-auto w-full xl:max-h-[min(86dvh,680px)] xl:w-auto xl:max-w-full"
+                      initial={reduced ? false : { opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.6, ease }}
                     />
                   </picture>
                 )}
@@ -237,10 +225,15 @@ export default function PromoPopup() {
             ) : null}
 
             {/* Content panel (right) — staggered reveal */}
+            {/* Beside media (xl+) the text column is absolutely filled into
+                its slot, so it never makes the card taller than the artwork;
+                it centres when short and scrolls when it can't fit. */}
             {hasText ? (
+              <div className={hasMedia ? "relative w-full xl:w-[420px] xl:shrink-0" : "w-full"}>
+              <div className={hasMedia ? "xl:absolute xl:inset-0 xl:overflow-y-auto" : ""}>
               <motion.div
-                className={`flex max-h-full flex-col items-center justify-center overflow-y-auto px-7 py-10 text-center sm:px-10 sm:py-12 ${
-                  hasMedia ? "sm:w-[380px] md:w-[420px] sm:shrink-0" : "w-full"
+                className={`flex min-h-full flex-col items-center justify-center text-center ${
+                  hasMedia ? "px-7 py-8 sm:px-10 xl:px-9 xl:py-7" : "px-7 py-10 sm:px-10 sm:py-12"
                 }`}
                 variants={container}
                 initial="hidden"
@@ -257,7 +250,7 @@ export default function PromoPopup() {
                 {heading ? (
                   <motion.h2
                     variants={item}
-                    className="text-[1.9rem] font-semibold leading-[1.2] tracking-tight text-slate-950 sm:text-[2.3rem] [overflow-wrap:anywhere]"
+                    className="text-[1.9rem] font-semibold leading-[1.2] tracking-tight text-slate-950 sm:text-[2.1rem] [overflow-wrap:anywhere]"
                   >
                     <HeadingWithAccent text={heading} reduced={reduced} />
                   </motion.h2>
@@ -304,6 +297,8 @@ export default function PromoPopup() {
                   </motion.div>
                 ) : null}
               </motion.div>
+              </div>
+              </div>
             ) : null}
           </motion.div>
         </motion.div>
