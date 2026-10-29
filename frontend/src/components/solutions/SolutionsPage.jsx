@@ -1448,24 +1448,36 @@ function TrustedBySection() {
 
           {/* Scrolling cards — CMS items (icon + title) */}
           {smItems.length > 0 ? (
+          // dir="ltr" on the track wrapper: the -50% loop needs a left-anchored
+          // track (an RTL track starts off-screen). Card text keeps the page dir.
           <div
-            dir={language === "ar" ? "rtl" : "ltr"}
+            dir="ltr"
             className="mx-auto mt-10 w-full overflow-x-hidden pb-2 lg:mt-12 [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)] [-webkit-mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]"
             aria-label="Integration systems, scrolling"
           >
             <style>{`
+              /* Left → right: start one copy to the left and slide to 0. */
               @keyframes seamlessMarquee {
-                0%   { transform: translateX(0); }
-                100% { transform: translateX(-50%); }
+                0%   { transform: translate3d(-50%, 0, 0); }
+                100% { transform: translate3d(0, 0, 0); }
               }
-              .seamless-marquee { animation: seamlessMarquee 45s linear infinite; }
+              .seamless-marquee {
+                animation: seamlessMarquee 45s linear infinite;
+                will-change: transform;
+                backface-visibility: hidden;
+              }
               @media (prefers-reduced-motion: reduce) { .seamless-marquee { animation: none; } }
             `}</style>
-            <div className="flex w-max gap-4 sm:gap-5 md:gap-6 seamless-marquee">
+            {/* key={language}: switching language remounts the track, so the
+                loop restarts from its initial position. Spacing is per-item
+                padding (not flex gap) so both copies are exactly equal width
+                and the loop has no jump. */}
+            <div key={language} className="flex w-max seamless-marquee">
               {[...smItems, ...smItems].map((sys, i) => {
                 const Icon = SEAMLESS_ICONS[sys.icon] || ParkingCircle;
                 return (
-                  <div key={i} className="flex w-[min(72vw,300px)] shrink-0 items-center gap-4 rounded-[24px] border border-[#E7EAF0] bg-white p-5 shadow-sm sm:w-[min(40vw,340px)] lg:w-[280px]">
+                  <div key={i} className="shrink-0 py-1 pr-4 sm:pr-5 md:pr-6" aria-hidden={i >= smItems.length || undefined}>
+                  <div dir={language === "ar" ? "rtl" : "ltr"} className="flex w-[min(72vw,300px)] items-center gap-4 rounded-[24px] border border-[#E7EAF0] bg-white p-5 shadow-sm sm:w-[min(40vw,340px)] lg:w-[280px]">
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-[12px] bg-[#EEF6FF]">
                       {sys.iconImage ? (
                         <Image src={sys.iconImage} alt="" width={40} height={40} className="h-10 w-10 object-cover" />
@@ -1474,6 +1486,7 @@ function TrustedBySection() {
                       )}
                     </div>
                     <p className="text-[0.88rem] font-medium leading-snug text-[#050A13] [overflow-wrap:anywhere]">{sys.title}</p>
+                  </div>
                   </div>
                 );
               })}
