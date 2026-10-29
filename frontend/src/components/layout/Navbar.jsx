@@ -369,14 +369,14 @@ export default function Navbar() {
         className="fixed top-0 left-0 right-0 z-50 border-b border-[#CFE2FA]/70 bg-[linear-gradient(90deg,rgba(0,136,255,0.08)_0%,rgba(255,255,255,0.82)_22%,rgba(255,255,255,0.82)_78%,rgba(0,136,255,0.08)_100%)] backdrop-blur-md shadow-none"
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 lg:h-[78px]">
+          <div className="flex items-center justify-between gap-3 h-16 lg:h-[78px]">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-1 flex-shrink-0">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={logo.image}
                 alt={logo.alt}
-                className="sm:h-12 h-7 w-auto"
+                className="sm:h-12 h-7 w-auto lg:h-9 xl:h-11 2xl:h-12"
               />
             </Link>
 
@@ -409,7 +409,7 @@ export default function Navbar() {
                       >
                         <button
                           type="button"
-                          className={`inline-flex h-11 items-center justify-center gap-1 border-b-2 px-4 text-[1.02rem] font-semibold transition ${
+                          className={`inline-flex h-11 items-center justify-center gap-1 border-b-2 px-1.5 text-[0.86rem] font-semibold xl:px-3 xl:text-[0.97rem] 2xl:px-4 2xl:text-[1.02rem] transition ${
                             isActive
                               ? "border-[#0088FF] text-[#0078E0]"
                               : "border-transparent text-slate-900 hover:text-[#0078E0]"
@@ -531,7 +531,7 @@ export default function Navbar() {
                     <Link
                       key={link.key}
                       href={resolveLinkHref(link.href)}
-                      className={`inline-flex h-11 items-center justify-center border-b-2 px-4 text-[1.02rem] font-semibold transition ${
+                      className={`inline-flex h-11 items-center justify-center border-b-2 px-1.5 text-[0.86rem] font-semibold xl:px-3 xl:text-[0.97rem] 2xl:px-4 2xl:text-[1.02rem] transition ${
                         isActive
                           ? "border-[#0088FF] text-[#0078E0]"
                           : "border-transparent text-slate-900 hover:text-[#0078E0]"
@@ -547,7 +547,7 @@ export default function Navbar() {
             </div>
 
             {/* Desktop CTA */}
-            <div className="hidden lg:flex items-center gap-2.5 flex-shrink-0">
+            <div className="hidden lg:flex items-center gap-2 flex-shrink-0 xl:gap-2.5">
               <div className="inline-flex items-center rounded-full border border-[#CFE2FA] bg-white/90 p-1 shadow-sm">
                 <button
                   type="button"
@@ -575,7 +575,7 @@ export default function Navbar() {
               {ctaLabel ? (
                 <Link
                   href={ctaHref}
-                  className="inline-flex items-center justify-center bg-[#0088FF] hover:brightness-95 active:bg-[#0088FF] text-white text-sm font-semibold px-5 py-2.5 rounded-full shadow-sm hover:shadow-md"
+                  className="inline-flex items-center justify-center bg-[#0088FF] hover:brightness-95 active:bg-[#0088FF] whitespace-nowrap text-white text-sm font-semibold px-4 py-2.5 rounded-full shadow-sm hover:shadow-md xl:px-5"
                 >
                   {ctaLabel}
                 </Link>
