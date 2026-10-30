@@ -174,14 +174,14 @@ export default function BlackBanner() {
                 {/* ── RIGHT: circular image ringed by labelled feature nodes ── */}
                 {featureCard.image ? (
                   <div className="lg:col-span-5">
-                    <div className="relative mx-auto aspect-square w-full max-w-[300px] sm:max-w-[340px] lg:my-10 lg:mb-20 lg:max-w-[380px]">
+                    <div className="relative mx-auto aspect-square w-full max-w-[300px] sm:max-w-[340px] md:my-10 md:mb-20 lg:max-w-[380px]">
                       {/* Connector lines: from each icon's edge to a dot that sits
                           ON the thin outer ring (45° points), like the reference. */}
                       {(featureCard.features || []).length > 0 ? (
                         <svg
                           aria-hidden
                           viewBox="0 0 100 100"
-                          className="pointer-events-none absolute inset-0 hidden h-full w-full overflow-visible lg:block"
+                          className="pointer-events-none absolute inset-0 hidden h-full w-full overflow-visible md:block"
                         >
                           {BANNER_NODE_GEOMETRY.slice(0, (featureCard.features || []).length).map((g, i) => (
                             <g key={i}>
@@ -206,21 +206,23 @@ export default function BlackBanner() {
                         </MobilePicture>
                       </div>
 
-                      {/* Nodes — placed at the four corners on desktop */}
+                      {/* Nodes — placed at the four corners from tablet (md) up */}
                       {(featureCard.features || []).slice(0, 4).map((f, i) => {
                         const Icon = BANNER_NODE_ICONS[i % BANNER_NODE_ICONS.length];
                         // Pushed out diagonally so each connector runs at ~45°
                         // into its dot on the outer ring (see BANNER_NODE_GEOMETRY).
+                        // Spots are physical (left/right), so in Arabic the icon
+                        // alignment is flipped back to keep it on the line.
                         const spot = [
-                          "lg:-left-[28%] lg:-top-[4%] lg:text-end lg:items-end",
-                          "lg:-right-[28%] lg:-top-[4%] lg:text-start lg:items-start",
-                          "lg:-left-[28%] lg:-bottom-[16%] lg:text-end lg:items-end",
-                          "lg:-right-[28%] lg:-bottom-[16%] lg:text-start lg:items-start",
+                          "md:-left-[28%] md:-top-[4%] md:text-end md:items-end rtl:md:text-start rtl:md:items-start",
+                          "md:-right-[28%] md:-top-[4%] md:text-start md:items-start rtl:md:text-end rtl:md:items-end",
+                          "md:-left-[28%] md:-bottom-[16%] md:text-end md:items-end rtl:md:text-start rtl:md:items-start",
+                          "md:-right-[28%] md:-bottom-[16%] md:text-start md:items-start rtl:md:text-end rtl:md:items-end",
                         ][i];
                         return (
                           <div
                             key={`${f.label}-${i}`}
-                            className={`hidden lg:absolute lg:flex lg:w-[128px] lg:flex-col lg:gap-2 ${spot}`}
+                            className={`hidden md:absolute md:flex md:w-[128px] md:flex-col md:gap-2 ${spot}`}
                           >
                             <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-[0_10px_26px_rgba(3,25,56,0.28)]">
                               {(f.iconImage || "").trim() ? (
@@ -238,9 +240,9 @@ export default function BlackBanner() {
                       })}
                     </div>
 
-                    {/* Same nodes as a simple grid below the circle on small screens */}
+                    {/* Same nodes as a simple grid below the circle on phones */}
                     {(featureCard.features || []).length > 0 ? (
-                      <div className="mt-8 grid grid-cols-2 gap-4 lg:hidden">
+                      <div className="mt-8 grid grid-cols-2 gap-4 md:hidden">
                         {(featureCard.features || []).slice(0, 4).map((f, i) => {
                           const Icon = BANNER_NODE_ICONS[i % BANNER_NODE_ICONS.length];
                           return (
