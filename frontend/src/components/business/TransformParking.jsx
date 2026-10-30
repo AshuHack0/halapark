@@ -40,6 +40,17 @@ export default function TransformParking() {
       : (Array.isArray(transformData.servicePartnerPerks) ? transformData.servicePartnerPerks : [])
   ).filter((p) => (p || "").trim());
 
+  // Card badges + list headings (admin-editable, with Arabic under `ar.*`).
+  // English shows the built-in wording only until the admin saves the field;
+  // a cleared field hides the label. Arabic is strict — blank until entered.
+  const label = (key, builtIn) =>
+    (t(transformData, key, language) || "").trim() ||
+    (language === "ar" || key in transformData ? "" : builtIn);
+  const parkingPartnerBadge = label("parkingPartnerBadge", "Parking Partner");
+  const parkingPartnerPerksLabel = label("parkingPartnerPerksLabel", "What You Get");
+  const servicePartnerBadge = label("servicePartnerBadge", "Service Partner");
+  const servicePartnerPerksLabel = label("servicePartnerPerksLabel", "Partnership Opportunities");
+
   const parkingPartnerCtaLabel = (t(transformData, "parkingPartnerCtaLabel", language) || "").trim();
   const servicePartnerCtaLabel = (t(transformData, "servicePartnerCtaLabel", language) || "").trim();
 
@@ -151,10 +162,12 @@ export default function TransformParking() {
                 />
               </>
             )}
-            <div className="mb-2 inline-flex w-fit items-center gap-2 rounded-full bg-[#EEF6FF] px-3 py-1">
-              <span className="h-2 w-2 rounded-full bg-[#0088FF]" />
-              <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#0088FF]">Parking Partner</span>
-            </div>
+            {parkingPartnerBadge ? (
+              <div className="mb-2 inline-flex w-fit items-center gap-2 rounded-full bg-[#EEF6FF] px-3 py-1">
+                <span className="h-2 w-2 rounded-full bg-[#0088FF]" />
+                <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#0088FF] rtl:tracking-normal">{parkingPartnerBadge}</span>
+              </div>
+            ) : null}
             <h3 className="mt-4 text-[clamp(1.6rem,2.5vw,2.2rem)] font-semibold leading-[1.1] tracking-[-0.04em] text-[#050A13]">
               {t(transformData, "parkingPartnerTitle", language)}
             </h3>
@@ -163,7 +176,9 @@ export default function TransformParking() {
             </p>
             <RichText text={t(transformData, "parkingPartnerDescription", language)} className="mt-4 text-[0.88rem] leading-6 text-slate-500 sm:text-[0.94rem] block" />
 
-            <p className="mt-8 text-[0.78rem] font-bold uppercase tracking-[0.16em] text-[#0088FF]">What You Get</p>
+            {parkingPartnerPerksLabel && parkingPartnerPerks.length > 0 ? (
+              <p className="mt-8 text-[0.78rem] font-bold uppercase tracking-[0.16em] text-[#0088FF] rtl:tracking-normal">{parkingPartnerPerksLabel}</p>
+            ) : null}
             <ul className="mt-4 grid gap-2 sm:grid-cols-2">
               {parkingPartnerPerks.map((perk, i) => (
                 <motion.li
@@ -256,10 +271,12 @@ export default function TransformParking() {
                 />
               </>
             )}
-            <div className="mb-2 inline-flex w-fit items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1">
-              <span className="h-2 w-2 rounded-full bg-[#5BC4FF]" />
-              <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/80">Service Partner</span>
-            </div>
+            {servicePartnerBadge ? (
+              <div className="mb-2 inline-flex w-fit items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1">
+                <span className="h-2 w-2 rounded-full bg-[#5BC4FF]" />
+                <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/80 rtl:tracking-normal">{servicePartnerBadge}</span>
+              </div>
+            ) : null}
             <h3 className="mt-4 text-[clamp(1.6rem,2.5vw,2.2rem)] font-semibold leading-[1.1] tracking-[-0.04em] text-white">
               {t(transformData, "servicePartnerTitle", language)}
             </h3>
@@ -269,7 +286,9 @@ export default function TransformParking() {
             <RichText text={t(transformData, "servicePartnerDescription1", language)} className="mt-4 text-[0.88rem] leading-6 text-white/55 sm:text-[0.94rem] block" />
             <RichText text={t(transformData, "servicePartnerDescription2", language)} className="mt-3 text-[0.88rem] leading-6 text-white/55 sm:text-[0.94rem] block" />
 
-            <p className="mt-8 text-[0.78rem] font-bold uppercase tracking-[0.16em] text-[#5BC4FF]">Partnership Opportunities</p>
+            {servicePartnerPerksLabel && servicePartnerPerks.length > 0 ? (
+              <p className="mt-8 text-[0.78rem] font-bold uppercase tracking-[0.16em] text-[#5BC4FF] rtl:tracking-normal">{servicePartnerPerksLabel}</p>
+            ) : null}
             <ul className="mt-4 grid gap-2 sm:grid-cols-2">
               {servicePartnerPerks.map((perk, i) => (
                 <motion.li
