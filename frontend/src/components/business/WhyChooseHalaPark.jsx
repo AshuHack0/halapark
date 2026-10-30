@@ -187,11 +187,14 @@ export default function WhyChooseHalaPark() {
                       </div>
                     )}
 
-                    {/* Center Text Overlay */}
-                    <div className="relative z-10 text-white text-center px-4">
-                      <p className="text-sm font-medium opacity-90 mb-2" dir={language === "ar" ? "rtl" : "ltr"}>{t(header, "cardEyebrow", language) || (language === "ar" ? "" : "Smart Solutions")}</p>
-                      <p className="text-lg font-bold leading-tight [overflow-wrap:anywhere]">{t(item, "title", language)}</p>
-                    </div>
+                    {/* Center Text Overlay — only on the gradient tile; an uploaded
+                        photo is shown clean (the title is already beside it). */}
+                    {!img ? (
+                      <div className="relative z-10 text-white text-center px-4">
+                        <p className="text-sm font-medium opacity-90 mb-2" dir={language === "ar" ? "rtl" : "ltr"}>{t(header, "cardEyebrow", language) || (language === "ar" ? "" : "Smart Solutions")}</p>
+                        <p className="text-lg font-bold leading-tight [overflow-wrap:anywhere]">{t(item, "title", language)}</p>
+                      </div>
+                    ) : null}
                   </div>
 
                   {/* Right: Text Content */}
