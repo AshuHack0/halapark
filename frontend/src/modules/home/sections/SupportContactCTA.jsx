@@ -8,6 +8,7 @@ import { ArrowRight, Mail, PhoneCall } from "lucide-react";
 import { useLanguage, t } from "@/context/LanguageContext";
 import RichText from "@/components/common/RichText";
 import { fetchPage } from "@/lib/cms";
+import MobilePicture from "@/components/common/MobilePicture";
 
 export default function SupportContactCTA() {
   const { language } = useLanguage();
@@ -46,13 +47,15 @@ export default function SupportContactCTA() {
               lg+: full-bleed background behind the glass cards. */}
           {data.image ? (
             <div className="relative aspect-[16/10] w-full lg:absolute lg:inset-0 lg:aspect-auto">
-              <Image
-                src={data.image}
-                alt=""
-                fill
-                sizes="(min-width: 1024px) 1200px, 100vw"
-                className="object-cover object-center"
-              />
+              <MobilePicture mobileSrc={data.mobileImage}>
+                <Image
+                  src={data.image}
+                  alt=""
+                  fill
+                  sizes="(min-width: 1024px) 1200px, 100vw"
+                  className="object-cover object-center"
+                />
+              </MobilePicture>
             </div>
           ) : null}
 

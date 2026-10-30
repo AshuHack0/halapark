@@ -2,6 +2,7 @@
 
 import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
+import MobilePicture from "@/components/common/MobilePicture";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { fetchHomeSection } from "@/lib/cms";
@@ -22,7 +23,7 @@ const serviceAudienceCards = [
     backgroundColor: "#ffffff",
     activeImageX: -10,
     imageClassName:
-      "object-cover object-center lg:object-[center_35%] xl:object-[center_32%]",
+      "object-cover object-center",
   },
   {
     title: "For Businesses /\nProperty owners",
@@ -36,7 +37,7 @@ const serviceAudienceCards = [
     backgroundColor: "#ffffff",
     activeImageX: 10,
     imageClassName:
-      "object-cover object-center lg:object-[center_28%] xl:object-[center_24%]",
+      "object-cover object-center",
   },
 ];
 
@@ -63,6 +64,7 @@ function AudienceCard({
   imageAlt,
   imageClassName,
   imageSrc,
+  mobileImage,
   ctaLabel,
   isDesktop,
   prefersReducedMotion,
@@ -111,14 +113,16 @@ function AudienceCard({
         }
         transition={prefersReducedMotion ? { duration: 0 } : contentSpring}
       >
-        <Image
-          src={imageSrc}
-          alt={imageAlt}
-          fill
-          sizes="(min-width: 1280px) 44vw, (min-width: 1024px) 48vw, 100vw"
-          className={`${imageClassName} select-none`}
-          draggable={false}
-        />
+        <MobilePicture mobileSrc={mobileImage}>
+          <Image
+            src={imageSrc}
+            alt={imageAlt}
+            fill
+            sizes="(min-width: 1280px) 44vw, (min-width: 1024px) 48vw, 100vw"
+            className={`${imageClassName} select-none`}
+            draggable={false}
+          />
+        </MobilePicture>
       </motion.div>
 
       <motion.div
@@ -233,6 +237,7 @@ export default function AiPoweredParkingService() {
                 // link, with the base href only as fallback.
                 href: c?.popup ? PARTNER_FORM_LINK : (c?.href ?? "").trim() || base.href || "/contact",
                 imageSrc: c?.imageSrc || base.imageSrc,
+                mobileImage: c?.mobileImage || "",
                 ar: c?.ar,
               };
             })

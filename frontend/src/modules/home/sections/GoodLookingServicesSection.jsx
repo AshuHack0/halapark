@@ -9,6 +9,7 @@ import { useEffect, useRef, useState } from "react";
 import { fetchHomeSection } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
 import RichText from "@/components/common/RichText";
+import MobilePicture from "@/components/common/MobilePicture";
 import { usePrefersReducedMotionOS } from "@/hooks/usePrefersReducedMotionOS";
 
 // Map a CMS service (from the Services page) to the card shape this section uses.
@@ -22,6 +23,7 @@ function toCard(svc) {
     description2: svc.description2 || "",
     mediaType: svc.mediaType,
     mediaSrc: svc.mediaSrc,
+    mobileImage: svc.mobileImage,
     // Admin-set card link (where the card/arrow navigates); /services default.
     href: (svc.href || "").trim(),
     ar: svc.ar,
@@ -116,19 +118,21 @@ function ServiceCard({ service, index, cardRef, isActive, language }) {
                 muted
                 playsInline
                 preload="metadata"
-                className="block h-full w-full object-cover"
+                className="block h-full w-full object-cover object-center"
               />
             ) : service.mediaSrc ? (
               /* Every size: a uniform box with a centred cover crop, so all
                  service cards have the same image height. */
-              <Image
-                src={service.mediaSrc}
-                alt={service.name}
-                width={1600}
-                height={900}
-                sizes="(min-width: 1024px) 50vw, 100vw"
-                className="absolute inset-0 block h-full w-full object-cover object-center"
-              />
+              <MobilePicture mobileSrc={service.mobileImage}>
+                <Image
+                  src={service.mediaSrc}
+                  alt={service.name}
+                  width={1600}
+                  height={900}
+                  sizes="(min-width: 1024px) 50vw, 100vw"
+                  className="absolute inset-0 block h-full w-full object-cover object-center"
+                />
+              </MobilePicture>
             ) : null}
           </div>
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.72)_0%,rgba(255,255,255,0)_55%)] opacity-70" />

@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useEffect, useId, useState } from "react";
 import { fetchHomeSection, fetchPage } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
+import MobilePicture from "@/components/common/MobilePicture";
 
 const sectionEase = [0.22, 1, 0.36, 1];
 
@@ -161,6 +162,7 @@ export default function HalaParkInAction({ cmsKey = "halaParkInAction", pageSlug
         downloadLabel: (d.downloadLabel || "").trim(),
         // Right-side preview image — admin upload overrides the built-in art.
         image: (d.image || "").trim(),
+        mobileImage: (d.mobileImage || "").trim(),
         imageAlt: (d.imageAlt || "").trim(),
         // Only store links with real text count — a cleared item must not
         // render an empty icon/badge shell.
@@ -312,14 +314,16 @@ export default function HalaParkInAction({ cmsKey = "halaParkInAction", pageSlug
                 style={{ clipPath: `url(#${blobId})` }}
               />
               <div className="absolute inset-0 overflow-hidden" style={{ clipPath: `url(#${blobId})` }}>
-                <Image
-                  src={copy.image}
-                  alt={copy.imageAlt || t(copy, "title", language) || "HalaPark in action"}
-                  fill
-                  sizes="(min-width: 1024px) 52vw, 100vw"
-                  className="object-cover object-center rtl:-scale-x-100"
-                  priority
-                />
+                <MobilePicture mobileSrc={copy.mobileImage}>
+                  <Image
+                    src={copy.image}
+                    alt={copy.imageAlt || t(copy, "title", language) || "HalaPark in action"}
+                    fill
+                    sizes="(min-width: 1024px) 52vw, 100vw"
+                    className="object-cover object-center rtl:-scale-x-100"
+                    priority
+                  />
+                </MobilePicture>
               </div>
             </div>
           </motion.div>

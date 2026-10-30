@@ -5,6 +5,7 @@ import { fetchHomeSection } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
 import RichText from "@/components/common/RichText";
 import { ArrowRight, Cctv, BarChart3, Car, ShieldCheck } from "lucide-react";
+import MobilePicture from "@/components/common/MobilePicture";
 
 // Built-in marks for the ring nodes, used when no icon is uploaded.
 const BANNER_NODE_ICONS = [Cctv, Car, BarChart3, ShieldCheck];
@@ -48,6 +49,7 @@ export default function BlackBanner() {
           eyebrow: (data.eyebrow || "").trim(),
           description: data.description || "",
           image: data.image || "",
+          mobileImage: data.mobileImage || "",
           // Labelled nodes around the circular image. Each needs a label; an
           // uploaded iconImage replaces the built-in mark.
           features: (Array.isArray(data.features) ? data.features : []).filter(
@@ -195,11 +197,13 @@ export default function BlackBanner() {
                       <div aria-hidden className="absolute inset-[2%] rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.3),transparent_64%)] blur-[2px]" />
                       <div aria-hidden className="absolute inset-[2%] rounded-full border-[5px] border-[#4FB0FF]/75 shadow-[0_0_44px_rgba(79,176,255,0.45)]" />
                       <div className="absolute inset-[5%] overflow-hidden rounded-full ring-1 ring-white/30">
-                        <img
-                          src={featureCard.image}
-                          alt="Banner visual"
-                          className="h-full w-full object-cover object-center"
-                        />
+                        <MobilePicture mobileSrc={featureCard.mobileImage}>
+                          <img
+                            src={featureCard.image}
+                            alt="Banner visual"
+                            className="h-full w-full object-cover object-center"
+                          />
+                        </MobilePicture>
                       </div>
 
                       {/* Nodes — placed at the four corners on desktop */}

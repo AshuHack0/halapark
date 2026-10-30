@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import MobilePicture from "@/components/common/MobilePicture";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
@@ -80,17 +81,19 @@ function FeatureVisual({ item, compact = false }) {
         compact ? "rounded-[2rem]" : "rounded-[24px]"
       }`}
     >
-      <Image
-        src={item.image}
-        alt={item.visualTitle}
-        fill
-        sizes={
-          compact
-            ? "(min-width: 768px) 60vw, 100vw"
-            : "(min-width: 1280px) 40vw, 50vw"
-        }
-        className="object-cover"
-      />
+      <MobilePicture mobileSrc={item.mobileImage}>
+        <Image
+          src={item.image}
+          alt={item.visualTitle}
+          fill
+          sizes={
+            compact
+              ? "(min-width: 768px) 60vw, 100vw"
+              : "(min-width: 1280px) 40vw, 50vw"
+          }
+          className="object-cover object-center"
+        />
+      </MobilePicture>
 
       {/* <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(2,6,23,0.1)_0%,rgba(2,6,23,0.18)_34%,rgba(2,6,23,0.72)_100%)]" /> */}
       {/* <div
