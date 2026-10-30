@@ -114,7 +114,9 @@ export default function TransformParking() {
                   <div className="absolute inset-0 bg-gradient-to-t from-white/80 via-white/10 to-transparent" />
                 </div>
               </div>
-              <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 hidden sm:block">
+              {/* Arabic: the whole photo/chevron layer mirrors to the left side; the
+                  photo itself is flipped back so it never shows reversed. */}
+              <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 hidden sm:block rtl:-scale-x-100">
                 {/* Chevron accent stripes echoing the photo's diagonal edge */}
                 <div className="absolute inset-y-0 right-0 w-[48%] bg-[#0088FF]/15 [clip-path:polygon(26%_0,100%_0,100%_100%,26%_100%,0_50%)]" />
                 <div className="absolute inset-y-0 right-0 w-[45%] bg-[#1AB2FF]/25 [clip-path:polygon(26%_0,100%_0,100%_100%,26%_100%,0_50%)]" />
@@ -125,7 +127,7 @@ export default function TransformParking() {
                     <img
                       src={transformData.parkingPartnerBgImage}
                       alt=""
-                      className="h-full w-full object-cover object-center"
+                      className="h-full w-full object-cover object-center rtl:-scale-x-100"
                     />
                   </MobilePicture>
                   {/* Soft fade toward the text side so copy stays readable */}
@@ -216,7 +218,9 @@ export default function TransformParking() {
                   <div className="absolute inset-0 bg-gradient-to-t from-[#06111f]/90 via-[#06111f]/20 to-transparent" />
                 </div>
               </div>
-              <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 hidden sm:block">
+              {/* Arabic: the whole photo/chevron layer mirrors to the left side; the
+                  photo itself is flipped back so it never shows reversed. */}
+              <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 hidden sm:block rtl:-scale-x-100">
                 {/* Chevron accent stripes echoing the photo's diagonal edge */}
                 <div className="absolute inset-y-0 right-0 w-[48%] bg-[#0088FF]/30 [clip-path:polygon(26%_0,100%_0,100%_100%,26%_100%,0_50%)]" />
                 <div className="absolute inset-y-0 right-0 w-[45%] bg-[#1AB2FF]/35 [clip-path:polygon(26%_0,100%_0,100%_100%,26%_100%,0_50%)]" />
@@ -227,7 +231,7 @@ export default function TransformParking() {
                     <img
                       src={transformData.servicePartnerBgImage}
                       alt=""
-                      className="h-full w-full object-cover object-center"
+                      className="h-full w-full object-cover object-center rtl:-scale-x-100"
                     />
                   </MobilePicture>
                   {/* Blue tint + fade toward the text side (matches the reference) */}
