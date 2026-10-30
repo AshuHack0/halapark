@@ -116,7 +116,7 @@ export default function BusinessSolutions() {
                 className="group overflow-hidden rounded-[24px] bg-white border border-[#E7EAF0] shadow-[0_4px_24px_rgba(6,6,22,0.06)] transition hover:border-[rgba(0,136,255,0.3)] hover:shadow-[0_20px_50px_rgba(0,136,255,0.15)]"
               >
                 <CardTag {...cardProps} className={`block h-full ${href ? "cursor-pointer" : ""}`}>
-                {/* Image Container with Icon Overlay */}
+                {/* Image only — the icon and text sit in the content area below */}
                 <div className="relative h-44 w-full overflow-hidden bg-gradient-to-br from-slate-100 to-slate-50">
                   {card.image ? (
                     <MobilePicture mobileSrc={card.mobileImage}>
@@ -129,43 +129,20 @@ export default function BusinessSolutions() {
                       />
                     </MobilePicture>
                   ) : null}
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#050A13]/50 via-transparent to-transparent" />
+                </div>
 
+                {/* Content Container */}
+                <div className="p-5 sm:p-6">
                   {/* Emoji badge (admin-set), tinted with the card's accent color */}
                   {card.icon ? (
                     <span
-                      className="absolute start-3 top-3 flex h-10 w-10 items-center justify-center rounded-xl text-lg shadow-sm backdrop-blur-sm"
-                      style={{ backgroundColor: `${accent}22`, border: `1px solid ${accent}55` }}
+                      className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl text-lg"
+                      style={{ backgroundColor: `${accent}1A`, border: `1px solid ${accent}40` }}
                       aria-hidden
                     >
                       {card.icon}
                     </span>
                   ) : null}
-
-                  {/* Hover Overlay */}
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    whileHover={{ opacity: 1 }}
-                    transition={{ duration: 0.3 }}
-                    className="absolute inset-0 flex items-end p-4"
-                    style={{ background: `linear-gradient(to top, ${accent}66, transparent)` }}
-                  >
-                    {href ? (
-                      <motion.div
-                        initial={{ y: 20, opacity: 0 }}
-                        whileHover={{ y: 0, opacity: 1 }}
-                        transition={{ duration: 0.3 }}
-                        className="text-white text-xs font-semibold flex items-center gap-2"
-                      >
-                        {ui("learnMore", language)}
-                        <ArrowRight className="h-3 w-3 rtl:rotate-180" />
-                      </motion.div>
-                    ) : null}
-                  </motion.div>
-                </div>
-
-                {/* Content Container */}
-                <div className="p-5 sm:p-6">
                   <h3 className="text-sm sm:text-base font-bold leading-tight tracking-[-0.02em] text-[#050A13] group-hover:text-[#0088FF] transition">
                     {t(card, "title", language)}
                   </h3>

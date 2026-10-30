@@ -53,81 +53,63 @@ function BusinessGrowthPanel({ reduced, slides, loading = false }) {
   if (deck.length === 0) return null;
 
   return (
-    <div className="relative flex items-center justify-center">
-      {/* Glow halo */}
-      <div className="pointer-events-none absolute left-1/2 top-1/2 h-[380px] w-[380px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(0,136,255,0.18),rgba(37,99,235,0.06)_55%,transparent_74%)] blur-2xl lg:h-[500px] lg:w-[500px]" />
+    <div className="relative flex flex-col items-center">
+      {/* Photos only — the caption and stat chips sit below the deck, never
+          on top of an image. */}
+      <div className="relative flex items-center justify-center">
+        {/* Glow halo */}
+        <div className="pointer-events-none absolute left-1/2 top-1/2 h-[380px] w-[380px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(0,136,255,0.18),rgba(37,99,235,0.06)_55%,transparent_74%)] blur-2xl lg:h-[500px] lg:w-[500px]" />
 
-      {/* ── Fanned deck of photo cards ── */}
-      <motion.div
-        animate={reduced ? undefined : { y: [0, -10, 0] }}
-        transition={{ duration: 6.5, repeat: Infinity, ease: "easeInOut" }}
-        className="relative z-20 h-[330px] w-[250px] sm:h-[380px] sm:w-[290px] lg:h-[430px] lg:w-[330px]"
-        style={{ perspective: 1200 }}
-      >
-        {deck.map((slide, i) => {
-          // Depth = how far this card is behind the active (front) one.
-          const depth = (i - active + deck.length) % deck.length;
-          const layout = DECK_LAYOUT[depth] || DECK_LAYOUT[DECK_LAYOUT.length - 1];
-          const isFront = depth === 0;
+        {/* ── Fanned deck of photo cards ── */}
+        <motion.div
+          animate={reduced ? undefined : { y: [0, -10, 0] }}
+          transition={{ duration: 6.5, repeat: Infinity, ease: "easeInOut" }}
+          className="relative z-20 h-[330px] w-[250px] sm:h-[380px] sm:w-[290px] lg:h-[430px] lg:w-[330px]"
+          style={{ perspective: 1200 }}
+        >
+          {deck.map((slide, i) => {
+            // Depth = how far this card is behind the active (front) one.
+            const depth = (i - active + deck.length) % deck.length;
+            const layout = DECK_LAYOUT[depth] || DECK_LAYOUT[DECK_LAYOUT.length - 1];
+            const isFront = depth === 0;
 
-          return (
-            <motion.div
-              key={`${slide.img}-${i}`}
-              initial={false}
-              animate={
-                reduced
-                  ? { opacity: isFront ? 1 : 0.85 }
-                  : {
-                      x: layout.x,
-                      y: layout.y,
-                      rotate: layout.rotate,
-                      scale: layout.scale,
-                      opacity: layout.opacity,
-                    }
-              }
-              transition={{ duration: 0.7, ease }}
-              style={{ zIndex: layout.z }}
-              className="absolute inset-0 overflow-hidden rounded-[28px] border-[5px] border-white shadow-[0_30px_70px_rgba(15,23,42,0.24)]"
-            >
-              <MobilePicture mobileSrc={slide.mobileImg}>
-                <Image
-                  src={slide.img}
-                  alt={slide.label}
-                  fill
-                  sizes="(min-width: 1024px) 330px, (min-width: 640px) 290px, 250px"
-                  className="object-cover object-center"
-                  priority={i === 0}
-                />
-              </MobilePicture>
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#050A13]/72 via-[#050A13]/10 to-[#050A13]/5" />
-
-              {/* Caption only on the front card */}
-              {isFront ? (
-                <div className="absolute inset-x-0 bottom-0 p-5">
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-white backdrop-blur-sm">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#5BE49B] animate-pulse" /> For Business
-                  </span>
-                  <AnimatePresence mode="wait">
-                    <motion.p
-                      key={current.label}
-                      initial={reduced ? false : { opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={reduced ? undefined : { opacity: 0, y: -6 }}
-                      transition={{ duration: 0.4 }}
-                      className="mt-2 text-[1.3rem] font-semibold leading-tight tracking-[-0.03em] text-white"
-                    >
-                      {current.label}
-                    </motion.p>
-                  </AnimatePresence>
-                </div>
-              ) : null}
-            </motion.div>
-          );
-        })}
-      </motion.div>
+            return (
+              <motion.div
+                key={`${slide.img}-${i}`}
+                initial={false}
+                animate={
+                  reduced
+                    ? { opacity: isFront ? 1 : 0.85 }
+                    : {
+                        x: layout.x,
+                        y: layout.y,
+                        rotate: layout.rotate,
+                        scale: layout.scale,
+                        opacity: layout.opacity,
+                      }
+                }
+                transition={{ duration: 0.7, ease }}
+                style={{ zIndex: layout.z }}
+                className="absolute inset-0 overflow-hidden rounded-[28px] border-[5px] border-white shadow-[0_30px_70px_rgba(15,23,42,0.24)]"
+              >
+                <MobilePicture mobileSrc={slide.mobileImg}>
+                  <Image
+                    src={slide.img}
+                    alt={slide.label}
+                    fill
+                    sizes="(min-width: 1024px) 330px, (min-width: 640px) 290px, 250px"
+                    className="object-cover object-center"
+                    priority={i === 0}
+                  />
+                </MobilePicture>
+              </motion.div>
+            );
+          })}
+        </motion.div>
+      </div>
 
       {/* Progress dots */}
-      <div className="absolute -bottom-2 left-1/2 z-40 flex -translate-x-1/2 gap-1.5">
+      <div className="relative z-40 mt-7 flex gap-1.5">
         {deck.map((s, i) => (
           <button
             key={`${s.img}-${i}`}
@@ -141,14 +123,30 @@ function BusinessGrowthPanel({ reduced, slides, loading = false }) {
         ))}
       </div>
 
-      {/* ── Data chip — revenue (top-left) ── */}
+      {/* Caption of the front photo — below the deck */}
+      {current?.label ? (
+        <AnimatePresence mode="wait">
+          <motion.p
+            key={current.label}
+            initial={reduced ? false : { opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={reduced ? undefined : { opacity: 0, y: -4 }}
+            transition={{ duration: 0.35 }}
+            className="mt-3 max-w-[330px] text-center text-[1.05rem] font-semibold leading-tight tracking-[-0.02em] text-[#050A13] [overflow-wrap:anywhere]"
+          >
+            {current.label}
+          </motion.p>
+        </AnimatePresence>
+      ) : null}
+
+      {/* ── Data chips — a row under the deck (was floating over the photos) ── */}
       <motion.div
-        initial={reduced ? false : { opacity: 0, y: -14, rotate: -5 }}
-        animate={reduced ? undefined : { opacity: 1, y: 0, rotate: -5 }}
+        initial={reduced ? false : { opacity: 0, y: 10 }}
+        animate={reduced ? undefined : { opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease, delay: 0.5 }}
-        className="absolute left-[-8%] top-2 z-40 hidden sm:block lg:left-[-16%] lg:top-4"
+        className="mt-5 hidden flex-wrap items-stretch justify-center gap-3 sm:flex"
       >
-        <div className="flex items-center gap-2.5 rounded-2xl border border-white/80 bg-white px-3 py-2.5 shadow-[0_16px_40px_rgba(15,23,42,0.15)]">
+        <div className="flex items-center gap-2.5 rounded-2xl border border-white/80 bg-white px-3 py-2.5 shadow-[0_12px_30px_rgba(15,23,42,0.1)]">
           <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[rgba(22,179,100,0.12)] text-[#16B364]">
             <TrendingUp className="h-4.5 w-4.5" aria-hidden />
           </span>
@@ -157,22 +155,14 @@ function BusinessGrowthPanel({ reduced, slides, loading = false }) {
             <p className="text-[10px] text-[#667085]">vs. last year</p>
           </div>
         </div>
-      </motion.div>
 
-      {/* ── Data chip — occupancy (right) ── */}
-      <motion.div
-        initial={reduced ? false : { opacity: 0, x: 16, rotate: 5 }}
-        animate={reduced ? undefined : { opacity: 1, x: 0, rotate: 5 }}
-        transition={{ duration: 0.6, ease, delay: 0.6 }}
-        className="absolute right-[-6%] top-[34%] z-40 hidden sm:block lg:right-[-16%]"
-      >
-        <div className="w-[150px] rounded-2xl border border-white/80 bg-white p-3 shadow-[0_16px_40px_rgba(15,23,42,0.15)]">
+        <div className="w-[150px] rounded-2xl border border-white/80 bg-white p-3 shadow-[0_12px_30px_rgba(15,23,42,0.1)]">
           <div className="flex items-center gap-1.5">
             <Gauge className="h-3.5 w-3.5 text-[#0088FF]" aria-hidden />
             <p className="text-[11px] font-semibold text-[#050A13]">Occupancy</p>
           </div>
-          <p className="mt-1.5 text-[1.1rem] font-bold tracking-[-0.03em] text-[#050A13]">92%</p>
-          <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
+          <p className="mt-1 text-[1.05rem] font-bold tracking-[-0.03em] text-[#050A13]">92%</p>
+          <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
             <motion.div
               className="h-full rounded-full bg-gradient-to-r from-[#0088FF] to-[#16B364]"
               initial={{ width: "0%" }}
@@ -181,16 +171,8 @@ function BusinessGrowthPanel({ reduced, slides, loading = false }) {
             />
           </div>
         </div>
-      </motion.div>
 
-      {/* ── Data chip — automated (bottom-right) ── */}
-      <motion.div
-        initial={reduced ? false : { opacity: 0, x: 14, rotate: 6 }}
-        animate={reduced ? undefined : { opacity: 1, x: 0, rotate: 6 }}
-        transition={{ duration: 0.6, ease, delay: 0.7 }}
-        className="absolute bottom-[10%] right-[-4%] z-40 hidden sm:block lg:right-[-12%]"
-      >
-        <div className="flex items-center gap-2 rounded-full border border-white/80 bg-white px-3 py-2 shadow-[0_14px_36px_rgba(15,23,42,0.14)]">
+        <div className="flex items-center gap-2 self-center rounded-full border border-white/80 bg-white px-3 py-2 shadow-[0_12px_30px_rgba(15,23,42,0.1)]">
           <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#0088FF] text-white">
             <Check className="h-3 w-3" strokeWidth={3} aria-hidden />
           </span>
