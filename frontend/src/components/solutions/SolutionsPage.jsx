@@ -962,11 +962,16 @@ function StatsSection() {
 function IntegrationRow({ card, index, isActive, onSelect, accent, language }) {
   const title = t(card, "title", language);
   const description = t(card, "description", language);
-  const points = Array.isArray(card.points)
-    ? card.points
-        .map((p) => (typeof p === "string" ? p : t(p, "label", language)))
-        .filter((p) => typeof p === "string" && p.trim() !== "")
-    : [];
+  // Points: English in card.points, Arabic in card.ar.points (strict — no
+  // English fallback in Arabic). Legacy { label, ar } objects still work.
+  const arPoints = Array.isArray(card.ar?.points) ? card.ar.points : null;
+  const source = language === "ar" && arPoints ? arPoints : Array.isArray(card.points) ? card.points : [];
+  const points = source
+    .map((p) => {
+      if (typeof p !== "string") return t(p, "label", language);
+      return language === "ar" && source !== arPoints ? "" : p;
+    })
+    .filter((p) => typeof p === "string" && p.trim() !== "");
 
   return (
     <li>
