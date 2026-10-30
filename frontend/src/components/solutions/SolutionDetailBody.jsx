@@ -62,6 +62,7 @@ export default function SolutionDetailBody({ detail, heroImage, heroMobileImage 
 
   const whyHeading = tx("whyHeading");
   const whyBody = paras("whyBody");
+  const hasWhyText = Boolean(whyHeading) || whyBody.length > 0;
   const whyImage = detail.whyImage || heroImage;
   const whyMobileImage = detail.whyImage ? detail.mobileWhyImage : heroMobileImage;
 
@@ -178,10 +179,13 @@ export default function SolutionDetailBody({ detail, heroImage, heroMobileImage 
       </section>
 
       {/* ── 2. Why X Matters ───────────────────────────────────────────── */}
-      {whyHeading || whyBody.length > 0 ? (
+      {/* Shown when it has text in this language OR its own uploaded photo —
+          an Arabic page with no Arabic "why" text still shows the photo. */}
+      {hasWhyText || detail.whyImage ? (
         <section className="bg-white py-14 sm:py-16 lg:py-20">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-14">
+            <div className={hasWhyText ? "grid items-center gap-10 lg:grid-cols-2 lg:gap-14" : "mx-auto max-w-3xl"}>
+              {hasWhyText ? (
               <div>
                 {whyHeading ? (
                   <h2 className="text-[clamp(1.7rem,3vw,2.5rem)] font-semibold tracking-[-0.04em] text-[#050A13] [overflow-wrap:anywhere]">
@@ -196,6 +200,7 @@ export default function SolutionDetailBody({ detail, heroImage, heroMobileImage 
                   ))}
                 </div>
               </div>
+              ) : null}
               {whyImage ? (
                 <div className="w-full overflow-hidden rounded-[22px] border border-[rgba(0,136,255,0.12)] bg-white shadow-[0_18px_48px_rgba(15,23,42,0.08)]">
                   <MobilePicture mobileSrc={whyMobileImage}>
