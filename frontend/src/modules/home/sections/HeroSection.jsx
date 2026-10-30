@@ -65,6 +65,8 @@ function HeroBackgroundMedia({ slide, isActive, onVideoEnd }) {
     ? slide.mediaType
     : (slide.video ? "video" : "image");
   const imageSrc = slide.cardImg || slide.image || "";
+  // Optional phone artwork (admin); phones fall back to the desktop image.
+  const mobileSrc = (slide.mobileImage || "").trim();
 
   if (mediaType === "video" && slide.video) {
     return (
@@ -88,11 +90,14 @@ function HeroBackgroundMedia({ slide, isActive, onVideoEnd }) {
   // (object-fill squashed/stretched it into the banner's shape). The edges are
   // trimmed instead; on narrow phones the focus stays on the centre.
   return (
-    <img
-      src={imageSrc}
-      alt={slide.title}
-      className="h-full w-full object-cover object-center"
-    />
+    <picture className="contents">
+      {mobileSrc ? <source media="(max-width: 639px)" srcSet={mobileSrc} /> : null}
+      <img
+        src={imageSrc}
+        alt={slide.title}
+        className="h-full w-full object-cover object-center"
+      />
+    </picture>
   );
 }
 
