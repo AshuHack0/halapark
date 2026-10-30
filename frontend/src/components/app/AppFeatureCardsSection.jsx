@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { fetchPage } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
 import RichText from "@/components/common/RichText";
+import MobilePicture from "@/components/common/MobilePicture";
 
 // Built-in icon + preview are UI chrome only, kept by index. All copy (title,
 // description) comes strictly from the CMS — no hardcoded content fallbacks.
@@ -163,6 +164,7 @@ export default function AppFeatureCardsSection() {
       description: t(cms, "description", language),
       iconImage: cms?.iconImage || "",
       image: cms?.image || "",
+      mobileImage: cms?.mobileImage || "",
       icon: cardIcons[i] ?? BarChart3,
       preview: cms?.preview || cardPreviews[i] || "",
     }))
@@ -254,13 +256,15 @@ export default function AppFeatureCardsSection() {
 
                   {item.image ? (
                     <div className="relative h-[150px] overflow-hidden rounded-2xl">
-                      <Image
-                        src={item.image}
-                        alt=""
-                        fill
-                        sizes="(min-width: 1024px) 360px, 100vw"
-                        className="object-cover"
-                      />
+                      <MobilePicture mobileSrc={item.mobileImage}>
+                        <Image
+                          src={item.image}
+                          alt=""
+                          fill
+                          sizes="(min-width: 1024px) 360px, 100vw"
+                          className="object-cover object-center"
+                        />
+                      </MobilePicture>
                     </div>
                   ) : (
                     <FeaturePreview type={item.preview} />

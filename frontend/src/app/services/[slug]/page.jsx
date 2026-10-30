@@ -46,6 +46,8 @@ export default async function ServiceDetailPage({ params }) {
       : "";
   const detailImage = detail.image && detail.image !== "/image.png" ? detail.image : "";
   const heroImage = detailImage || serviceImage || null;
+  // Phone artwork follows whichever image the hero actually uses.
+  const heroMobileImage = (detailImage ? detail.mobileImage : serviceImage ? service.mobileImage : "") || "";
 
   // `details` is passed as relatedList so "Other Related Services" can resolve
   // each related slug to a live service title + link. `services` provides the
@@ -55,6 +57,7 @@ export default async function ServiceDetailPage({ params }) {
     <ServiceDetailBody
       detail={detail}
       heroImage={heroImage}
+      heroMobileImage={heroMobileImage}
       relatedList={details}
       relatedServices={services}
     />

@@ -8,6 +8,7 @@ import { ChevronLeft, ChevronRight, ArrowRight, Sparkles } from "lucide-react";
 import { fetchBusinessSection } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
 import RichText from "@/components/common/RichText";
+import MobilePicture from "@/components/common/MobilePicture";
 
 const ease = [0.22, 1, 0.36, 1];
 
@@ -350,13 +351,15 @@ export default function WhoWeWorkWith() {
             transition={{ duration: 0.5, ease, delay: 0.1 }}
             className="relative h-80 sm:h-96 lg:h-[480px] rounded-[32px] overflow-hidden shadow-[0_20px_80px_rgba(0,136,255,0.2)] border border-[#E7EAF0]"
           >
-            <Image
-              src={activePartner.image}
-              alt={activePartner.title || ""}
-              fill
-              className="object-cover"
-              priority
-            />
+            <MobilePicture mobileSrc={activePartner.mobileImage}>
+              <Image
+                src={activePartner.image}
+                alt={activePartner.title || ""}
+                fill
+                className="object-cover object-center"
+                priority
+              />
+            </MobilePicture>
 
             {/* Gradient Overlays */}
             <motion.div

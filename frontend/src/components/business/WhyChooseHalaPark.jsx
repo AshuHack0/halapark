@@ -6,6 +6,7 @@ import { useRef, useState, useEffect } from "react";
 import { fetchBusinessSection } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
 import RichText from "@/components/common/RichText";
+import MobilePicture from "@/components/common/MobilePicture";
 
 const ease = [0.22, 1, 0.36, 1];
 
@@ -173,8 +174,10 @@ export default function WhyChooseHalaPark() {
                   >
                     {img ? (
                       <>
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={img} alt={t(item, "title", language) || ""} className="absolute inset-0 h-full w-full object-cover" />
+                        <MobilePicture mobileSrc={item.mobileImage}>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={img} alt={t(item, "title", language) || ""} className="absolute inset-0 h-full w-full object-cover object-center" />
+                        </MobilePicture>
                         <div className="absolute inset-0 bg-gradient-to-t from-[#050A13]/55 via-[#050A13]/10 to-transparent" />
                       </>
                     ) : (

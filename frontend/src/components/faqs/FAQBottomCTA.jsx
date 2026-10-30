@@ -6,6 +6,7 @@ import { ArrowRight, MessageCircle } from "lucide-react";
 import { fetchPage } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
 import RichText from "@/components/common/RichText";
+import MobilePicture from "@/components/common/MobilePicture";
 
 // CMS-only section (sections.bottomCta): the DB is the single source of truth.
 // No hardcoded fallbacks — anything deleted from the database simply doesn't render.
@@ -63,8 +64,10 @@ export default function FAQBottomCTA() {
             <div aria-hidden className="pointer-events-none absolute inset-y-5 end-5 hidden w-[38%] lg:block">
               <div className="absolute inset-0 translate-x-3 translate-y-3 rounded-[150px_24px_150px_24px] border border-white/35 rtl:-translate-x-3 rtl:rounded-[24px_150px_24px_150px]" />
               <div className="absolute inset-0 overflow-hidden rounded-[150px_24px_150px_24px] rtl:rounded-[24px_150px_24px_150px]">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={image} alt="" className="h-full w-full object-cover object-center" />
+                <MobilePicture mobileSrc={bottomCta?.mobileImage}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={image} alt="" className="h-full w-full object-cover object-center" />
+                </MobilePicture>
                 <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,110,214,0.72)_0%,rgba(0,110,214,0.15)_60%,transparent_100%)] rtl:bg-[linear-gradient(270deg,rgba(0,110,214,0.72)_0%,rgba(0,110,214,0.15)_60%,transparent_100%)]" />
               </div>
             </div>
@@ -139,8 +142,10 @@ export default function FAQBottomCTA() {
               <div className="relative mx-auto aspect-[4/3] w-full max-w-[440px]">
                 <div className="absolute inset-0 translate-x-3 translate-y-3 rounded-[110px_22px_110px_22px] border border-white/35 rtl:-translate-x-3 rtl:rounded-[22px_110px_22px_110px]" />
                 <div className="absolute inset-0 overflow-hidden rounded-[110px_22px_110px_22px] shadow-[0_20px_48px_rgba(0,60,140,0.35)] rtl:rounded-[22px_110px_22px_110px]">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={image} alt="" className="h-full w-full object-cover object-center" />
+                  <MobilePicture mobileSrc={bottomCta?.mobileImage}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={image} alt="" className="h-full w-full object-cover object-center" />
+                  </MobilePicture>
                   <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,110,214,0.35)_0%,transparent_45%)]" />
                 </div>
               </div>

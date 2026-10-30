@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
+import MobilePicture from "@/components/common/MobilePicture";
 import Link from "next/link";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import {
@@ -88,8 +89,9 @@ const opportunityIcons = {
 // Careers layout: an asymmetric photo mosaic (one tall tile + two stacked tiles),
 // each cross-fading independently — a gallery feel, distinct from About/Business.
 
-function MosaicTile({ slides, idx, reduced, sizes }) {
+function MosaicTile({ slides, mobileSlides = [], idx, reduced, sizes }) {
   const src = slides[idx % slides.length];
+  const mobileSrc = mobileSlides[idx % slides.length];
   return (
     <div className="absolute inset-0 overflow-hidden">
       <AnimatePresence mode="popLayout">
@@ -101,7 +103,9 @@ function MosaicTile({ slides, idx, reduced, sizes }) {
           transition={{ duration: 0.8, ease }}
           className="absolute inset-0"
         >
-          <Image src={src} alt="HalaPark team" fill sizes={sizes} className="object-cover object-center" />
+          <MobilePicture mobileSrc={mobileSrc}>
+            <Image src={src} alt="HalaPark team" fill sizes={sizes} className="object-cover object-center" />
+          </MobilePicture>
         </motion.div>
       </AnimatePresence>
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#050A13]/35 to-transparent" />
@@ -115,7 +119,12 @@ function CareersVisual({ hero, reduced }) {
   // Every hero image is a slide in the single large panel — the small corner
   // photos were removed, so all uploads cycle here instead of being split
   // three ways (which left only one image on the main panel).
-  const images = (Array.isArray(hero?.images) ? hero.images : []).filter(hasText);
+  // hero.mobileImages[i] is the optional phone version of hero.images[i].
+  const tiles = (Array.isArray(hero?.images) ? hero.images : [])
+    .map((src, i) => ({ src, mobile: (hero?.mobileImages?.[i] || "").trim() }))
+    .filter((tile) => hasText(tile.src));
+  const images = tiles.map((tile) => tile.src);
+  const mobileImages = tiles.map((tile) => tile.mobile);
 
   const [a, setA] = useState(0);
 
@@ -152,6 +161,7 @@ function CareersVisual({ hero, reduced }) {
       >
         <MosaicTile
           slides={images}
+          mobileSlides={mobileImages}
           idx={a}
           reduced={reduced}
           sizes="(min-width: 1024px) 60vw, 100vw"
@@ -384,7 +394,9 @@ function OpportunitiesSection({ opportunities, header }) {
                       aria-hidden="true"
                       className="pointer-events-none relative aspect-[4/3] w-full [mask-image:linear-gradient(180deg,#000_0%,#000_55%,rgba(0,0,0,0.5)_78%,transparent_100%)] sm:absolute sm:inset-y-0 sm:end-0 sm:aspect-auto sm:w-[62%] sm:[mask-image:linear-gradient(90deg,transparent_0%,rgba(0,0,0,0.45)_30%,#000_58%,#000_100%)] rtl:sm:[mask-image:linear-gradient(270deg,transparent_0%,rgba(0,0,0,0.45)_30%,#000_58%,#000_100%)]"
                     >
-                      <Image src={image} alt="" fill sizes="(min-width: 1280px) 28vw, (min-width: 768px) 40vw, 100vw" className="object-cover object-center" />
+                      <MobilePicture mobileSrc={item.mobileImage}>
+                        <Image src={image} alt="" fill sizes="(min-width: 1280px) 28vw, (min-width: 768px) 40vw, 100vw" className="object-cover object-center" />
+                      </MobilePicture>
                       {/* Pastel wash over the photo so it sits inside the card tone */}
                       <div className="absolute inset-0 sm:hidden" style={{ background: `linear-gradient(180deg, transparent 40%, ${tone.wash} 75%, ${tone.bg} 100%)` }} />
                       <div className="absolute inset-0 hidden sm:block" style={{ background: `linear-gradient(${language === "ar" ? "270deg" : "90deg"}, ${tone.bg} 0%, ${tone.wash} 30%, transparent 52%)` }} />
@@ -729,13 +741,15 @@ function JobOpenings({ openPositions }) {
                   {/* Photo on top (admin upload per job) */}
                   {hasText(post.image) ? (
                     <div className="relative mb-4 aspect-[16/10] w-full overflow-hidden rounded-[14px] bg-[linear-gradient(135deg,#E8F2FF,#F6FAFF)]">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={post.image}
-                        alt={jt(post, "title", language) || ""}
-                        loading="lazy"
-                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
-                      />
+                      <MobilePicture mobileSrc={post.mobileImage}>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={post.image}
+                          alt={jt(post, "title", language) || ""}
+                          loading="lazy"
+                          className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-[1.04]"
+                        />
+                      </MobilePicture>
                     </div>
                   ) : null}
 
@@ -907,15 +921,17 @@ function CareersCTA({ cta, hasOpenPositions }) {
               a narrow slice by the tall band). md+: full-bleed cover background. */}
           <div className="relative md:absolute md:inset-0">
             {background ? (
-              <Image
-                src={background}
-                alt=""
-                width={1600}
-                height={640}
-                sizes="(min-width: 768px) 1280px, 100vw"
-                className="block h-auto w-full object-cover object-center md:absolute md:inset-0 md:h-full"
-                aria-hidden
-              />
+              <MobilePicture mobileSrc={cta?.mobileImage}>
+                <Image
+                  src={background}
+                  alt=""
+                  width={1600}
+                  height={640}
+                  sizes="(min-width: 768px) 1280px, 100vw"
+                  className="block h-auto w-full object-cover object-center md:absolute md:inset-0 md:h-full"
+                  aria-hidden
+                />
+              </MobilePicture>
             ) : null}
             {/* Phones: fade the strip's bottom into the navy copy area */}
             <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-b from-transparent to-[#06111f] md:hidden" />

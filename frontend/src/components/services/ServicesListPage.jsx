@@ -6,6 +6,7 @@ import { createPortal } from "react-dom";
 import ReCAPTCHA from "react-google-recaptcha";
 import { RECAPTCHA_SITE_KEY } from "@/config/recaptcha.site";
 import Image from "next/image";
+import MobilePicture from "@/components/common/MobilePicture";
 import Link from "next/link";
 import {
   motion,
@@ -118,14 +119,16 @@ function ServiceModal({ service, onClose }) {
                 muted
                 playsInline
                 preload="metadata"
-                className="h-full w-full object-cover"
+                className="h-full w-full object-cover object-center"
               />
             ) : (
-              <img
-                src={service.mediaSrc}
-                alt={service.name}
-                className="h-full w-full object-cover"
-              />
+              <MobilePicture mobileSrc={service.mobileImage}>
+                <img
+                  src={service.mediaSrc}
+                  alt={service.name}
+                  className="h-full w-full object-cover object-center"
+                />
+              </MobilePicture>
             )}
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#06111f]/50 to-transparent" />
             <button
@@ -804,14 +807,16 @@ function ServiceCard({ service, index, onClick, category, clickable = false, hre
               src={service.mediaSrc}
               autoPlay={!osReducedMotion}
               loop muted playsInline preload="metadata"
-              className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover/card:scale-[1.07]"
+              className="h-full w-full object-cover object-center transition-transform duration-700 ease-out group-hover/card:scale-[1.07]"
             />
           ) : service.mediaSrc ? (
-            <img
-              src={service.mediaSrc}
-              alt={service.name}
-              className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover/card:scale-[1.07]"
-            />
+            <MobilePicture mobileSrc={service.mobileImage}>
+              <img
+                src={service.mediaSrc}
+                alt={service.name}
+                className="h-full w-full object-cover object-center transition-transform duration-700 ease-out group-hover/card:scale-[1.07]"
+              />
+            </MobilePicture>
           ) : null}
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
 
@@ -987,14 +992,16 @@ function SvcHeroVisual({ reduced, slides }) {
                   className="h-full w-full scale-[1.035] object-cover object-center"
                 />
               ) : slide.img ? (
-                <Image
-                  src={slide.img}
-                  alt={isActive ? slide.name || "" : ""}
-                  fill
-                  sizes="(min-width: 1024px) 260px, 230px"
-                  className="object-cover object-center"
-                  priority={isActive}
-                />
+                <MobilePicture mobileSrc={slide.mobileImg}>
+                  <Image
+                    src={slide.img}
+                    alt={isActive ? slide.name || "" : ""}
+                    fill
+                    sizes="(min-width: 1024px) 260px, 230px"
+                    className="object-cover object-center"
+                    priority={isActive}
+                  />
+                </MobilePicture>
               ) : slide.video ? (
                 // A side card whose slide is video-only: show its first frame,
                 // paused. Never autoplays, so only the centre card is playing.
@@ -1153,6 +1160,7 @@ function HeroSection({ onGetQuote, hero }) {
   const heroSlides = (Array.isArray(hero?.slides) ? hero.slides : [])
     .map((s) => ({
       img: (s?.img || "").trim(),
+      mobileImg: (s?.mobileImg || "").trim(),
       video: (s?.video || "").trim(),
       name: t(s, "name", language),
       tag: t(s, "tag", language),
@@ -1829,6 +1837,7 @@ function LongTermCTA({ onGetQuote, cta }) {
   const ctaLabel = (t(cta, "ctaLabel", language) || "").trim();
   // Optional photo for the curved cutout on the right (admin upload).
   const image = (cta?.image || "").trim();
+  const mobileImage = (cta?.mobileImage || "").trim();
   const eyebrow = (t(cta, "eyebrow", language) || "").trim();
   // Small pills under the button. Each needs a label; an uploaded icon
   // replaces the built-in mark.
@@ -1884,7 +1893,9 @@ function LongTermCTA({ onGetQuote, cta }) {
               />
               {/* The photo */}
               <div className="absolute inset-0" style={{ clipPath: `url(#${leafClipId})` }}>
-                <Image src={image} alt="" fill className="object-cover object-center rtl:-scale-x-100" sizes="54vw" />
+                <MobilePicture mobileSrc={mobileImage}>
+                  <Image src={image} alt="" fill className="object-cover object-center rtl:-scale-x-100" sizes="54vw" />
+                </MobilePicture>
                 {/* Light tint on the inner edge so the copy side stays legible */}
                 <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(5,10,19,0.45)_0%,rgba(5,10,19,0.08)_30%,transparent_60%)]" />
                 {/* Blue wave band sweeping along the bottom-right, cut by the leaf */}
@@ -1988,7 +1999,9 @@ function LongTermCTA({ onGetQuote, cta }) {
                   style={{ clipPath: `url(#${leafClipId})` }}
                 />
                 <div className="absolute inset-0" style={{ clipPath: `url(#${leafClipId})` }}>
-                  <Image src={image} alt="" fill className="object-cover object-center rtl:-scale-x-100" sizes="100vw" />
+                  <MobilePicture mobileSrc={mobileImage}>
+                    <Image src={image} alt="" fill className="object-cover object-center rtl:-scale-x-100" sizes="100vw" />
+                  </MobilePicture>
                   <div
                     className="absolute inset-0 bg-[linear-gradient(90deg,#0A3F9E_0%,#1270F0_55%,#1AB2FF_100%)] opacity-95"
                     style={{ clipPath: `url(#${leafClipId}-w1)` }}

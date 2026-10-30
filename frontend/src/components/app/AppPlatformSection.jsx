@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { fetchPage } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
 import RichText from "@/components/common/RichText";
+import MobilePicture from "@/components/common/MobilePicture";
 
 const NAVY = "#050A13";
 const ACCENT = "#0088FF";
@@ -235,7 +236,7 @@ function PhonePreview({ screen, alt = "HalaPark app screen" }) {
   );
 }
 
-function WebsitePreview({ screen }) {
+function WebsitePreview({ screen, mobileScreen }) {
   // Admin-uploaded website screenshot replaces the built-in mock login screen
   // inside the browser frame (the frame itself is decorative chrome).
   const src = (screen || "").trim();
@@ -261,13 +262,15 @@ function WebsitePreview({ screen }) {
 
           {src ? (
             <div className="relative min-h-[300px] overflow-hidden">
-              <Image
-                src={src}
-                alt="HalaPark website preview"
-                fill
-                sizes="(min-width: 640px) 430px, 90vw"
-                className="object-cover object-top"
-              />
+              <MobilePicture mobileSrc={mobileScreen}>
+                <Image
+                  src={src}
+                  alt="HalaPark website preview"
+                  fill
+                  sizes="(min-width: 640px) 430px, 90vw"
+                  className="object-cover object-center"
+                />
+              </MobilePicture>
             </div>
           ) : (
           <div className="relative min-h-[300px] overflow-hidden bg-[linear-gradient(135deg,#F8FBFF_0%,#EAF3FF_58%,#DCEBFF_100%)] px-5 py-5">
@@ -592,7 +595,7 @@ export default function AppPlatformSection() {
               </div>
 
               <div className="relative flex min-h-[360px] items-center justify-center sm:min-h-[420px]">
-                <WebsitePreview screen={content.webScreen} />
+                <WebsitePreview screen={content.webScreen} mobileScreen={content.mobileWebScreen} />
               </div>
             </div>
           </motion.article>

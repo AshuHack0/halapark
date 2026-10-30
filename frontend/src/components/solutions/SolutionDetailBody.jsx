@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowRight, Check, ChevronRight, ShieldCheck, AlertTriangle, Lightbulb } from "lucide-react";
 import { useLanguage, t } from "@/context/LanguageContext";
 import RichText from "@/components/common/RichText";
+import MobilePicture from "@/components/common/MobilePicture";
 
 /**
  * Client body for a solution detail page (new standardized template).
@@ -23,7 +24,7 @@ import RichText from "@/components/common/RichText";
  * slugs into clickable links. `heroImage` is the per-solution image from the CMS
  * card (source of truth), falling back to the detail's own image.
  */
-export default function SolutionDetailBody({ detail, heroImage, relatedList = [], relatedCards = [], advantages = null }) {
+export default function SolutionDetailBody({ detail, heroImage, heroMobileImage = "", relatedList = [], relatedCards = [], advantages = null }) {
   const { language } = useLanguage();
   const isAr = language === "ar";
   const dir = isAr ? "rtl" : "ltr";
@@ -62,14 +63,17 @@ export default function SolutionDetailBody({ detail, heroImage, relatedList = []
   const whyHeading = tx("whyHeading");
   const whyBody = paras("whyBody");
   const whyImage = detail.whyImage || heroImage;
+  const whyMobileImage = detail.whyImage ? detail.mobileWhyImage : heroMobileImage;
 
   const problemHeading = tx("problemHeading") || (isAr ? "" : "Problem We Face");
   const problemBody = paras("problemBody");
   const problemImage = detail.problemImage || "";
+  const problemMobileImage = detail.mobileProblemImage || "";
 
   const solutionHeading = tx("solutionHeading") || (isAr ? "" : "Our Solution");
   const solutionBody = paras("solutionBody");
   const solutionImage = detail.solutionImage || "";
+  const solutionMobileImage = detail.mobileSolutionImage || "";
 
   const benefitsHeading = tx("benefitsHeading") || (isAr ? "" : "Key Benefits");
   const keyBenefits = objList("keyBenefits");
@@ -107,7 +111,8 @@ export default function SolutionDetailBody({ detail, heroImage, relatedList = []
       const cardImg = card?.image && card.image !== "/image.png" ? card.image : null;
       const detailImg = match.image && match.image !== "/image.png" ? match.image : null;
       const image = cardImg || detailImg || null;
-      return { slug, label, image };
+      const mobileImage = (cardImg ? card.mobileImage : detailImg ? match.mobileImage : "") || "";
+      return { slug, label, image, mobileImage };
     })
     .filter(Boolean);
 
@@ -155,15 +160,17 @@ export default function SolutionDetailBody({ detail, heroImage, relatedList = []
                 rendered height comes from the real image. */}
             {heroImage ? (
               <div className="mx-auto w-full max-w-[560px] overflow-hidden rounded-[22px] border border-white/80 bg-white shadow-[0_24px_60px_rgba(15,23,42,0.14)] lg:mx-0 lg:ms-auto lg:max-w-[540px]">
-                <Image
-                  src={heroImage}
-                  alt={banner.title}
-                  width={1200}
-                  height={800}
-                  className="h-auto w-full"
-                  sizes="(min-width: 1024px) 540px, 560px"
-                  priority
-                />
+                <MobilePicture mobileSrc={heroMobileImage}>
+                  <Image
+                    src={heroImage}
+                    alt={banner.title}
+                    width={1200}
+                    height={800}
+                    className="h-auto w-full"
+                    sizes="(min-width: 1024px) 540px, 560px"
+                    priority
+                  />
+                </MobilePicture>
               </div>
             ) : null}
           </div>
@@ -191,14 +198,16 @@ export default function SolutionDetailBody({ detail, heroImage, relatedList = []
               </div>
               {whyImage ? (
                 <div className="w-full overflow-hidden rounded-[22px] border border-[rgba(0,136,255,0.12)] bg-white shadow-[0_18px_48px_rgba(15,23,42,0.08)]">
-                  <Image
-                    src={whyImage}
-                    alt={whyHeading || banner.title}
-                    width={1200}
-                    height={800}
-                    className="h-auto w-full"
-                    sizes="(min-width: 1024px) 540px, 90vw"
-                  />
+                  <MobilePicture mobileSrc={whyMobileImage}>
+                    <Image
+                      src={whyImage}
+                      alt={whyHeading || banner.title}
+                      width={1200}
+                      height={800}
+                      className="h-auto w-full"
+                      sizes="(min-width: 1024px) 540px, 90vw"
+                    />
+                  </MobilePicture>
                 </div>
               ) : null}
             </div>
@@ -228,14 +237,16 @@ export default function SolutionDetailBody({ detail, heroImage, relatedList = []
                   </div>
                   {problemImage ? (
                     <div className="mt-6 w-full overflow-hidden rounded-[18px] border border-[rgba(239,68,68,0.14)] bg-white shadow-[0_18px_48px_rgba(15,23,42,0.08)]">
-                      <Image
-                        src={problemImage}
-                        alt={problemHeading || banner.title}
-                        width={1200}
-                        height={800}
-                        className="h-auto w-full"
-                        sizes="(min-width: 1024px) 540px, 90vw"
-                      />
+                      <MobilePicture mobileSrc={problemMobileImage}>
+                        <Image
+                          src={problemImage}
+                          alt={problemHeading || banner.title}
+                          width={1200}
+                          height={800}
+                          className="h-auto w-full"
+                          sizes="(min-width: 1024px) 540px, 90vw"
+                        />
+                      </MobilePicture>
                     </div>
                   ) : null}
                 </div>
@@ -258,14 +269,16 @@ export default function SolutionDetailBody({ detail, heroImage, relatedList = []
                   </div>
                   {solutionImage ? (
                     <div className="mt-6 w-full overflow-hidden rounded-[18px] border border-[rgba(0,136,255,0.14)] bg-white shadow-[0_18px_48px_rgba(15,23,42,0.08)]">
-                      <Image
-                        src={solutionImage}
-                        alt={solutionHeading || banner.title}
-                        width={1200}
-                        height={800}
-                        className="h-auto w-full"
-                        sizes="(min-width: 1024px) 540px, 90vw"
-                      />
+                      <MobilePicture mobileSrc={solutionMobileImage}>
+                        <Image
+                          src={solutionImage}
+                          alt={solutionHeading || banner.title}
+                          width={1200}
+                          height={800}
+                          className="h-auto w-full"
+                          sizes="(min-width: 1024px) 540px, 90vw"
+                        />
+                      </MobilePicture>
                     </div>
                   ) : null}
                 </div>
@@ -409,13 +422,15 @@ export default function SolutionDetailBody({ detail, heroImage, relatedList = []
                   {/* Image cell — only when the solution has a real image */}
                   {r.image ? (
                     <div className="relative aspect-[16/10] w-full overflow-hidden bg-[#EAF3FF]">
-                      <Image
-                        src={r.image}
-                        alt={r.label}
-                        fill
-                        className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
-                        sizes="(min-width: 1024px) 360px, (min-width: 640px) 50vw, 90vw"
-                      />
+                      <MobilePicture mobileSrc={r.mobileImage}>
+                        <Image
+                          src={r.image}
+                          alt={r.label}
+                          fill
+                          className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                          sizes="(min-width: 1024px) 360px, (min-width: 640px) 50vw, 90vw"
+                        />
+                      </MobilePicture>
                       <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
                     </div>
                   ) : null}

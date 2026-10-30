@@ -10,6 +10,7 @@ import { useLanguage, t } from "@/context/LanguageContext";
 import LogoTicker from "@/components/common/LogoTicker";
 import RichText from "@/components/common/RichText";
 import { PARTNER_FORM_LINK } from "@/components/partners/PartnershipFormProvider";
+import MobilePicture from "@/components/common/MobilePicture";
 
 const ease = [0.22, 1, 0.36, 1];
 
@@ -67,7 +68,9 @@ export default function PartnersShowcase() {
               transition={{ duration: 0.65, ease, delay: 0.1 }}
               className="relative h-80 sm:h-96 lg:h-[500px] rounded-[32px] overflow-hidden shadow-[0_20px_80px_rgba(0,136,255,0.15)] border border-[#E7EAF0]"
             >
-              <Image src={image} alt={heading || "Trusted Partners"} fill className="object-cover" priority />
+              <MobilePicture mobileSrc={showcase.mobileImage}>
+                <Image src={image} alt={heading || "Trusted Partners"} fill className="object-cover object-center" priority />
+              </MobilePicture>
               <div className="absolute inset-0 bg-gradient-to-t from-[#050A13]/20 to-transparent" />
             </motion.div>
           ) : null}
@@ -248,7 +251,9 @@ export function PartnerCTA() {
         >
           {image ? (
             <div className="absolute inset-0">
-              <Image src={image} alt="" fill className="object-cover object-center opacity-60" aria-hidden />
+              <MobilePicture mobileSrc={cta.mobileImage}>
+                <Image src={image} alt="" fill className="object-cover object-center opacity-60" aria-hidden />
+              </MobilePicture>
               <div className="absolute inset-0 bg-gradient-to-r from-[#06111f]/90 via-[#06111f]/70 to-[#06111f]/50" />
             </div>
           ) : null}

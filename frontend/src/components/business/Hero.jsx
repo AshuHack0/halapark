@@ -9,6 +9,7 @@ import { fetchBusinessSection } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
 import RichText from "@/components/common/RichText";
 import { GetProposalModal, ConsultationModal } from "./BusinessLeadModals";
+import MobilePicture from "@/components/common/MobilePicture";
 
 const ease = [0.22, 1, 0.36, 1];
 
@@ -88,14 +89,16 @@ function BusinessGrowthPanel({ reduced, slides, loading = false }) {
               style={{ zIndex: layout.z }}
               className="absolute inset-0 overflow-hidden rounded-[28px] border-[5px] border-white shadow-[0_30px_70px_rgba(15,23,42,0.24)]"
             >
-              <Image
-                src={slide.img}
-                alt={slide.label}
-                fill
-                sizes="(min-width: 1024px) 330px, (min-width: 640px) 290px, 250px"
-                className="object-cover object-center"
-                priority={i === 0}
-              />
+              <MobilePicture mobileSrc={slide.mobileImg}>
+                <Image
+                  src={slide.img}
+                  alt={slide.label}
+                  fill
+                  sizes="(min-width: 1024px) 330px, (min-width: 640px) 290px, 250px"
+                  className="object-cover object-center"
+                  priority={i === 0}
+                />
+              </MobilePicture>
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#050A13]/72 via-[#050A13]/10 to-[#050A13]/5" />
 
               {/* Caption only on the front card */}

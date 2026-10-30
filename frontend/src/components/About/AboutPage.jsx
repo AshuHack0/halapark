@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import MobilePicture from "@/components/common/MobilePicture";
 import Link from "next/link";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import {
@@ -28,7 +29,7 @@ const hasText = (value) => typeof value === "string" && value.trim().length > 0;
 // A slide's media may be an image OR a video file (same admin field).
 const isVideoSrc = (src = "") => /\.(mp4|webm|mov|m4v)(\?|#|$)/i.test(src);
 
-function SlideMedia({ src, alt, sizes, priority = false }) {
+function SlideMedia({ src, mobileSrc, alt, sizes, priority = false }) {
   if (isVideoSrc(src)) {
     return (
       <video
@@ -44,7 +45,9 @@ function SlideMedia({ src, alt, sizes, priority = false }) {
     );
   }
   return (
-    <Image src={src} alt={alt} fill sizes={sizes} className="object-cover object-center" priority={priority} />
+    <MobilePicture mobileSrc={mobileSrc}>
+      <Image src={src} alt={alt} fill sizes={sizes} className="object-cover object-center" priority={priority} />
+    </MobilePicture>
   );
 }
 
@@ -97,6 +100,7 @@ function AboutVisual({ slides, language, reduced, hero }) {
               >
                 <SlideMedia
                   src={slide.img}
+                  mobileSrc={slide.mobileImg}
                   alt={label}
                   sizes="(min-width: 1024px) 560px, (min-width: 640px) 70vw, 92vw"
                   priority={i === 0}
@@ -408,7 +412,9 @@ function OurMission({ mission }) {
             {/* Photo half — bleeds to the panel edge */}
             {mission?.image ? (
               <div className="relative min-h-[280px] overflow-hidden sm:min-h-[340px] lg:min-h-[500px] lg:[clip-path:polygon(14%_0,100%_0,100%_100%,0_100%)]">
-                <Image src={mission.image} alt="Smart city mobility" fill className="object-cover object-center transition duration-700 group-hover:scale-[1.04]" sizes="(min-width: 1024px) 48vw, 100vw" />
+                <MobilePicture mobileSrc={mission.mobileImage}>
+                  <Image src={mission.image} alt="Smart city mobility" fill className="object-cover object-center transition duration-700 group-hover:scale-[1.04]" sizes="(min-width: 1024px) 48vw, 100vw" />
+                </MobilePicture>
                 <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(5,10,19,0.30)_0%,transparent_45%,rgba(0,136,255,0.18)_100%)]" />
               </div>
             ) : null}
@@ -467,7 +473,9 @@ function OurVision({ vision }) {
               always sits behind the copy. */}
           <div className="relative rtl:-scale-x-100 lg:absolute lg:inset-0">
             {vision?.image ? (
-              <Image src={vision.image} alt="" width={1600} height={640} sizes="(min-width: 1024px) 1280px, 100vw" className="block h-auto w-full object-cover object-center transition duration-700 group-hover:scale-[1.03] lg:absolute lg:inset-0 lg:h-full" aria-hidden />
+              <MobilePicture mobileSrc={vision.mobileImage}>
+                <Image src={vision.image} alt="" width={1600} height={640} sizes="(min-width: 1024px) 1280px, 100vw" className="block h-auto w-full object-cover object-center transition duration-700 group-hover:scale-[1.03] lg:absolute lg:inset-0 lg:h-full" aria-hidden />
+              </MobilePicture>
             ) : null}
             {/* Dark on the copy side, clearing toward the photo so the upload
                 is actually visible (mirrored with the layer for Arabic). */}
@@ -574,7 +582,9 @@ function OurStory({ story }) {
           <div className="grid lg:grid-cols-[0.95fr_1.05fr]">
             {story?.image ? (
               <div className="relative min-h-[280px] overflow-hidden sm:min-h-[340px] lg:min-h-[500px] lg:[clip-path:polygon(0_0,100%_0,86%_100%,0_100%)]">
-                <Image src={story.image} alt="HalaPark story" fill className="object-cover object-center transition duration-700 group-hover:scale-[1.04]" sizes="(min-width: 1024px) 48vw, 100vw" />
+                <MobilePicture mobileSrc={story.mobileImage}>
+                  <Image src={story.image} alt="HalaPark story" fill className="object-cover object-center transition duration-700 group-hover:scale-[1.04]" sizes="(min-width: 1024px) 48vw, 100vw" />
+                </MobilePicture>
                 <div className="absolute inset-0 bg-[linear-gradient(300deg,rgba(5,10,19,0.30)_0%,transparent_45%,rgba(0,136,255,0.18)_100%)]" />
               </div>
             ) : null}
@@ -646,7 +656,9 @@ function WhatWeDo({ whatWeDo }) {
             ) : null}
             {whatWeDo?.image ? (
             <div className="relative mt-8 h-48 w-full overflow-hidden rounded-[18px]">
-              <Image src={whatWeDo.image} alt="HalaPark smart parking" fill className="object-cover object-center" />
+              <MobilePicture mobileSrc={whatWeDo.mobileImage}>
+                <Image src={whatWeDo.image} alt="HalaPark smart parking" fill className="object-cover object-center" />
+              </MobilePicture>
               <div className="absolute inset-0 bg-[#050A13]/15" />
             </div>
             ) : null}
@@ -692,7 +704,9 @@ function TechnologyInnovation({ technology }) {
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
           {technology?.image ? (
           <motion.div initial={reduced ? false : { opacity: 0, x: -24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease }} className="relative h-72 w-full overflow-hidden rounded-[24px] sm:h-80 lg:h-[420px]" dir={language === "ar" ? "rtl" : "ltr"}>
-            <Image src={technology.image} alt="HalaPark technology" fill className="object-cover object-center" />
+            <MobilePicture mobileSrc={technology.mobileImage}>
+              <Image src={technology.image} alt="HalaPark technology" fill className="object-cover object-center" />
+            </MobilePicture>
             <div className="absolute inset-0 bg-gradient-to-tr from-[#06111f]/60 via-transparent to-transparent" />
             {hasText(technology?.imageBadge) ? (
               <div className="absolute bottom-6 left-6 rtl:left-auto rtl:right-6">
@@ -1406,7 +1420,9 @@ function FinalCTA({ cta }) {
             <div aria-hidden className="pointer-events-none absolute inset-y-10 end-12 hidden w-[36%] lg:block">
               <div className="absolute inset-0 translate-x-4 translate-y-4 rounded-[140px_32px_140px_32px] border border-[#1AB2FF]/45 rtl:-translate-x-4 rtl:rounded-[32px_140px_32px_140px]" />
               <div className="absolute inset-0 overflow-hidden rounded-[140px_32px_140px_32px] shadow-[0_30px_70px_rgba(3,10,20,0.55)] ring-1 ring-white/15 rtl:rounded-[32px_140px_32px_140px]">
-                <Image src={image} alt="" fill className="object-cover object-center" sizes="36vw" aria-hidden />
+                <MobilePicture mobileSrc={cta?.mobileImage}>
+                  <Image src={image} alt="" fill className="object-cover object-center" sizes="36vw" aria-hidden />
+                </MobilePicture>
                 <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,19,39,0.55)_0%,rgba(7,19,39,0.08)_50%,transparent_100%)] rtl:bg-[linear-gradient(270deg,rgba(7,19,39,0.55)_0%,rgba(7,19,39,0.08)_50%,transparent_100%)]" />
               </div>
               <div className="absolute -bottom-3 start-6 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-[#0A3F84] to-[#0088FF] shadow-[0_12px_30px_rgba(0,136,255,0.45)] ring-4 ring-[#0A1E3C]">
@@ -1468,7 +1484,9 @@ function FinalCTA({ cta }) {
               <div className="relative mx-auto aspect-[4/3] w-full max-w-[440px]">
                 <div className="absolute inset-0 translate-x-3 translate-y-3 rounded-[110px_24px_110px_24px] border border-[#1AB2FF]/45 rtl:-translate-x-3 rtl:rounded-[24px_110px_24px_110px]" />
                 <div className="absolute inset-0 overflow-hidden rounded-[110px_24px_110px_24px] shadow-[0_24px_56px_rgba(3,10,20,0.5)] ring-1 ring-white/15 rtl:rounded-[24px_110px_24px_110px]">
-                  <Image src={image} alt="" fill className="object-cover object-center" sizes="100vw" aria-hidden />
+                  <MobilePicture mobileSrc={cta?.mobileImage}>
+                    <Image src={image} alt="" fill className="object-cover object-center" sizes="100vw" aria-hidden />
+                  </MobilePicture>
                   <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,19,39,0.35)_0%,transparent_45%)]" />
                 </div>
                 <div className="absolute -bottom-3 start-5 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-[#0A3F84] to-[#0088FF] shadow-[0_12px_30px_rgba(0,136,255,0.45)] ring-4 ring-[#0A1E3C]">

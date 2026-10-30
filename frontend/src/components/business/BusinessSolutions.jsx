@@ -8,6 +8,7 @@ import { useEffect, useState, useSyncExternalStore } from "react";
 import { fetchBusinessContent } from "@/lib/cms";
 import { useLanguage, t, ui } from "@/context/LanguageContext";
 import RichText from "@/components/common/RichText";
+import MobilePicture from "@/components/common/MobilePicture";
 
 const ease = [0.22, 1, 0.36, 1];
 
@@ -118,13 +119,15 @@ export default function BusinessSolutions() {
                 {/* Image Container with Icon Overlay */}
                 <div className="relative h-44 w-full overflow-hidden bg-gradient-to-br from-slate-100 to-slate-50">
                   {card.image ? (
-                    <Image
-                      src={card.image}
-                      alt={t(card, "title", language) || ""}
-                      fill
-                      className="object-cover transition duration-500 group-hover:scale-110"
-                      sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                    />
+                    <MobilePicture mobileSrc={card.mobileImage}>
+                      <Image
+                        src={card.image}
+                        alt={t(card, "title", language) || ""}
+                        fill
+                        className="object-cover object-center transition duration-500 group-hover:scale-110"
+                        sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                      />
+                    </MobilePicture>
                   ) : null}
                   <div className="absolute inset-0 bg-gradient-to-t from-[#050A13]/50 via-transparent to-transparent" />
 

@@ -49,10 +49,13 @@ export default async function SolutionDetailPage({ params }) {
     (isRealImage(detail.image) && detail.image) ||
     (isRealImage(card?.image) && card.image) ||
     "/hf_20260327_060926_cbb82448-441c-42ee-9589-785e7acd7565.png";
+  // Phone artwork follows whichever image the hero actually uses.
+  const heroMobileImage =
+    (isRealImage(detail.image) ? detail.mobileImage : isRealImage(card?.image) ? card.mobileImage : "") || "";
 
   // `details` is passed as relatedList so "Other Related Services" can resolve
   // each related slug to a live solution title + link. `cards` provides the
   // canonical per-solution image for those related cards. Render through a client
   // body so the language toggle + t() apply (Arabic).
-  return <SolutionDetailBody detail={detail} heroImage={heroImage} relatedList={details} relatedCards={cards} advantages={advantages} />;
+  return <SolutionDetailBody detail={detail} heroImage={heroImage} heroMobileImage={heroMobileImage} relatedList={details} relatedCards={cards} advantages={advantages} />;
 }

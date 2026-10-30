@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import MobilePicture from "@/components/common/MobilePicture";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { fetchPage } from "@/lib/cms";
@@ -520,14 +521,16 @@ function GlobalExpansionSection() {
               transition={{ duration: 0.65, ease, delay: 0.1 }}
               className="relative w-full overflow-hidden rounded-[24px]"
             >
-              <Image
-                src={image}
-                alt={heading || "HalaPark parking solutions"}
-                width={920}
-                height={700}
-                className="h-auto w-full object-cover"
-                sizes="(min-width: 1024px) 50vw, 100vw"
-              />
+              <MobilePicture mobileSrc={content.mobileImage}>
+                <Image
+                  src={image}
+                  alt={heading || "HalaPark parking solutions"}
+                  width={920}
+                  height={700}
+                  className="h-auto w-full object-cover object-center"
+                  sizes="(min-width: 1024px) 50vw, 100vw"
+                />
+              </MobilePicture>
             </motion.div>
           ) : null}
 
@@ -596,13 +599,15 @@ function SolutionCard({ card, i, reduced, detailSlugs, categoryLabel }) {
       <div className="relative h-40 w-full shrink-0 overflow-hidden bg-slate-100 sm:h-48">
         {hasPhoto ? (
           <>
-            <Image
-              src={image}
-              alt={card.title}
-              fill
-              className="object-cover transition duration-500 group-hover:scale-105"
-              sizes="(min-width: 1280px) 25vw, (min-width: 640px) 45vw, 100vw"
-            />
+            <MobilePicture mobileSrc={card.mobileImage}>
+              <Image
+                src={image}
+                alt={card.title}
+                fill
+                className="object-cover object-center transition duration-500 group-hover:scale-105"
+                sizes="(min-width: 1280px) 25vw, (min-width: 640px) 45vw, 100vw"
+              />
+            </MobilePicture>
             <div className="absolute inset-0 bg-gradient-to-t from-[#050A13]/40 to-transparent" />
           </>
         ) : (
@@ -1133,13 +1138,15 @@ function SectorSolutionsSection() {
                 transition={{ duration: 0.45, ease }}
                 className="relative aspect-[16/11] w-full overflow-hidden rounded-[30px] shadow-[0_30px_70px_rgba(15,23,42,0.2)] ring-1 ring-black/5 sm:aspect-[5/4] lg:aspect-auto lg:h-full"
               >
-                <Image
-                  src={activeImage}
-                  alt={activeTitle || ""}
-                  fill
-                  className="object-cover"
-                  sizes="(min-width: 1024px) 46vw, 100vw"
-                />
+                <MobilePicture mobileSrc={activeCard?.mobileImage}>
+                  <Image
+                    src={activeImage}
+                    alt={activeTitle || ""}
+                    fill
+                    className="object-cover object-center"
+                    sizes="(min-width: 1024px) 46vw, 100vw"
+                  />
+                </MobilePicture>
                 <div
                   aria-hidden="true"
                   className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,transparent_45%,rgba(5,10,19,0.72)_100%)]"
@@ -1283,13 +1290,15 @@ function TrustedBySection() {
             <motion.div initial={reduced ? false : { opacity: 0, x: 28 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.65, ease, delay: 0.1 }} className="relative overflow-hidden rounded-[28px] bg-[#06111f]">
               {/* Smart-city image backdrop — CMS-driven (hidden when blank) */}
               {image ? (
-                <Image
-                  src={image}
-                  alt={heading || "Smart public parking infrastructure"}
-                  fill
-                  sizes="(min-width: 1024px) 50vw, 100vw"
-                  className="object-cover object-center"
-                />
+                <MobilePicture mobileSrc={trust.mobileImage}>
+                  <Image
+                    src={image}
+                    alt={heading || "Smart public parking infrastructure"}
+                    fill
+                    sizes="(min-width: 1024px) 50vw, 100vw"
+                    className="object-cover object-center"
+                  />
+                </MobilePicture>
               ) : null}
               <div className="absolute inset-0 bg-[linear-gradient(150deg,rgba(6,17,31,0.92)_0%,rgba(6,17,31,0.6)_50%,rgba(6,17,31,0.85)_100%)]" />
               <div className="absolute right-0 top-0 h-64 w-64 rounded-full bg-[#0088FF]/20 blur-3xl" />
@@ -1607,14 +1616,16 @@ function FeatureHighlightsSection() {
                 shows at full brightness. */}
             {featImage ? (
               <div className="mx-auto mb-12 max-w-5xl overflow-hidden rounded-[24px] shadow-[0_30px_70px_rgba(0,0,0,0.45)] ring-1 ring-white/15 sm:rounded-[28px]">
-                <Image
-                  src={featImage}
-                  alt={featHeading || ""}
-                  width={1600}
-                  height={900}
-                  sizes="(min-width: 1024px) 1024px, 100vw"
-                  className="h-auto w-full"
-                />
+                <MobilePicture mobileSrc={features.mobileImage}>
+                  <Image
+                    src={featImage}
+                    alt={featHeading || ""}
+                    width={1600}
+                    height={900}
+                    sizes="(min-width: 1024px) 1024px, 100vw"
+                    className="h-auto w-full"
+                  />
+                </MobilePicture>
               </div>
             ) : null}
 
@@ -1741,7 +1752,9 @@ function FeatureHighlightsSection() {
                         className="h-full w-full object-cover object-center"
                       />
                     ) : (
-                      <Image src={depImage} alt="" fill className="object-cover object-center" aria-hidden />
+                      <MobilePicture mobileSrc={deployment.mobileImage}>
+                        <Image src={depImage} alt="" fill className="object-cover object-center" aria-hidden />
+                      </MobilePicture>
                     )}
                     {/* Light wash only — enough to seat the panel in the section without
                         dimming the photo. */}
@@ -1859,13 +1872,15 @@ function WhyHalaparkSection() {
           >
             <div className="absolute inset-0">
               {why.image ? (
-                <Image
-                  src={why.image}
-                  alt=""
-                  fill
-                  className="object-cover object-center"
-                  aria-hidden
-                />
+                <MobilePicture mobileSrc={why.mobileImage}>
+                  <Image
+                    src={why.image}
+                    alt=""
+                    fill
+                    className="object-cover object-center"
+                    aria-hidden
+                  />
+                </MobilePicture>
               ) : null}
               <div className="absolute inset-0 bg-gradient-to-t from-[#06111f]/80 via-[#06111f]/30 to-transparent" />
             </div>
@@ -1948,7 +1963,9 @@ function NewFinalCTA() {
             <div aria-hidden className="pointer-events-none absolute inset-y-6 end-6 hidden w-[44%] md:block">
               <div className="absolute inset-0 translate-x-3 translate-y-3 rounded-[180px_28px_180px_28px] border border-[#1AB2FF]/35 rtl:-translate-x-3 rtl:rounded-[28px_180px_28px_180px]" />
               <div className="absolute inset-0 overflow-hidden rounded-[180px_28px_180px_28px] rtl:rounded-[28px_180px_28px_180px]">
-                <Image src={image} alt="" fill className="object-cover object-center" sizes="44vw" />
+                <MobilePicture mobileSrc={cta.mobileImage}>
+                  <Image src={image} alt="" fill className="object-cover object-center" sizes="44vw" />
+                </MobilePicture>
                 <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,19,39,0.78)_0%,rgba(7,19,39,0.18)_55%,transparent_100%)] rtl:bg-[linear-gradient(270deg,rgba(7,19,39,0.78)_0%,rgba(7,19,39,0.18)_55%,transparent_100%)]" />
               </div>
             </div>
@@ -2030,7 +2047,9 @@ function NewFinalCTA() {
               <div className="relative mx-auto aspect-[4/3] w-full max-w-[420px]">
                 <div className="absolute inset-0 translate-x-2 translate-y-2 rounded-[110px_22px_110px_22px] border border-[#1AB2FF]/35 rtl:-translate-x-2 rtl:rounded-[22px_110px_22px_110px]" />
                 <div className="absolute inset-0 overflow-hidden rounded-[110px_22px_110px_22px] rtl:rounded-[22px_110px_22px_110px]">
-                  <Image src={image} alt="" fill className="object-cover object-center" sizes="100vw" />
+                  <MobilePicture mobileSrc={cta.mobileImage}>
+                    <Image src={image} alt="" fill className="object-cover object-center" sizes="100vw" />
+                  </MobilePicture>
                   <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,19,39,0.35)_0%,transparent_45%)]" />
                 </div>
               </div>

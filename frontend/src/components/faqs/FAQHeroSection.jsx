@@ -5,6 +5,7 @@ import Image from "next/image";
 import { fetchPage } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
 import RichText from "@/components/common/RichText";
+import MobilePicture from "@/components/common/MobilePicture";
 
 // CMS-only hero: the DB is the single source of truth (seeded). No hardcoded
 // fallbacks — anything deleted from the database simply doesn't render.
@@ -51,13 +52,15 @@ export default function FAQHeroSection() {
         <div className="relative overflow-hidden rounded-[24px] bg-[#02376B] text-white">
           <div className="absolute inset-0">
             {image ? (
-              <Image
-                src={image}
-                alt=""
-                fill
-                className="object-cover object-center"
-                aria-hidden
-              />
+              <MobilePicture mobileSrc={hero.mobileImage}>
+                <Image
+                  src={image}
+                  alt=""
+                  fill
+                  className="object-cover object-center"
+                  aria-hidden
+                />
+              </MobilePicture>
             ) : null}
             <div className="absolute inset-0 bg-[linear-gradient(90deg,#02376B_0%,rgba(2,55,107,0.92)_30%,rgba(10,76,148,0.45)_60%,transparent_100%)] rtl:bg-[linear-gradient(270deg,#02376B_0%,rgba(2,55,107,0.92)_30%,rgba(10,76,148,0.45)_60%,transparent_100%)]" />
           </div>

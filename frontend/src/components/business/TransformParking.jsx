@@ -8,6 +8,7 @@ import { fetchBusinessSection } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
 import RichText from "@/components/common/RichText";
 import { PARTNER_FORM_LINK } from "@/components/partners/PartnershipFormProvider";
+import MobilePicture from "@/components/common/MobilePicture";
 
 const ease = [0.22, 1, 0.36, 1];
 
@@ -106,8 +107,10 @@ export default function TransformParking() {
               <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 -z-10 aspect-[16/9] sm:hidden">
                 <div className="absolute inset-0 bg-[#1AB2FF]/25 [clip-path:polygon(0_0,100%_0,100%_78%,50%_100%,0_78%)]" />
                 <div className="absolute inset-0 overflow-hidden [clip-path:polygon(0_0,100%_0,100%_74%,50%_96%,0_74%)]">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={transformData.parkingPartnerBgImage} alt="" className="h-full w-full object-cover" />
+                  <MobilePicture mobileSrc={transformData.parkingPartnerMobileBgImage}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={transformData.parkingPartnerBgImage} alt="" className="h-full w-full object-cover object-center" />
+                  </MobilePicture>
                   <div className="absolute inset-0 bg-gradient-to-t from-white/80 via-white/10 to-transparent" />
                 </div>
               </div>
@@ -117,12 +120,14 @@ export default function TransformParking() {
                 <div className="absolute inset-y-0 right-0 w-[45%] bg-[#1AB2FF]/25 [clip-path:polygon(26%_0,100%_0,100%_100%,26%_100%,0_50%)]" />
                 {/* Photo panel with a left-pointing chevron edge */}
                 <div className="absolute inset-y-0 right-0 w-[42%] overflow-hidden [clip-path:polygon(26%_0,100%_0,100%_100%,26%_100%,0_50%)]">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={transformData.parkingPartnerBgImage}
-                    alt=""
-                    className="h-full w-full object-cover"
-                  />
+                  <MobilePicture mobileSrc={transformData.parkingPartnerMobileBgImage}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={transformData.parkingPartnerBgImage}
+                      alt=""
+                      className="h-full w-full object-cover object-center"
+                    />
+                  </MobilePicture>
                   {/* Soft fade toward the text side so copy stays readable */}
                   <div className="absolute inset-0 bg-gradient-to-r from-white/90 via-white/35 to-transparent" />
                 </div>
@@ -203,8 +208,10 @@ export default function TransformParking() {
               <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 -z-10 aspect-[16/9] sm:hidden">
                 <div className="absolute inset-0 bg-[#1AB2FF]/35 [clip-path:polygon(0_0,100%_0,100%_78%,50%_100%,0_78%)]" />
                 <div className="absolute inset-0 overflow-hidden [clip-path:polygon(0_0,100%_0,100%_74%,50%_96%,0_74%)]">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={transformData.servicePartnerBgImage} alt="" className="h-full w-full object-cover" />
+                  <MobilePicture mobileSrc={transformData.servicePartnerMobileBgImage}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={transformData.servicePartnerBgImage} alt="" className="h-full w-full object-cover object-center" />
+                  </MobilePicture>
                   <div className="absolute inset-0 bg-[#0044AA]/30 mix-blend-multiply" />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#06111f]/90 via-[#06111f]/20 to-transparent" />
                 </div>
@@ -215,12 +222,14 @@ export default function TransformParking() {
                 <div className="absolute inset-y-0 right-0 w-[45%] bg-[#1AB2FF]/35 [clip-path:polygon(26%_0,100%_0,100%_100%,26%_100%,0_50%)]" />
                 {/* Photo panel with a left-pointing chevron edge */}
                 <div className="absolute inset-y-0 right-0 w-[42%] overflow-hidden [clip-path:polygon(26%_0,100%_0,100%_100%,26%_100%,0_50%)]">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={transformData.servicePartnerBgImage}
-                    alt=""
-                    className="h-full w-full object-cover"
-                  />
+                  <MobilePicture mobileSrc={transformData.servicePartnerMobileBgImage}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={transformData.servicePartnerBgImage}
+                      alt=""
+                      className="h-full w-full object-cover object-center"
+                    />
+                  </MobilePicture>
                   {/* Blue tint + fade toward the text side (matches the reference) */}
                   <div className="absolute inset-0 bg-[#0044AA]/30 mix-blend-multiply" />
                   <div className="absolute inset-0 bg-gradient-to-r from-[#06111f]/95 via-[#06111f]/40 to-transparent" />

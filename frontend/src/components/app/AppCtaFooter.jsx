@@ -5,6 +5,7 @@ import { ArrowRight, Download } from "lucide-react";
 import { fetchPage } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
 import RichText from "@/components/common/RichText";
+import MobilePicture from "@/components/common/MobilePicture";
 
 // App-page CTA footer band. CMS shape (page "app" → sections.ctaFooter):
 //   { heading, description, stores: [{ key, label, icon, href }], ar: { heading, description } }
@@ -76,8 +77,10 @@ export default function AppCtaFooter() {
             <div className="relative">
               {bannerImage ? (
                 <div className="relative aspect-[4/3] overflow-hidden rounded-[22px] shadow-[0_24px_56px_rgba(2,8,20,0.45)] ring-1 ring-white/15">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={bannerImage} alt="" aria-hidden className="h-full w-full object-cover object-center" />
+                  <MobilePicture mobileSrc={data?.mobileImage}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={bannerImage} alt="" aria-hidden className="h-full w-full object-cover object-center" />
+                  </MobilePicture>
                   <div className="absolute inset-0 bg-[linear-gradient(140deg,transparent_35%,rgba(5,10,19,0.45)_100%)]" />
                 </div>
               ) : (
