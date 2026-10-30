@@ -43,7 +43,7 @@ export default function BusinessCTA() {
         <div className="relative overflow-hidden rounded-[28px] bg-[#06111f]">
           <div className="absolute inset-0">
             <MobilePicture mobileSrc={cta.mobileImage}>
-              <Image src={cta.image || "/hf_20260327_064457_c75923ba-dc06-4c6e-9b63-fa181e94bcfa.png"} alt="" fill className="object-cover object-center opacity-40" aria-hidden />
+              <Image src={cta.image || "/hf_20260327_064457_c75923ba-dc06-4c6e-9b63-fa181e94bcfa.png"} alt="" fill className="object-cover object-center opacity-40 -scale-x-100" aria-hidden />
             </MobilePicture>
             <div className="absolute inset-0 bg-gradient-to-b from-[#06111f]/60 via-[#06111f]/40 to-[#06111f]/80" />
           </div>
