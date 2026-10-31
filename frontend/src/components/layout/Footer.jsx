@@ -227,7 +227,7 @@ export default function Footer() {
                     </Link>
                   ) : null}
                   {hasStoreLinks ? (
-                    <div className="flex w-[6.75rem] flex-col items-start gap-2 lg:items-end">
+                    <div className="flex w-[7.25rem] flex-col items-start gap-2 lg:items-end">
                       {/* Google Play + App Store are built like the Huawei badge
                           (real text + vector icon) instead of the old SVG files,
                           whose embedded bitmap text was tiny and blurry. */}
@@ -236,7 +236,7 @@ export default function Footer() {
                           href={playStoreUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex h-9 w-[6.75rem] items-center gap-1.5 rounded-2xl border-2 border-black bg-black px-2.5"
+                          className="inline-flex h-9 w-[7.25rem] items-center gap-1.5 rounded-2xl border-2 border-black bg-black px-2.5"
                           aria-label="Get it on Google Play"
                         >
                           <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" aria-hidden>
@@ -245,8 +245,8 @@ export default function Footer() {
                             <path fill="#FF3A44" d="M17 15.4 13.6 12 3.6 22.2c.4.2.9.1 1.5-.2L17 15.4z" />
                             <path fill="#00F076" d="M17 8.6 5.1 2c-.6-.3-1.1-.4-1.5-.2L13.6 12 17 8.6z" />
                           </svg>
-                          <span className="flex flex-col leading-none text-white">
-                            <span className="text-[7px] font-medium opacity-90">
+                          <span className="flex min-w-0 flex-col items-start text-start leading-none text-white">
+                            <span className="whitespace-nowrap text-[8px] font-medium opacity-90">
                               {language === "ar" ? "احصل عليه من" : "Get it on"}
                             </span>
                             <span className="mt-0.5 whitespace-nowrap text-[13px] font-semibold">
@@ -260,14 +260,14 @@ export default function Footer() {
                           href={appStoreUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex h-9 w-[6.75rem] items-center gap-1.5 rounded-2xl border-2 border-black bg-black px-2.5"
+                          className="inline-flex h-9 w-[7.25rem] items-center gap-1.5 rounded-2xl border-2 border-black bg-black px-2.5"
                           aria-label="Download on the App Store"
                         >
                           <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" fill="#ffffff" aria-hidden>
                             <path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701" />
                           </svg>
-                          <span className="flex flex-col leading-none text-white">
-                            <span className="text-[7px] font-medium opacity-90">
+                          <span className="flex min-w-0 flex-col items-start text-start leading-none text-white">
+                            <span className="whitespace-nowrap text-[8px] font-medium opacity-90">
                               {language === "ar" ? "حمّله من" : "Download on the"}
                             </span>
                             <span className="mt-0.5 whitespace-nowrap text-[13px] font-semibold">
@@ -281,7 +281,7 @@ export default function Footer() {
                           href={appGalleryUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex h-9 w-[6.75rem] items-center gap-1.5 rounded-2xl border-2 border-black bg-black px-2.5"
+                          className="inline-flex h-9 w-[7.25rem] items-center gap-1.5 rounded-2xl border-2 border-black bg-black px-2.5"
                           aria-label="Download on Huawei AppGallery"
                         >
                           <img
@@ -289,8 +289,8 @@ export default function Footer() {
                             alt="Huawei AppGallery"
                             className="h-4 w-4 rounded-sm object-cover"
                           />
-                          <span className="flex flex-col leading-none text-white">
-                            <span className="text-[7px] font-medium opacity-90">
+                          <span className="flex min-w-0 flex-col items-start text-start leading-none text-white">
+                            <span className="whitespace-nowrap text-[8px] font-medium opacity-90">
                               {language === "ar" ? "متوفر على" : "Get it on"}
                             </span>
                             <span className="mt-0.5 text-[13px] font-semibold">
