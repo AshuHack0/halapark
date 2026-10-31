@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { fetchHomeSection } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
 import RichText from "@/components/common/RichText";
-import { MoveHorizontal } from "lucide-react";
 
 const partnerLogos = [
   "Parkin Dubai",
@@ -260,30 +259,6 @@ export default function GlobalMobilityNetworkSection() {
   const isBlank = (v) => !String(v ?? "").trim();
   const hasMap = nodes.length > 0;
 
-  // Below lg the map is wider than the screen and swipeable. It opens at the
-  // right edge and, the first time it scrolls into view, glides right-to-left
-  // until the UAE lens (x 64%) is centred; after that the visitor swipes freely.
-  const mapScrollRef = useRef(null);
-  useEffect(() => {
-    const el = mapScrollRef.current;
-    if (!el || !hasMap || window.matchMedia("(min-width: 1024px)").matches) return undefined;
-    const uaeCentre = () => el.scrollWidth * 0.64 - el.clientWidth / 2;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      el.scrollLeft = uaeCentre();
-      return undefined;
-    }
-    el.scrollLeft = el.scrollWidth - el.clientWidth;
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting) return;
-        io.disconnect();
-        el.scrollTo({ left: uaeCentre(), behavior: "smooth" });
-      },
-      { threshold: 0.5 },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, [hasMap]);
   const hasPanelText =
     !isBlank(content.panelTitle) ||
     !isBlank(content.panelTitleAccent) ||
@@ -350,16 +325,11 @@ export default function GlobalMobilityNetworkSection() {
                 {hasMap ? (
                   /* Below lg the map keeps the desktop proportions (12:5), so the
                      node/link % positions still land on the right countries.
-                     It's drawn wider than the screen inside a horizontal
-                     scroller (see mapScrollRef) so the whole map is reachable. */
+                     It's shown at full screen width so every country is visible
+                     without scrolling. */
                   <div className="relative order-2 mt-4 w-full lg:absolute lg:inset-0 lg:order-none lg:mt-0">
-                  <div
-                    ref={mapScrollRef}
-                    dir="ltr"
-                    data-lenis-prevent-touch
-                    className="relative w-full overflow-x-auto overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:absolute lg:inset-0 lg:overflow-hidden"
-                  >
-                  <div className="relative aspect-[12/5] w-[210%] sm:w-[150%] lg:absolute lg:inset-0 lg:aspect-auto lg:w-full">
+                  <div dir="ltr" className="relative w-full lg:absolute lg:inset-0">
+                  <div className="relative aspect-[12/5] w-full lg:absolute lg:inset-0 lg:aspect-auto">
                     <img
                       src="/map_6824dc8ea581a9958227b98c_map.svg"
                       alt="Global mobility map"
@@ -439,12 +409,6 @@ export default function GlobalMobilityNetworkSection() {
                       </div>
                     </div>
                   </div>
-                  </div>
-                  {/* Swipe hint — phones/tablets only, where the map scrolls */}
-                  <div aria-hidden className="mt-2 flex justify-center lg:hidden">
-                    <span className="gm-swipe-hint inline-flex">
-                      <MoveHorizontal className="h-5 w-5 text-[#0088FF]/60" />
-                    </span>
                   </div>
                   </div>
                 ) : null}
@@ -551,17 +515,6 @@ export default function GlobalMobilityNetworkSection() {
           filter: drop-shadow(0 0 5px rgba(0, 136, 255, 0.3));
         }
 
-        .gm-swipe-hint {
-          animation: gmSwipeHint 1.8s ease-in-out infinite;
-        }
-        @keyframes gmSwipeHint {
-          0%, 100% { transform: translateX(-6px); }
-          50% { transform: translateX(6px); }
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .gm-swipe-hint { animation: none; }
-        }
-
         .gm-city-lens {
           width: 124px;
           height: 124px;
@@ -614,6 +567,21 @@ export default function GlobalMobilityNetworkSection() {
 
           .gm-city-label {
             font-size: 8px;
+          }
+        }
+
+        /* Phones: the whole map fits the screen width, so the lens shrinks
+           to stay in proportion with it. */
+        @media (max-width: 639px) {
+          .gm-city-lens {
+            width: 56px;
+            height: 56px;
+            padding-left: 22px;
+            gap: 2px;
+          }
+
+          .gm-city-label {
+            font-size: 5.5px;
           }
         }
 
