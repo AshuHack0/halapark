@@ -157,10 +157,10 @@ export default function WhyChooseHalaPark() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.1 }}
                 transition={{ duration: 0.5, ease, delay: i * 0.08 }}
-                // Exact per-breakpoint widths (1 card on phones, 2 from tablet
+                // Exact per-breakpoint widths (1 card on phones and tablets, 2 from desktop
                 // up) + snap alignment, so swipes/arrows always settle on whole
                 // cards — nothing renders half-cropped at the edges.
-                className="flex-shrink-0 snap-center w-full md:w-[calc(50%-10px)] rounded-[24px] overflow-hidden bg-white shadow-[0_4px_24px_rgba(6,6,22,0.06)] hover:shadow-[0_16px_40px_rgba(0,136,255,0.10)] transition"
+                className="flex-shrink-0 snap-center w-full lg:w-[calc(50%-10px)] rounded-[24px] overflow-hidden bg-white shadow-[0_4px_24px_rgba(6,6,22,0.06)] hover:shadow-[0_16px_40px_rgba(0,136,255,0.10)] transition"
               >
                 {/* Card Layout: Image Left + Text Right. min-height (not fixed
                     height) so long descriptions grow the card instead of being
