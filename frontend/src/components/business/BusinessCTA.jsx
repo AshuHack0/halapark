@@ -40,15 +40,11 @@ export default function BusinessCTA() {
   return (
     <section className="bg-white py-4 sm:py-5 lg:py-6">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="relative overflow-hidden rounded-[28px] bg-[#06111f]">
-          <div className="absolute inset-0">
-            <MobilePicture mobileSrc={cta.mobileImage}>
-              <Image src={cta.image || "/hf_20260327_064457_c75923ba-dc06-4c6e-9b63-fa181e94bcfa.png"} alt="" fill className="object-cover object-center opacity-40 -scale-x-100" aria-hidden />
-            </MobilePicture>
-            <div className="absolute inset-0 bg-gradient-to-b from-[#06111f]/60 via-[#06111f]/40 to-[#06111f]/80" />
-          </div>
-
-          {/* Glowing network SVG overlay */}
+        {/* Text + button on the start side, photo on the end side. The grid
+            follows the page direction, so Arabic (RTL) mirrors it: text on
+            the right, photo on the left. Stacked (text, then photo) on phones. */}
+        <div className="relative grid overflow-hidden rounded-[28px] bg-[#06111f] md:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
+          {/* Glowing network SVG behind the text */}
           <svg className="pointer-events-none absolute inset-0 h-full w-full opacity-20" aria-hidden preserveAspectRatio="xMidYMid slice" viewBox="0 0 800 400">
             <defs>
               <radialGradient id="businessNodeGlow" cx="50%" cy="50%" r="50%">
@@ -74,10 +70,10 @@ export default function BusinessCTA() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.55, ease }}
-            className="relative z-10 flex flex-col items-start gap-4 px-6 py-8 sm:flex-row sm:items-center sm:justify-between sm:px-10 sm:py-10"
+            className="relative z-10 flex flex-col items-start justify-center gap-5 px-6 py-8 sm:px-10 sm:py-10"
           >
-            <div className="max-w-[580px]">
-              <h2 className="text-[1.35rem] font-semibold leading-snug tracking-[-0.03em] text-white sm:text-[1.6rem] [overflow-wrap:anywhere]">
+            <div>
+              <h2 className="text-[1.35rem] font-semibold leading-snug tracking-[-0.03em] text-white sm:text-[1.6rem] rtl:tracking-normal [overflow-wrap:anywhere]">
                 {t(cta, "heading", language)}
                 {t(cta, "headingAccent", language) ? (
                   <>
@@ -97,19 +93,28 @@ export default function BusinessCTA() {
               <button
                 type="button"
                 onClick={() => setConsultOpen(true)}
-                className="shrink-0 inline-flex items-center gap-2 rounded-full bg-[#0088FF] px-6 py-2.5 text-sm font-semibold text-white shadow-[0_4px_20px_rgba(0,136,255,0.4)] transition hover:brightness-110"
+                className="inline-flex shrink-0 items-center gap-2 rounded-full bg-[#0088FF] px-6 py-2.5 text-sm font-semibold text-white shadow-[0_4px_20px_rgba(0,136,255,0.4)] transition hover:brightness-110"
               >
                 {t(cta, "ctaLabel", language)} <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
               </button>
             ) : (
               <Link
                 href={cta.ctaLink}
-                className="shrink-0 inline-flex items-center gap-2 rounded-full bg-[#0088FF] px-6 py-2.5 text-sm font-semibold text-white shadow-[0_4px_20px_rgba(0,136,255,0.4)] transition hover:brightness-110"
+                className="inline-flex shrink-0 items-center gap-2 rounded-full bg-[#0088FF] px-6 py-2.5 text-sm font-semibold text-white shadow-[0_4px_20px_rgba(0,136,255,0.4)] transition hover:brightness-110"
               >
                 {t(cta, "ctaLabel", language)} <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
               </Link>
             )}
           </motion.div>
+
+          {/* Photo only — no text over it. */}
+          <div className="relative z-10 p-3 pt-0 md:p-3 md:ps-0">
+            <div className="relative aspect-[16/10] overflow-hidden rounded-[20px] md:aspect-auto md:h-full md:min-h-[220px]">
+              <MobilePicture mobileSrc={cta.mobileImage}>
+                <Image src={cta.image || "/hf_20260327_064457_c75923ba-dc06-4c6e-9b63-fa181e94bcfa.png"} alt="" fill sizes="(min-width: 768px) 40vw, 100vw" className="object-cover object-center" aria-hidden />
+              </MobilePicture>
+            </div>
+          </div>
         </div>
       </div>
 
