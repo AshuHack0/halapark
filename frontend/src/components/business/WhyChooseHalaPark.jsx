@@ -169,7 +169,7 @@ export default function WhyChooseHalaPark() {
                 <div className="flex flex-col sm:flex-row sm:min-h-[20rem]">
                   {/* Left: uploaded image OR color gradient */}
                   <div
-                    className="relative flex h-44 w-full shrink-0 items-center justify-center overflow-hidden sm:h-auto sm:w-2/5"
+                    className="relative flex h-44 w-full shrink-0 items-center justify-center overflow-hidden sm:h-auto sm:w-1/2"
                     style={img ? undefined : { background: `linear-gradient(135deg, ${from}, ${to})` }}
                   >
                     {img ? (
@@ -198,7 +198,7 @@ export default function WhyChooseHalaPark() {
                   </div>
 
                   {/* Right: Text Content */}
-                  <div className="w-full sm:w-3/5 p-6 sm:p-8 flex flex-col justify-between">
+                  <div className="w-full sm:w-1/2 p-6 sm:p-8 flex flex-col justify-between">
                     <div>
                       <h3 className="text-xl font-semibold text-[#050A13] mb-3 [overflow-wrap:anywhere]">
                         {t(item, "title", language)}
