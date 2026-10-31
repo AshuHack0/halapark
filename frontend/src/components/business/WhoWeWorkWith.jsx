@@ -69,16 +69,36 @@ export default function WhoWeWorkWith() {
     return () => clearInterval(interval);
   }, [paused, partners.length]);
 
+  // Keep the active industry's tab in view. On phones only one tab fits, so
+  // without this the auto-advance changed the content below while the tab
+  // row kept showing a different industry. Scrolls the tab row only, never
+  // the page; the centre-to-centre delta works in LTR and RTL alike.
+  useEffect(() => {
+    const el = scrollRef.current;
+    const tab = el?.querySelectorAll("[data-tab]")[activeIndex];
+    if (!el || !tab || el.scrollWidth <= el.clientWidth + 10) return;
+    const t = tab.getBoundingClientRect();
+    const box = el.getBoundingClientRect();
+    el.scrollBy({
+      left: t.left + t.width / 2 - (box.left + box.width / 2),
+      behavior: reduced ? "auto" : "smooth",
+    });
+    const id = setTimeout(checkScroll, 350);
+    return () => clearTimeout(id);
+  }, [activeIndex, partners.length, reduced]);
+
+  // The arrows step to the previous/next industry (the tab row follows via
+  // the effect above), so the tab label and the content always match.
+  // They are physical: in RTL the start of the list is on the right.
   const scrollTabs = (dir) => {
+    if (partners.length === 0) return;
+    const isRtl = scrollRef.current && getComputedStyle(scrollRef.current).direction === "rtl";
+    const step = (dir === "left") !== isRtl ? -1 : 1;
+    const next = Math.min(partners.length - 1, Math.max(0, activeIndex + step));
+    if (next === activeIndex) return;
     setPaused(true);
-    if (scrollRef.current) {
-      const tabWidth = scrollRef.current.querySelector('[data-tab]')?.offsetWidth || 150;
-      scrollRef.current.scrollBy({
-        left: dir === 'left' ? -tabWidth : tabWidth,
-        behavior: 'smooth',
-      });
-      setTimeout(checkScroll, 300);
-    }
+    setDirection(step);
+    setActiveIndex(next);
   };
 
   const handleTabClick = (index) => {
