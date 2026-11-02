@@ -40,10 +40,24 @@ export default function BusinessCTA() {
   return (
     <section className="bg-white py-4 sm:py-5 lg:py-6">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Text + button on the start side, photo on the end side. The grid
-            follows the page direction, so Arabic (RTL) mirrors it: text on
-            the right, photo on the left. Stacked (text, then photo) on phones. */}
-        <div className="relative grid overflow-hidden rounded-[28px] bg-[#06111f] md:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
+        {/* Photo is a background layer anchored to the physical RIGHT of the
+            card in both English and Arabic (right-0, not end-0). Its left edge
+            fades into the navy. Text uses logical spacing, so it sits on the
+            left in LTR and moves to the right (over the photo) in RTL, where an
+            extra RTL-only overlay keeps it readable. */}
+        <div className="relative overflow-hidden rounded-[28px] bg-[#06111f]">
+          <div className="pointer-events-none absolute right-0 top-0 h-full w-full opacity-60 md:w-[58%] md:opacity-100 md:rtl:opacity-70" aria-hidden>
+            <MobilePicture mobileSrc={cta.mobileImage}>
+              <Image src={cta.image || "/hf_20260327_064457_c75923ba-dc06-4c6e-9b63-fa181e94bcfa.png"} alt="" fill sizes="(min-width: 768px) 58vw, 100vw" className="object-cover object-right" aria-hidden />
+            </MobilePicture>
+            {/* Soft fade: the photo's left edge melts into the card navy */}
+            <div className="absolute inset-0 hidden bg-gradient-to-r from-[#06111f] via-[#06111f]/35 via-30% to-transparent to-60% md:block" />
+          </div>
+          {/* Phones: photo sits behind the text, so darken the whole card */}
+          <div className="pointer-events-none absolute inset-0 bg-[#06111f]/70 md:hidden" aria-hidden />
+          {/* RTL only: the Arabic text sits over the photo, so darken the right side */}
+          <div className="pointer-events-none absolute inset-0 hidden bg-gradient-to-l from-[#06111f]/90 via-[#06111f]/75 via-45% to-transparent to-75% md:rtl:block" aria-hidden />
+
           {/* Glowing network SVG behind the text */}
           <svg className="pointer-events-none absolute inset-0 h-full w-full opacity-20" aria-hidden preserveAspectRatio="xMidYMid slice" viewBox="0 0 800 400">
             <defs>
@@ -70,7 +84,7 @@ export default function BusinessCTA() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.55, ease }}
-            className="relative z-10 flex flex-col items-start justify-center gap-5 px-6 py-8 sm:px-10 sm:py-10"
+            className="relative z-10 flex flex-col items-start justify-center gap-5 px-6 py-10 text-start sm:px-10 sm:py-12 md:max-w-[58%]"
           >
             <div>
               <h2 className="text-[1.35rem] font-semibold leading-snug tracking-[-0.03em] text-white sm:text-[1.6rem] rtl:tracking-normal [overflow-wrap:anywhere]">
@@ -106,16 +120,6 @@ export default function BusinessCTA() {
               </Link>
             )}
           </motion.div>
-
-          {/* Photo only — no text over it. Flush to the card edges (no padding),
-              full card height; the card's rounded corners clip it. */}
-          <div className="relative z-10">
-            <div className="relative aspect-[16/10] overflow-hidden md:aspect-auto md:h-full md:min-h-[220px]">
-              <MobilePicture mobileSrc={cta.mobileImage}>
-                <Image src={cta.image || "/hf_20260327_064457_c75923ba-dc06-4c6e-9b63-fa181e94bcfa.png"} alt="" fill sizes="(min-width: 768px) 40vw, 100vw" className="object-cover object-center" aria-hidden />
-              </MobilePicture>
-            </div>
-          </div>
         </div>
       </div>
 
