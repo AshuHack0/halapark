@@ -40,23 +40,20 @@ export default function BusinessCTA() {
   return (
     <section className="bg-white py-4 sm:py-5 lg:py-6">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Photo is a background layer anchored to the physical RIGHT of the
-            card in both English and Arabic (right-0, not end-0). Its left edge
-            fades into the navy. Text uses logical spacing, so it sits on the
-            left in LTR and moves to the right (over the photo) in RTL, where an
-            extra RTL-only overlay keeps it readable. */}
+        {/* Photo is a full-height background layer on the end side of the
+            card: right in English, left in Arabic (end-0), never mirrored. Its
+            edge facing the text fades into the navy. Text sits on the start
+            side, so the two never overlap on md+. */}
         <div className="relative overflow-hidden rounded-[28px] bg-[#06111f]">
-          <div className="pointer-events-none absolute right-0 top-0 h-full w-full opacity-60 md:w-[58%] md:opacity-100 md:rtl:opacity-70" aria-hidden>
+          <div className="pointer-events-none absolute inset-y-0 end-0 h-full w-full opacity-60 md:w-[58%] md:opacity-100" aria-hidden>
             <MobilePicture mobileSrc={cta.mobileImage}>
-              <Image src={cta.image || "/hf_20260327_064457_c75923ba-dc06-4c6e-9b63-fa181e94bcfa.png"} alt="" fill sizes="(min-width: 768px) 58vw, 100vw" className="object-cover object-right" aria-hidden />
+              <Image src={cta.image || "/hf_20260327_064457_c75923ba-dc06-4c6e-9b63-fa181e94bcfa.png"} alt="" fill sizes="(min-width: 768px) 58vw, 100vw" className="object-cover object-right rtl:object-left" aria-hidden />
             </MobilePicture>
-            {/* Soft fade: the photo's left edge melts into the card navy */}
-            <div className="absolute inset-0 hidden bg-gradient-to-r from-[#06111f] via-[#06111f]/35 via-30% to-transparent to-60% md:block" />
+            {/* Soft fade on the photo edge facing the text */}
+            <div className="absolute inset-0 hidden bg-gradient-to-r from-[#06111f] via-[#06111f]/35 via-30% to-transparent to-60% rtl:bg-gradient-to-l md:block" />
           </div>
           {/* Phones: photo sits behind the text, so darken the whole card */}
           <div className="pointer-events-none absolute inset-0 bg-[#06111f]/70 md:hidden" aria-hidden />
-          {/* RTL only: the Arabic text sits over the photo, so darken the right side */}
-          <div className="pointer-events-none absolute inset-0 hidden bg-gradient-to-l from-[#06111f]/90 via-[#06111f]/75 via-45% to-transparent to-75% md:rtl:block" aria-hidden />
 
           {/* Glowing network SVG behind the text */}
           <svg className="pointer-events-none absolute inset-0 h-full w-full opacity-20" aria-hidden preserveAspectRatio="xMidYMid slice" viewBox="0 0 800 400">
