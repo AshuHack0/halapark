@@ -45,12 +45,12 @@ export default function BusinessCTA() {
             wrapper is mirrored, so the photo faces the text and its fade stays
             on the edge next to the text. Only the wrapper flips, never the text. */}
         <div className="relative overflow-hidden rounded-[28px] bg-[#06111f]">
-          <div className="pointer-events-none absolute inset-y-0 end-0 h-full w-full opacity-60 rtl:-scale-x-100 md:w-[58%] md:opacity-100" aria-hidden>
+          <div className="pointer-events-none absolute inset-y-0 end-0 h-full w-full overflow-hidden opacity-60 rtl:-scale-x-100 md:w-[58%] md:opacity-100" aria-hidden>
             <MobilePicture mobileSrc={cta.mobileImage}>
-              <Image src={cta.image || "/hf_20260327_064457_c75923ba-dc06-4c6e-9b63-fa181e94bcfa.png"} alt="" fill sizes="(min-width: 768px) 58vw, 100vw" className="object-cover object-right" aria-hidden />
+              <Image src={cta.image || "/hf_20260327_064457_c75923ba-dc06-4c6e-9b63-fa181e94bcfa.png"} alt="" fill sizes="(min-width: 768px) 58vw, 100vw" className="origin-[85%_50%] scale-[1.7] object-cover object-[85%_50%]" aria-hidden />
             </MobilePicture>
             {/* Soft fade on the photo edge facing the text (mirrored with the wrapper in RTL) */}
-            <div className="absolute inset-0 hidden bg-gradient-to-r from-[#06111f] via-[#06111f]/35 via-30% to-transparent to-60% md:block" />
+            <div className="absolute -inset-px hidden bg-gradient-to-r from-[#06111f] via-[#06111f]/35 via-30% to-transparent to-60% md:block" />
           </div>
           {/* Phones: photo sits behind the text, so darken the whole card */}
           <div className="pointer-events-none absolute inset-0 bg-[#06111f]/70 md:hidden" aria-hidden />
