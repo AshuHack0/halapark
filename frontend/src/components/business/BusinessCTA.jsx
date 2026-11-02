@@ -107,9 +107,10 @@ export default function BusinessCTA() {
             )}
           </motion.div>
 
-          {/* Photo only — no text over it. */}
-          <div className="relative z-10 p-3 pt-0 md:p-3 md:ps-0">
-            <div className="relative aspect-[16/10] overflow-hidden rounded-[20px] md:aspect-auto md:h-full md:min-h-[220px]">
+          {/* Photo only — no text over it. Flush to the card edges (no padding),
+              full card height; the card's rounded corners clip it. */}
+          <div className="relative z-10">
+            <div className="relative aspect-[16/10] overflow-hidden md:aspect-auto md:h-full md:min-h-[220px]">
               <MobilePicture mobileSrc={cta.mobileImage}>
                 <Image src={cta.image || "/hf_20260327_064457_c75923ba-dc06-4c6e-9b63-fa181e94bcfa.png"} alt="" fill sizes="(min-width: 768px) 40vw, 100vw" className="object-cover object-center" aria-hidden />
               </MobilePicture>
