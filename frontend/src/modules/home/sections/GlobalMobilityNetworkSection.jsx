@@ -325,11 +325,13 @@ export default function GlobalMobilityNetworkSection() {
                 {hasMap ? (
                   /* Below lg the map keeps the desktop proportions (12:5), so the
                      node/link % positions still land on the right countries.
-                     It's shown at full screen width so every country is visible
-                     without scrolling. */
+                     Tablets show it at full width. Phones (<640px) show a 3:2
+                     close-up: the map is drawn 1.6× wide and shifted to frame
+                     the pins (USA on the left to India on the right), cropping
+                     only the empty Pacific edges, so every pin stays visible. */
                   <div className="relative order-2 mt-4 w-full lg:absolute lg:inset-0 lg:order-none lg:mt-0">
-                  <div dir="ltr" className="relative w-full lg:absolute lg:inset-0">
-                  <div className="relative aspect-[12/5] w-full lg:absolute lg:inset-0 lg:aspect-auto">
+                  <div dir="ltr" className="relative w-full max-sm:aspect-[3/2] max-sm:overflow-hidden lg:absolute lg:inset-0">
+                  <div className="relative aspect-[12/5] w-full max-sm:absolute max-sm:left-[-28%] max-sm:top-0 max-sm:w-[160%] lg:absolute lg:inset-0 lg:aspect-auto">
                     <img
                       src="/map_6824dc8ea581a9958227b98c_map.svg"
                       alt="Global mobility map"
@@ -570,18 +572,23 @@ export default function GlobalMobilityNetworkSection() {
           }
         }
 
-        /* Phones: the whole map fits the screen width, so the lens shrinks
-           to stay in proportion with it. */
+        /* Phones: the map is a 1.6× close-up framing all pins, so the lens,
+           labels and dots are sized to stay readable. */
         @media (max-width: 639px) {
           .gm-city-lens {
-            width: 56px;
-            height: 56px;
-            padding-left: 22px;
+            width: 76px;
+            height: 76px;
+            padding-left: 30px;
             gap: 2px;
           }
 
           .gm-city-label {
-            font-size: 5.5px;
+            font-size: 7.5px;
+          }
+
+          .gm-map-dot {
+            width: 8px;
+            height: 8px;
           }
         }
 
