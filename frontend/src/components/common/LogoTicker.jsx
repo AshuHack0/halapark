@@ -60,11 +60,12 @@ export default function LogoTicker({ heading, headingEnd, logos = [], placeholde
                 ? items.map((logo, index) => (
                     <div
                       key={`${logo.image}-${index}`}
-                      className="flex h-[80px] w-[180px] shrink-0 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-white p-2 sm:h-[96px] sm:w-[210px]"
+                      className="flex h-[80px] w-[180px] shrink-0 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-white sm:h-[96px] sm:w-[210px]"
                     >
                       {/* Every card is the SAME fixed size; the logo fills the
-                          whole tile and object-contain scales it to fit without
-                          distorting or cropping. */}
+                          whole tile edge to edge (no padding). object-contain
+                          scales it as large as the tile allows without
+                          cropping brand marks. */}
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={logo.image}
