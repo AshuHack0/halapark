@@ -330,7 +330,9 @@ export default function WhyHalapark() {
           style={{ height: `${visibleWhyItems.length * DESKTOP_STEP_SCROLL_VH}svh` }}
         >
           <div className="sticky top-[70px] flex h-[calc(100svh-70px)] items-center">
-            <div className="grid w-full items-center gap-14 xl:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] xl:gap-[4.5rem]">
+            {/* Two columns from lg (tablets in landscape too) so the pinned block
+                never stacks taller than the screen and spills over the intro. */}
+            <div className="grid w-full items-center gap-10 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] xl:gap-[4.5rem]">
               <div className="max-w-[33rem]">
                 {/* <SectionIntro /> */}
 
@@ -354,7 +356,7 @@ export default function WhyHalapark() {
                         <motion.div
                           key={item.id ?? index}
                           transition={{ duration: 0.35, ease: "easeOut" }}
-                          className="relative min-h-[5.4rem] ps-10 pe-3 py-3"
+                          className="relative min-h-[5.4rem] ps-10 pe-3 py-3 [@media(max-height:820px)]:min-h-0 [@media(max-height:820px)]:py-2"
                         >
                           <span
                             className="absolute start-0 top-5 inline-flex h-[15px] w-[15px] rounded-full border-2 bg-white"
@@ -406,8 +408,8 @@ export default function WhyHalapark() {
                                 isActive
                                   ? "text-slate-950"
                                   : isComplete
-                                    ? "text-slate-600"
-                                    : "text-slate-400"
+                                    ? "text-slate-600 [@media(max-height:820px)]:hidden"
+                                    : "text-slate-400 [@media(max-height:820px)]:hidden"
                               }`}
                             >
                               {t(item, "subtitle", language) || t(item, "copy", language)}
@@ -417,7 +419,7 @@ export default function WhyHalapark() {
                               className={`mt-3 inline-flex items-center text-sm font-semibold transition-all duration-200 ${
                                 isActive
                                   ? "translate-y-0 opacity-100 text-slate-400 hover:text-[#0088FF]"
-                                  : "pointer-events-none -translate-y-1 opacity-0"
+                                  : "pointer-events-none -translate-y-1 opacity-0 [@media(max-height:820px)]:hidden"
                               }`}
                             >
                               {ui("learnMore", language)}
@@ -432,7 +434,9 @@ export default function WhyHalapark() {
               </div>
 
               <div className="relative">
-                <div className="relative mx-auto aspect-[0.95] w-full max-w-[39rem] overflow-hidden rounded-[24px]  shadow-[0_36px_90px_rgba(15,23,42,0.18)]">
+                {/* Width is capped by the screen height too, so on short screens
+                    (tablet landscape) the image still fits inside the pinned area. */}
+                <div className="relative mx-auto aspect-[0.95] w-[min(100%,calc((100svh-120px)*0.95))] max-w-[39rem] overflow-hidden rounded-[24px]  shadow-[0_36px_90px_rgba(15,23,42,0.18)]">
                   <div className="pointer-events-none absolute inset-x-[12%] top-8 h-32 rounded-full bg-[#0088FF]/18 blur-3xl" />
 
                   {visibleWhyItems.map((item, index) => {
