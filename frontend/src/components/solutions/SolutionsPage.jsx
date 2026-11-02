@@ -1965,7 +1965,7 @@ function NewFinalCTA() {
               Rounded right across the top and bottom-right, square where it
               meets the copy, with an offset blue outline echoing the shape. */}
           {image ? (
-            <div aria-hidden className="pointer-events-none absolute inset-y-6 end-6 hidden w-[44%] md:block">
+            <div aria-hidden className="pointer-events-none absolute inset-y-6 end-6 hidden w-[44%] lg:block">
               <div className="absolute inset-0 translate-x-3 translate-y-3 rounded-[180px_28px_180px_28px] border border-[#1AB2FF]/35 rtl:-translate-x-3 rtl:rounded-[28px_180px_28px_180px]" />
               <div className="absolute inset-0 overflow-hidden rounded-[180px_28px_180px_28px] rtl:rounded-[28px_180px_28px_180px]">
                 <MobilePicture mobileSrc={cta.mobileImage}>
@@ -2002,7 +2002,7 @@ function NewFinalCTA() {
 
           <motion.div dir={language === "ar" ? "rtl" : "ltr"} initial={reduced ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.65, ease }} className={`relative z-10 flex flex-col px-6 py-12 sm:px-10 sm:py-14 lg:py-20 ${
               image
-                ? "items-center pb-6 text-center md:max-w-[54%] md:items-start md:pb-14 md:pe-4 md:text-start lg:ps-14 lg:pb-20"
+                ? "items-center pb-6 text-center lg:max-w-[54%] lg:items-start lg:pe-4 lg:ps-14 lg:pb-20 lg:text-start"
                 : "items-center text-center"
             }`}>
             {heading || gradient ? (
@@ -2029,7 +2029,7 @@ function NewFinalCTA() {
               />
             ) : null}
             {hasButtons ? (
-              <div className={`mt-8 flex flex-wrap items-center gap-3 ${image ? "justify-center md:justify-start" : "justify-center"}`}>
+              <div className={`mt-8 flex flex-wrap items-center gap-3 ${image ? "justify-center lg:justify-start" : "justify-center"}`}>
                 {primaryLabel ? (
                   <Link href={primaryLink} className="inline-flex items-center gap-2 rounded-full bg-[#0088FF] px-8 py-3.5 text-sm font-semibold text-white shadow-[0_8px_28px_rgba(0,136,255,0.45)] transition hover:brightness-110">
                     {primaryLabel} <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
@@ -2045,11 +2045,11 @@ function NewFinalCTA() {
             ) : null}
           </motion.div>
 
-          {/* Phones/tablets: the same arch-shaped photo stacked under the copy
-              (the absolute panel above is desktop-only). */}
+          {/* Phones/tablets (below lg): the same arch-shaped photo stacked under
+              the copy, so it shows in full (the absolute panel above is lg+ only). */}
           {image ? (
-            <div aria-hidden className="relative z-10 px-6 pb-8 md:hidden">
-              <div className="relative mx-auto aspect-[4/3] w-full max-w-[420px]">
+            <div aria-hidden className="relative z-10 px-6 pb-8 sm:pb-10 lg:hidden">
+              <div className="relative mx-auto aspect-[4/3] w-full max-w-[420px] md:max-w-[560px]">
                 <div className="absolute inset-0 translate-x-2 translate-y-2 rounded-[110px_22px_110px_22px] border border-[#1AB2FF]/35 rtl:-translate-x-2 rtl:rounded-[22px_110px_22px_110px]" />
                 <div className="absolute inset-0 overflow-hidden rounded-[110px_22px_110px_22px] rtl:rounded-[22px_110px_22px_110px]">
                   <MobilePicture mobileSrc={cta.mobileImage}>
