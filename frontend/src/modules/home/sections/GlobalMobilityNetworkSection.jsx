@@ -291,19 +291,20 @@ export default function GlobalMobilityNetworkSection() {
         <div className="relative overflow-hidden rounded-[24px] border border-[#D8E7F8] bg-white shadow-[0_20px_56px_rgba(15,23,42,0.08)]">
           <div className="relative z-10 text-center">
             {/* Centered across the full width: heading on one line, the
-                gradient part always on its own second line. */}
-            <h2 className="mx-auto w-full pt-5 text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.08] tracking-[-0.06em] text-[#050A13] sm:pt-6 [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
+                gradient part always on its own second line. Phones get a
+                smaller heading so it doesn't wrap into four big lines. */}
+            <h2 className="mx-auto w-full px-4 pt-5 text-[clamp(2.65rem,4.5vw,4rem)] font-semibold leading-[1.08] tracking-[-0.06em] text-[#050A13] max-sm:pt-7 max-sm:text-[2.05rem] max-sm:tracking-[-0.04em] sm:pt-6 [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
               <span className="block">{heading}</span>
               {headingGradient ? (
-                <span className="mt-2 block bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-[clamp(1.75rem,3vw,2.6rem)] leading-[1.15] tracking-[-0.04em] text-transparent">
+                <span className="mt-2 block bg-[linear-gradient(120deg,#0078E0_10%,#1AB2FF_90%)] bg-clip-text text-[clamp(1.75rem,3vw,2.6rem)] leading-[1.15] tracking-[-0.04em] text-transparent max-sm:mt-1.5 max-sm:text-[1.3rem] max-sm:tracking-[-0.02em]">
                   {headingGradient}
                 </span>
               ) : null}
             </h2>
-            <p className="mx-auto mt-3 max-w-[650px] px-4 text-[0.88rem] leading-6 text-slate-800 sm:text-[0.94rem] text-bold [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
+            <p className="mx-auto mt-3 max-w-[650px] px-4 text-[0.88rem] leading-6 text-slate-800 max-sm:px-6 max-sm:font-medium sm:text-[0.94rem] text-bold [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
               {t(content, "subtitle", language)}
             </p>
-            <p className="mx-auto mt-2 max-w-[650px] px-4 text-[0.88rem] leading-6 text-slate-600 sm:text-[0.94rem] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
+            <p className="mx-auto mt-2 max-w-[650px] px-4 text-[0.88rem] leading-6 text-slate-600 max-sm:px-6 sm:text-[0.94rem] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
               <RichText text={t(content, "description", language)} />
             </p>
           </div>
@@ -415,8 +416,10 @@ export default function GlobalMobilityNetworkSection() {
                   </div>
                 ) : null}
                 {hasPanelText ? (
-                  <div className="relative order-1 z-20 w-full px-4 sm:px-6 lg:absolute lg:start-0 lg:top-[10%] lg:max-w-[390px]">
-                    <h3 className="text-[1.45rem] font-semibold leading-[1.18] tracking-[0.02em] text-[#071221] sm:text-[1.85rem] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
+                  <div className="relative order-1 z-20 w-full px-4 max-sm:mt-2 max-sm:border-t max-sm:border-[#E3EEFA] max-sm:pt-6 sm:px-6 lg:absolute lg:start-0 lg:top-[10%] lg:max-w-[390px]">
+                    {/* Phones: a divider separates the panel from the centered intro,
+                        and each capability sits in its own light card. */}
+                    <h3 className="text-[1.45rem] font-semibold max-sm:text-[1.3rem] leading-[1.18] tracking-[0.02em] text-[#071221] sm:text-[1.85rem] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
                       {t(content, "panelTitle", language)}
                       {t(content, "panelTitleAccent", language) ? (
                         <>
@@ -430,9 +433,9 @@ export default function GlobalMobilityNetworkSection() {
                     </span>
 
                     {caps.length > 0 ? (
-                      <ul className="mt-3 space-y-2.5">
+                      <ul className="mt-3 space-y-2.5 max-sm:mt-4 max-sm:space-y-2">
                         {caps.map((item, index) => (
-                          <li key={`cap-${index}`}>
+                          <li key={`cap-${index}`} className="max-sm:rounded-2xl max-sm:border max-sm:border-[#E3EEFA] max-sm:bg-[#F8FBFF] max-sm:p-3.5">
                             <div className="flex items-center gap-2.5">
                               {item.iconImage ? (
                                 // Custom-uploaded icons render at the same size as
@@ -450,7 +453,7 @@ export default function GlobalMobilityNetworkSection() {
                                 {t(item, "title", language)}
                               </p>
                             </div>
-                            <RichText text={t(item, "description", language)} className="mt-1 max-w-none text-[0.92rem] leading-relaxed text-slate-600 lg:max-w-[290px] block" />
+                            <RichText text={t(item, "description", language)} className="mt-1 max-w-none text-[0.92rem] leading-relaxed text-slate-600 max-sm:mt-1.5 max-sm:text-[0.86rem] lg:max-w-[290px] block" />
                           </li>
                         ))}
                       </ul>
