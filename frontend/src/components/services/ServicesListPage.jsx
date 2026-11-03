@@ -1839,10 +1839,11 @@ function LongTermCTA({ onGetQuote, cta }) {
   const image = (cta?.image || "").trim();
   const mobileImage = (cta?.mobileImage || "").trim();
   const eyebrow = (t(cta, "eyebrow", language) || "").trim();
-  // Small pills under the button. Each needs a label; an uploaded icon
-  // replaces the built-in mark.
+  // Small pills under the button. Each needs a label in the current
+  // language (blank Arabic hides the pill); an uploaded icon replaces the
+  // built-in mark.
   const chips = (Array.isArray(cta?.features) ? cta.features : []).filter(
-    (f) => f && ((f.label ?? "").trim()),
+    (f) => f && (t(f, "label", language) || "").trim(),
   );
 
   return (
@@ -1856,11 +1857,6 @@ function LongTermCTA({ onGetQuote, cta }) {
             <defs>
               <clipPath id={leafClipId} clipPathUnits="objectBoundingBox">
                 <path d="M0.16 0 C0.03 0.18 -0.03 0.42 0.01 0.62 C0.04 0.8 0.13 0.94 0.26 1 L1 1 L1 0 Z" />
-              </clipPath>
-              {/* Phones/tablets: the same sweep turned to run along the top
-                  edge, since the photo sits under the copy there. */}
-              <clipPath id={`${leafClipId}-top`} clipPathUnits="objectBoundingBox">
-                <path d="M0 0.3 C0.18 0.1 0.42 0.01 0.66 0.01 C0.8 0.01 0.92 0.04 1 0.09 L1 1 L0 1 Z" />
               </clipPath>
               {/* Two smooth waves for the blue band along the bottom-right */}
               <clipPath id={`${leafClipId}-w1`} clipPathUnits="objectBoundingBox">
@@ -1995,17 +1991,19 @@ function LongTermCTA({ onGetQuote, cta }) {
           </motion.div>
 
           {/* Phones/tablets: the photo stacked under the copy, edge to edge
-              along the bottom of the card, with the curve sweeping across its
-              top edge (blue rim just above it) and the same wave band (the
-              absolute panel above is desktop/lg+ only, so tablets stack too). */}
+              along the bottom of the card. Its top edge is a true circular arc
+              (radius = 80% of the width via cqw, so it stays a perfect circle
+              at every size) with an even 6px blue rim on a concentric circle,
+              plus the same wave band. The absolute panel above is desktop/lg+
+              only, so tablets stack too. */}
           {image ? (
             <div aria-hidden="true" className="relative mt-2 lg:hidden">
-              <div className="relative aspect-[4/3] w-full sm:aspect-[16/10] md:aspect-[16/9] rtl:-scale-x-100">
+              <div className="relative aspect-[4/3] w-full [container-type:inline-size] sm:aspect-[16/10] md:aspect-[16/9] rtl:-scale-x-100">
                 <div
-                  className="absolute inset-0 -translate-y-2 bg-[linear-gradient(100deg,#0A66FF_0%,#1AB2FF_60%,#0A66FF_100%)] opacity-90"
-                  style={{ clipPath: `url(#${leafClipId}-top)` }}
+                  className="absolute inset-0 bg-[linear-gradient(100deg,#0A66FF_0%,#1AB2FF_50%,#0A66FF_100%)] opacity-90"
+                  style={{ clipPath: "circle(calc(80cqw + 6px) at 50% calc(80cqw + 6px))" }}
                 />
-                <div className="absolute inset-0" style={{ clipPath: `url(#${leafClipId}-top)` }}>
+                <div className="absolute inset-0" style={{ clipPath: "circle(80cqw at 50% calc(80cqw + 6px))" }}>
                   <MobilePicture mobileSrc={mobileImage}>
                     <Image src={image} alt="" fill className="object-cover object-center rtl:-scale-x-100" sizes="100vw" />
                   </MobilePicture>
