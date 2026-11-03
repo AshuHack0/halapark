@@ -418,8 +418,9 @@ export default function GlobalMobilityNetworkSection() {
                 {hasPanelText ? (
                   <div className="relative order-1 z-20 w-full px-4 max-sm:mt-2 max-sm:border-t max-sm:border-[#E3EEFA] max-sm:pt-6 sm:px-6 lg:absolute lg:start-0 lg:top-[10%] lg:max-w-[390px]">
                     {/* Phones: a divider separates the panel from the centered intro,
-                        and each capability sits in its own light card. */}
-                    <h3 className="text-[1.45rem] font-semibold max-sm:text-[1.3rem] leading-[1.18] tracking-[0.02em] text-[#071221] sm:text-[1.85rem] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
+                        the panel title is centered too, and each capability
+                        sits in its own light card. */}
+                    <h3 className="text-[1.45rem] font-semibold max-sm:text-center max-sm:text-[1.3rem] leading-[1.18] tracking-[0.02em] text-[#071221] sm:text-[1.85rem] [overflow-wrap:anywhere]" dir={language === "ar" ? "rtl" : "ltr"}>
                       {t(content, "panelTitle", language)}
                       {t(content, "panelTitleAccent", language) ? (
                         <>
@@ -429,7 +430,7 @@ export default function GlobalMobilityNetworkSection() {
                       ) : null}
                     </h3>
                     <span dir={language === "ar" ? "rtl" : "ltr"} className="block">
-                      <RichText text={t(content, "panelBody", language)} className="mt-2 max-w-none text-sm leading-relaxed text-slate-600 lg:max-w-[300px] [overflow-wrap:anywhere] block" />
+                      <RichText text={t(content, "panelBody", language)} className="mt-2 max-w-none text-sm leading-relaxed text-slate-600 max-sm:text-center lg:max-w-[300px] [overflow-wrap:anywhere] block" />
                     </span>
 
                     {caps.length > 0 ? (
