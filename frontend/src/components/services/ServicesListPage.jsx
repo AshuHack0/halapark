@@ -1884,7 +1884,7 @@ function LongTermCTA({ onGetQuote, cta }) {
           {image ? (
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute inset-y-0 end-0 hidden w-[54%] md:block rtl:-scale-x-100"
+              className="pointer-events-none absolute inset-y-0 end-0 hidden w-[54%] lg:block rtl:-scale-x-100"
             >
               {/* Blue rim behind the photo */}
               <div
@@ -1925,7 +1925,7 @@ function LongTermCTA({ onGetQuote, cta }) {
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.6, ease }}
             className={`relative px-6 py-14 sm:px-10 sm:py-20 lg:py-24 lg:ps-16 ${
-              image ? "pb-6 text-center sm:pb-8 md:max-w-[47%] md:pb-20 md:pe-4 md:text-start lg:ps-16 lg:pb-24" : "mx-auto max-w-3xl text-center lg:px-16"
+              image ? "pb-6 text-center sm:pb-8 lg:max-w-[47%] lg:pe-4 lg:text-start lg:ps-16 lg:pb-24" : "mx-auto max-w-3xl text-center lg:px-16"
             }`}
           >
             {eyebrow ? (
@@ -1945,7 +1945,7 @@ function LongTermCTA({ onGetQuote, cta }) {
             {subtitle ? (
               <p
                 className={`mt-5 max-w-2xl text-sm leading-7 text-slate-300 sm:text-base [overflow-wrap:anywhere] ${
-                  image ? "mx-auto md:mx-0" : "mx-auto"
+                  image ? "mx-auto lg:mx-0" : "mx-auto"
                 }`}
               >
                 {subtitle}
@@ -1963,7 +1963,7 @@ function LongTermCTA({ onGetQuote, cta }) {
             ) : null}
 
             {chips.length > 0 ? (
-              <div className={`mt-8 flex flex-wrap gap-3 ${image ? "justify-center md:justify-start" : "justify-center"}`}>
+              <div className={`mt-8 flex flex-wrap gap-3 ${image ? "justify-center lg:justify-start" : "justify-center"}`}>
                 {chips.map((chip, i) => {
                   const Icon = LT_CHIP_ICONS[i % LT_CHIP_ICONS.length];
                   return (
@@ -1990,10 +1990,11 @@ function LongTermCTA({ onGetQuote, cta }) {
           </motion.div>
 
           {/* Phones/tablets: the leaf-cut photo stacked under the copy, with the
-              same rim and wave band (the absolute panel above is md+ only). */}
+              same rim and wave band (the absolute panel above is desktop/lg+
+              only, so tablets stack like phones). */}
           {image ? (
-            <div aria-hidden="true" className="relative px-6 pb-8 md:hidden">
-              <div className="relative mx-auto aspect-[4/3] w-full max-w-[440px] rtl:-scale-x-100">
+            <div aria-hidden="true" className="relative px-6 pb-8 sm:pb-10 lg:hidden">
+              <div className="relative mx-auto aspect-[4/3] w-full max-w-[440px] md:max-w-[560px] rtl:-scale-x-100">
                 <div
                   className="absolute inset-0 -translate-x-2 translate-y-1 bg-[linear-gradient(160deg,#1AB2FF_0%,#0A66FF_55%,#0B2E5E_100%)] opacity-90"
                   style={{ clipPath: `url(#${leafClipId})` }}
