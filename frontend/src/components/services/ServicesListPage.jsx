@@ -488,7 +488,7 @@ function QuoteModal({ isOpen, onClose, quoteForm, services }) {
     if (validationError) { setFormError(validationError); return; }
 
     if (!RECAPTCHA_SITE_KEY) {
-      setFormError("reCAPTCHA is not configured. Add your site key in src/config/recaptcha.site.js");
+      setFormError("reCAPTCHA is not configured. Set NEXT_PUBLIC_RECAPTCHA_SITE_KEY in the environment.");
       return;
     }
 
@@ -718,7 +718,7 @@ function QuoteModal({ isOpen, onClose, quoteForm, services }) {
                       />
                     ) : (
                       <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
-                        Add your site key in src/config/recaptcha.site.js to enable captcha.
+                        Set NEXT_PUBLIC_RECAPTCHA_SITE_KEY to enable captcha.
                       </p>
                     )}
                   </div>
