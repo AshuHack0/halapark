@@ -1,0 +1,12 @@
+/* FAQs page: stop gradient headline text clipping its last letter.
+   background-clip:text only paints inside the span's box; with tight tracking
+   the final glyph's tail overhangs that box and gets cut. Extend the box with
+   padding and cancel it with an equal negative margin so layout is unchanged. */
+.faqs-page .bg-clip-text {
+  padding-inline-end: 0.14em;
+  margin-inline-end: -0.14em;
+  padding-bottom: 0.1em;
+  margin-bottom: -0.1em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}

@@ -1,6 +1,7 @@
 import FAQHeroSection from "@/components/faqs/FAQHeroSection";
 import { FAQCategorySection, FAQBottomCTA } from "@/components/faqs";
 import { fetchPage } from "@/lib/cms";
+import "@/components/faqs/faqs-gradient-text.css";
 
 // CMS-driven page — render per request so admin edits show without a rebuild.
 export const dynamic = "force-dynamic";
@@ -17,7 +18,7 @@ export default async function FAQsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="faqs-page min-h-screen bg-white">
       <FAQHeroSection />
       <FAQCategorySection categories={Array.isArray(categories) ? categories : []} />
       <FAQBottomCTA />
