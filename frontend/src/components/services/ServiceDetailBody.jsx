@@ -224,7 +224,7 @@ export default function ServiceDetailBody({ detail, heroImage, heroMobileImage =
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
               {problemBody.length > 0 || problemImage ? (
-                <div className="rounded-[24px] border border-[rgba(239,68,68,0.18)] bg-white p-7 shadow-[0_4px_24px_rgba(6,6,22,0.05)] sm:p-9">
+                <div className="flex flex-col rounded-[24px] border border-[rgba(239,68,68,0.18)] bg-white p-7 shadow-[0_4px_24px_rgba(6,6,22,0.05)] sm:p-9">
                   <div className="flex items-center gap-3">
                     <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#FEF2F2] text-[#EF4444]">
                       <AlertTriangle className="h-5 w-5" aria-hidden />
@@ -233,7 +233,7 @@ export default function ServiceDetailBody({ detail, heroImage, heroMobileImage =
                       {problemHeading}
                     </h2>
                   </div>
-                  <div className="mt-5 space-y-4">
+                  <div className="mt-5 flex-1 space-y-4">
                     {problemBody.map((p, i) => (
                       <p key={i} className="whitespace-pre-line text-[0.95rem] leading-8 text-slate-600 [overflow-wrap:anywhere]">{p}</p>
                     ))}
@@ -255,7 +255,7 @@ export default function ServiceDetailBody({ detail, heroImage, heroMobileImage =
               ) : null}
 
               {solutionBody.length > 0 || solutionImage ? (
-                <div className="rounded-[24px] border border-[rgba(0,136,255,0.18)] bg-white p-7 shadow-[0_4px_24px_rgba(6,6,22,0.05)] sm:p-9">
+                <div className="flex flex-col rounded-[24px] border border-[rgba(0,136,255,0.18)] bg-white p-7 shadow-[0_4px_24px_rgba(6,6,22,0.05)] sm:p-9">
                   <div className="flex items-center gap-3">
                     <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#EFF6FF] text-[#0088FF]">
                       <Lightbulb className="h-5 w-5" aria-hidden />
@@ -264,7 +264,7 @@ export default function ServiceDetailBody({ detail, heroImage, heroMobileImage =
                       {solutionHeading}
                     </h2>
                   </div>
-                  <div className="mt-5 space-y-4">
+                  <div className="mt-5 flex-1 space-y-4">
                     {solutionBody.map((p, i) => (
                       <p key={i} className="whitespace-pre-line text-[0.95rem] leading-8 text-slate-600 [overflow-wrap:anywhere]">{p}</p>
                     ))}
