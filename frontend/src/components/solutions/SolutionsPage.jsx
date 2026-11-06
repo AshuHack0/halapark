@@ -8,6 +8,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { fetchPage } from "@/lib/cms";
 import { useLanguage, t } from "@/context/LanguageContext";
 import RichText from "@/components/common/RichText";
+import "./solutions-gradient-text.css";
 import { PARTNER_FORM_LINK } from "@/components/partners/PartnershipFormProvider";
 import {
   ArrowRight,
@@ -2070,7 +2071,7 @@ function NewFinalCTA() {
 
 export default function SolutionsPage() {
   return (
-    <main className="min-h-screen bg-white text-slate-950">
+    <main className="solutions-page min-h-screen bg-white text-slate-950">
       <NewHero />
       <GlobalExpansionSection />
       <StatsSection />
