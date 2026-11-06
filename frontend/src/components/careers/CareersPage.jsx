@@ -639,7 +639,7 @@ function JobsCarousel({ posts, language, reduced, renderCard }) {
       <div
         ref={trackRef}
         onScroll={measure}
-        className="flex snap-x snap-mandatory gap-4 overflow-x-auto px-[11%] pb-3 pt-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:gap-5 sm:px-1"
+        className="flex snap-x snap-mandatory gap-4 overflow-x-auto px-1 pb-3 pt-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:gap-5 sm:px-1"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
         {posts.map((post, i) => (
