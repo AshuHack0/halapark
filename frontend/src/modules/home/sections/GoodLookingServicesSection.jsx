@@ -341,7 +341,7 @@ export default function GoodLookingServicesSection() {
 
         <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start lg:gap-12 lg:pb-10">
           <motion.div
-            className="max-w-xl lg:sticky lg:top-28 lg:self-start"
+            className="order-last w-full lg:order-none lg:max-w-xl lg:sticky lg:top-28 lg:self-start"
             {...(noMotion
               ? {}
               : {
@@ -358,6 +358,11 @@ export default function GoodLookingServicesSection() {
                   },
                 })}
           >
+            {/* Desktop only: this panel follows the scroll and mirrors the card
+                in focus. On phones/tablets it never changes (stuck on Service
+                01), so it only duplicated the first card — hide it there and
+                keep just the CTAs, which drop below the cards. */}
+            <div className="hidden lg:block">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 sm:text-sm">
               Service {String(activeServiceIndex + 1).padStart(2, "0")}
             </p>
@@ -386,9 +391,10 @@ export default function GoodLookingServicesSection() {
                 ))}
               </div> */}
             </motion.div>
+            </div>
 
             {t(copy, "exploreCtaLabel", language) || t(copy, "contactCtaLabel", language) ? (
-              <div className="mt-8 flex flex-wrap gap-3">
+              <div className="flex flex-wrap justify-center gap-3 lg:mt-8 lg:justify-start">
                 {t(copy, "exploreCtaLabel", language) ? (
                   <Link
                     href={copy.exploreCtaLink || "/services"}
@@ -410,27 +416,48 @@ export default function GoodLookingServicesSection() {
           </motion.div>
 
           <motion.div
-            className="flex flex-col gap-5 sm:grid sm:grid-cols-2 lg:flex lg:grid-cols-none lg:gap-6"
+            className="flex flex-col gap-10 sm:grid sm:grid-cols-2 sm:items-start sm:gap-x-5 sm:gap-y-10 lg:flex lg:grid-cols-none lg:gap-6"
           >
-            {featuredServices.map((service, index) => (
-              <ServiceCard
-                key={service.slug}
-                service={service}
-                index={index}
-                isActive={activeServiceIndex === index}
-                language={language}
-                cardRef={(node) => {
-                  cardRefs.current[index] = node;
-                }}
-              />
-            ))}
+            {featuredServices.map((service, index) => {
+              // Phones/tablets: the desktop left panel's text (name +
+              // Description 1) sits above each card, then the card itself
+              // (Description 2). Description 1 is skipped when the card would
+              // already fall back to showing it, so it never repeats.
+              const desc1 = t(service, "summary", language);
+              const desc2 = t(service, "description2", language);
+              const showDesc1 = Boolean((desc1 || "").trim()) && Boolean((desc2 || "").trim());
+              const name = t(service, "name", language);
+              return (
+                <div key={service.slug} className="flex flex-col gap-4">
+                  {showDesc1 ? (
+                    <div className="px-1 lg:hidden">
+                      {name ? (
+                        <h3 className="text-[1.6rem] font-semibold leading-[1.08] tracking-[-0.04em] text-[#050A13] [overflow-wrap:anywhere]">
+                          {name}
+                        </h3>
+                      ) : null}
+                      <RichText text={desc1} className="mt-2 block text-[0.9rem] leading-6 text-slate-600 [overflow-wrap:anywhere]" />
+                    </div>
+                  ) : null}
+                  <ServiceCard
+                    service={service}
+                    index={index}
+                    isActive={activeServiceIndex === index}
+                    language={language}
+                    cardRef={(node) => {
+                      cardRefs.current[index] = node;
+                    }}
+                  />
+                </div>
+              );
+            })}
           </motion.div>
         </div>
       </div>
 
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-40 bg-gradient-to-t from-[#f0f2f4] via-[#f0f2f4]/82 to-transparent backdrop-blur-md [mask-image:linear-gradient(180deg,transparent_0%,black_38%,black_100%)] [-webkit-mask-image:linear-gradient(180deg,transparent_0%,black_38%,black_100%)] sm:h-48 md:h-56"
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-20 hidden h-40 bg-gradient-to-t lg:block from-[#f0f2f4] via-[#f0f2f4]/82 to-transparent backdrop-blur-md [mask-image:linear-gradient(180deg,transparent_0%,black_38%,black_100%)] [-webkit-mask-image:linear-gradient(180deg,transparent_0%,black_38%,black_100%)] sm:h-48 md:h-56"
       />
     </section>
   );

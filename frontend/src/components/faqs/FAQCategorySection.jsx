@@ -64,27 +64,51 @@ const iconMap = {
   WalletCards,
 };
 
+// YouTube video id from any common link form — watch?v=, youtu.be/, /shorts/,
+// /embed/, /live/, /v/, m./music. hosts, youtube-nocookie. "" when the link is
+// not a YouTube video. (Same rule as the admin's validator.)
+function youtubeId(url) {
+  const v = (typeof url === "string" ? url : "").trim();
+  if (!v) return "";
+  let u;
+  try { u = new URL(/^https?:\/\//i.test(v) ? v : `https://${v}`); } catch { return ""; }
+  const host = u.hostname.replace(/^(www\.|m\.|music\.)/, "");
+  let id = "";
+  if (host === "youtu.be") id = u.pathname.split("/")[1] || "";
+  else if (host === "youtube.com" || host === "youtube-nocookie.com") {
+    id = u.searchParams.get("v") || "";
+    if (!id) {
+      const m = u.pathname.match(/^\/(?:shorts|embed|live|v)\/([^/?#]+)/);
+      if (m) id = m[1];
+    }
+  }
+  return /^[A-Za-z0-9_-]{11}$/.test(id) ? id : "";
+}
+
+function youtubeEmbed(url) {
+  const id = youtubeId(url);
+  return id ? `https://www.youtube.com/embed/${id}?rel=0&modestbranding=1` : null;
+}
+
 function normalizeVideoUrl(url) {
   if (!url || typeof url !== "string") return null;
   const trimmed = url.trim();
   if (!trimmed) return null;
 
+  // Any YouTube link form (incl. Shorts) → embed URL.
+  const yt = youtubeEmbed(trimmed);
+  if (yt) return yt;
+
   // Already embeddable URL
-  if (trimmed.includes("youtube.com/embed/") || trimmed.includes("player.vimeo.com/video/")) {
+  if (trimmed.includes("player.vimeo.com/video/")) {
     return trimmed;
   }
 
-  // Convert common YouTube watch/share links to embed links
   try {
     const parsed = new URL(trimmed);
-    if (parsed.hostname.includes("youtube.com")) {
-      const id = parsed.searchParams.get("v");
-      if (id) return `https://www.youtube.com/embed/${id}`;
-    }
-    if (parsed.hostname === "youtu.be") {
-      const id = parsed.pathname.replace("/", "");
-      if (id) return `https://www.youtube.com/embed/${id}`;
-    }
+    // Any other YouTube URL (channel, playlist page…) can't be framed —
+    // fall back to a plain "Open video" link.
+    if (parsed.hostname.includes("youtube.com") || parsed.hostname === "youtu.be") return null;
     // Convert a Google Drive *file* link to its embeddable preview form.
     // Drive *folder* links cannot be embedded — those fall through and are
     // surfaced as a normal "Open tutorial" link instead (see render below).
@@ -344,14 +368,31 @@ export default function FAQCategorySection({ categories = [] }) {
                         {(() => {
                           const videos = collectVideos(item);
                           const folder = externalLink(item.videoFolderUrl);
-                          if (videos.length === 0 && !folder) return null;
+                          // Per-language YouTube link (admin: YouTube English /
+                          // Arabic). Strict — the Arabic page only plays the
+                          // Arabic link, never the English one.
+                          const ytEmbed = youtubeEmbed(language === "ar" ? item.ar?.youtubeUrl : item.youtubeUrl);
+                          if (videos.length === 0 && !folder && !ytEmbed) return null;
                           // Single video → full width. Two or more → 2-up grid
                           // (50% each on sm+, stacking on mobile).
-                          const multi = videos.length > 1;
+                          const multi = videos.length + (ytEmbed ? 1 : 0) > 1;
                           return (
                             <div
                               className={`mt-4 grid gap-3 ${multi ? "sm:grid-cols-2" : "grid-cols-1"}`}
                             >
+                              {ytEmbed ? (
+                                <div className="overflow-hidden rounded-[14px] border border-[#E7EAF0] bg-black">
+                                  <iframe
+                                    src={ytEmbed}
+                                    title={`${t(item, "question", language) || "FAQ"} — YouTube video`}
+                                    loading="lazy"
+                                    referrerPolicy="strict-origin-when-cross-origin"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    allowFullScreen
+                                    className="aspect-video w-full"
+                                  />
+                                </div>
+                              ) : null}
                               {videos.map((url, i) => {
                                 const fileSrc = directVideoSrc(url);
                                 const embed = fileSrc ? null : normalizeVideoUrl(url);
