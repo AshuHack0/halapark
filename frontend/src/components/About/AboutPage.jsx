@@ -471,10 +471,14 @@ function OurVision({ vision }) {
           {/* Arabic: the whole background layer (photo + dark wash + glow) is
               mirrored, so the photo faces the other way and the dark side
               always sits behind the copy. */}
-          <div className="relative rtl:-scale-x-100 lg:absolute lg:inset-0">
+          {/* Phones/tablets: a 4:3 photo frame (16:9 on tablets) cropped
+              toward the right, where the subject sits — the wide desktop upload
+              keeps its left side empty for the copy, which on a phone was just
+              a blue band with a sliver of photo in the corner. */}
+          <div className={`relative rtl:-scale-x-100 lg:absolute lg:inset-0 ${vision?.image ? "max-lg:aspect-[4/3] sm:max-lg:aspect-[16/9]" : ""}`}>
             {vision?.image ? (
               <MobilePicture mobileSrc={vision.mobileImage}>
-                <Image src={vision.image} alt="" width={1600} height={640} sizes="(min-width: 1024px) 1280px, 100vw" className="block h-auto w-full object-cover object-center transition duration-700 group-hover:scale-[1.03] lg:absolute lg:inset-0 lg:h-full" aria-hidden />
+                <Image src={vision.image} alt="" width={1600} height={640} sizes="(min-width: 1024px) 1280px, 100vw" className="absolute inset-0 block h-full w-full object-cover object-[80%_50%] transition duration-700 group-hover:scale-[1.03] lg:object-center" aria-hidden />
               </MobilePicture>
             ) : null}
             {/* Dark on the copy side, clearing toward the photo so the upload
@@ -509,8 +513,8 @@ function OurVision({ vision }) {
 
             {/* Glass card floating on the dark panel */}
             {vision?.image || cardHasContent ? (
-              <div className="relative px-6 pb-8 pt-2 sm:px-10 sm:pb-10 lg:p-10" dir={language === "ar" ? "rtl" : "ltr"}>
-                <div className="flex h-full flex-col justify-between gap-10 rounded-[22px] border border-white/25 bg-[#02376B]/35 p-7 shadow-[0_18px_44px_rgba(2,8,20,0.35)] backdrop-blur-[1.5px] sm:p-9">
+              <div className="relative px-4 pb-6 pt-2 sm:px-10 sm:pb-10 lg:p-10" dir={language === "ar" ? "rtl" : "ltr"}>
+                <div className="flex h-full flex-col justify-between gap-6 rounded-[22px] border border-white/25 bg-[#02376B]/35 p-5 shadow-[0_18px_44px_rgba(2,8,20,0.35)] backdrop-blur-[1.5px] sm:gap-10 sm:p-9">
                   <div>
                     {hasText(card.badge) ? (
                       <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-3.5 py-1.5">
