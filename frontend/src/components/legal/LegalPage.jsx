@@ -43,7 +43,7 @@ export default function LegalPage({ slug, fallbackTitle }) {
   if (!body || !body.trim()) {
     return (
       <main className="min-h-[60vh] bg-white">
-        <div className="mx-auto max-w-3xl px-4 py-24 text-center sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl px-4 py-24 text-center sm:px-6 lg:px-8">
           <h1 className="text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">{title}</h1>
           <p className="mt-4 text-slate-500">
             {language === "ar" ? "المحتوى غير متوفر حالياً." : "This content is not available yet."}
@@ -55,7 +55,9 @@ export default function LegalPage({ slug, fallbackTitle }) {
 
   return (
     <main className="min-h-screen bg-white">
-      <div className="mx-auto max-w-3xl px-5 py-12 sm:px-6 sm:py-20 lg:px-8" dir={dir}>
+      {/* Same content width and side padding as the rest of the site
+          (max-w-7xl, px-4/6/8) instead of a narrow centred column. */}
+      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-20 lg:px-8" dir={dir}>
         {title ? (
           <h1 className="text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl md:text-5xl [overflow-wrap:anywhere]">
             {title}

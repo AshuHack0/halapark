@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Send, Paperclip, X, Loader2, FileText } from "lucide-react";
 
 import { useLanguage, t } from "@/context/LanguageContext";
+import { validateForm, focusFirstError, errorInputClass } from "@/lib/formValidation";
+import FieldError from "@/components/common/FieldError";
 
 // Fixed UI copy (not CMS-driven) — translated inline.
 const COPY = {
@@ -125,22 +127,25 @@ function FormField({
   value,
   onChange,
   required = false,
+  error = "",
 }) {
   return (
     <label className="block">
       <span className="mb-2 block text-sm font-medium text-slate-700">
-        {label}
+        {label} {required ? <span className="text-red-500">*</span> : null}
       </span>
       <input
         id={id}
         name={id}
         type={type}
+        inputMode={type === "tel" ? "tel" : undefined}
         value={value}
         onChange={onChange}
-        required={required}
+        aria-invalid={Boolean(error)}
         placeholder={placeholder}
-        className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3.5 text-base text-slate-900 outline-none transition focus:border-[#0088FF] focus:ring-4 focus:ring-[#0088FF]/10"
+        className={`w-full rounded-2xl border border-slate-200 bg-white px-4 py-3.5 text-base text-slate-900 outline-none transition focus:border-[#0088FF] focus:ring-4 focus:ring-[#0088FF]/10 ${error ? errorInputClass : ""}`}
       />
+      <FieldError message={error} />
     </label>
   );
 }
@@ -153,6 +158,8 @@ export default function ContactFormPanel({ form }) {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submitting, setSubmitting]  = useState(false);
   const [formError, setFormError]    = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
+  const formRef = useRef(null);
   // Attachments: each item is { name, type, url } once uploaded to Cloudinary.
   const [attachments, setAttachments] = useState([]);
   const [uploadingCount, setUploadingCount] = useState(0);
@@ -185,6 +192,7 @@ export default function ContactFormPanel({ form }) {
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormError("");
+    if (fieldErrors[name]) setFieldErrors((p) => ({ ...p, [name]: "" }));
     setIsSubmitted(false);
     // Phone: digits, +, spaces, hyphens, parentheses only — letters are
     // rejected as they're typed. A "+" is kept only at the very start.
@@ -245,9 +253,24 @@ export default function ContactFormPanel({ form }) {
     setAttachments((prev) => prev.filter((_, i) => i !== index));
   };
 
+  // Shared rules (src/lib/formValidation.js) — same flow as every other form:
+  // message under each invalid field, first one scrolled to and focused.
+  const CONTACT_RULES = {
+    fullName: { label: c.fullName, required: true },
+    email: { label: c.email, required: true, email: true },
+    phone: { label: c.phone, required: true, phone: true },
+    message: { label: c.message, required: true },
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     setFormError("");
+    const errors = validateForm(formData, CONTACT_RULES, language);
+    setFieldErrors(errors);
+    if (Object.keys(errors).length) {
+      focusFirstError(formRef.current, errors, Object.keys(CONTACT_RULES));
+      return;
+    }
     setSubmitting(true);
     try {
       const res = await fetch("/api/contact", {
@@ -295,7 +318,7 @@ export default function ContactFormPanel({ form }) {
         </div>
       ) : null}
 
-      <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+      <form ref={formRef} noValidate onSubmit={handleSubmit} className="mt-8 space-y-5">
         <div className="grid gap-5 md:grid-cols-2">
           <FormField
             id="fullName"
@@ -304,6 +327,7 @@ export default function ContactFormPanel({ form }) {
             value={formData.fullName}
             onChange={handleChange}
             required
+            error={fieldErrors.fullName}
           />
           <FormField
             id="email"
@@ -313,6 +337,7 @@ export default function ContactFormPanel({ form }) {
             value={formData.email}
             onChange={handleChange}
             required
+            error={fieldErrors.email}
           />
           <FormField
             id="phone"
@@ -322,6 +347,7 @@ export default function ContactFormPanel({ form }) {
             value={formData.phone}
             onChange={handleChange}
             required
+            error={fieldErrors.phone}
           />
           <FormField
             id="company"
@@ -355,7 +381,7 @@ export default function ContactFormPanel({ form }) {
 
         <label className="block">
           <span className="mb-2 block text-sm font-medium text-slate-700">
-            {c.message}
+            {c.message} <span className="text-red-500">*</span>
           </span>
           <textarea
             id="message"
@@ -363,10 +389,11 @@ export default function ContactFormPanel({ form }) {
             rows={6}
             value={formData.message}
             onChange={handleChange}
-            required
+            aria-invalid={Boolean(fieldErrors.message)}
             placeholder={c.messagePlaceholder}
-            className="w-full rounded-[24px] border border-slate-200 bg-white px-4 py-3.5 text-base text-slate-900 outline-none transition focus:border-[#0088FF] focus:ring-4 focus:ring-[#0088FF]/10"
+            className={`w-full rounded-[24px] border border-slate-200 bg-white px-4 py-3.5 text-base text-slate-900 outline-none transition focus:border-[#0088FF] focus:ring-4 focus:ring-[#0088FF]/10 ${fieldErrors.message ? errorInputClass : ""}`}
           />
+          <FieldError message={fieldErrors.message} />
         </label>
 
         {/* Attachments (optional) */}

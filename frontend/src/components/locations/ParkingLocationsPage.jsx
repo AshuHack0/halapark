@@ -287,14 +287,29 @@ function ReviewsCarousel({ items, language, reduced }) {
   // In RTL the track scrolls the other way, so paging has to flip sign.
   const rtl = language === "ar";
 
+  // Paging is measured from the real card width (card + 20px gap), not the
+  // track width: on phones a card is 86% wide, so stepping a full track width
+  // overshot the snap points (jumping straight to the last review) and the end
+  // state was never reached. One "page" = the cards that fit on screen
+  // (1 phone / 2 tablet / 3 desktop); the end is the true scroll end.
+  const GAP = 20;
+  const [atEndPos, setAtEndPos] = useState(false);
+  const geometry = (el) => {
+    const first = el.firstElementChild;
+    const step = first ? first.getBoundingClientRect().width + GAP : el.clientWidth;
+    const perPage = Math.max(1, Math.round((el.clientWidth + GAP) / step));
+    return { pageStep: perPage * step, max: Math.max(0, el.scrollWidth - el.clientWidth) };
+  };
+
   const measure = useCallback(() => {
     const el = trackRef.current;
     if (!el) return;
-    const perPage = Math.max(1, Math.round(el.clientWidth / (el.scrollWidth / items.length || 1)));
-    setPageCount(Math.max(1, Math.ceil(items.length / perPage)));
+    const { pageStep, max } = geometry(el);
     const pos = Math.abs(el.scrollLeft);
-    setPage(el.clientWidth ? Math.round(pos / el.clientWidth) : 0);
-  }, [items.length]);
+    setPageCount(Math.max(1, Math.ceil(max / pageStep - 0.01) + 1));
+    setPage(pos >= max - 2 ? Math.max(0, Math.ceil(max / pageStep - 0.01)) : Math.round(pos / pageStep));
+    setAtEndPos(pos >= max - 2);
+  }, []);
 
   useEffect(() => {
     measure();
@@ -303,22 +318,24 @@ function ReviewsCarousel({ items, language, reduced }) {
     const onResize = () => measure();
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
-  }, [measure]);
+  }, [measure, items.length]);
 
   const scrollByPage = (dir) => {
     const el = trackRef.current;
     if (!el) return;
-    el.scrollBy({ left: dir * el.clientWidth * (rtl ? -1 : 1), behavior: reduced ? "auto" : "smooth" });
+    const { pageStep } = geometry(el);
+    el.scrollBy({ left: dir * pageStep * (rtl ? -1 : 1), behavior: reduced ? "auto" : "smooth" });
   };
 
   const goToPage = (i) => {
     const el = trackRef.current;
     if (!el) return;
-    el.scrollTo({ left: i * el.clientWidth * (rtl ? -1 : 1), behavior: reduced ? "auto" : "smooth" });
+    const { pageStep, max } = geometry(el);
+    el.scrollTo({ left: Math.min(i * pageStep, max) * (rtl ? -1 : 1), behavior: reduced ? "auto" : "smooth" });
   };
 
   const atStart = page <= 0;
-  const atEnd = page >= pageCount - 1;
+  const atEnd = atEndPos;
 
   const arrowClass = (disabled) =>
     `flex h-10 w-10 items-center justify-center rounded-full border transition-all duration-300 ${

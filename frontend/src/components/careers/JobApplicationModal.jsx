@@ -6,6 +6,17 @@ import ReCAPTCHA from "react-google-recaptcha";
 import { Check, Loader2, Paperclip, X } from "lucide-react";
 import { RECAPTCHA_SITE_KEY } from "@/config/recaptcha.site";
 import { useLanguage } from "@/context/LanguageContext";
+import { validateForm, focusFirstError, sanitizePhone, errorInputClass } from "@/lib/formValidation";
+import FieldError from "@/components/common/FieldError";
+
+// Shared validation rules (src/lib/formValidation.js). Optional fields are
+// only checked when filled in.
+const JOB_RULES = {
+  fullName: { label: "Full name", required: true },
+  phone: { label: "Phone", required: true, phone: true },
+  email: { label: "Email", required: true, email: true },
+  linkedIn: { label: "LinkedIn profile", url: true },
+};
 
 const ease = [0.22, 1, 0.36, 1];
 
@@ -73,6 +84,8 @@ export default function JobApplicationModal({ isOpen, onClose, job }) {
   const [done, setDone] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
+  const formRef = useRef(null);
   // Resume upload state: idle | uploading | done | error
   const [resume, setResume] = useState({ status: "idle", name: "", url: "", progress: 0, error: "" });
   const recaptchaRef = useRef(null);
@@ -100,6 +113,7 @@ export default function JobApplicationModal({ isOpen, onClose, job }) {
     setForm({ fullName: "", email: "", phone: "", location: "", message: "", linkedIn: "" });
     setDone(false);
     setFormError("");
+    setFieldErrors({});
     setSubmitting(false);
     setResume({ status: "idle", name: "", url: "", progress: 0, error: "" });
     recaptchaRef.current?.reset();
@@ -107,8 +121,10 @@ export default function JobApplicationModal({ isOpen, onClose, job }) {
   }
 
   function onChange(e) {
-    const { name, value } = e.target;
+    const { name } = e.target;
+    const value = name === "phone" ? sanitizePhone(e.target.value) : e.target.value;
     setForm((prev) => ({ ...prev, [name]: value }));
+    if (fieldErrors[name]) setFieldErrors((prev) => ({ ...prev, [name]: "" }));
   }
 
   function removeResume() {
@@ -158,6 +174,13 @@ export default function JobApplicationModal({ isOpen, onClose, job }) {
 
     // Wait for the resume upload to finish before submitting.
     if (resume.status === "uploading") return;
+
+    const errors = validateForm(form, JOB_RULES, language);
+    setFieldErrors(errors);
+    if (Object.keys(errors).length) {
+      focusFirstError(formRef.current, errors, Object.keys(JOB_RULES));
+      return;
+    }
 
     if (!job?.title) {
       setFormError("Job details are missing. Please refresh and try again.");
@@ -273,7 +296,7 @@ export default function JobApplicationModal({ isOpen, onClose, job }) {
                   Fill in your details and we&apos;ll be in touch.
                 </p>
 
-                <form onSubmit={handleSubmit} className="mt-4 space-y-3 sm:mt-6 sm:space-y-4">
+                <form ref={formRef} noValidate onSubmit={handleSubmit} className="mt-4 space-y-3 sm:mt-6 sm:space-y-4">
                   <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
                     <div>
                       <label className="mb-1 block text-[11px] font-medium text-slate-700 sm:mb-1.5 sm:text-xs">
@@ -286,8 +309,10 @@ export default function JobApplicationModal({ isOpen, onClose, job }) {
                         value={form.fullName}
                         onChange={onChange}
                         placeholder="Your full name"
-                        className={inputClass}
+                        aria-invalid={Boolean(fieldErrors.fullName)}
+                        className={`${inputClass} ${fieldErrors.fullName ? errorInputClass : ""}`}
                       />
+                      <FieldError message={fieldErrors.fullName} />
                     </div>
                     <div>
                       <label className="mb-1 block text-[11px] font-medium text-slate-700 sm:mb-1.5 sm:text-xs">
@@ -300,8 +325,11 @@ export default function JobApplicationModal({ isOpen, onClose, job }) {
                         value={form.phone}
                         onChange={onChange}
                         placeholder="+971 50 000 0000"
-                        className={inputClass}
+                        inputMode="tel"
+                        aria-invalid={Boolean(fieldErrors.phone)}
+                        className={`${inputClass} ${fieldErrors.phone ? errorInputClass : ""}`}
                       />
+                      <FieldError message={fieldErrors.phone} />
                     </div>
                   </div>
 
@@ -316,8 +344,10 @@ export default function JobApplicationModal({ isOpen, onClose, job }) {
                       value={form.email}
                       onChange={onChange}
                       placeholder="you@email.com"
-                      className={inputClass}
+                      aria-invalid={Boolean(fieldErrors.email)}
+                      className={`${inputClass} ${fieldErrors.email ? errorInputClass : ""}`}
                     />
+                    <FieldError message={fieldErrors.email} />
                   </div>
 
                   <div>
@@ -344,8 +374,10 @@ export default function JobApplicationModal({ isOpen, onClose, job }) {
                       value={form.linkedIn}
                       onChange={onChange}
                       placeholder="https://linkedin.com/in/..."
-                      className={inputClass}
+                      aria-invalid={Boolean(fieldErrors.linkedIn)}
+                      className={`${inputClass} ${fieldErrors.linkedIn ? errorInputClass : ""}`}
                     />
+                    <FieldError message={fieldErrors.linkedIn} />
                   </div>
 
                   <div dir={language === "ar" ? "rtl" : "ltr"}>

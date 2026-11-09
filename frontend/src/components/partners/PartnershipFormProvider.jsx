@@ -11,6 +11,19 @@ export const PARTNER_FORM_LINK = "#partner-form";
 
 const PartnershipFormContext = createContext({ openPartnerForm: () => {} });
 
+// Which partnership a button is for: an explicit data-partner-type="parking" /
+// "service" on the link wins; otherwise the button text is read ("Become a
+// Parking Partner" / "Become a Service Partner", also Arabic). "" = let the
+// visitor choose in the popup.
+function partnerTypeOf(anchor) {
+  const explicit = (anchor?.dataset?.partnerType || "").toLowerCase();
+  if (explicit === "parking" || explicit === "service") return explicit;
+  const text = (anchor?.textContent || "").toLowerCase();
+  if (/parking\s+partner|شريك\s*(في\s*)?(مواقف|الموقف|المواقف)/.test(text)) return "parking";
+  if (/service\s+partner|شريك\s*(في\s*)?(خدمات|الخدمات|الخدمة)/.test(text)) return "service";
+  return "";
+}
+
 export function usePartnershipForm() {
   return useContext(PartnershipFormContext);
 }
@@ -19,11 +32,13 @@ export default function PartnershipFormProvider({ children }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [source, setSource] = useState("website");
+  const [partnerType, setPartnerType] = useState("");
   const [config, setConfig] = useState(null);
   const configRequested = useRef(false);
 
-  const openPartnerForm = useCallback((src) => {
+  const openPartnerForm = useCallback((src, type = "") => {
     setSource(src || "website");
+    setPartnerType(type === "parking" || type === "service" ? type : "");
     setOpen(true);
     if (!configRequested.current) {
       configRequested.current = true;
@@ -51,7 +66,10 @@ export default function PartnershipFormProvider({ children }) {
       e.preventDefault();
       e.stopPropagation();
       const label = (anchor.textContent || "").replace(/\s+/g, " ").trim();
-      openPartnerForm(anchor.dataset.partnerSource || `${window.location.pathname}${label ? ` · ${label}` : ""}`);
+      openPartnerForm(
+        anchor.dataset.partnerSource || `${window.location.pathname}${label ? ` · ${label}` : ""}`,
+        partnerTypeOf(anchor),
+      );
     };
     window.addEventListener("click", onClick, true);
     return () => window.removeEventListener("click", onClick, true);
@@ -71,7 +89,7 @@ export default function PartnershipFormProvider({ children }) {
   return (
     <PartnershipFormContext.Provider value={{ openPartnerForm }}>
       {children}
-      <PartnershipModal isOpen={open} onClose={() => setOpen(false)} config={config} source={source} />
+      <PartnershipModal isOpen={open} onClose={() => setOpen(false)} config={config} source={source} initialType={partnerType} />
     </PartnershipFormContext.Provider>
   );
 }

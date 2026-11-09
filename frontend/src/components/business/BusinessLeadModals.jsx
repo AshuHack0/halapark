@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { X, Check, Loader2 } from "lucide-react";
 import { useLanguage, t } from "@/context/LanguageContext";
+import { validateForm, focusFirstError, sanitizePhone, errorInputClass } from "@/lib/formValidation";
+import FieldError from "@/components/common/FieldError";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "";
 
@@ -69,10 +71,10 @@ export function ModalShell({ isOpen, onClose, title, subtitle, done, successTitl
 }
 
 // Shared checkbox group.
-function CheckboxGroup({ label, options, selected, onToggle, dir }) {
+function CheckboxGroup({ label, options, selected, onToggle, dir, error }) {
   if (options.length === 0) return null;
   return (
-    <div dir={dir}>
+    <div dir={dir} data-field="options">
       <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">{label}</p>
       <div className="grid gap-2 sm:grid-cols-2">
         {options.map((opt) => {
@@ -85,44 +87,60 @@ function CheckboxGroup({ label, options, selected, onToggle, dir }) {
           );
         })}
       </div>
+      <FieldError message={error} />
     </div>
   );
 }
 
 const BLANK = { fullName: "", email: "", phone: "", company: "", message: "" };
 
-function onlyPhone(v) {
-  let s = v.replace(/[^\d+\s\-().]/g, "");
-  return s.replace(/(?!^)\+/g, "");
+// Shared rules (src/lib/formValidation.js): name required, email format,
+// mobile number 7–15 digits (optional +). Labels follow the UI language.
+const leadRules = (c) => ({
+  fullName: { label: c.fullName, required: true },
+  email: { label: c.email, required: true, email: true },
+  phone: { label: c.phone, required: true, phone: true },
+});
+const LEAD_ORDER = ["fullName", "email", "phone"];
+
+// One submit check for both lead dialogs: field errors + "pick at least one
+// option"; scrolls to / focuses the first problem. Returns true when valid.
+function checkLead({ form, c, language, picked, hasOptions, formEl, setFieldErrors }) {
+  const errors = validateForm(form, leadRules(c), language);
+  if (hasOptions && picked.length === 0) errors.options = c.pickError;
+  setFieldErrors(errors);
+  if (Object.keys(errors).length === 0) return true;
+  if (errors.options) {
+    formEl?.querySelector('[data-field="options"]')?.scrollIntoView({ behavior: "smooth", block: "center" });
+  } else {
+    focusFirstError(formEl, errors, LEAD_ORDER);
+  }
+  return false;
 }
 
-function validateLead(form) {
-  if (!form.fullName.trim()) return "Full name is required.";
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) return "A valid email is required.";
-  if (!form.phone.trim()) return "Phone number is required.";
-  if (/[a-zA-Z]/.test(form.phone)) return "Phone number must not contain letters.";
-  return null;
-}
-
-function LeadFields({ form, setForm, dir, c }) {
-  const set = (k, v) => setForm((p) => ({ ...p, [k]: v }));
+function LeadFields({ form, setForm, dir, c, errors = {}, clearError }) {
+  const set = (k, v) => { setForm((p) => ({ ...p, [k]: v })); clearError?.(k); };
+  const cls = (k) => `${inputClass} ${errors[k] ? errorInputClass : ""}`;
   return (
     <div className="mt-4 grid gap-3 sm:grid-cols-2" dir={dir}>
       <div>
         <label className="mb-1 block text-[11px] font-medium text-slate-700">{c.fullName} <span className="text-red-500">*</span></label>
-        <input required value={form.fullName} onChange={(e) => set("fullName", e.target.value)} className={inputClass} placeholder={c.fullName} />
+        <input name="fullName" aria-invalid={Boolean(errors.fullName)} value={form.fullName} onChange={(e) => set("fullName", e.target.value)} className={cls("fullName")} placeholder={c.fullName} />
+        <FieldError message={errors.fullName} />
       </div>
       <div>
         <label className="mb-1 block text-[11px] font-medium text-slate-700">{c.company}</label>
-        <input value={form.company} onChange={(e) => set("company", e.target.value)} className={inputClass} placeholder={c.company} />
+        <input name="company" value={form.company} onChange={(e) => set("company", e.target.value)} className={inputClass} placeholder={c.company} />
       </div>
       <div>
         <label className="mb-1 block text-[11px] font-medium text-slate-700">{c.email} <span className="text-red-500">*</span></label>
-        <input required type="email" value={form.email} onChange={(e) => set("email", e.target.value)} className={inputClass} placeholder={c.email} />
+        <input name="email" type="email" aria-invalid={Boolean(errors.email)} value={form.email} onChange={(e) => set("email", e.target.value)} className={cls("email")} placeholder={c.email} />
+        <FieldError message={errors.email} />
       </div>
       <div>
         <label className="mb-1 block text-[11px] font-medium text-slate-700">{c.phone} <span className="text-red-500">*</span></label>
-        <input required type="tel" inputMode="tel" value={form.phone} onChange={(e) => set("phone", onlyPhone(e.target.value))} className={inputClass} placeholder="+971 50 000 0000" />
+        <input name="phone" type="tel" inputMode="tel" aria-invalid={Boolean(errors.phone)} value={form.phone} onChange={(e) => set("phone", sanitizePhone(e.target.value))} className={cls("phone")} placeholder="+971 50 000 0000" />
+        <FieldError message={errors.phone} />
       </div>
     </div>
   );
@@ -143,6 +161,9 @@ export function GetProposalModal({ isOpen, onClose, config, options }) {
   const [done, setDone] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
+  const formRef = useRef(null);
+  const clearError = (k) => setFieldErrors((p) => (p[k] ? { ...p, [k]: "" } : p));
 
   const opts = resolveOptions(options, language);
   const heading = t(config, "heading", language) || (language === "ar" ? "احصل على عرض سعر" : "Get a Proposal");
@@ -151,17 +172,15 @@ export function GetProposalModal({ isOpen, onClose, config, options }) {
   const successTitle = t(config, "successTitle", language) || (language === "ar" ? "تم استلام الطلب!" : "Request Received!");
   const successMessage = t(config, "successMessage", language) || (language === "ar" ? "سيتواصل معك فريقنا بعرض السعر قريبًا." : "Our team will get back to you with a proposal shortly.");
 
-  const toggle = (v) => setSolutions((p) => (p.includes(v) ? p.filter((x) => x !== v) : [...p, v]));
+  const toggle = (v) => { setSolutions((p) => (p.includes(v) ? p.filter((x) => x !== v) : [...p, v])); clearError("options"); };
 
-  const reset = () => { setForm(BLANK); setSolutions([]); setDone(false); setError(""); setSubmitting(false); };
+  const reset = () => { setForm(BLANK); setSolutions([]); setDone(false); setError(""); setFieldErrors({}); setSubmitting(false); };
   const close = () => { reset(); onClose(); };
 
   const submit = async (e) => {
     e.preventDefault();
     setError("");
-    const v = validateLead(form);
-    if (v) { setError(v); return; }
-    if (opts.length > 0 && solutions.length === 0) { setError(c.pickError); return; }
+    if (!checkLead({ form, c, language, picked: solutions, hasOptions: opts.length > 0, formEl: formRef.current, setFieldErrors })) return;
     setSubmitting(true);
     try {
       const res = await fetch(`${API}/api/business/proposals`, {
@@ -180,9 +199,9 @@ export function GetProposalModal({ isOpen, onClose, config, options }) {
 
   return (
     <ModalShell isOpen={isOpen} onClose={close} title={heading} subtitle={subtitle} done={done} successTitle={successTitle} successMessage={successMessage}>
-      <form onSubmit={submit} className="mt-5 space-y-4">
-        <CheckboxGroup label={optionsLabel} options={opts} selected={solutions} onToggle={toggle} dir={dir} />
-        <LeadFields form={form} setForm={setForm} dir={dir} c={c} />
+      <form ref={formRef} noValidate onSubmit={submit} className="mt-5 space-y-4">
+        <CheckboxGroup label={optionsLabel} options={opts} selected={solutions} onToggle={toggle} dir={dir} error={fieldErrors.options} />
+        <LeadFields form={form} setForm={setForm} dir={dir} c={c} errors={fieldErrors} clearError={clearError} />
         <div dir={dir}>
           <label className="mb-1 block text-[11px] font-medium text-slate-700">{c.message}</label>
           <textarea rows={3} value={form.message} onChange={(e) => setForm((p) => ({ ...p, message: e.target.value }))} className={inputClass} />
@@ -207,6 +226,9 @@ export function ConsultationModal({ isOpen, onClose, config, options }) {
   const [done, setDone] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
+  const formRef = useRef(null);
+  const clearError = (k) => setFieldErrors((p) => (p[k] ? { ...p, [k]: "" } : p));
 
   const opts = resolveOptions(options, language);
   const heading = t(config, "heading", language) || (language === "ar" ? "احجز استشارة مجانية" : "Book a Free Consultation");
@@ -216,17 +238,15 @@ export function ConsultationModal({ isOpen, onClose, config, options }) {
   const successTitle = t(config, "successTitle", language) || (language === "ar" ? "تم استلام الطلب!" : "Request Received!");
   const successMessage = t(config, "successMessage", language) || (language === "ar" ? "سيتواصل معك فريقنا لتحديد موعد الاستشارة." : "Our team will reach out to schedule your consultation.");
 
-  const toggle = (v) => setTopics((p) => (p.includes(v) ? p.filter((x) => x !== v) : [...p, v]));
+  const toggle = (v) => { setTopics((p) => (p.includes(v) ? p.filter((x) => x !== v) : [...p, v])); clearError("options"); };
 
-  const reset = () => { setForm({ ...BLANK, preferredTime: "" }); setTopics([]); setDone(false); setError(""); setSubmitting(false); };
+  const reset = () => { setForm({ ...BLANK, preferredTime: "" }); setTopics([]); setDone(false); setError(""); setFieldErrors({}); setSubmitting(false); };
   const close = () => { reset(); onClose(); };
 
   const submit = async (e) => {
     e.preventDefault();
     setError("");
-    const v = validateLead(form);
-    if (v) { setError(v); return; }
-    if (opts.length > 0 && topics.length === 0) { setError(c.pickError); return; }
+    if (!checkLead({ form, c, language, picked: topics, hasOptions: opts.length > 0, formEl: formRef.current, setFieldErrors })) return;
     setSubmitting(true);
     try {
       const res = await fetch(`${API}/api/business/consultations`, {
@@ -245,9 +265,9 @@ export function ConsultationModal({ isOpen, onClose, config, options }) {
 
   return (
     <ModalShell isOpen={isOpen} onClose={close} title={heading} subtitle={subtitle} done={done} successTitle={successTitle} successMessage={successMessage}>
-      <form onSubmit={submit} className="mt-5 space-y-4">
-        <CheckboxGroup label={optionsLabel} options={opts} selected={topics} onToggle={toggle} dir={dir} />
-        <LeadFields form={form} setForm={setForm} dir={dir} c={c} />
+      <form ref={formRef} noValidate onSubmit={submit} className="mt-5 space-y-4">
+        <CheckboxGroup label={optionsLabel} options={opts} selected={topics} onToggle={toggle} dir={dir} error={fieldErrors.options} />
+        <LeadFields form={form} setForm={setForm} dir={dir} c={c} errors={fieldErrors} clearError={clearError} />
         <div dir={dir}>
           <label className="mb-1 block text-[11px] font-medium text-slate-700">{timeLabel}</label>
           <input value={form.preferredTime} onChange={(e) => setForm((p) => ({ ...p, preferredTime: e.target.value }))} className={inputClass} placeholder="e.g. Weekday mornings" />

@@ -329,37 +329,20 @@ export default function WhoWeWorkWith() {
               </motion.ul>
             </motion.div>
 
-            {/* CTA Button — links to header.ctaLink when set, otherwise a plain button */}
-            {header.ctaLink ? (
-              <motion.div variants={itemVariants} className="inline-block">
-                <Link
-                  href={header.ctaLink}
-                  className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] text-white font-semibold rounded-full hover:shadow-lg hover:shadow-[#0088FF]/30 transition"
-                >
-                  <span dir={language === "ar" ? "rtl" : "ltr"} className="[overflow-wrap:anywhere]">
-                    {t(header, "ctaLabel", language) || (language === "ar" ? "" : "Learn More")}
-                  </span>
-                  <ArrowRight className="h-4 w-4 rtl:rotate-180" />
-                </Link>
-              </motion.div>
-            ) : (
-              <motion.button
-                variants={itemVariants}
-                whileHover={{ x: 4 }}
-                whileTap={{ scale: 0.98 }}
+            {/* CTA Button — goes to the admin link (Business › Who We Work With ›
+                CTA link); with none set it opens Contact, like the site's other CTAs,
+                instead of being a dead button. */}
+            <motion.div variants={itemVariants} className="inline-block">
+              <Link
+                href={(header.ctaLink || "").trim() || "/contact"}
                 className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-[#0088FF] to-[#1AB2FF] text-white font-semibold rounded-full hover:shadow-lg hover:shadow-[#0088FF]/30 transition"
               >
                 <span dir={language === "ar" ? "rtl" : "ltr"} className="[overflow-wrap:anywhere]">
                   {t(header, "ctaLabel", language) || (language === "ar" ? "" : "Learn More")}
                 </span>
-                <motion.div
-                  whileHover={{ x: 4 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <ArrowRight className="h-4 w-4 rtl:rotate-180" />
-                </motion.div>
-              </motion.button>
-            )}
+                <ArrowRight className="h-4 w-4 rtl:rotate-180" />
+              </Link>
+            </motion.div>
           </motion.div>
 
           {/* Right: Image with Enhanced Effects — hidden entirely when the

@@ -1,9 +1,11 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Check, CloudUpload, FileText, Loader2 } from "lucide-react";
 import { useLanguage, t } from "@/context/LanguageContext";
 import { ModalShell, inputClass } from "@/components/business/BusinessLeadModals";
+import { validateForm, focusFirstError, errorInputClass } from "@/lib/formValidation";
+import FieldError from "@/components/common/FieldError";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "";
 
@@ -24,6 +26,12 @@ const COPY = {
     emailPh: "you@company.com",
     phone: "Phone Number",
     phonePh: "50 000 0000",
+    type: "Partner Type",
+    typeParking: "Parking Partner",
+    typeParkingHint: "List or manage your parking spaces with HalaPark",
+    typeService: "Service Partner",
+    typeServiceHint: "Offer services (valet, car wash, EV…) through HalaPark",
+    errType: "Please choose Parking Partner or Service Partner.",
     help: "How Can We Help?",
     helpPh: "Tell us about your partnership opportunity",
     doc: "Supporting Documents",
@@ -40,7 +48,7 @@ const COPY = {
     errName: "Full name is required.",
     errCompany: "Company name is required.",
     errEmail: "A valid email address is required.",
-    errPhone: "Enter a valid phone number (digits only).",
+    errPhone: "Enter a valid UAE mobile number after +971: 8–9 digits (e.g. 50 123 4567).",
     errHelp: "Please tell us how we can help.",
     errDocType: "Unsupported file type. Upload a PDF, Word, PowerPoint, Excel or image file.",
     errDocSize: "File is too large (max 10MB).",
@@ -63,6 +71,12 @@ const COPY = {
     emailPh: "you@company.com",
     phone: "رقم الهاتف",
     phonePh: "50 000 0000",
+    type: "نوع الشراكة",
+    typeParking: "شريك مواقف",
+    typeParkingHint: "أدرج مواقفك أو أدِرها مع هالا بارك",
+    typeService: "شريك خدمات",
+    typeServiceHint: "قدّم خدماتك (صف السيارات، الغسيل، الشحن…) عبر هالا بارك",
+    errType: "يرجى اختيار شريك مواقف أو شريك خدمات.",
     help: "كيف يمكننا مساعدتك؟",
     helpPh: "أخبرنا عن فرصة الشراكة",
     doc: "مستندات داعمة",
@@ -79,7 +93,7 @@ const COPY = {
     errName: "الاسم الكامل مطلوب.",
     errCompany: "اسم الشركة مطلوب.",
     errEmail: "يرجى إدخال بريد إلكتروني صالح.",
-    errPhone: "يرجى إدخال رقم هاتف صالح (أرقام فقط).",
+    errPhone: "أدخل رقم جوال إماراتي صحيحًا بعد ‎+971: من 8 إلى 9 أرقام (مثال: 50 123 4567).",
     errHelp: "يرجى إخبارنا كيف يمكننا مساعدتك.",
     errDocType: "نوع الملف غير مدعوم. ارفع ملف PDF أو Word أو PowerPoint أو Excel أو صورة.",
     errDocSize: "حجم الملف كبير جدًا (بحد أقصى 10 ميجابايت).",
@@ -91,7 +105,8 @@ const COPY = {
   },
 };
 
-const BLANK = { fullName: "", companyName: "", email: "", phone: "", message: "" };
+const BLANK = { partnerType: "", fullName: "", companyName: "", email: "", phone: "", message: "" };
+const FIELD_ORDER = ["partnerType", "fullName", "companyName", "email", "phone", "message"];
 const DOC_MAX_COUNT = 5;
 const BLANK_DOC = { status: "idle", name: "", type: "", url: "", progress: 0, error: "" };
 
@@ -135,7 +150,7 @@ function uploadToCloudinary(file, sig, onProgress) {
  * admin-editable copy from Settings → Partnership Form, `source` records which
  * button opened it.
  */
-export default function PartnershipModal({ isOpen, onClose, config, source }) {
+export default function PartnershipModal({ isOpen, onClose, config, source, initialType = "" }) {
   const { language } = useLanguage();
   const isAr = language === "ar";
   const c = COPY[isAr ? "ar" : "en"];
@@ -149,14 +164,26 @@ export default function PartnershipModal({ isOpen, onClose, config, source }) {
   const [done, setDone] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
   const fileRef = useRef(null);
+  const formRef = useRef(null);
+
+  // The button that opened the popup pre-selects the partner type
+  // (Become a Parking Partner → parking, Become a Service Partner → service).
+  useEffect(() => {
+    if (isOpen) setForm((p) => ({ ...p, partnerType: initialType || p.partnerType }));
+  }, [isOpen, initialType]);
 
   const heading = t(config, "heading", language) || c.heading;
   const subtitle = t(config, "subtitle", language) || c.subtitle;
   const successTitle = t(config, "successTitle", language) || c.successTitle;
   const successMessage = t(config, "successMessage", language) || c.successMessage;
 
-  const set = (k, v) => setForm((p) => ({ ...p, [k]: v }));
+  const set = (k, v) => {
+    setForm((p) => ({ ...p, [k]: v }));
+    setFieldErrors((p) => (p[k] ? { ...p, [k]: "" } : p));
+  };
+  const errCls = (k) => (fieldErrors[k] ? errorInputClass : "");
 
   const close = () => {
     setForm(BLANK);
@@ -165,6 +192,7 @@ export default function PartnershipModal({ isOpen, onClose, config, source }) {
     setDragOver(false);
     setDone(false);
     setError("");
+    setFieldErrors({});
     setSubmitting(false);
     onClose();
   };
@@ -206,11 +234,29 @@ export default function PartnershipModal({ isOpen, onClose, config, source }) {
   async function submit(e) {
     e.preventDefault();
     setError("");
-    if (!form.fullName.trim()) return setError(c.errName);
-    if (!form.companyName.trim()) return setError(c.errCompany);
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) return setError(c.errEmail);
-    if (!/^\d{8,9}$/.test(form.phone)) return setError(c.errPhone);
-    if (!form.message.trim()) return setError(c.errHelp);
+    // Shared rules (src/lib/formValidation.js) + this form's specifics:
+    // partner type chosen, UAE mobile (8–9 digits after the fixed +971).
+    const errors = validateForm(form, {
+      fullName: { label: c.fullName, required: true },
+      companyName: { label: c.company, required: true },
+      email: { label: c.email, required: true, email: true },
+      message: { label: c.help, required: true },
+    }, language);
+    if (!form.partnerType) errors.partnerType = c.errType;
+    if (!/^\d{8,9}$/.test(form.phone)) errors.phone = c.errPhone;
+    if (errors.fullName) errors.fullName = c.errName;
+    if (errors.companyName) errors.companyName = c.errCompany;
+    if (errors.email) errors.email = c.errEmail;
+    if (errors.message) errors.message = c.errHelp;
+    setFieldErrors(errors);
+    if (Object.keys(errors).length) {
+      if (FIELD_ORDER.find((k) => errors[k]) === "partnerType") {
+        formRef.current?.querySelector('[data-field="partnerType"]')?.scrollIntoView({ behavior: "smooth", block: "center" });
+      } else {
+        focusFirstError(formRef.current, errors, FIELD_ORDER);
+      }
+      return;
+    }
     if (docs.some((d) => d.status === "uploading")) return setError(c.errWait);
 
     setSubmitting(true);
@@ -219,6 +265,7 @@ export default function PartnershipModal({ isOpen, onClose, config, source }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          partnerType: form.partnerType,
           fullName: form.fullName.trim(),
           companyName: form.companyName.trim(),
           email: form.email.trim(),
@@ -256,53 +303,103 @@ export default function PartnershipModal({ isOpen, onClose, config, source }) {
       successTitle={successTitle}
       successMessage={successMessage}
     >
-      <form onSubmit={submit} className="mt-5 space-y-3.5" dir={dir} noValidate>
+      <form ref={formRef} onSubmit={submit} className="mt-5 space-y-3.5" dir={dir} noValidate>
+        {/* Partner type — pre-selected by the button that opened the popup */}
+        <div data-field="partnerType">
+          <p className={labelCls}>{c.type} {req}</p>
+          <div className="grid gap-2 sm:grid-cols-2" role="radiogroup" aria-label={c.type}>
+            {[
+              ["parking", c.typeParking, c.typeParkingHint],
+              ["service", c.typeService, c.typeServiceHint],
+            ].map(([value, label, hint]) => {
+              const checked = form.partnerType === value;
+              return (
+                <label
+                  key={value}
+                  className={`flex cursor-pointer items-start gap-2.5 rounded-xl border px-3 py-2.5 transition ${
+                    checked
+                      ? "border-[#0088FF] bg-[rgba(0,136,255,0.06)]"
+                      : fieldErrors.partnerType
+                        ? "border-red-300 bg-white"
+                        : "border-slate-200 bg-white hover:border-[#0088FF]/40"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="partnerType"
+                    value={value}
+                    checked={checked}
+                    onChange={() => set("partnerType", value)}
+                    className="mt-0.5 h-4 w-4 accent-[#0088FF]"
+                  />
+                  <span className="min-w-0">
+                    <span className="block text-sm font-semibold text-[#050A13]">{label}</span>
+                    <span className="block text-[11px] leading-4 text-slate-500">{hint}</span>
+                  </span>
+                </label>
+              );
+            })}
+          </div>
+          <FieldError message={fieldErrors.partnerType} />
+        </div>
+
         <div>
           <label className={labelCls}>{c.fullName} {req}</label>
           <input
+            name="fullName"
+            aria-invalid={Boolean(fieldErrors.fullName)}
             value={form.fullName}
             onChange={(e) => set("fullName", e.target.value)}
-            className={inputClass}
+            className={`${inputClass} ${errCls("fullName")}`}
             placeholder={c.fullNamePh}
             maxLength={120}
             autoComplete="name"
           />
+          <FieldError message={fieldErrors.fullName} />
         </div>
 
         <div>
           <label className={labelCls}>{c.company} {req}</label>
           <input
+            name="companyName"
+            aria-invalid={Boolean(fieldErrors.companyName)}
             value={form.companyName}
             onChange={(e) => set("companyName", e.target.value)}
-            className={inputClass}
+            className={`${inputClass} ${errCls("companyName")}`}
             placeholder={c.companyPh}
             maxLength={160}
             autoComplete="organization"
           />
+          <FieldError message={fieldErrors.companyName} />
         </div>
 
         <div>
           <label className={labelCls}>{c.email} {req}</label>
           <input
             type="email"
+            name="email"
+            aria-invalid={Boolean(fieldErrors.email)}
             dir="ltr"
             value={form.email}
             onChange={(e) => set("email", e.target.value)}
-            className={`${inputClass} ${isAr ? "text-right" : ""}`}
+            className={`${inputClass} ${errCls("email")} ${isAr ? "text-right" : ""}`}
             placeholder={c.emailPh}
             autoComplete="email"
           />
+          <FieldError message={fieldErrors.email} />
         </div>
 
         <div>
           <label className={labelCls}>{c.phone} {req}</label>
           {/* Phone numbers always read left-to-right, even in Arabic. */}
-          <div dir="ltr" className="flex items-stretch overflow-hidden rounded-xl border border-slate-200 bg-slate-50 transition focus-within:border-[#0088FF] focus-within:bg-white focus-within:ring-2 focus-within:ring-[rgba(0,136,255,0.12)]">
+          <div dir="ltr" className={`flex items-stretch overflow-hidden rounded-xl border ${fieldErrors.phone ? "border-red-400" : "border-slate-200"} bg-slate-50 transition focus-within:border-[#0088FF] focus-within:bg-white focus-within:ring-2 focus-within:ring-[rgba(0,136,255,0.12)]`}>
             <span className="flex shrink-0 items-center border-r border-slate-200 bg-slate-100 px-3 text-sm font-semibold text-slate-600">
               +971
             </span>
             <input
               type="tel"
+              name="phone"
+              aria-invalid={Boolean(fieldErrors.phone)}
               inputMode="numeric"
               value={form.phone}
               onChange={(e) => set("phone", normalizeUaeDigits(e.target.value))}
@@ -311,18 +408,22 @@ export default function PartnershipModal({ isOpen, onClose, config, source }) {
               autoComplete="tel-national"
             />
           </div>
+          <FieldError message={fieldErrors.phone} />
         </div>
 
         <div>
           <label className={labelCls}>{c.help} {req}</label>
           <textarea
+            name="message"
+            aria-invalid={Boolean(fieldErrors.message)}
             rows={4}
             value={form.message}
             onChange={(e) => set("message", e.target.value)}
-            className={inputClass}
+            className={`${inputClass} ${errCls("message")}`}
             placeholder={c.helpPh}
             maxLength={3000}
           />
+          <FieldError message={fieldErrors.message} />
         </div>
 
         <div>

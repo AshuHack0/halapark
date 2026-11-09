@@ -450,10 +450,10 @@ export default function HeroSection() {
             <Link href={ctaHref}>
               <button
                 type="button"
-                className="mt-7 inline-flex w-full max-w-[295px] items-center justify-between rounded-2xl bg-[#005BFF] px-4 py-3.5 text-base font-semibold text-white shadow-[0_16px_34px_rgba(0,91,255,0.28)] transition hover:brightness-95 sm:px-5"
+                className="mt-7 inline-flex w-full max-w-[295px] items-center justify-between rounded-2xl bg-[#0088FF] px-4 py-3.5 text-base font-semibold text-white shadow-[0_16px_34px_rgba(0,136,255,0.28)] transition hover:brightness-95 sm:px-5"
               >
                 <span className="flex items-center gap-3">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#005BFF]">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#0088FF]">
                     <MapPin
                       aria-hidden="true"
                       className="h-6 w-6"

@@ -200,6 +200,7 @@ export default function TransformParking() {
             {parkingPartnerCtaLabel ? (
               <div className="mt-auto pt-10">
                 <Link
+                  data-partner-type="parking"
                   href={transformData.parkingPartnerCtaPopup ? PARTNER_FORM_LINK : (transformData.parkingPartnerCtaLink || "").trim() || "/contact"}
                   data-partner-source="Business · Parking Partner"
                   className="inline-flex items-center gap-2 rounded-full bg-[#0088FF] px-8 py-3.5 text-sm font-semibold text-white shadow-[0_8px_28px_rgba(0,136,255,0.35)] transition hover:brightness-110"
@@ -310,6 +311,7 @@ export default function TransformParking() {
             {servicePartnerCtaLabel ? (
               <div className="mt-auto pt-10">
                 <Link
+                  data-partner-type="service"
                   href={transformData.servicePartnerCtaPopup ? PARTNER_FORM_LINK : (transformData.servicePartnerCtaLink || "").trim() || "/contact"}
                   data-partner-source="Business · Service Partner"
                   className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-8 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20"

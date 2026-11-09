@@ -5,6 +5,15 @@ import { AnimatePresence, motion } from "framer-motion";
 import ReCAPTCHA from "react-google-recaptcha";
 import { Check, CloudUpload, Loader2, X } from "lucide-react";
 import { RECAPTCHA_SITE_KEY } from "@/config/recaptcha.site";
+import { validateForm, focusFirstError, errorInputClass } from "@/lib/formValidation";
+import FieldError from "@/components/common/FieldError";
+
+// Shared validation rules (src/lib/formValidation.js).
+const GENERAL_RULES = {
+  firstName: { label: "First name", required: true },
+  lastName: { label: "Last name", required: true },
+  email: { label: "Email address", required: true, email: true },
+};
 
 const ease = [0.22, 1, 0.36, 1];
 
@@ -89,6 +98,9 @@ export default function GeneralApplicationModal({ isOpen, onClose }) {
   const [done, setDone] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
+  const formRef = useRef(null);
+  const cvBoxRef = useRef(null);
   // CV upload state: idle | uploading | done | error
   const [cv, setCv] = useState({ status: "idle", name: "", url: "", progress: 0, error: "" });
   const [dragOver, setDragOver] = useState(false);
@@ -117,6 +129,7 @@ export default function GeneralApplicationModal({ isOpen, onClose }) {
     setForm({ firstName: "", lastName: "", email: "", birthDay: "", birthMonth: "", birthYear: "", hearAbout: "" });
     setDone(false);
     setFormError("");
+    setFieldErrors({});
     setSubmitting(false);
     setCv({ status: "idle", name: "", url: "", progress: 0, error: "" });
     setDragOver(false);
@@ -127,6 +140,8 @@ export default function GeneralApplicationModal({ isOpen, onClose }) {
   function onChange(e) {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
+    const key = name.startsWith("birth") ? "birthDate" : name;
+    if (fieldErrors[key]) setFieldErrors((prev) => ({ ...prev, [key]: "" }));
   }
 
   function removeCv() {
@@ -161,6 +176,7 @@ export default function GeneralApplicationModal({ isOpen, onClose }) {
       });
       setCv({ status: "done", name: file.name, url: secureUrl, progress: 100, error: "" });
       setFormError("");
+      setFieldErrors((prev) => ({ ...prev, cv: "" }));
     } catch {
       setCv({ status: "error", name: "", url: "", progress: 0, error: "CV upload failed. Please try again." });
     }
@@ -180,9 +196,18 @@ export default function GeneralApplicationModal({ isOpen, onClose }) {
     // Wait for the CV upload to finish before submitting.
     if (cv.status === "uploading") return;
 
-    // CV is mandatory.
-    if (cv.status !== "done" || !cv.url) {
-      setFormError("Please upload your CV.");
+    // Field checks (shared rules) + CV mandatory + birth date all-or-nothing.
+    const errors = validateForm(form, GENERAL_RULES, "en");
+    if (cv.status !== "done" || !cv.url) errors.cv = "Please upload your CV.";
+    const birthParts = [form.birthDay, form.birthMonth, form.birthYear].filter(Boolean).length;
+    if (birthParts > 0 && birthParts < 3) errors.birthDate = "Select day, month and year (or leave the birth date empty).";
+    setFieldErrors(errors);
+    if (Object.keys(errors).length) {
+      if (errors.cv) {
+        cvBoxRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      } else {
+        focusFirstError(formRef.current, { ...errors, birthDay: errors.birthDate }, ["firstName", "lastName", "email", "birthDay"]);
+      }
       return;
     }
 
@@ -302,9 +327,9 @@ export default function GeneralApplicationModal({ isOpen, onClose }) {
                   Fill in your details and upload your CV — we&apos;ll be in touch.
                 </p>
 
-                <form onSubmit={handleSubmit} className="mt-4 space-y-3 sm:mt-6 sm:space-y-4">
+                <form ref={formRef} noValidate onSubmit={handleSubmit} className="mt-4 space-y-3 sm:mt-6 sm:space-y-4">
                   {/* CV upload — mandatory, drag & drop or browse */}
-                  <div>
+                  <div ref={cvBoxRef}>
                     <label className="mb-1 block text-[11px] font-medium text-slate-700 sm:mb-1.5 sm:text-xs">
                       Upload Your CV <span className="text-red-500">*</span>
                     </label>
@@ -386,6 +411,7 @@ export default function GeneralApplicationModal({ isOpen, onClose }) {
                         {cv.error}
                       </p>
                     ) : null}
+                    {cv.status !== "error" ? <FieldError message={fieldErrors.cv} /> : null}
                   </div>
 
                   <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
@@ -400,8 +426,10 @@ export default function GeneralApplicationModal({ isOpen, onClose }) {
                         value={form.firstName}
                         onChange={onChange}
                         placeholder="First name"
-                        className={inputClass}
+                        aria-invalid={Boolean(fieldErrors.firstName)}
+                        className={`${inputClass} ${fieldErrors.firstName ? errorInputClass : ""}`}
                       />
+                      <FieldError message={fieldErrors.firstName} />
                     </div>
                     <div>
                       <label className="mb-1 block text-[11px] font-medium text-slate-700 sm:mb-1.5 sm:text-xs">
@@ -414,8 +442,10 @@ export default function GeneralApplicationModal({ isOpen, onClose }) {
                         value={form.lastName}
                         onChange={onChange}
                         placeholder="Last name"
-                        className={inputClass}
+                        aria-invalid={Boolean(fieldErrors.lastName)}
+                        className={`${inputClass} ${fieldErrors.lastName ? errorInputClass : ""}`}
                       />
+                      <FieldError message={fieldErrors.lastName} />
                     </div>
                   </div>
 
@@ -430,8 +460,10 @@ export default function GeneralApplicationModal({ isOpen, onClose }) {
                       value={form.email}
                       onChange={onChange}
                       placeholder="you@email.com"
-                      className={inputClass}
+                      aria-invalid={Boolean(fieldErrors.email)}
+                      className={`${inputClass} ${fieldErrors.email ? errorInputClass : ""}`}
                     />
+                    <FieldError message={fieldErrors.email} />
                   </div>
 
                   <div>
@@ -458,6 +490,7 @@ export default function GeneralApplicationModal({ isOpen, onClose }) {
                         ))}
                       </select>
                     </div>
+                    <FieldError message={fieldErrors.birthDate} />
                   </div>
 
                   <div>

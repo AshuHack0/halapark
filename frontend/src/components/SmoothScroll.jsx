@@ -125,6 +125,43 @@ export default function SmoothScroll({ children }) {
     scheduleRefresh();
   }, [pathname]);
 
+  // Popup scroll lock. Every popup/modal locks scrolling by setting
+  // `document.body.style.overflow = "hidden"` — but on this site the page
+  // scrolls inside this container (driven by Lenis), not the body, so the
+  // page behind kept scrolling and wheel/touch inside the popup was hijacked
+  // (home search, careers Apply, …). While the body is locked:
+  //  • the container gets overflow:hidden → the page behind cannot move;
+  //  • the content wrapper gets data-lenis-prevent → Lenis ignores wheel/touch
+  //    (it never checks its own root element, hence the inner wrapper), so
+  //    the popup's own scroll area scrolls natively.
+  // Both are undone as soon as the popup releases the body.
+  useEffect(() => {
+    const container = containerRef.current;
+    const content = contentRef.current;
+    if (!container || !content) return undefined;
+    let locked = false;
+    const sync = () => {
+      const shouldLock = document.body.style.overflow === "hidden";
+      if (shouldLock === locked) return;
+      locked = shouldLock;
+      if (shouldLock) {
+        container.style.overflowY = "hidden";
+        content.setAttribute("data-lenis-prevent", "");
+      } else {
+        container.style.overflowY = "";
+        content.removeAttribute("data-lenis-prevent");
+      }
+    };
+    const observer = new MutationObserver(sync);
+    observer.observe(document.body, { attributes: true, attributeFilter: ["style"] });
+    sync();
+    return () => {
+      observer.disconnect();
+      container.style.overflowY = "";
+      content.removeAttribute("data-lenis-prevent");
+    };
+  }, []);
+
   useEffect(() => {
     const handleHashChange = () => {
       syncScrollPosition({ honorHash: true, resetToTop: false });

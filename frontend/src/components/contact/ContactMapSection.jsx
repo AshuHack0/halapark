@@ -28,9 +28,13 @@ export default function ContactMapSection({ map }) {
     return null;
   }
 
-  // Google Maps embed pinned to the office coordinates (functional embed).
-  const officeLocation = { latitude: 25.2048, longitude: 55.2708 };
-  const mapEmbedUrl = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3611.0816849547654!2d${officeLocation.longitude}!3d${officeLocation.latitude}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f43348c88e54b%3A0x1234567890abcdef!2s${encodeURIComponent(map?.address || "Dubai")}!5e0!3m2!1sen!2sae!4v1234567890`;
+  // Map pinned to the office: Google Maps searches the admin's (English)
+  // address, so the embed shows a marker on the office and its "Open in Maps"
+  // link opens that same pinned location. (The previous URL used a dummy place
+  // id + fixed city-centre coordinates, so no office marker was shown.)
+  const mapQuery = (map?.address || "").trim() || "HalaPark, Dubai";
+  const mapEmbedUrl = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&z=15&output=embed`;
+  const mapOpenUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`;
 
   return (
     <section className="mt-8 overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.08)]">
@@ -57,9 +61,14 @@ export default function ContactMapSection({ map }) {
                     {c.addressLabel}
                   </p>
                   {address ? (
-                    <p className="mt-1 text-base text-slate-900 font-medium [overflow-wrap:anywhere]">
+                    <a
+                      href={mapOpenUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-1 block text-base text-slate-900 font-medium transition hover:text-[#0088FF] [overflow-wrap:anywhere]"
+                    >
                       {address}
-                    </p>
+                    </a>
                   ) : null}
                   {officeName ? (
                     <p className="mt-1 text-sm text-slate-500 [overflow-wrap:anywhere]">

@@ -162,8 +162,22 @@ function collectVideos(item) {
     .filter(Boolean);
 }
 
-export default function FAQCategorySection({ categories = [] }) {
+export default function FAQCategorySection({ categories: rawCategories = [] }) {
   const { language } = useLanguage();
+  // Only questions that have an answer (in the current language) are listed;
+  // a category left with no answered questions is hidden too.
+  const categories = useMemo(
+    () =>
+      (Array.isArray(rawCategories) ? rawCategories : [])
+        .map((cat) => ({
+          ...cat,
+          items: (cat.items || []).filter((item) =>
+            String(t(item, "answer", language) ?? "").replace(/<[^>]*>/g, "").trim(),
+          ),
+        }))
+        .filter((cat) => cat.items.length > 0),
+    [rawCategories, language],
+  );
   const fq = (key) => FAQ_UI[key]?.[language] ?? FAQ_UI[key]?.en ?? "";
   const [searchHeader, setSearchHeader] = useState(null);
   const [activeCategoryId, setActiveCategoryId] = useState(categories[0]?.id);
@@ -184,26 +198,39 @@ export default function FAQCategorySection({ categories = [] }) {
     };
   }, []);
 
-  const activeCategory = useMemo(
-    () => categories.find((c) => c.id === activeCategoryId),
-    [activeCategoryId, categories]
-  );
-
-  // Filter categories and items based on search query
+  // Search matches the question/answer text in the CURRENT language (HTML
+  // tags in rich answers ignored).
+  const plain = (v) => String(v ?? "").replace(/<[^>]*>/g, " ").toLowerCase();
   const filteredCategories = useMemo(() => {
-    if (!searchQuery.trim()) return categories;
-    const query = searchQuery.toLowerCase();
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) return categories;
     return categories
       .map((cat) => ({
         ...cat,
         items: (cat.items || []).filter(
           (item) =>
-            item.question?.toLowerCase().includes(query) ||
-            item.answer?.toLowerCase().includes(query)
+            plain(t(item, "question", language)).includes(query) ||
+            plain(t(item, "answer", language)).includes(query)
         ),
       }))
       .filter((cat) => cat.items.length > 0);
-  }, [categories, searchQuery]);
+  }, [categories, searchQuery, language]);
+
+  // While searching, the question panel shows the MATCHING questions (the
+  // selected category if it has matches, else the first category that does) —
+  // previously it kept showing the unfiltered category, so hits were invisible.
+  const activeCategory = useMemo(() => {
+    const list = searchQuery.trim() ? filteredCategories : categories;
+    return list.find((c) => c.id === activeCategoryId) ?? list[0];
+  }, [activeCategoryId, categories, filteredCategories, searchQuery]);
+
+  // Typing a search opens the first matching question so the hit is visible.
+  useEffect(() => {
+    if (!searchQuery.trim()) return;
+    const cat = filteredCategories.find((c) => c.id === activeCategoryId) ?? filteredCategories[0];
+    if (cat?.items?.[0]) setOpenQuestionKey(makeKey(cat.id, cat.items[0].id));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery]);
 
   const handleCategoryClick = (category) => {
     setActiveCategoryId(category.id);
@@ -277,7 +304,7 @@ export default function FAQCategorySection({ categories = [] }) {
               <ul className="space-y-0.5">
                 {filteredCategories.map((category) => {
                   const Icon = iconMap[category.icon] ?? Building2;
-                  const isActive = category.id === activeCategoryId;
+                  const isActive = category.id === activeCategory?.id;
                   return (
                     <li key={category.id}>
                       <button
@@ -333,7 +360,7 @@ export default function FAQCategorySection({ categories = [] }) {
 
             <div className="divide-y divide-slate-100 rounded-[20px] border border-[#E7EAF0] bg-white shadow-[0_4px_24px_rgba(6,6,22,0.05)]">
               {activeCategory?.items?.map((item) => {
-                const key = makeKey(activeCategoryId, item.id);
+                const key = makeKey(activeCategory?.id, item.id);
                 const isOpen = openQuestionKey === key;
                 return (
                   <div key={key}>

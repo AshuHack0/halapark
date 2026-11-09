@@ -233,7 +233,7 @@ export default function AppScreenshots() {
                   key={index}
                   className={`flex items-center gap-2 rounded-2xl border border-[#E4EAF2] bg-white p-3 shadow-[0_10px_26px_rgba(15,23,42,0.04)] lg:rounded-none lg:border-0 lg:bg-transparent lg:p-0 lg:shadow-none ${
                     index === displaySteps.length - 1
-                      ? "sm:col-span-2 sm:mx-auto sm:w-full sm:max-w-[22rem] lg:col-span-1 lg:mx-0 lg:max-w-none"
+                      ? "sm:col-span-2 sm:mx-auto sm:w-full sm:max-w-[22rem] lg:col-span-1 lg:mx-0 lg:w-auto lg:max-w-none"
                       : ""
                   }`}
                 >

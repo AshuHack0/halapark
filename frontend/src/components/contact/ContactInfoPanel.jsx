@@ -7,6 +7,23 @@ import RichText from "@/components/common/RichText";
 
 import { ICON_BY_KEY } from "./contactData";
 
+const MAP_HOST = /(^|\.)google\.[a-z.]+$|^maps\.app\.goo\.gl$|^goo\.gl$|^maps\.apple\.com$/i;
+
+// Office address cards always open a map in a new tab. An admin link that is
+// already a map link is used as is; otherwise (empty, or e.g. the site's own
+// homepage) a Google Maps search for the card's address text is built.
+function addressMapHref(item) {
+  const href = (item.href || "").trim();
+  try {
+    const u = new URL(href);
+    if (MAP_HOST.test(u.hostname) && (u.hostname !== "www.google.com" || u.pathname.startsWith("/maps"))) return href;
+  } catch {
+    /* not an absolute URL — fall through */
+  }
+  const place = [item.description, item.value].map((v) => (v || "").trim()).find(Boolean) || "";
+  return place ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place)}` : href || undefined;
+}
+
 function ContactDetailItem({ detail }) {
   const { language } = useLanguage();
   const isAr = language === "ar";
@@ -21,6 +38,7 @@ function ContactDetailItem({ detail }) {
   const value = detail.href ? (
     <a
       href={detail.href}
+      {...(detail.newTab ? { target: "_blank", rel: "noopener noreferrer" } : {})}
       className="inline-flex items-center gap-2 text-base font-semibold text-slate-900 transition hover:text-[#0088FF]"
     >
       {displayValue}
@@ -68,7 +86,8 @@ export default function ContactInfoPanel({ details }) {
       titleAr: item.ar?.title,
       value: item.value,
       valueAr: item.ar?.value,
-      href: item.href || undefined,
+      href: item.key === "address" ? addressMapHref(item) : item.href || undefined,
+      newTab: item.key === "address",
       description: item.description,
       descriptionAr: item.ar?.description,
       icon: ICON_BY_KEY[item.key] || ICON_BY_KEY.address,

@@ -31,6 +31,8 @@ import { fetchPage } from "@/lib/cms";
 import { usePrefersReducedMotionOS } from "@/hooks/usePrefersReducedMotionOS";
 import { useLanguage, t } from "@/context/LanguageContext";
 import RichText from "@/components/common/RichText";
+import { validateForm, focusFirstError, errorInputClass } from "@/lib/formValidation";
+import FieldError from "@/components/common/FieldError";
 import LogoTicker from "@/components/common/LogoTicker";
 import { PARTNER_FORM_LINK } from "@/components/partners/PartnershipFormProvider";
 // import GoodLookingServiceHero from "./GoodLookingServiceHero"; // OLD dark hero (looked like home page) — replaced by the light HeroSection below
@@ -370,6 +372,9 @@ function QuoteModal({ isOpen, onClose, quoteForm, services }) {
   const [done, setDone] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
+  const formRef = useRef(null);
+  const clearFieldError = (k) => setFieldErrors((p) => (p[k] ? { ...p, [k]: "" } : p));
   const [serviceSearch, setServiceSearch] = useState("");
   const [serviceOpen, setServiceOpen] = useState(false);
   // Attachments: each item is { name, type, url } once uploaded to Cloudinary.
@@ -417,6 +422,7 @@ function QuoteModal({ isOpen, onClose, quoteForm, services }) {
   const onChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm((p) => ({ ...p, [name]: type === "checkbox" ? checked : value }));
+    clearFieldError(name);
   };
 
   // Phone field: only allow digits, +, spaces, hyphens, parentheses. A leading
@@ -426,6 +432,7 @@ function QuoteModal({ isOpen, onClose, quoteForm, services }) {
     // Collapse any "+" that isn't the first character.
     v = v.replace(/(?!^)\+/g, "");
     setForm((p) => ({ ...p, phone: v }));
+    clearFieldError("phone");
   };
 
   const onAttachmentsSelected = async (event) => {
@@ -459,19 +466,24 @@ function QuoteModal({ isOpen, onClose, quoteForm, services }) {
 
   const removeAttachment = (index) => setAttachments((prev) => prev.filter((_, i) => i !== index));
 
+  // Shared rules (src/lib/formValidation.js): message under each field,
+  // first invalid one scrolled to + focused.
+  const QUOTE_ORDER = ["fullName", "email", "phone", "service"];
   const validate = () => {
-    if (!form.fullName.trim()) return "Full name is required.";
-    if (!form.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) return "A valid email is required.";
-    if (!form.phone.trim()) return "Phone number is required.";
-    if (/[a-zA-Z]/.test(form.phone)) return "Phone number must not contain letters.";
-    if (!form.service) return "Please select a service.";
-    return null;
+    const errors = validateForm(form, {
+      fullName: { label: "Full name", required: true },
+      email: { label: "Email address", required: true, email: true },
+      phone: { label: "Phone number", required: true, phone: true },
+    }, "en");
+    if (!form.service) errors.service = "Please select a service.";
+    return errors;
   };
 
   const handleClose = () => {
     setForm(BLANK_FORM);
     setDone(false);
     setFormError("");
+    setFieldErrors({});
     setSubmitting(false);
     setAttachments([]);
     setAttachUpload(null);
@@ -484,8 +496,16 @@ function QuoteModal({ isOpen, onClose, quoteForm, services }) {
     e.preventDefault();
     setFormError("");
 
-    const validationError = validate();
-    if (validationError) { setFormError(validationError); return; }
+    const errors = validate();
+    setFieldErrors(errors);
+    if (Object.keys(errors).length) {
+      if (QUOTE_ORDER.find((k) => errors[k]) === "service") {
+        formRef.current?.querySelector('[data-field="service"]')?.scrollIntoView({ behavior: "smooth", block: "center" });
+      } else {
+        focusFirstError(formRef.current, errors, QUOTE_ORDER);
+      }
+      return;
+    }
 
     if (!RECAPTCHA_SITE_KEY) {
       setFormError("reCAPTCHA is not configured. Set NEXT_PUBLIC_RECAPTCHA_SITE_KEY in the environment.");
@@ -571,37 +591,41 @@ function QuoteModal({ isOpen, onClose, quoteForm, services }) {
                 <h2 className="mt-1 text-xl font-semibold tracking-[-0.04em] text-[#050A13] sm:mt-2 sm:text-2xl [overflow-wrap:anywhere]">{qHeading}</h2>
                 {qIntro ? <p className="mt-0.5 text-[0.78rem] text-slate-500 sm:text-[0.84rem] [overflow-wrap:anywhere]">{qIntro}</p> : null}
 
-                <form onSubmit={handleSubmit} className="mt-4 space-y-3 sm:mt-6 sm:space-y-4">
+                <form ref={formRef} noValidate onSubmit={handleSubmit} className="mt-4 space-y-3 sm:mt-6 sm:space-y-4">
                   {/* compact input style shared */}
                   <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
                     {[["fullName","Full Name","John Smith","text",true],["companyName","Company Name","Acme Corp","text",false]].map(([name,label,ph,type,req]) => (
                       <div key={name}>
                         <label className="mb-1 block text-[11px] font-medium text-slate-700 sm:mb-1.5 sm:text-xs">{label}{req && <span className="ms-0.5 text-red-500">*</span>}</label>
-                        <input required={req} type={type} name={name} value={form[name]} onChange={onChange} placeholder={ph}
-                          className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#0088FF] focus:bg-white focus:ring-2 focus:ring-[rgba(0,136,255,0.12)] sm:rounded-xl sm:px-4 sm:py-2.5"
+                        <input type={type} name={name} value={form[name]} onChange={onChange} placeholder={ph}
+                          aria-invalid={Boolean(fieldErrors[name])}
+                          className={`w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#0088FF] focus:bg-white focus:ring-2 focus:ring-[rgba(0,136,255,0.12)] sm:rounded-xl sm:px-4 sm:py-2.5 ${fieldErrors[name] ? errorInputClass : ""}`}
                         />
+                        <FieldError message={fieldErrors[name]} />
                       </div>
                     ))}
                   </div>
                   <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
                     <div>
                       <label className="mb-1 block text-[11px] font-medium text-slate-700 sm:mb-1.5 sm:text-xs">Email Address <span className="ms-0.5 text-red-500">*</span></label>
-                      <input required type="email" name="email" value={form.email} onChange={onChange} placeholder="john@company.com"
-                        className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#0088FF] focus:bg-white focus:ring-2 focus:ring-[rgba(0,136,255,0.12)] sm:rounded-xl sm:px-4 sm:py-2.5"
+                      <input type="email" name="email" value={form.email} onChange={onChange} placeholder="john@company.com"
+                        aria-invalid={Boolean(fieldErrors.email)}
+                        className={`w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#0088FF] focus:bg-white focus:ring-2 focus:ring-[rgba(0,136,255,0.12)] sm:rounded-xl sm:px-4 sm:py-2.5 ${fieldErrors.email ? errorInputClass : ""}`}
                       />
+                      <FieldError message={fieldErrors.email} />
                     </div>
                     <div>
                       <label className="mb-1 block text-[11px] font-medium text-slate-700 sm:mb-1.5 sm:text-xs">Phone Number <span className="ms-0.5 text-red-500">*</span></label>
-                      <input required type="tel" name="phone" value={form.phone} onChange={onPhoneChange}
+                      <input type="tel" name="phone" value={form.phone} onChange={onPhoneChange}
                         placeholder="+971 50 000 0000"
                         inputMode="tel"
-                        pattern="[\d+\s\-().]+"
-                        title="Phone number must contain only digits, +, spaces, or hyphens"
-                        className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#0088FF] focus:bg-white focus:ring-2 focus:ring-[rgba(0,136,255,0.12)] sm:rounded-xl sm:px-4 sm:py-2.5"
+                        aria-invalid={Boolean(fieldErrors.phone)}
+                        className={`w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#0088FF] focus:bg-white focus:ring-2 focus:ring-[rgba(0,136,255,0.12)] sm:rounded-xl sm:px-4 sm:py-2.5 ${fieldErrors.phone ? errorInputClass : ""}`}
                       />
+                      <FieldError message={fieldErrors.phone} />
                     </div>
                   </div>
-                  <div>
+                  <div data-field="service">
                     <label className="mb-1 block text-[11px] font-medium text-slate-700 sm:mb-1.5 sm:text-xs">Select Service <span className="text-red-500">*</span></label>
                     <div className="relative">
                       <button
@@ -637,6 +661,7 @@ function QuoteModal({ isOpen, onClose, quoteForm, services }) {
                                     type="button"
                                     onClick={() => {
                                       setForm((p) => ({ ...p, service }));
+                                      clearFieldError("service");
                                       setServiceOpen(false);
                                       setServiceSearch("");
                                     }}
@@ -653,6 +678,7 @@ function QuoteModal({ isOpen, onClose, quoteForm, services }) {
                         </div>
                       )}
                     </div>
+                    <FieldError message={fieldErrors.service} />
                   </div>
                   <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
                     <div>
