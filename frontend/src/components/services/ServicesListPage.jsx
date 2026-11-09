@@ -1547,7 +1547,10 @@ function ServicesGrid({ onServiceClick, cmsServices, gridHeader, detailSlugs, ca
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.5 }}
           transition={{ duration: 0.5, ease }}
-          className="mb-8 flex gap-2 overflow-x-auto pb-1 sm:gap-3 [&::-webkit-scrollbar]:hidden"
+          // Wraps onto extra rows instead of a hidden-scrollbar strip, so every
+          // category is visible and tappable on phones/tablets (the sideways
+          // scroll cut tabs off with no scroll cue).
+          className="mb-8 flex flex-wrap gap-2 sm:gap-3"
         >
           {visibleFilters.map((f, i) => {
             const isActive = effectiveFilter === f.id;
