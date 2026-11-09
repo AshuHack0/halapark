@@ -274,7 +274,7 @@ export default function AppServiceTabs() {
                   setActiveTab(service.key);
                   setActiveStep(service.steps[0]);
                 }}
-                className={`relative flex min-w-0 items-center justify-center gap-2 rounded-xl border px-3 py-2.5 text-center text-[14px] font-medium transition-colors duration-300 odd:last:col-span-2 sm:odd:last:col-span-1 sm:rounded-none sm:border-0 sm:bg-transparent sm:px-2 sm:pb-6 lg:px-6 sm:pt-1 sm:text-[15px] md:text-[17px] ${
+                className={`relative flex min-w-0 items-center justify-start gap-2 rounded-xl border px-3 py-2.5 text-start text-[14px] sm:justify-center sm:text-center font-medium transition-colors duration-300 odd:last:col-span-2 sm:odd:last:col-span-1 sm:rounded-none sm:border-0 sm:bg-transparent sm:px-2 sm:pb-6 lg:px-6 sm:pt-1 sm:text-[15px] md:text-[17px] ${
                   isActive
                     ? "border-[#0088FF]/40 bg-[#F3F8FF] text-[#1F2940]"
                     : "border-[#E4E7EC] bg-white text-[#7C8596] sm:text-[#D2D6DD] hover:text-[#7C8596]"
@@ -300,10 +300,13 @@ export default function AppServiceTabs() {
           })}
         </div>
 
-        <div className="flex flex-col items-center gap-10 text-center md:flex-row md:items-center md:justify-between md:text-start">
+        {/* Copy is start-aligned at every size (title, description, chips and
+            CTA share one edge) and spans the tab grid's width on phones —
+            centred long paragraphs read ragged next to start-aligned chips. */}
+        <div className="flex flex-col items-center gap-10 text-start md:flex-row md:items-center md:justify-between">
           <div
             dir={dir}
-            className="w-full max-w-[360px] md:flex-1 md:max-w-[500px] md:pt-6 lg:max-w-[560px] lg:pt-10"
+            className="w-full md:flex-1 md:max-w-[500px] md:pt-6 lg:max-w-[560px] lg:pt-10"
           >
             <motion.h3
               key={activeService.key}
