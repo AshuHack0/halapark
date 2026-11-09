@@ -6,6 +6,29 @@ import { useLanguage, t } from "@/context/LanguageContext";
 import RichText from "@/components/common/RichText";
 import { ArrowRight, Cctv, BarChart3, Car, ShieldCheck } from "lucide-react";
 import MobilePicture from "@/components/common/MobilePicture";
+import Link from "next/link";
+
+// Hosts that are this same website (production, staging, Vercel preview).
+const OWN_HOSTS = /(^|\.)halapark\.com$|^halapark-umber\.vercel\.app$/i;
+
+// CTA links from the CMS → an in-site path where possible, so the button
+// navigates within the current domain instead of jumping to another host or
+// scrolling the home page:
+//  • https://halapark.com/services, https://halapark-umber.vercel.app/services → /services
+//  • #services, /#services (the home Services section) → /services page
+// Anything else (other sites, mailto:, tel:) is left exactly as entered.
+function resolveCtaHref(href) {
+  const raw = (href ?? "").trim();
+  if (!raw) return "";
+  if (/^\/?#services$/i.test(raw)) return "/services";
+  try {
+    const u = new URL(raw);
+    if (OWN_HOSTS.test(u.hostname)) return `${u.pathname}${u.search}${u.hash}` || "/";
+  } catch {
+    /* relative path or non-URL — keep as is */
+  }
+  return raw;
+}
 
 // Built-in marks for the ring nodes, used when no icon is uploaded.
 const BANNER_NODE_ICONS = [Cctv, Car, BarChart3, ShieldCheck];
@@ -154,20 +177,31 @@ export default function BlackBanner() {
                   </p>
 
                   <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                    {(featureCard.ctas || []).map((cta, index) => (
-                      <a
-                        key={cta.label}
-                        href={cta.href}
-                        className={`group inline-flex min-h-[50px] items-center justify-center gap-2 rounded-full px-7 text-[14px] font-semibold tracking-[-0.02em] transition-all duration-200 sm:text-[15px] ${
-                          index === 0
-                            ? "bg-white text-[#0A1B33] hover:bg-white/90"
-                            : "border border-white/45 text-white hover:bg-white/10"
-                        }`}
-                      >
-                        {t(cta, "label", language)}
-                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5" aria-hidden />
-                      </a>
-                    ))}
+                    {(featureCard.ctas || []).map((cta, index) => {
+                      const href = resolveCtaHref(cta.href);
+                      const cls = `group inline-flex min-h-[50px] items-center justify-center gap-2 rounded-full px-7 text-[14px] font-semibold tracking-[-0.02em] transition-all duration-200 sm:text-[15px] ${
+                        index === 0
+                          ? "bg-white text-[#0A1B33] hover:bg-white/90"
+                          : "border border-white/45 text-white hover:bg-white/10"
+                      }`;
+                      const inner = (
+                        <>
+                          {t(cta, "label", language)}
+                          <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5" aria-hidden />
+                        </>
+                      );
+                      // In-site paths use Next's router: the new page opens at
+                      // its top, no full reload. Everything else stays a plain link.
+                      return href.startsWith("/") && !href.startsWith("//") ? (
+                        <Link key={cta.label} href={href} scroll className={cls}>
+                          {inner}
+                        </Link>
+                      ) : (
+                        <a key={cta.label} href={href || undefined} className={cls}>
+                          {inner}
+                        </a>
+                      );
+                    })}
                   </div>
                 </div>
 
