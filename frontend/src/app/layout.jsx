@@ -8,6 +8,7 @@ import SmoothScroll from "@/components/SmoothScroll";
 import MobileMotionConfig from "@/components/MobileMotionConfig";
 import PartnershipFormProvider from "@/components/partners/PartnershipFormProvider";
 import SameSiteLinks from "@/components/common/SameSiteLinks";
+import TawkChat from "@/components/common/TawkChat";
 
 // Public site URL — used to build absolute links for the share preview image
 // (WhatsApp/LinkedIn/X need an absolute og:image). Set NEXT_PUBLIC_SITE_URL to
@@ -63,6 +64,7 @@ export default function RootLayout({ children }) {
                 <Footer />
                 <FloatingActions />
                 <SameSiteLinks />
+                <TawkChat />
               </PartnershipFormProvider>
             </LanguageProvider>
           </AppProvider>
