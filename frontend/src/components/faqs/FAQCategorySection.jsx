@@ -398,7 +398,14 @@ export default function FAQCategorySection({ categories: rawCategories = [] }) {
                           // Per-language YouTube link (admin: YouTube English /
                           // Arabic). Strict — the Arabic page only plays the
                           // Arabic link, never the English one.
-                          const ytEmbed = youtubeEmbed(language === "ar" ? item.ar?.youtubeUrl : item.youtubeUrl);
+                          const ytLink = language === "ar" ? item.ar?.youtubeUrl : item.youtubeUrl;
+                          const ytEmbed = youtubeEmbed(ytLink);
+                          // Admin → FAQ question → Video orientation. Portrait
+                          // (phone-recorded / Shorts) gets an upright 9:16 frame
+                          // instead of a wide one with black bars both sides.
+                          const ytPortrait =
+                            item.videoOrientation === "portrait" ||
+                            (!item.videoOrientation && /\/shorts\//i.test(String(ytLink || "")));
                           if (videos.length === 0 && !folder && !ytEmbed) return null;
                           // Single video → full width. Two or more → 2-up grid
                           // (50% each on sm+, stacking on mobile).
@@ -408,7 +415,11 @@ export default function FAQCategorySection({ categories: rawCategories = [] }) {
                               className={`mt-4 grid gap-3 ${multi ? "sm:grid-cols-2" : "grid-cols-1"}`}
                             >
                               {ytEmbed ? (
-                                <div className="overflow-hidden rounded-[14px] border border-[#E7EAF0] bg-black">
+                                <div
+                                  className={`overflow-hidden rounded-[14px] border border-[#E7EAF0] bg-black ${
+                                    ytPortrait ? "w-full max-w-[340px] justify-self-center" : ""
+                                  }`}
+                                >
                                   <iframe
                                     src={ytEmbed}
                                     title={`${t(item, "question", language) || "FAQ"} — YouTube video`}
@@ -416,7 +427,7 @@ export default function FAQCategorySection({ categories: rawCategories = [] }) {
                                     referrerPolicy="strict-origin-when-cross-origin"
                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                                     allowFullScreen
-                                    className="aspect-video w-full"
+                                    className={`${ytPortrait ? "aspect-[9/16]" : "aspect-video"} block w-full`}
                                   />
                                 </div>
                               ) : null}
