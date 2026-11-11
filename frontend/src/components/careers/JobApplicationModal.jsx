@@ -33,6 +33,8 @@ const RESUME_TEXT = {
   errorType: { en: "Please upload a PDF, DOC, or DOCX file.", ar: "يرجى رفع ملف بصيغة PDF أو DOC أو DOCX." },
   errorSize: { en: "File is too large (max 5MB).", ar: "حجم الملف كبير جدًا (بحد أقصى 5 ميجابايت)." },
   errorUpload: { en: "Resume upload failed. Please try again.", ar: "فشل رفع السيرة الذاتية. يرجى المحاولة مرة أخرى." },
+  errorRequired: { en: "Please upload your resume / CV.", ar: "يرجى رفع سيرتك الذاتية." },
+  waitUpload: { en: "Please wait for your resume to finish uploading.", ar: "يرجى الانتظار حتى يكتمل رفع سيرتك الذاتية." },
 };
 
 const RESUME_MAX_BYTES = 5 * 1024 * 1024;
@@ -90,6 +92,7 @@ export default function JobApplicationModal({ isOpen, onClose, job }) {
   const [resume, setResume] = useState({ status: "idle", name: "", url: "", progress: 0, error: "" });
   const recaptchaRef = useRef(null);
   const resumeInputRef = useRef(null);
+  const resumeBoxRef = useRef(null);
 
   useLayoutEffect(() => {
     if (!isOpen) return;
@@ -149,6 +152,7 @@ export default function JobApplicationModal({ isOpen, onClose, job }) {
     }
 
     setResume({ status: "uploading", name: file.name, url: "", progress: 0, error: "" });
+    setFieldErrors((prev) => ({ ...prev, resume: "" }));
     try {
       const sigRes = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/job-applications/resume-signature`,
@@ -172,13 +176,19 @@ export default function JobApplicationModal({ isOpen, onClose, job }) {
     e.preventDefault();
     setFormError("");
 
-    // Wait for the resume upload to finish before submitting.
-    if (resume.status === "uploading") return;
-
     const errors = validateForm(form, JOB_RULES, language);
+    // The resume / CV is required: flag it alongside the other fields.
+    if (resume.status === "uploading") errors.resume = rt("waitUpload");
+    else if (resume.status !== "done" || !resume.url) errors.resume = rt("errorRequired");
     setFieldErrors(errors);
     if (Object.keys(errors).length) {
-      focusFirstError(formRef.current, errors, Object.keys(JOB_RULES));
+      const fieldErrorsOnly = { ...errors };
+      delete fieldErrorsOnly.resume;
+      if (Object.keys(fieldErrorsOnly).length) {
+        focusFirstError(formRef.current, fieldErrorsOnly, Object.keys(JOB_RULES));
+      } else {
+        resumeBoxRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
       return;
     }
 
@@ -380,9 +390,9 @@ export default function JobApplicationModal({ isOpen, onClose, job }) {
                     <FieldError message={fieldErrors.linkedIn} />
                   </div>
 
-                  <div dir={language === "ar" ? "rtl" : "ltr"}>
+                  <div ref={resumeBoxRef} dir={language === "ar" ? "rtl" : "ltr"}>
                     <label className="mb-1 block text-[11px] font-medium text-slate-700 sm:mb-1.5 sm:text-xs">
-                      {rt("label")}
+                      {rt("label")} <span className="text-red-500">*</span>
                     </label>
                     <input
                       ref={resumeInputRef}
@@ -426,7 +436,9 @@ export default function JobApplicationModal({ isOpen, onClose, job }) {
                       <button
                         type="button"
                         onClick={() => resumeInputRef.current?.click()}
-                        className="flex w-full items-center gap-2 rounded-lg border border-dashed border-slate-300 bg-slate-50 px-3 py-2.5 text-xs text-slate-500 transition hover:border-[#0088FF]/60 hover:text-[#0088FF] sm:rounded-xl sm:px-4"
+                        className={`flex w-full items-center gap-2 rounded-lg border border-dashed bg-slate-50 px-3 py-2.5 text-xs text-slate-500 transition hover:border-[#0088FF]/60 hover:text-[#0088FF] sm:rounded-xl sm:px-4 ${
+                          fieldErrors.resume ? "border-red-400" : "border-slate-300"
+                        }`}
                       >
                         <Paperclip className="h-3.5 w-3.5 shrink-0" aria-hidden />
                         <span>{rt("choose")}</span>
@@ -437,6 +449,8 @@ export default function JobApplicationModal({ isOpen, onClose, job }) {
                       <p className="mt-1.5 text-xs text-red-600" role="alert">
                         {resume.error}
                       </p>
+                    ) : resume.status !== "done" ? (
+                      <FieldError message={fieldErrors.resume} />
                     ) : null}
                   </div>
 
