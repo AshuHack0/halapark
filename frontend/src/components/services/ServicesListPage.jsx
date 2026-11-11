@@ -1451,6 +1451,23 @@ function ServicesGrid({ onServiceClick, cmsServices, gridHeader, detailSlugs, ca
     sectionRef.current = node;
     if (node) setScrollTarget(sectionRef);
   };
+  // Arriving with /services#services-grid (home "View Our Services"): the grid
+  // only mounts after the CMS data loads — later than the smooth-scroll
+  // container's own hash check — so jump to it here once it exists, landing
+  // on the category tabs + service cards (skipping the section's intro text).
+  // Repeated once in case images above it change the height while loading.
+  const tabsRef = useRef(null);
+  useEffect(() => {
+    if (!scrollTarget || window.location.hash !== "#services-grid") return undefined;
+    const jump = () =>
+      (tabsRef.current || sectionRef.current)?.scrollIntoView({ behavior: "auto", block: "start" });
+    const t1 = window.setTimeout(jump, 350);
+    const t2 = window.setTimeout(jump, 1000);
+    return () => {
+      window.clearTimeout(t1);
+      window.clearTimeout(t2);
+    };
+  }, [scrollTarget]);
   const { scrollYProgress } = useScroll({
     target: scrollTarget ?? undefined,
     offset: ["start end", "end start"],
@@ -1576,7 +1593,8 @@ function ServicesGrid({ onServiceClick, cmsServices, gridHeader, detailSlugs, ca
           // Wraps onto extra rows instead of a hidden-scrollbar strip, so every
           // category is visible and tappable on phones/tablets (the sideways
           // scroll cut tabs off with no scroll cue).
-          className="mb-8 flex flex-wrap gap-2 sm:gap-3"
+          ref={tabsRef}
+          className="mb-8 flex scroll-mt-[96px] flex-wrap gap-2 sm:gap-3"
         >
           {visibleFilters.map((f, i) => {
             const isActive = effectiveFilter === f.id;

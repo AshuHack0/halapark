@@ -20,14 +20,17 @@ const OWN_HOSTS = /(^|\.)halapark\.com$|^halapark-umber\.vercel\.app$/i;
 function resolveCtaHref(href) {
   const raw = (href ?? "").trim();
   if (!raw) return "";
-  if (/^\/?#services$/i.test(raw)) return "/services";
+  let path = raw;
   try {
     const u = new URL(raw);
-    if (OWN_HOSTS.test(u.hostname)) return `${u.pathname}${u.search}${u.hash}` || "/";
+    if (OWN_HOSTS.test(u.hostname)) path = `${u.pathname}${u.search}${u.hash}` || "/";
   } catch {
     /* relative path or non-URL — keep as is */
   }
-  return raw;
+  // "View Our Services" (#services, /#services or /services) lands straight on
+  // the services list of the Services page, not at the top of its hero.
+  if (/^\/?#services$/i.test(path) || /^\/services\/?$/i.test(path)) return "/services#services-grid";
+  return path;
 }
 
 // Built-in marks for the ring nodes, used when no icon is uploaded.
