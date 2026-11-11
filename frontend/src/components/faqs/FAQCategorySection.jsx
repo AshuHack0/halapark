@@ -164,16 +164,22 @@ function collectVideos(item) {
 
 export default function FAQCategorySection({ categories: rawCategories = [] }) {
   const { language } = useLanguage();
-  // Only questions that have an answer (in the current language) are listed;
-  // a category left with no answered questions is hidden too.
+  // A question is listed when it has an answer OR a video (in the current
+  // language — the Arabic page uses the Arabic answer/YouTube link). With
+  // neither it's hidden; a category left with no questions is hidden too.
   const categories = useMemo(
     () =>
       (Array.isArray(rawCategories) ? rawCategories : [])
         .map((cat) => ({
           ...cat,
-          items: (cat.items || []).filter((item) =>
-            String(t(item, "answer", language) ?? "").replace(/<[^>]*>/g, "").trim(),
-          ),
+          items: (cat.items || []).filter((item) => {
+            const hasAnswer = String(t(item, "answer", language) ?? "").replace(/<[^>]*>/g, "").trim() !== "";
+            const hasVideo =
+              Boolean(youtubeEmbed(language === "ar" ? item.ar?.youtubeUrl : item.youtubeUrl)) ||
+              collectVideos(item).length > 0 ||
+              Boolean(externalLink(item.videoFolderUrl));
+            return hasAnswer || hasVideo;
+          }),
         }))
         .filter((cat) => cat.items.length > 0),
     [rawCategories, language],
