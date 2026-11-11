@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { useLanguage, ui } from "@/context/LanguageContext";
 import { fetchPage } from "@/lib/cms";
 
@@ -78,27 +77,24 @@ const PayIcon = () => (
   </svg>
 );
 
-function FloatingIconButton({ href, label, className, children, prominent = false, animationClass = "", external = false, onClick }) {
+// Tawk.to live chat sits in the bottom-right corner (see common/TawkChat.jsx);
+// when it's configured these buttons stack just above its bubble.
+const CHAT_ENABLED = Boolean(
+  (process.env.NEXT_PUBLIC_TAWK_PROPERTY_ID || "").trim() && (process.env.NEXT_PUBLIC_TAWK_WIDGET_ID || "").trim(),
+);
+
+// Labelled pill: icon in a coloured circle + always-visible text, so each
+// action is clear without hovering (hover tooltips don't exist on phones).
+const PILL =
+  "group relative inline-flex h-11 items-center gap-2 rounded-full border bg-white py-1 ps-1 pe-4 text-[13px] font-semibold text-slate-800 shadow-[0_10px_26px_rgba(15,23,42,0.14)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_14px_32px_rgba(15,23,42,0.2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0088FF]/45 focus-visible:ring-offset-2 sm:h-12 sm:text-sm";
+const PILL_ICON = "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-white sm:h-10 sm:w-10";
+
+function FloatingPill({ href, label, iconClass, borderClass, children }) {
   return (
-    <div className={`group relative ${animationClass}`}>
-      {/* end-* keeps the tooltip on the screen side of the button in both
-          directions: left of the button in LTR, right of it in RTL. */}
-      <span dir="auto" className="pointer-events-none absolute end-[calc(100%+0.65rem)] top-1/2 -translate-y-1/2 whitespace-nowrap rounded-full bg-[#0B1220] px-3 py-1.5 text-xs font-semibold tracking-[0.02em] text-white opacity-0 shadow-[0_12px_28px_rgba(2,6,23,0.3)] transition-all duration-200 group-hover:opacity-100 group-hover:-translate-x-0.5 rtl:group-hover:translate-x-0.5 group-focus-within:opacity-100">
-        {label}
-      </span>
-      {prominent ? (
-        <span aria-hidden="true" className="pointer-events-none absolute inset-0 rounded-full bg-[#0088FF]/35 blur-[14px] transition duration-300 group-hover:bg-[#0088FF]/45" />
-      ) : null}
-      <Link
-        href={href}
-        aria-label={label}
-        onClick={onClick}
-        {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-        className={`relative inline-flex h-12 w-12 items-center justify-center rounded-full border transition-all duration-300 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0088FF]/45 focus-visible:ring-offset-2 focus-visible:ring-offset-white ${className}`}
-      >
-        {children}
-      </Link>
-    </div>
+    <a href={href} target="_blank" rel="noopener noreferrer" className={`${PILL} ${borderClass}`}>
+      <span className={`${PILL_ICON} ${iconClass}`}>{children}</span>
+      <span dir="auto" className="whitespace-nowrap">{label}</span>
+    </a>
   );
 }
 
@@ -114,6 +110,30 @@ export default function FloatingActions() {
     fetchPage("settings").then((page) => {
       setCfg(page?.sections?.floatingApp ?? {});
     });
+  }, []);
+
+  // Keep the stack just above the Tawk chat bubble. Its size differs by device
+  // and by Tawk's own settings, so measure where it actually sits (the small
+  // bubble iframe in the bottom-right corner — not the open chat window).
+  const [chatGap, setChatGap] = useState(null);
+  useEffect(() => {
+    if (!CHAT_ENABLED) return undefined;
+    const measure = () => {
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const tops = [...document.querySelectorAll("iframe")]
+        .map((f) => f.getBoundingClientRect())
+        .filter((r) => r.width > 0 && r.width < 200 && r.height < 200 && r.right > vw - 220 && r.bottom > vh - 240)
+        .map((r) => r.top);
+      if (tops.length) setChatGap(Math.round(vh - Math.min(...tops) + 10));
+    };
+    measure();
+    const timer = window.setInterval(measure, 1500);
+    window.addEventListener("resize", measure);
+    return () => {
+      window.clearInterval(timer);
+      window.removeEventListener("resize", measure);
+    };
   }, []);
 
   useEffect(() => {
@@ -146,36 +166,40 @@ export default function FloatingActions() {
 
   return (
     // Hidden while the mobile nav menu is open (body gets .nav-menu-open) so
-    // the buttons never overlap the menu on short screens.
-    <div className="fixed bottom-5 end-4 z-[60] sm:bottom-6 sm:end-6 [.nav-menu-open_&]:hidden">
+    // the buttons never overlap the menu on short screens. Always on the
+    // right (both languages), stacked above the chat bubble when chat is on.
+    <div
+      className={`fixed right-4 z-[60] sm:right-6 [.nav-menu-open_&]:hidden ${
+        CHAT_ENABLED ? "bottom-[88px] sm:bottom-[150px]" : "bottom-5 sm:bottom-6"
+      }`}
+      style={chatGap ? { bottom: chatGap } : undefined}
+    >
       <div className="flex flex-col items-end gap-2.5">
         {whatsapp ? (
-          <FloatingIconButton
+          <FloatingPill
             href={whatsapp}
             label={ui("chatOnWhatsApp", language)}
-            external
-            animationClass="motion-safe:animate-[floatButton_5s_ease-in-out_infinite]"
-            className="border-[#25D366]/40 bg-[#25D366] text-white shadow-[0_10px_28px_rgba(37,211,102,0.40)] hover:bg-[#20BB5A] hover:shadow-[0_14px_36px_rgba(37,211,102,0.52)]"
+            iconClass="bg-[#25D366]"
+            borderClass="border-[#25D366]/30 hover:border-[#25D366]"
           >
             <WhatsAppIcon />
-          </FloatingIconButton>
+          </FloatingPill>
         ) : null}
 
         {payHref ? (
-          <FloatingIconButton
+          <FloatingPill
             href={payHref}
-            label={ui("pay", language)}
-            external
-            animationClass="motion-safe:animate-[floatButton_4.4s_ease-in-out_infinite]"
-            className="border-[#D9E3F0] bg-white text-slate-900 shadow-[0_10px_22px_rgba(15,23,42,0.12)] hover:border-[#BDD8FB] hover:text-[#0078E0] hover:shadow-[0_14px_28px_rgba(0,136,255,0.18)]"
+            label={ui("payParking", language)}
+            iconClass="bg-slate-800"
+            borderClass="border-slate-200 hover:border-slate-400"
           >
             <PayIcon />
-          </FloatingIconButton>
+          </FloatingPill>
         ) : null}
 
-        {/* One prominent "Download App" button — opens a menu with all stores. */}
+        {/* "Download App" — opens a menu with all configured stores. */}
         {stores.length > 0 ? (
-          <div className="group relative motion-safe:animate-[floatButton_3.6s_ease-in-out_infinite,softPulse_2.4s_ease-in-out_infinite]">
+          <div className="relative">
             {storesOpen ? (
               <>
                 {/* Invisible click-away backdrop */}
@@ -187,7 +211,7 @@ export default function FloatingActions() {
                 />
                 <div
                   role="menu"
-                  className="absolute bottom-[calc(100%+0.6rem)] end-0 w-60 rounded-2xl border border-slate-100 bg-white p-1.5 shadow-[0_18px_44px_rgba(2,6,23,0.2)]"
+                  className="absolute bottom-[calc(100%+0.6rem)] right-0 w-60 rounded-2xl border border-slate-100 bg-white p-1.5 shadow-[0_18px_44px_rgba(2,6,23,0.2)]"
                 >
                   {stores.map((store, i) => {
                     const Icon = STORE_ICONS[store.key] || DownloadAppIcon;
@@ -219,40 +243,22 @@ export default function FloatingActions() {
                   })}
                 </div>
               </>
-            ) : (
-              <span
-                dir="auto"
-                className="pointer-events-none absolute end-[calc(100%+0.65rem)] top-1/2 -translate-y-1/2 whitespace-nowrap rounded-full bg-[#0B1220] px-3 py-1.5 text-xs font-semibold tracking-[0.02em] text-white opacity-0 shadow-[0_12px_28px_rgba(2,6,23,0.3)] transition-all duration-200 group-hover:opacity-100 group-hover:-translate-x-0.5 rtl:group-hover:translate-x-0.5 group-focus-within:opacity-100"
-              >
-                {ui("downloadApp", language)}
-              </span>
-            )}
-            <span
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0 rounded-full bg-[#0088FF]/35 blur-[14px] transition duration-300 group-hover:bg-[#0088FF]/45"
-            />
+            ) : null}
             <button
               type="button"
-              aria-label={ui("downloadApp", language)}
               aria-expanded={storesOpen}
+              aria-haspopup="menu"
               onClick={() => setStoresOpen((v) => !v)}
-              className="relative inline-flex h-12 w-12 items-center justify-center rounded-full border border-[#0088FF] bg-[linear-gradient(165deg,#0A97FF_0%,#0088FF_50%,#006FD2_100%)] text-white shadow-[0_16px_34px_rgba(0,136,255,0.45)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_20px_42px_rgba(0,136,255,0.52)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0088FF]/45 focus-visible:ring-offset-2 focus-visible:ring-offset-white active:scale-[0.98]"
+              className={`${PILL} border-[#0088FF] bg-[linear-gradient(165deg,#0A97FF_0%,#0088FF_50%,#006FD2_100%)] text-white`}
             >
-              <DownloadAppIcon />
+              <span className={`${PILL_ICON} bg-white/20`}>
+                <DownloadAppIcon />
+              </span>
+              <span dir="auto" className="whitespace-nowrap">{ui("downloadApp", language)}</span>
             </button>
           </div>
         ) : null}
       </div>
-      <style jsx>{`
-        @keyframes floatButton {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-5px); }
-        }
-        @keyframes softPulse {
-          0%, 100% { filter: saturate(1); }
-          50% { filter: saturate(1.08); }
-        }
-      `}</style>
     </div>
   );
 }

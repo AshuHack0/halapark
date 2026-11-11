@@ -11,8 +11,8 @@ import { useLanguage } from "@/context/LanguageContext";
 // Optional: a second widget set to Arabic in the Tawk dashboard
 // (NEXT_PUBLIC_TAWK_WIDGET_ID_AR) — the site switches to it in Arabic mode.
 //
-// The bubble sits on the opposite side to the WhatsApp / Pay / Download App
-// buttons (FloatingActions, bottom-end), so the two never overlap.
+// The bubble sits bottom-right; the WhatsApp / Pay / Download App buttons
+// (FloatingActions) stack directly above it, so the two never overlap.
 const PROPERTY_ID = (process.env.NEXT_PUBLIC_TAWK_PROPERTY_ID || "").trim();
 const WIDGET_ID = (process.env.NEXT_PUBLIC_TAWK_WIDGET_ID || "").trim();
 const WIDGET_ID_AR = (process.env.NEXT_PUBLIC_TAWK_WIDGET_ID_AR || "").trim();
@@ -37,14 +37,15 @@ export default function TawkChat() {
     }
     if (document.getElementById("tawk-script")) return;
 
-    // Start side of the page: bottom-left in English, bottom-right in Arabic.
-    const position = language === "ar" ? "br" : "bl";
+    // Bottom-right in both languages — where visitors expect a chat button.
+    // The WhatsApp / Pay / Download App buttons stack above it.
+    const position = "br";
     window.Tawk_API = window.Tawk_API || {};
     window.Tawk_LoadStart = new Date();
     window.Tawk_API.customStyle = {
       visibility: {
-        desktop: { position, xOffset: 20, yOffset: 20 },
-        mobile: { position, xOffset: 12, yOffset: 16 },
+        desktop: { position, xOffset: 24, yOffset: 24 },
+        mobile: { position, xOffset: 16, yOffset: 16 },
       },
     };
 
