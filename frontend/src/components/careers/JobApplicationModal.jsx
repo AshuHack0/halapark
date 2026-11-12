@@ -6,7 +6,8 @@ import ReCAPTCHA from "react-google-recaptcha";
 import { Check, Loader2, Paperclip, X } from "lucide-react";
 import { RECAPTCHA_SITE_KEY } from "@/config/recaptcha.site";
 import { useLanguage } from "@/context/LanguageContext";
-import { validateForm, focusFirstError, sanitizePhone, errorInputClass } from "@/lib/formValidation";
+import { validateForm, focusFirstError, formatUaeMobile, errorInputClass } from "@/lib/formValidation";
+import UaePhoneInput from "@/components/common/UaePhoneInput";
 import FieldError from "@/components/common/FieldError";
 
 // Shared validation rules (src/lib/formValidation.js). Optional fields are
@@ -125,7 +126,7 @@ export default function JobApplicationModal({ isOpen, onClose, job }) {
 
   function onChange(e) {
     const { name } = e.target;
-    const value = name === "phone" ? sanitizePhone(e.target.value) : e.target.value;
+    const { value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
     if (fieldErrors[name]) setFieldErrors((prev) => ({ ...prev, [name]: "" }));
   }
@@ -215,6 +216,7 @@ export default function JobApplicationModal({ isOpen, onClose, job }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...form,
+          phone: formatUaeMobile(form.phone),
           recaptchaToken,
           jobTitle: job.title,
           department: job.department ?? "",
@@ -328,16 +330,11 @@ export default function JobApplicationModal({ isOpen, onClose, job }) {
                       <label className="mb-1 block text-[11px] font-medium text-slate-700 sm:mb-1.5 sm:text-xs">
                         Phone <span className="text-red-500">*</span>
                       </label>
-                      <input
-                        required
-                        type="tel"
-                        name="phone"
+                      <UaePhoneInput
+                        size="sm"
                         value={form.phone}
-                        onChange={onChange}
-                        placeholder="+971 50 000 0000"
-                        inputMode="tel"
-                        aria-invalid={Boolean(fieldErrors.phone)}
-                        className={`${inputClass} ${fieldErrors.phone ? errorInputClass : ""}`}
+                        onChange={(v) => onChange({ target: { name: "phone", value: v } })}
+                        invalid={Boolean(fieldErrors.phone)}
                       />
                       <FieldError message={fieldErrors.phone} />
                     </div>

@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { Check, CloudUpload, FileText, Loader2 } from "lucide-react";
 import { useLanguage, t } from "@/context/LanguageContext";
 import { ModalShell, inputClass } from "@/components/business/BusinessLeadModals";
-import { validateForm, focusFirstError, errorInputClass } from "@/lib/formValidation";
+import { validateForm, focusFirstError, errorInputClass, isValidUaeMobile, formatUaeMobile } from "@/lib/formValidation";
+import UaePhoneInput from "@/components/common/UaePhoneInput";
 import FieldError from "@/components/common/FieldError";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "";
@@ -25,7 +26,7 @@ const COPY = {
     email: "Email Address",
     emailPh: "you@company.com",
     phone: "Phone Number",
-    phonePh: "50 000 0000",
+    phonePh: "50 123 4567",
     type: "Partner Type",
     typeParking: "Parking Partner",
     typeParkingHint: "List or manage your parking spaces with HalaPark",
@@ -48,7 +49,7 @@ const COPY = {
     errName: "Full name is required.",
     errCompany: "Company name is required.",
     errEmail: "A valid email address is required.",
-    errPhone: "Enter a valid UAE mobile number after +971: 8–9 digits (e.g. 50 123 4567).",
+    errPhone: "Enter a valid UAE mobile number: 9 digits starting with 50, 52, 54, 55, 56 or 58 (e.g. 50 123 4567).",
     errHelp: "Please tell us how we can help.",
     errDocType: "Unsupported file type. Upload a PDF, Word, PowerPoint, Excel or image file.",
     errDocSize: "File is too large (max 10MB).",
@@ -70,7 +71,7 @@ const COPY = {
     email: "البريد الإلكتروني",
     emailPh: "you@company.com",
     phone: "رقم الهاتف",
-    phonePh: "50 000 0000",
+    phonePh: "50 123 4567",
     type: "نوع الشراكة",
     typeParking: "شريك مواقف",
     typeParkingHint: "أدرج مواقفك أو أدِرها مع هالا بارك",
@@ -93,7 +94,7 @@ const COPY = {
     errName: "الاسم الكامل مطلوب.",
     errCompany: "اسم الشركة مطلوب.",
     errEmail: "يرجى إدخال بريد إلكتروني صالح.",
-    errPhone: "أدخل رقم جوال إماراتي صحيحًا بعد ‎+971: من 8 إلى 9 أرقام (مثال: 50 123 4567).",
+    errPhone: "أدخل رقم جوال إماراتي صحيحًا: 9 أرقام تبدأ بـ 50 أو 52 أو 54 أو 55 أو 56 أو 58 (مثال: ‎50 123 4567).",
     errHelp: "يرجى إخبارنا كيف يمكننا مساعدتك.",
     errDocType: "نوع الملف غير مدعوم. ارفع ملف PDF أو Word أو PowerPoint أو Excel أو صورة.",
     errDocSize: "حجم الملف كبير جدًا (بحد أقصى 10 ميجابايت).",
@@ -109,12 +110,6 @@ const BLANK = { partnerType: "", fullName: "", companyName: "", email: "", phone
 const FIELD_ORDER = ["partnerType", "fullName", "companyName", "email", "phone", "message"];
 const DOC_MAX_COUNT = 5;
 const BLANK_DOC = { status: "idle", name: "", type: "", url: "", progress: 0, error: "" };
-
-// UAE numbers are entered after the fixed +971 prefix. A leading 0 (common
-// local habit, e.g. 050…) is dropped; the rest must be 8–9 digits.
-function normalizeUaeDigits(raw) {
-  return raw.replace(/\D/g, "").replace(/^0+/, "").slice(0, 9);
-}
 
 function uploadToCloudinary(file, sig, onProgress) {
   return new Promise((resolve, reject) => {
@@ -235,7 +230,7 @@ export default function PartnershipModal({ isOpen, onClose, config, source, init
     e.preventDefault();
     setError("");
     // Shared rules (src/lib/formValidation.js) + this form's specifics:
-    // partner type chosen, UAE mobile (8–9 digits after the fixed +971).
+    // partner type chosen, UAE mobile (9 digits after the fixed +971).
     const errors = validateForm(form, {
       fullName: { label: c.fullName, required: true },
       companyName: { label: c.company, required: true },
@@ -243,7 +238,7 @@ export default function PartnershipModal({ isOpen, onClose, config, source, init
       message: { label: c.help, required: true },
     }, language);
     if (!form.partnerType) errors.partnerType = c.errType;
-    if (!/^\d{8,9}$/.test(form.phone)) errors.phone = c.errPhone;
+    if (!isValidUaeMobile(form.phone)) errors.phone = c.errPhone;
     if (errors.fullName) errors.fullName = c.errName;
     if (errors.companyName) errors.companyName = c.errCompany;
     if (errors.email) errors.email = c.errEmail;
@@ -269,7 +264,7 @@ export default function PartnershipModal({ isOpen, onClose, config, source, init
           fullName: form.fullName.trim(),
           companyName: form.companyName.trim(),
           email: form.email.trim(),
-          phone: `+971 ${form.phone}`,
+          phone: formatUaeMobile(form.phone),
           message: form.message.trim(),
           documents: docs
             .filter((d) => d.status === "done" && d.url)
@@ -391,23 +386,13 @@ export default function PartnershipModal({ isOpen, onClose, config, source, init
 
         <div>
           <label className={labelCls}>{c.phone} {req}</label>
-          {/* Phone numbers always read left-to-right, even in Arabic. */}
-          <div dir="ltr" className={`flex items-stretch overflow-hidden rounded-xl border ${fieldErrors.phone ? "border-red-400" : "border-slate-200"} bg-slate-50 transition focus-within:border-[#0088FF] focus-within:bg-white focus-within:ring-2 focus-within:ring-[rgba(0,136,255,0.12)]`}>
-            <span className="flex shrink-0 items-center border-r border-slate-200 bg-slate-100 px-3 text-sm font-semibold text-slate-600">
-              +971
-            </span>
-            <input
-              type="tel"
-              name="phone"
-              aria-invalid={Boolean(fieldErrors.phone)}
-              inputMode="numeric"
-              value={form.phone}
-              onChange={(e) => set("phone", normalizeUaeDigits(e.target.value))}
-              className="w-full bg-transparent px-3.5 py-2.5 text-sm text-slate-900 outline-none placeholder:text-slate-400"
-              placeholder={c.phonePh}
-              autoComplete="tel-national"
-            />
-          </div>
+          <UaePhoneInput
+            size="md"
+            value={form.phone}
+            onChange={(v) => set("phone", v)}
+            invalid={Boolean(fieldErrors.phone)}
+            placeholder={c.phonePh}
+          />
           <FieldError message={fieldErrors.phone} />
         </div>
 

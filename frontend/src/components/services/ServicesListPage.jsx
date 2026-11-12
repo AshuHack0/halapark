@@ -31,7 +31,8 @@ import { fetchPage } from "@/lib/cms";
 import { usePrefersReducedMotionOS } from "@/hooks/usePrefersReducedMotionOS";
 import { useLanguage, t } from "@/context/LanguageContext";
 import RichText from "@/components/common/RichText";
-import { validateForm, focusFirstError, errorInputClass } from "@/lib/formValidation";
+import { validateForm, focusFirstError, errorInputClass, formatUaeMobile } from "@/lib/formValidation";
+import UaePhoneInput from "@/components/common/UaePhoneInput";
 import FieldError from "@/components/common/FieldError";
 import LogoTicker from "@/components/common/LogoTicker";
 import { PARTNER_FORM_LINK } from "@/components/partners/PartnershipFormProvider";
@@ -425,12 +426,8 @@ function QuoteModal({ isOpen, onClose, quoteForm, services }) {
     clearFieldError(name);
   };
 
-  // Phone field: only allow digits, +, spaces, hyphens, parentheses. A leading
-  // "+" is kept only at the very start (a phone can't have "+" mid-number).
-  const onPhoneChange = (e) => {
-    let v = e.target.value.replace(/[^\d+\s\-().]/g, "");
-    // Collapse any "+" that isn't the first character.
-    v = v.replace(/(?!^)\+/g, "");
+  // Phone field: UaePhoneInput hands back the 9 digits after +971.
+  const onPhoneChange = (v) => {
     setForm((p) => ({ ...p, phone: v }));
     clearFieldError("phone");
   };
@@ -523,7 +520,7 @@ function QuoteModal({ isOpen, onClose, quoteForm, services }) {
       const res = await fetch("/api/quote", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, attachments, recaptchaToken }),
+        body: JSON.stringify({ ...form, phone: formatUaeMobile(form.phone), attachments, recaptchaToken }),
       });
       const data = await res.json().catch(() => ({}));
 
@@ -616,12 +613,7 @@ function QuoteModal({ isOpen, onClose, quoteForm, services }) {
                     </div>
                     <div>
                       <label className="mb-1 block text-[11px] font-medium text-slate-700 sm:mb-1.5 sm:text-xs">Phone Number <span className="ms-0.5 text-red-500">*</span></label>
-                      <input type="tel" name="phone" value={form.phone} onChange={onPhoneChange}
-                        placeholder="+971 50 000 0000"
-                        inputMode="tel"
-                        aria-invalid={Boolean(fieldErrors.phone)}
-                        className={`w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#0088FF] focus:bg-white focus:ring-2 focus:ring-[rgba(0,136,255,0.12)] sm:rounded-xl sm:px-4 sm:py-2.5 ${fieldErrors.phone ? errorInputClass : ""}`}
-                      />
+                      <UaePhoneInput size="sm" value={form.phone} onChange={onPhoneChange} invalid={Boolean(fieldErrors.phone)} />
                       <FieldError message={fieldErrors.phone} />
                     </div>
                   </div>

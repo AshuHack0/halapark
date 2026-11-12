@@ -4,7 +4,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Send, Paperclip, X, Loader2, FileText } from "lucide-react";
 
 import { useLanguage, t } from "@/context/LanguageContext";
-import { validateForm, focusFirstError, errorInputClass } from "@/lib/formValidation";
+import { validateForm, focusFirstError, errorInputClass, formatUaeMobile } from "@/lib/formValidation";
+import UaePhoneInput from "@/components/common/UaePhoneInput";
 import FieldError from "@/components/common/FieldError";
 
 // Fixed UI copy (not CMS-driven) — translated inline.
@@ -18,7 +19,7 @@ const COPY = {
     email: "Email",
     emailPlaceholder: "Enter your email address",
     phone: "Phone",
-    phonePlaceholder: "Enter your phone number",
+    phonePlaceholder: "50 123 4567",
     company: "Company (Optional)",
     companyPlaceholder: "Enter your company name",
     subject: "Subject",
@@ -52,7 +53,7 @@ const COPY = {
     email: "البريد الإلكتروني",
     emailPlaceholder: "أدخل بريدك الإلكتروني",
     phone: "الهاتف",
-    phonePlaceholder: "أدخل رقم هاتفك",
+    phonePlaceholder: "50 123 4567",
     company: "الشركة (اختياري)",
     companyPlaceholder: "أدخل اسم شركتك",
     subject: "الموضوع",
@@ -202,13 +203,7 @@ export default function ContactFormPanel({ form }) {
     setFormError("");
     if (fieldErrors[name]) setFieldErrors((p) => ({ ...p, [name]: "" }));
     setIsSubmitted(false);
-    // Phone: digits, +, spaces, hyphens, parentheses only — letters are
-    // rejected as they're typed. A "+" is kept only at the very start.
-    const next =
-      name === "phone"
-        ? value.replace(/[^\d+\s\-().]/g, "").replace(/(?!^)\+/g, "")
-        : value;
-    setFormData((current) => ({ ...current, [name]: next }));
+    setFormData((current) => ({ ...current, [name]: value }));
   };
 
   const handleFilesSelected = async (event) => {
@@ -284,7 +279,7 @@ export default function ContactFormPanel({ form }) {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...formData, attachments }),
+        body: JSON.stringify({ ...formData, phone: formatUaeMobile(formData.phone), attachments }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -365,16 +360,20 @@ export default function ContactFormPanel({ form }) {
             required
             error={fieldErrors.email}
           />
-          <FormField
-            id="phone"
-            label={c.phone}
-            type="tel"
-            placeholder={c.phonePlaceholder}
-            value={formData.phone}
-            onChange={handleChange}
-            required
-            error={fieldErrors.phone}
-          />
+          <label className="block">
+            <span className="mb-2 block text-sm font-medium text-slate-700">
+              {c.phone} <span className="text-red-500">*</span>
+            </span>
+            <UaePhoneInput
+              id="phone"
+              size="lg"
+              value={formData.phone}
+              onChange={(digits) => handleChange({ target: { name: "phone", value: digits } })}
+              invalid={Boolean(fieldErrors.phone)}
+              placeholder={c.phonePlaceholder}
+            />
+            <FieldError message={fieldErrors.phone} />
+          </label>
           <FormField
             id="company"
             label={c.company}

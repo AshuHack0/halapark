@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { X, Check, Loader2 } from "lucide-react";
 import { useLanguage, t } from "@/context/LanguageContext";
-import { validateForm, focusFirstError, sanitizePhone, errorInputClass } from "@/lib/formValidation";
+import { validateForm, focusFirstError, formatUaeMobile, errorInputClass } from "@/lib/formValidation";
+import UaePhoneInput from "@/components/common/UaePhoneInput";
 import FieldError from "@/components/common/FieldError";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "";
@@ -95,7 +96,7 @@ function CheckboxGroup({ label, options, selected, onToggle, dir, error }) {
 const BLANK = { fullName: "", email: "", phone: "", company: "", message: "" };
 
 // Shared rules (src/lib/formValidation.js): name required, email format,
-// mobile number 7–15 digits (optional +). Labels follow the UI language.
+// UAE mobile (+971 + 9 digits starting 50/52/54/55/56/58). Labels follow the UI language.
 const leadRules = (c) => ({
   fullName: { label: c.fullName, required: true },
   email: { label: c.email, required: true, email: true },
@@ -139,7 +140,7 @@ function LeadFields({ form, setForm, dir, c, errors = {}, clearError }) {
       </div>
       <div>
         <label className="mb-1 block text-[11px] font-medium text-slate-700">{c.phone} <span className="text-red-500">*</span></label>
-        <input name="phone" type="tel" inputMode="tel" aria-invalid={Boolean(errors.phone)} value={form.phone} onChange={(e) => set("phone", sanitizePhone(e.target.value))} className={cls("phone")} placeholder="+971 50 000 0000" />
+        <UaePhoneInput size="md" value={form.phone} onChange={(v) => set("phone", v)} invalid={Boolean(errors.phone)} />
         <FieldError message={errors.phone} />
       </div>
     </div>
@@ -186,7 +187,7 @@ export function GetProposalModal({ isOpen, onClose, config, options }) {
       const res = await fetch(`${API}/api/business/proposals`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, solutions, source: "business-hero" }),
+        body: JSON.stringify({ ...form, phone: formatUaeMobile(form.phone), solutions, source: "business-hero" }),
       });
       if (!res.ok) { const d = await res.json().catch(() => ({})); setError(d.error || "Something went wrong. Please try again."); return; }
       setDone(true);
@@ -252,7 +253,7 @@ export function ConsultationModal({ isOpen, onClose, config, options }) {
       const res = await fetch(`${API}/api/business/consultations`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, topics, source: "business-hero" }),
+        body: JSON.stringify({ ...form, phone: formatUaeMobile(form.phone), topics, source: "business-hero" }),
       });
       if (!res.ok) { const d = await res.json().catch(() => ({})); setError(d.error || "Something went wrong. Please try again."); return; }
       setDone(true);
