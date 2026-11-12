@@ -28,6 +28,10 @@ const COPY = {
     sending: "Sending…",
     success: "✓ Message sent! Our team will get back to you shortly.",
     genericError: "Something went wrong. Please try again.",
+    checkFields: "Please check the highlighted fields and try again.",
+    serverError: "We couldn't send your message right now. Please try again in a moment.",
+    attachmentRejected: "One of the attachments couldn't be accepted. Please remove it and attach it again.",
+    fieldInvalid: "Please check this field.",
     networkError: "Network error. Please try again.",
     attachments: "Attachments (Optional)",
     attachmentsHint: "Attach images, photos, or documents (PDF, DOC). Up to 5 files, 10MB each.",
@@ -58,6 +62,10 @@ const COPY = {
     sending: "جارٍ الإرسال…",
     success: "✓ تم إرسال الرسالة! سيتواصل معك فريقنا قريبًا.",
     genericError: "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+    checkFields: "يرجى مراجعة الحقول المحددة والمحاولة مرة أخرى.",
+    serverError: "تعذّر إرسال رسالتك الآن. يرجى المحاولة بعد قليل.",
+    attachmentRejected: "تعذّر قبول أحد المرفقات. يرجى إزالته وإرفاقه مرة أخرى.",
+    fieldInvalid: "يرجى مراجعة هذا الحقل.",
     networkError: "حدث خطأ في الشبكة. يرجى المحاولة مرة أخرى.",
     attachments: "المرفقات (اختياري)",
     attachmentsHint: "أرفق صورًا أو مستندات (PDF أو DOC). حتى 5 ملفات، 10 ميجابايت لكل ملف.",
@@ -280,7 +288,25 @@ export default function ContactFormPanel({ form }) {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setFormError(data.error || c.genericError);
+        // Never show raw server text: map rejected fields to friendly,
+        // translated messages under each input; otherwise a plain message.
+        const serverFields = data && typeof data.fields === "object" && data.fields ? data.fields : null;
+        if (res.status === 400 && serverFields) {
+          const ownRules = validateForm({ ...formData, fullName: "", email: "", phone: "", message: "" }, CONTACT_RULES, language);
+          const mapped = {};
+          for (const key of Object.keys(serverFields)) {
+            if (key === "attachments") continue;
+            if (key === "email") mapped.email = validateForm({ email: "x" }, { email: CONTACT_RULES.email }, language).email;
+            else if (key === "phone") mapped.phone = validateForm({ phone: "x" }, { phone: CONTACT_RULES.phone }, language).phone;
+            else if (ownRules[key]) mapped[key] = ownRules[key];
+            else mapped[key] = c.fieldInvalid;
+          }
+          setFieldErrors(mapped);
+          setFormError(serverFields.attachments ? c.attachmentRejected : c.checkFields);
+          if (Object.keys(mapped).length) focusFirstError(formRef.current, mapped, Object.keys(CONTACT_RULES));
+        } else {
+          setFormError(res.status >= 500 ? c.serverError : c.genericError);
+        }
         return;
       }
       setIsSubmitted(true);

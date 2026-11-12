@@ -34,8 +34,10 @@ export async function POST(request) {
 
     if (!backendRes.ok) {
       const data = await backendRes.json().catch(() => ({}));
+      // `fields` = { fieldName: message } when the backend rejected specific
+      // fields — the form shows each under its input.
       return Response.json(
-        { error: data.error ?? "Failed to submit message." },
+        { error: data.error ?? "Failed to submit message.", fields: data.fields ?? undefined },
         { status: backendRes.status },
       );
     }
