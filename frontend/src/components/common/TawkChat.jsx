@@ -11,13 +11,35 @@ import { useLanguage } from "@/context/LanguageContext";
 // Optional: a second widget set to Arabic in the Tawk dashboard
 // (NEXT_PUBLIC_TAWK_WIDGET_ID_AR) — the site switches to it in Arabic mode.
 //
-// The bubble sits bottom-right; the WhatsApp / Pay / Download App buttons
-// (FloatingActions) stack directly above it, so the two never overlap.
+// Tawk's bubble is hidden — the "Chat with us" button in FloatingActions
+// opens the chat (see openTawkChat below).
 const PROPERTY_ID = (process.env.NEXT_PUBLIC_TAWK_PROPERTY_ID || "").trim();
 const WIDGET_ID = (process.env.NEXT_PUBLIC_TAWK_WIDGET_ID || "").trim();
 const WIDGET_ID_AR = (process.env.NEXT_PUBLIC_TAWK_WIDGET_ID_AR || "").trim();
 
 const widgetFor = (language) => (language === "ar" && WIDGET_ID_AR ? WIDGET_ID_AR : WIDGET_ID);
+
+export const TAWK_ENABLED = Boolean(PROPERTY_ID && WIDGET_ID);
+// Unread-message count from the agent → our "Chat with us" button badge.
+export const TAWK_UNREAD_EVENT = "halapark-tawk-unread";
+// Chat window opened / closed → FloatingActions hides its buttons while open
+// (Tawk's own close button sits in the same corner).
+export const TAWK_OPEN_EVENT = "halapark-tawk-open";
+const announceOpen = (open) => window.dispatchEvent(new CustomEvent(TAWK_OPEN_EVENT, { detail: open }));
+
+// Tawk's own round bubble is hidden: the site's "Chat with us" button
+// (FloatingActions) opens the chat window instead, and the window hides again
+// when the visitor minimises it.
+let openWhenReady = false;
+export function openTawkChat() {
+  const api = typeof window !== "undefined" ? window.Tawk_API : null;
+  if (api && typeof api.maximize === "function") {
+    api.showWidget?.();
+    api.maximize();
+  } else {
+    openWhenReady = true; // script still loading → open as soon as it's ready
+  }
+}
 
 export default function TawkChat() {
   const { language } = useLanguage();
@@ -37,16 +59,32 @@ export default function TawkChat() {
     }
     if (document.getElementById("tawk-script")) return;
 
-    // Bottom-right in both languages — where visitors expect a chat button.
-    // The WhatsApp / Pay / Download App buttons stack above it.
+    // Chat window opens bottom-right (above our "Chat with us" button).
     const position = "br";
-    window.Tawk_API = window.Tawk_API || {};
+    const api = (window.Tawk_API = window.Tawk_API || {});
     window.Tawk_LoadStart = new Date();
-    window.Tawk_API.customStyle = {
+    api.customStyle = {
       visibility: {
         desktop: { position, xOffset: 24, yOffset: 24 },
         mobile: { position, xOffset: 16, yOffset: 16 },
       },
+    };
+    api.onLoad = () => {
+      if (openWhenReady) {
+        openWhenReady = false;
+        api.showWidget?.();
+        api.maximize?.();
+      } else {
+        api.hideWidget?.();
+      }
+    };
+    api.onChatMaximized = () => announceOpen(true);
+    api.onChatMinimized = () => {
+      api.hideWidget?.();
+      announceOpen(false);
+    };
+    api.onUnreadCountChanged = (count) => {
+      window.dispatchEvent(new CustomEvent(TAWK_UNREAD_EVENT, { detail: Number(count) || 0 }));
     };
 
     const s = document.createElement("script");

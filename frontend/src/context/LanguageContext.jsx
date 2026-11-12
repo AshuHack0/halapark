@@ -110,7 +110,9 @@ const UI_LABELS = {
   viewOpenPositions: { en: "View Open Positions", ar: "عرض الوظائف المتاحة" },
   chatOnWhatsApp: { en: "Chat on WhatsApp", ar: "تحدث عبر واتساب" },
   pay: { en: "Pay", ar: "ادفع" },
-  payParking: { en: "Pay for Parking", ar: "ادفع رسوم الموقف" },
+  whatsapp: { en: "WhatsApp", ar: "واتساب" },
+  payNow: { en: "Pay Now", ar: "ادفع الآن" },
+  chatWithUs: { en: "Chat with us", ar: "تحدث معنا" },
   downloadApp: { en: "Download App", ar: "حمّل التطبيق" },
 };
 

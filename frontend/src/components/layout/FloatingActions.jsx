@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useLanguage, ui } from "@/context/LanguageContext";
 import { fetchPage } from "@/lib/cms";
+import { TAWK_ENABLED, TAWK_OPEN_EVENT, TAWK_UNREAD_EVENT, openTawkChat } from "@/components/common/TawkChat";
 
 // ─── Store icons ──────────────────────────────────────────────────────────────
 // The icon glyph is chosen by the store's `key` (a recognizable brand mark), but
@@ -77,23 +78,33 @@ const PayIcon = () => (
   </svg>
 );
 
-// Tawk.to live chat sits in the bottom-right corner (see common/TawkChat.jsx);
-// when it's configured these buttons stack just above its bubble.
-const CHAT_ENABLED = Boolean(
-  (process.env.NEXT_PUBLIC_TAWK_PROPERTY_ID || "").trim() && (process.env.NEXT_PUBLIC_TAWK_WIDGET_ID || "").trim(),
+const ChatBubbleIcon = ({ className = "h-5 w-5" }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+  </svg>
 );
 
-// Labelled pill: icon in a coloured circle + always-visible text, so each
-// action is clear without hovering (hover tooltips don't exist on phones).
-const PILL =
-  "group relative inline-flex h-11 items-center gap-2 rounded-full border bg-white py-1 ps-1 pe-4 text-[13px] font-semibold text-slate-800 shadow-[0_10px_26px_rgba(15,23,42,0.14)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_14px_32px_rgba(15,23,42,0.2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0088FF]/45 focus-visible:ring-offset-2 sm:h-12 sm:text-sm";
-const PILL_ICON = "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-white sm:h-10 sm:w-10";
+const PhoneIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <rect x="6" y="2.5" width="12" height="19" rx="2.5" />
+    <line x1="11" y1="18" x2="13" y2="18" />
+  </svg>
+);
 
-function FloatingPill({ href, label, iconClass, borderClass, children }) {
+// One action: a dark label chip beside a dark round icon button (the whole
+// row is one link / button). Labels are always visible — no hover needed.
+const ROW =
+  "group flex items-center justify-end gap-3 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0088FF]/50 focus-visible:ring-offset-2";
+const CHIP =
+  "whitespace-nowrap rounded-xl bg-[#2B2B2E] px-3.5 py-2 text-[13px] font-medium text-white shadow-[0_8px_20px_rgba(0,0,0,0.18)] transition group-hover:bg-[#3A3A3E] sm:px-4 sm:py-2.5 sm:text-[15px]";
+const CIRCLE =
+  "inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#2B2B2E] text-white shadow-[0_10px_24px_rgba(0,0,0,0.22)] transition group-hover:-translate-y-0.5 group-hover:bg-[#3A3A3E] sm:h-14 sm:w-14";
+
+function ActionRow({ href, label, icon, iconClass = "" }) {
   return (
-    <a href={href} target="_blank" rel="noopener noreferrer" className={`${PILL} ${borderClass}`}>
-      <span className={`${PILL_ICON} ${iconClass}`}>{children}</span>
-      <span dir="auto" className="whitespace-nowrap">{label}</span>
+    <a href={href} target="_blank" rel="noopener noreferrer" className={ROW}>
+      <span dir="auto" className={CHIP}>{label}</span>
+      <span className={`${CIRCLE} ${iconClass}`}>{icon}</span>
     </a>
   );
 }
@@ -101,10 +112,14 @@ function FloatingPill({ href, label, iconClass, borderClass, children }) {
 export default function FloatingActions() {
   const { language } = useLanguage();
   // Everything is CMS-driven (settings.floatingApp) — no hardcoded links.
-  //   floatingApp: { whatsapp, pay: { href }, stores: [{ key, label, href }] }
+  //   floatingApp: { whatsapp, payHref, stores: [{ key, label, href }] }
   const [cfg, setCfg] = useState(null);
-  // One "Download App" button opens a menu listing all configured stores.
+  // "Download App" opens a menu listing all configured stores.
   const [storesOpen, setStoresOpen] = useState(false);
+  // Unread chat messages (agent replied while the chat was closed).
+  const [unread, setUnread] = useState(0);
+  // Chat window open → hide these buttons (Tawk's close button is there).
+  const [chatOpen, setChatOpen] = useState(false);
 
   useEffect(() => {
     fetchPage("settings").then((page) => {
@@ -112,27 +127,15 @@ export default function FloatingActions() {
     });
   }, []);
 
-  // Keep the stack just above the Tawk chat bubble. Its size differs by device
-  // and by Tawk's own settings, so measure where it actually sits (the small
-  // bubble iframe in the bottom-right corner — not the open chat window).
-  const [chatGap, setChatGap] = useState(null);
   useEffect(() => {
-    if (!CHAT_ENABLED) return undefined;
-    const measure = () => {
-      const vw = window.innerWidth;
-      const vh = window.innerHeight;
-      const tops = [...document.querySelectorAll("iframe")]
-        .map((f) => f.getBoundingClientRect())
-        .filter((r) => r.width > 0 && r.width < 200 && r.height < 200 && r.right > vw - 220 && r.bottom > vh - 240)
-        .map((r) => r.top);
-      if (tops.length) setChatGap(Math.round(vh - Math.min(...tops) + 10));
-    };
-    measure();
-    const timer = window.setInterval(measure, 1500);
-    window.addEventListener("resize", measure);
+    if (!TAWK_ENABLED) return undefined;
+    const onUnread = (e) => setUnread(Number(e.detail) || 0);
+    const onOpen = (e) => setChatOpen(Boolean(e.detail));
+    window.addEventListener(TAWK_UNREAD_EVENT, onUnread);
+    window.addEventListener(TAWK_OPEN_EVENT, onOpen);
     return () => {
-      window.clearInterval(timer);
-      window.removeEventListener("resize", measure);
+      window.removeEventListener(TAWK_UNREAD_EVENT, onUnread);
+      window.removeEventListener(TAWK_OPEN_EVENT, onOpen);
     };
   }, []);
 
@@ -145,13 +148,11 @@ export default function FloatingActions() {
     return () => window.removeEventListener("keydown", fn);
   }, [storesOpen]);
 
-  if (!cfg) return null;
-
-  const whatsapp = (cfg.whatsapp || "").trim();
-  const payHref = (cfg.payHref || "").trim();
-  // Store buttons — one per configured store with a link. Icon = uploaded
+  const whatsapp = (cfg?.whatsapp || "").trim();
+  const payHref = (cfg?.payHref || "").trim();
+  // Store links — one per configured store with a link. Icon = uploaded
   // custom image when set, else the built-in glyph for the store key.
-  const stores = (Array.isArray(cfg.stores) ? cfg.stores : [])
+  const stores = (Array.isArray(cfg?.stores) ? cfg.stores : [])
     .map((s) => ({
       key: String(s?.key || "").trim().toLowerCase(),
       label: (s?.label || "").trim(),
@@ -161,43 +162,27 @@ export default function FloatingActions() {
     }))
     .filter((s) => s.href);
 
+  if (chatOpen) return null;
+
   // Nothing configured → render nothing (no default buttons).
-  if (!whatsapp && !payHref && stores.length === 0) return null;
+  if (!TAWK_ENABLED && (!cfg || (!whatsapp && !payHref && stores.length === 0))) return null;
 
   return (
-    // Hidden while the mobile nav menu is open (body gets .nav-menu-open) so
-    // the buttons never overlap the menu on short screens. Always on the
-    // right (both languages), stacked above the chat bubble when chat is on.
-    <div
-      className={`fixed right-4 z-[60] sm:right-6 [.nav-menu-open_&]:hidden ${
-        CHAT_ENABLED ? "bottom-[88px] sm:bottom-[150px]" : "bottom-5 sm:bottom-6"
-      }`}
-      style={chatGap ? { bottom: chatGap } : undefined}
-    >
-      <div className="flex flex-col items-end gap-2.5">
+    // Bottom-right in both languages. Hidden while the mobile nav menu is open
+    // (body gets .nav-menu-open) so it never overlaps the menu.
+    <div className="fixed bottom-4 right-4 z-[60] sm:bottom-6 sm:right-6 [.nav-menu-open_&]:hidden">
+      <div className="flex flex-col items-end gap-3 sm:gap-4">
         {whatsapp ? (
-          <FloatingPill
+          <ActionRow
             href={whatsapp}
-            label={ui("chatOnWhatsApp", language)}
-            iconClass="bg-[#25D366]"
-            borderClass="border-[#25D366]/30 hover:border-[#25D366]"
-          >
-            <WhatsAppIcon />
-          </FloatingPill>
+            label={ui("whatsapp", language)}
+            iconClass="!text-[#25D366]"
+            icon={<WhatsAppIcon />}
+          />
         ) : null}
 
-        {payHref ? (
-          <FloatingPill
-            href={payHref}
-            label={ui("payParking", language)}
-            iconClass="bg-slate-800"
-            borderClass="border-slate-200 hover:border-slate-400"
-          >
-            <PayIcon />
-          </FloatingPill>
-        ) : null}
+        {payHref ? <ActionRow href={payHref} label={ui("payNow", language)} icon={<PayIcon />} /> : null}
 
-        {/* "Download App" — opens a menu with all configured stores. */}
         {stores.length > 0 ? (
           <div className="relative">
             {storesOpen ? (
@@ -249,14 +234,31 @@ export default function FloatingActions() {
               aria-expanded={storesOpen}
               aria-haspopup="menu"
               onClick={() => setStoresOpen((v) => !v)}
-              className={`${PILL} border-[#0088FF] bg-[linear-gradient(165deg,#0A97FF_0%,#0088FF_50%,#006FD2_100%)] text-white`}
+              className={ROW}
             >
-              <span className={`${PILL_ICON} bg-white/20`}>
-                <DownloadAppIcon />
+              <span dir="auto" className={CHIP}>{ui("downloadApp", language)}</span>
+              <span className={CIRCLE}>
+                <PhoneIcon />
               </span>
-              <span dir="auto" className="whitespace-nowrap">{ui("downloadApp", language)}</span>
             </button>
           </div>
+        ) : null}
+
+        {/* Live chat (Tawk.to) — replaces Tawk's own round bubble. */}
+        {TAWK_ENABLED ? (
+          <button
+            type="button"
+            onClick={openTawkChat}
+            className="relative inline-flex h-12 items-center gap-2.5 rounded-full bg-[#0A84FF] px-5 text-[15px] font-semibold text-white shadow-[0_12px_28px_rgba(10,132,255,0.4)] transition hover:-translate-y-0.5 hover:bg-[#0077EE] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0088FF]/50 focus-visible:ring-offset-2 sm:h-14 sm:px-7 sm:text-[17px]"
+          >
+            <ChatBubbleIcon className="h-5 w-5 sm:h-6 sm:w-6" />
+            <span dir="auto">{ui("chatWithUs", language)}</span>
+            {unread > 0 ? (
+              <span className="absolute -right-1 -top-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[11px] font-bold text-white ring-2 ring-white">
+                {unread}
+              </span>
+            ) : null}
+          </button>
         ) : null}
       </div>
     </div>
