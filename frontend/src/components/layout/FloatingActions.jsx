@@ -94,11 +94,11 @@ const PhoneIcon = () => (
 // One action: a dark label chip beside a dark round icon button (the whole
 // row is one link / button). Labels are always visible — no hover needed.
 const ROW =
-  "group flex items-center justify-end gap-3 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0088FF]/50 focus-visible:ring-offset-2";
+  "group flex items-center justify-end gap-2 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0088FF]/50 focus-visible:ring-offset-2";
 const CHIP =
-  "whitespace-nowrap rounded-xl bg-[#2B2B2E] px-3.5 py-2 text-[13px] font-medium text-white shadow-[0_8px_20px_rgba(0,0,0,0.18)] transition group-hover:bg-[#3A3A3E] sm:px-4 sm:py-2.5 sm:text-[15px]";
+  "whitespace-nowrap rounded-lg bg-[#232326]/95 px-2.5 py-1 text-[12px] font-medium leading-5 text-white shadow-[0_4px_12px_rgba(0,0,0,0.16)] backdrop-blur transition group-hover:bg-[#35353A] sm:text-[13px]";
 const CIRCLE =
-  "inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#2B2B2E] text-white shadow-[0_10px_24px_rgba(0,0,0,0.22)] transition group-hover:-translate-y-0.5 group-hover:bg-[#3A3A3E] sm:h-14 sm:w-14";
+  "inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#232326] text-white shadow-[0_6px_16px_rgba(0,0,0,0.2)] ring-1 ring-white/10 transition group-hover:-translate-y-0.5 group-hover:bg-[#35353A] [&_svg]:h-[18px] [&_svg]:w-[18px]";
 
 function ActionRow({ href, label, icon, iconClass = "" }) {
   return (
@@ -170,8 +170,8 @@ export default function FloatingActions() {
   return (
     // Bottom-right in both languages. Hidden while the mobile nav menu is open
     // (body gets .nav-menu-open) so it never overlaps the menu.
-    <div className="fixed bottom-4 right-4 z-[60] sm:bottom-6 sm:right-6 [.nav-menu-open_&]:hidden">
-      <div className="flex flex-col items-end gap-3 sm:gap-4">
+    <div className="fixed bottom-4 right-4 z-[60] sm:bottom-5 sm:right-5 [.nav-menu-open_&]:hidden">
+      <div className="flex flex-col items-end gap-2">
         {whatsapp ? (
           <ActionRow
             href={whatsapp}
@@ -249,12 +249,12 @@ export default function FloatingActions() {
           <button
             type="button"
             onClick={openTawkChat}
-            className="relative inline-flex h-12 items-center gap-2.5 rounded-full bg-[#0A84FF] px-5 text-[15px] font-semibold text-white shadow-[0_12px_28px_rgba(10,132,255,0.4)] transition hover:-translate-y-0.5 hover:bg-[#0077EE] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0088FF]/50 focus-visible:ring-offset-2 sm:h-14 sm:px-7 sm:text-[17px]"
+            className="relative mt-0.5 inline-flex h-10 items-center gap-2 rounded-full bg-[#0A84FF] pe-4 ps-3.5 text-[13px] font-semibold text-white shadow-[0_8px_20px_rgba(10,132,255,0.35)] transition hover:-translate-y-0.5 hover:bg-[#0077EE] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0088FF]/50 focus-visible:ring-offset-2 sm:text-sm"
           >
-            <ChatBubbleIcon className="h-5 w-5 sm:h-6 sm:w-6" />
+            <ChatBubbleIcon className="h-[18px] w-[18px]" />
             <span dir="auto">{ui("chatWithUs", language)}</span>
             {unread > 0 ? (
-              <span className="absolute -right-1 -top-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[11px] font-bold text-white ring-2 ring-white">
+              <span className="absolute -right-1 -top-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white ring-2 ring-white">
                 {unread}
               </span>
             ) : null}
