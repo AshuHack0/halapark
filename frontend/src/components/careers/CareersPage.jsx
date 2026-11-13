@@ -392,18 +392,18 @@ function OpportunitiesSection({ opportunities, header }) {
                        side band dissolving toward the copy, as before. */
                     <div
                       aria-hidden="true"
-                      className="pointer-events-none relative aspect-[4/3] w-full [mask-image:linear-gradient(180deg,#000_0%,#000_55%,rgba(0,0,0,0.5)_78%,transparent_100%)] sm:absolute sm:inset-y-0 sm:end-0 sm:aspect-auto sm:w-[62%] sm:[mask-image:linear-gradient(90deg,transparent_0%,rgba(0,0,0,0.45)_30%,#000_58%,#000_100%)] rtl:sm:[mask-image:linear-gradient(270deg,transparent_0%,rgba(0,0,0,0.45)_30%,#000_58%,#000_100%)]"
+                      className="pointer-events-none relative aspect-[4/3] w-full [mask-image:linear-gradient(180deg,#000_0%,#000_55%,rgba(0,0,0,0.5)_78%,transparent_100%)] lg:absolute lg:inset-y-0 lg:end-0 lg:aspect-auto lg:w-[62%] lg:[mask-image:linear-gradient(90deg,transparent_0%,rgba(0,0,0,0.45)_30%,#000_58%,#000_100%)] rtl:lg:[mask-image:linear-gradient(270deg,transparent_0%,rgba(0,0,0,0.45)_30%,#000_58%,#000_100%)]"
                     >
                       <MobilePicture mobileSrc={item.mobileImage}>
-                        <Image src={image} alt="" fill sizes="(min-width: 1280px) 28vw, (min-width: 768px) 40vw, 100vw" className="object-cover object-center" />
+                        <Image src={image} alt="" fill sizes="(min-width: 1280px) 28vw, (min-width: 1024px) 40vw, (min-width: 768px) 50vw, 100vw" className="object-cover object-center" />
                       </MobilePicture>
                       {/* Pastel wash over the photo so it sits inside the card tone */}
-                      <div className="absolute inset-0 sm:hidden" style={{ background: `linear-gradient(180deg, transparent 40%, ${tone.wash} 75%, ${tone.bg} 100%)` }} />
-                      <div className="absolute inset-0 hidden sm:block" style={{ background: `linear-gradient(${language === "ar" ? "270deg" : "90deg"}, ${tone.bg} 0%, ${tone.wash} 30%, transparent 52%)` }} />
+                      <div className="absolute inset-0 lg:hidden" style={{ background: `linear-gradient(180deg, transparent 40%, ${tone.wash} 75%, ${tone.bg} 100%)` }} />
+                      <div className="absolute inset-0 hidden lg:block" style={{ background: `linear-gradient(${language === "ar" ? "270deg" : "90deg"}, ${tone.bg} 0%, ${tone.wash} 30%, transparent 52%)` }} />
                     </div>
                   ) : null}
 
-                  <div className={`relative flex h-full flex-col p-5 sm:p-6 ${image ? "-mt-10 sm:mt-0 sm:pe-[34%]" : ""}`}>
+                  <div className={`relative flex h-full flex-col p-5 lg:p-6 ${image ? "-mt-10 lg:mt-0 lg:pe-[34%]" : ""}`}>
                     <div className="flex flex-wrap items-center gap-3">
                       <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full shadow-[0_8px_18px_rgba(6,6,22,0.14)]" style={{ backgroundColor: tone.accent }}>
                         {hasText(item.iconImage) ? (

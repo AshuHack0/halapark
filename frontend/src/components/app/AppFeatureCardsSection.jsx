@@ -209,8 +209,11 @@ export default function AppFeatureCardsSection() {
           </motion.div>
         )}
 
+        {/* Phones: one column. Tablets: two columns, an odd last card
+            centred at the same width (one full-width column looked
+            stretched). Desktop: three columns. */}
         {displayCards.length > 0 && (
-          <div className="mt-8 grid gap-6 lg:grid-cols-3">
+          <div className="mt-8 grid gap-6 md:grid-cols-2 md:[&>*:last-child:nth-child(odd)]:col-span-2 md:[&>*:last-child:nth-child(odd)]:mx-auto md:[&>*:last-child:nth-child(odd)]:w-[calc(50%-12px)] lg:grid-cols-3 lg:[&>*:last-child:nth-child(odd)]:col-span-1 lg:[&>*:last-child:nth-child(odd)]:mx-0 lg:[&>*:last-child:nth-child(odd)]:w-auto">
             {displayCards.map((item, index) => {
               const Icon = item.icon ?? BarChart3;
 

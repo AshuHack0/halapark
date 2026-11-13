@@ -1584,9 +1584,10 @@ function ServicesGrid({ onServiceClick, cmsServices, gridHeader, detailSlugs, ca
           transition={{ duration: 0.5, ease }}
           // Wraps onto extra rows instead of a hidden-scrollbar strip, so every
           // category is visible and tappable on phones/tablets (the sideways
-          // scroll cut tabs off with no scroll cue).
+          // scroll cut tabs off with no scroll cue). Phones: an even 2-column
+          // grid of equal-width buttons; from sm up: wrapping pills.
           ref={tabsRef}
-          className="mb-8 flex scroll-mt-[96px] flex-wrap gap-2 sm:gap-3"
+          className="mb-8 grid scroll-mt-[96px] grid-cols-2 gap-2 [&>*:last-child:nth-child(odd)]:col-span-2 sm:flex sm:flex-wrap sm:gap-3"
         >
           {visibleFilters.map((f, i) => {
             const isActive = effectiveFilter === f.id;
@@ -1598,7 +1599,7 @@ function ServicesGrid({ onServiceClick, cmsServices, gridHeader, detailSlugs, ca
                 whileHover={reduced ? undefined : { scale: 1.04 }}
                 whileTap={reduced ? undefined : { scale: 0.97 }}
                 transition={springSoft}
-                className={`relative flex shrink-0 items-center gap-2 rounded-full px-4 py-2.5 text-[12px] font-semibold transition-all duration-200 ${
+                className={`relative flex min-h-[44px] w-full min-w-0 items-center justify-between gap-2 rounded-full px-4 py-2.5 text-start text-[12px] font-semibold leading-tight transition-all duration-200 sm:w-auto sm:shrink-0 sm:justify-start ${
                   isActive
                     ? "bg-[#0088FF] text-white shadow-[0_4px_14px_rgba(0,136,255,0.32)]"
                     : "border border-slate-200 bg-white text-slate-600 hover:border-[#0088FF]/40 hover:text-[#0088FF]"
@@ -1612,8 +1613,8 @@ function ServicesGrid({ onServiceClick, cmsServices, gridHeader, detailSlugs, ca
                     transition={{ type:"spring", stiffness:380, damping:28 }}
                   />
                 )}
-                <span>{language === "ar" ? f.labelAr : f.label}</span>
-                <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold leading-none ${
+                <span className="min-w-0 [overflow-wrap:anywhere]">{language === "ar" ? f.labelAr : f.label}</span>
+                <span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-bold leading-none ${
                   isActive ? "bg-white/20 text-white" : "bg-slate-100 text-slate-500"
                 }`}>
                   {counts[i]}

@@ -21,22 +21,13 @@ export default function WhoWeWorkWith() {
   const [direction, setDirection] = useState(0);
   const [paused, setPaused] = useState(false);
   const scrollRef = useRef(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
   const [hasOverflow, setHasOverflow] = useState(false);
 
   // Declared before the effects that call it so it is defined at call time.
   function checkScroll() {
     if (scrollRef.current) {
       const el = scrollRef.current;
-      const { scrollLeft, scrollWidth, clientWidth } = el;
-      const max = scrollWidth - clientWidth;
-      // In RTL (Arabic) browsers report scrollLeft as 0 → -max, so normalize
-      // to "distance scrolled from the start edge" before deciding the arrows.
-      const isRtl = getComputedStyle(el).direction === "rtl";
-      const fromStart = isRtl ? -scrollLeft : scrollLeft;
-      setCanScrollLeft(isRtl ? fromStart < max - 10 : fromStart > 0);
-      setCanScrollRight(isRtl ? fromStart > 0 : fromStart < max - 10);
+      const { scrollWidth, clientWidth } = el;
       setHasOverflow(scrollWidth > clientWidth + 10);
     }
   }
@@ -56,6 +47,13 @@ export default function WhoWeWorkWith() {
 
   useEffect(() => {
     checkScroll();
+    // Re-check on resize / tablet rotation, so the arrows appear exactly when
+    // the tab row overflows at the current width.
+    const el = scrollRef.current;
+    if (!el || typeof ResizeObserver === "undefined") return;
+    const ro = new ResizeObserver(() => checkScroll());
+    ro.observe(el);
+    return () => ro.disconnect();
   }, [partners]);
 
   useEffect(() => {
@@ -100,6 +98,16 @@ export default function WhoWeWorkWith() {
     setDirection(step);
     setActiveIndex(next);
   };
+
+  // The arrows step through industries, so they are enabled by the active
+  // industry's position (first / last), not by how far the tab row has
+  // scrolled — on tablets the row reaches its end before the last industry,
+  // which used to disable the right arrow too early.
+  const isRtlRow = language === "ar";
+  const hasPrev = activeIndex > 0;
+  const hasNext = activeIndex < partners.length - 1;
+  const leftEnabled = isRtlRow ? hasNext : hasPrev;
+  const rightEnabled = isRtlRow ? hasPrev : hasNext;
 
   const handleTabClick = (index) => {
     setPaused(true);
@@ -188,10 +196,10 @@ export default function WhoWeWorkWith() {
           {hasOverflow && (
             <motion.button
               onClick={() => scrollTabs('left')}
-              disabled={!canScrollLeft}
+              disabled={!leftEnabled}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
-              className="absolute -left-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-white shadow-lg hover:shadow-xl disabled:opacity-30 disabled:cursor-not-allowed transition border border-[#E7EAF0]"
+              className="absolute left-0 top-[calc(50%-6px)] -translate-y-1/2 z-10 p-2 rounded-full bg-white shadow-lg hover:shadow-xl disabled:opacity-30 disabled:cursor-not-allowed transition border border-[#E7EAF0]"
               aria-label="Scroll tabs left"
             >
               <ChevronLeft className="h-5 w-5 text-[#0088FF]" />
@@ -203,8 +211,8 @@ export default function WhoWeWorkWith() {
             <div
               ref={scrollRef}
               onScroll={checkScroll}
-              className={`flex gap-3 overflow-x-auto scroll-smooth scrollbar-hide pb-3 px-2 ${
-                hasOverflow ? "" : "justify-center"
+              className={`flex gap-3 overflow-x-auto scroll-smooth scrollbar-hide pb-3 ${
+                hasOverflow ? "px-12" : "px-2 justify-center"
               }`}
             >
               {partners.map((partner, i) => (
@@ -234,8 +242,8 @@ export default function WhoWeWorkWith() {
                 so a short tab row is never visually clipped. */}
             {hasOverflow ? (
               <>
-                <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white to-transparent pointer-events-none" />
-                <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white to-transparent pointer-events-none" />
+                <div className="absolute left-0 top-0 bottom-0 w-14 bg-gradient-to-r from-white via-white/80 to-transparent pointer-events-none" />
+                <div className="absolute right-0 top-0 bottom-0 w-14 bg-gradient-to-l from-white via-white/80 to-transparent pointer-events-none" />
               </>
             ) : null}
           </div>
@@ -244,10 +252,10 @@ export default function WhoWeWorkWith() {
           {hasOverflow && (
             <motion.button
               onClick={() => scrollTabs('right')}
-              disabled={!canScrollRight}
+              disabled={!rightEnabled}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
-              className="absolute -right-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full bg-white shadow-lg hover:shadow-xl disabled:opacity-30 disabled:cursor-not-allowed transition border border-[#E7EAF0]"
+              className="absolute right-0 top-[calc(50%-6px)] -translate-y-1/2 z-10 p-2 rounded-full bg-white shadow-lg hover:shadow-xl disabled:opacity-30 disabled:cursor-not-allowed transition border border-[#E7EAF0]"
               aria-label="Scroll tabs right"
             >
               <ChevronRight className="h-5 w-5 text-[#0088FF]" />
@@ -261,8 +269,8 @@ export default function WhoWeWorkWith() {
           initial={{ opacity: 0, x: direction === 1 ? 100 : -100 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, ease }}
-          className={`grid grid-cols-1 gap-8 lg:gap-16 items-center ${
-            activePartner.image ? "lg:grid-cols-2" : ""
+          className={`grid grid-cols-1 gap-8 md:gap-10 lg:gap-16 items-center ${
+            activePartner.image ? "md:grid-cols-2" : ""
           }`}
         >
           {/* Left: Title, Description & Benefits */}
@@ -352,7 +360,9 @@ export default function WhoWeWorkWith() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, ease, delay: 0.1 }}
-            className="relative h-80 sm:h-96 lg:h-[480px] rounded-[32px] overflow-hidden shadow-[0_20px_80px_rgba(0,136,255,0.2)] border border-[#E7EAF0]"
+            // Tablet + desktop: the same 1300×950 shape as the admin's
+            // recommended size (≈654×478 at 1440px), so iPads don't crop more.
+            className="relative h-80 sm:h-96 md:h-auto md:aspect-[1300/950] rounded-[32px] overflow-hidden shadow-[0_20px_80px_rgba(0,136,255,0.2)] border border-[#E7EAF0]"
           >
             <MobilePicture mobileSrc={activePartner.mobileImage}>
               <Image

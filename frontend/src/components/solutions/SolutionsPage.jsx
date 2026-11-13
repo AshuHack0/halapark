@@ -1023,8 +1023,9 @@ function IntegrationRow({ card, index, isActive, onSelect, accent, language }) {
                     className="mt-2 block text-[0.82rem] leading-6 text-slate-500 [overflow-wrap:anywhere]"
                   />
                 ) : null}
+                {/* Phones: one point per line; tablet/desktop: side by side. */}
                 {points.length > 0 ? (
-                  <span className="mt-3 flex flex-wrap gap-x-4 gap-y-2">
+                  <span className="mt-3 flex flex-col gap-y-2 sm:flex-row sm:flex-wrap sm:gap-x-4">
                     {points.map((point, pi) => (
                       <span
                         key={pi}
