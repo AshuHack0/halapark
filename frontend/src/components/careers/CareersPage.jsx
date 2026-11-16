@@ -314,7 +314,7 @@ function BuildingSmarterMobility({ building }) {
               </h2>
             ) : null}
             {paragraphs.length > 0 ? (
-              <div className="mt-8 space-y-5 text-[0.94rem] leading-7 text-slate-500 sm:text-base">
+              <div className="mt-8 space-y-5 text-[0.94rem] leading-7 text-slate-500 text-justify sm:text-base">
                 {paragraphs.map((text, i) => (
                   <RichText key={`${text.slice(0, 40)}-${i}`} text={text} className="[overflow-wrap:anywhere] block" />
                 ))}
