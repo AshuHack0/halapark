@@ -1613,16 +1613,16 @@ function ServicesGrid({ onServiceClick, cmsServices, gridHeader, detailSlugs, ca
                     transition={{ type:"spring", stiffness:380, damping:28 }}
                   />
                 )}
+                {/* grid icon on the LEFT of the "All Services" button (mobile only, like the photo) */}
+                {f.id === ALL_FILTER.id ? (
+                  <LayoutGrid className="hidden shrink-0 h-4 w-4 max-sm:block" aria-hidden />
+                ) : null}
                 <span className="min-w-0 [overflow-wrap:anywhere]">{language === "ar" ? f.labelAr : f.label}</span>
                 <span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-bold leading-none max-sm:flex max-sm:h-6 max-sm:w-6 max-sm:items-center max-sm:justify-center max-sm:p-0 max-sm:text-[11px] ${
                   isActive ? "bg-white/20 text-white" : "bg-slate-100 text-slate-500 max-sm:bg-[rgba(0,136,255,0.12)] max-sm:text-[#0078E0]"
                 }`}>
                   {counts[i]}
                 </span>
-                {/* grid icon on the right of the "All Services" button (mobile only, like the photo) */}
-                {f.id === ALL_FILTER.id ? (
-                  <LayoutGrid className="hidden shrink-0 h-4 w-4 max-sm:block" aria-hidden />
-                ) : null}
               </motion.button>
             );
           })}
