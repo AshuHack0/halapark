@@ -21,7 +21,7 @@ import {
 import {
   X, ArrowUpRight, Check, Shield, Camera, BadgeCheck,
   CreditCard, Lock, ChevronLeft, ChevronRight, ChevronDown, MapPin, Clock, ParkingCircle, ArrowRight, Zap, Search, Loader2,
-  ShieldCheck, CalendarCheck, Users,
+  ShieldCheck, CalendarCheck, Users, LayoutGrid,
 } from "lucide-react";
 
 // Built-in marks for the Long-Term CTA chips, used when no icon is uploaded.
@@ -1587,7 +1587,7 @@ function ServicesGrid({ onServiceClick, cmsServices, gridHeader, detailSlugs, ca
           // scroll cut tabs off with no scroll cue). Phones: an even 2-column
           // grid of equal-width buttons; from sm up: wrapping pills.
           ref={tabsRef}
-          className="mb-8 grid scroll-mt-[96px] grid-cols-2 gap-2 [&>*:last-child:nth-child(odd)]:col-span-2 sm:flex sm:flex-wrap sm:gap-3"
+          className="mb-8 grid scroll-mt-[96px] grid-cols-2 gap-2 max-sm:[&>*:first-child]:col-span-2 max-sm:[&>*:first-child]:justify-center max-sm:[&>*:last-child:nth-child(even)]:col-span-2 sm:flex sm:flex-wrap sm:gap-3"
         >
           {visibleFilters.map((f, i) => {
             const isActive = effectiveFilter === f.id;
@@ -1614,11 +1614,15 @@ function ServicesGrid({ onServiceClick, cmsServices, gridHeader, detailSlugs, ca
                   />
                 )}
                 <span className="min-w-0 [overflow-wrap:anywhere]">{language === "ar" ? f.labelAr : f.label}</span>
-                <span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-bold leading-none ${
-                  isActive ? "bg-white/20 text-white" : "bg-slate-100 text-slate-500"
+                <span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-bold leading-none max-sm:flex max-sm:h-6 max-sm:w-6 max-sm:items-center max-sm:justify-center max-sm:p-0 max-sm:text-[11px] ${
+                  isActive ? "bg-white/20 text-white" : "bg-slate-100 text-slate-500 max-sm:bg-[rgba(0,136,255,0.12)] max-sm:text-[#0078E0]"
                 }`}>
                   {counts[i]}
                 </span>
+                {/* grid icon on the right of the "All Services" button (mobile only, like the photo) */}
+                {f.id === ALL_FILTER.id ? (
+                  <LayoutGrid className="hidden shrink-0 h-4 w-4 max-sm:block" aria-hidden />
+                ) : null}
               </motion.button>
             );
           })}
