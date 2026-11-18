@@ -59,6 +59,9 @@ function PhonePreview({ image, video }) {
         <div className="absolute left-[4.2%] right-[4.2%] top-[1.05%] bottom-[1.05%] z-30 overflow-hidden bg-white [border-radius:16.4%/7.6%]">
           {/* A video wins when one is uploaded; the image becomes its poster.
               Muted + playsInline so it autoplays on phones too. */}
+          {/* Inset screen: the whole screenshot shows, clear of the bezel and
+              the rounded corners (no cropping, no stretching). */}
+          <div className="absolute inset-[2.5%] overflow-hidden [border-radius:13%/6%]">
           {clip ? (
             <video
               src={clip}
@@ -81,6 +84,7 @@ function PhonePreview({ image, video }) {
               className="object-cover object-center"
             />
           )}
+          </div>
         </div>
         <div className="pointer-events-none absolute inset-0 z-10">
           <Image

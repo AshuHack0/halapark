@@ -107,14 +107,16 @@ function PhoneFrame({ screen, index, prefersReducedMotion }) {
         <div
           className={`absolute z-30 overflow-hidden bg-white ${screenBounds}`}
         >
-          <Image
-            src={screen.image || phoneFrameSrc}
-            alt={screen.title || ""}
-            fill
-            sizes="(min-width: 1280px) 260px, (min-width: 1024px) 220px, (min-width: 640px) 250px, 230px"
-            className="object-cover object-center"
-            priority={index === 2}
-          />
+          <div className="absolute inset-[2.5%] overflow-hidden [border-radius:13%/6%]">
+            <Image
+              src={screen.image || phoneFrameSrc}
+              alt={screen.title || ""}
+              fill
+              sizes="(min-width: 1280px) 260px, (min-width: 1024px) 220px, (min-width: 640px) 250px, 230px"
+              className="object-cover object-center"
+              priority={index === 2}
+            />
+          </div>
         </div>
 
         <div className="pointer-events-none absolute inset-0 z-10">
