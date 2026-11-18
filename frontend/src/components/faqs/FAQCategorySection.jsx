@@ -175,6 +175,7 @@ export default function FAQCategorySection({ categories: rawCategories = [] }) {
           items: (cat.items || []).filter((item) => {
             const hasAnswer = String(t(item, "answer", language) ?? "").replace(/<[^>]*>/g, "").trim() !== "";
             const hasVideo =
+              Boolean(String((language === "ar" ? item.ar?.videoFile : item.videoFile) ?? "").trim()) ||
               Boolean(youtubeEmbed(language === "ar" ? item.ar?.youtubeUrl : item.youtubeUrl)) ||
               collectVideos(item).length > 0 ||
               Boolean(externalLink(item.videoFolderUrl));
@@ -404,22 +405,45 @@ export default function FAQCategorySection({ categories: rawCategories = [] }) {
                           // Per-language YouTube link (admin: YouTube English /
                           // Arabic). Strict — the Arabic page only plays the
                           // Arabic link, never the English one.
+                          // Admin → FAQ question → Uploaded video (per language)
+                          // is the primary video; YouTube is only the fallback.
+                          const uploaded = String((language === "ar" ? item.ar?.videoFile : item.videoFile) ?? "").trim();
                           const ytLink = language === "ar" ? item.ar?.youtubeUrl : item.youtubeUrl;
-                          const ytEmbed = youtubeEmbed(ytLink);
+                          const ytEmbed = uploaded ? null : youtubeEmbed(ytLink);
                           // Admin → FAQ question → Video orientation. Portrait
                           // (phone-recorded / Shorts) gets an upright 9:16 frame
                           // instead of a wide one with black bars both sides.
                           const ytPortrait =
                             item.videoOrientation === "portrait" ||
                             (!item.videoOrientation && /\/shorts\//i.test(String(ytLink || "")));
-                          if (videos.length === 0 && !folder && !ytEmbed) return null;
+                          const uploadedPortrait = item.videoOrientation === "portrait";
+                          if (videos.length === 0 && !folder && !ytEmbed && !uploaded) return null;
                           // Single video → full width. Two or more → 2-up grid
                           // (50% each on sm+, stacking on mobile).
-                          const multi = videos.length + (ytEmbed ? 1 : 0) > 1;
+                          const multi = videos.length + (ytEmbed || uploaded ? 1 : 0) > 1;
                           return (
                             <div
                               className={`mt-4 grid gap-3 ${multi ? "sm:grid-cols-2" : "grid-cols-1"}`}
                             >
+                              {uploaded ? (
+                                <div
+                                  className={`overflow-hidden rounded-[14px] border border-[#E7EAF0] bg-black ${
+                                    uploadedPortrait ? "w-full max-w-[340px] justify-self-center" : ""
+                                  }`}
+                                >
+                                  <video
+                                    src={uploaded}
+                                    controls
+                                    controlsList="nodownload"
+                                    disablePictureInPicture
+                                    onContextMenu={(e) => e.preventDefault()}
+                                    preload="metadata"
+                                    playsInline
+                                    aria-label={`${t(item, "question", language) || "FAQ"} — video`}
+                                    className={`${uploadedPortrait ? "aspect-[9/16]" : "aspect-video"} block w-full object-contain`}
+                                  />
+                                </div>
+                              ) : null}
                               {ytEmbed ? (
                                 <div
                                   className={`overflow-hidden rounded-[14px] border border-[#E7EAF0] bg-black ${
