@@ -26,10 +26,10 @@ export async function POST(request) {
     return Response.json({ error: "Captcha is required." }, { status: 400 });
   }
 
-  // Phone is required for per-job applications but not for the general
-  // "Join Our Team" form (its spec collects CV + name + email + birth date).
+  // Mobile number is required on both careers forms (per-job Apply and the
+  // general "Join Our Team" form).
   const isGeneral = jobTitle?.trim() === "General Application";
-  if (!fullName?.trim() || !email?.trim() || !jobTitle?.trim() || (!isGeneral && !phone?.trim())) {
+  if (!fullName?.trim() || !email?.trim() || !jobTitle?.trim() || !phone?.trim()) {
     return Response.json({ error: "Missing required fields." }, { status: 400 });
   }
   if (isGeneral && !body.resumeUrl?.trim()) {

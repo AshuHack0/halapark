@@ -5,7 +5,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import ReCAPTCHA from "react-google-recaptcha";
 import { Check, CloudUpload, Loader2, X } from "lucide-react";
 import { RECAPTCHA_SITE_KEY } from "@/config/recaptcha.site";
-import { validateForm, focusFirstError, errorInputClass } from "@/lib/formValidation";
+import { validateForm, focusFirstError, errorInputClass, formatUaeMobile } from "@/lib/formValidation";
+import UaePhoneInput from "@/components/common/UaePhoneInput";
 import FieldError from "@/components/common/FieldError";
 
 // Shared validation rules (src/lib/formValidation.js).
@@ -13,6 +14,7 @@ const GENERAL_RULES = {
   firstName: { label: "First name", required: true },
   lastName: { label: "Last name", required: true },
   email: { label: "Email address", required: true, email: true },
+  phone: { label: "Mobile number", required: true, phone: true },
 };
 
 const ease = [0.22, 1, 0.36, 1];
@@ -80,7 +82,7 @@ function uploadCvToCloudinary(file, sig, onProgress) {
 /**
  * General "Join Our Team" application modal (not tied to a specific opening).
  * Fields per the client spec: CV upload (mandatory, drag & drop or browse),
- * first/last name, email (all mandatory), birth date (D/M/Y) and a
+ * first/last name, email, UAE mobile (all mandatory), birth date (D/M/Y) and a
  * "How did you hear about us?" dropdown. Submits through the same
  * /api/job-application pipeline as per-job applications with
  * jobTitle "General Application".
@@ -90,6 +92,7 @@ export default function GeneralApplicationModal({ isOpen, onClose }) {
     firstName: "",
     lastName: "",
     email: "",
+    phone: "",
     birthDay: "",
     birthMonth: "",
     birthYear: "",
@@ -126,7 +129,7 @@ export default function GeneralApplicationModal({ isOpen, onClose }) {
   }, [isOpen]);
 
   function handleClose() {
-    setForm({ firstName: "", lastName: "", email: "", birthDay: "", birthMonth: "", birthYear: "", hearAbout: "" });
+    setForm({ firstName: "", lastName: "", email: "", phone: "", birthDay: "", birthMonth: "", birthYear: "", hearAbout: "" });
     setDone(false);
     setFormError("");
     setFieldErrors({});
@@ -206,7 +209,7 @@ export default function GeneralApplicationModal({ isOpen, onClose }) {
       if (errors.cv) {
         cvBoxRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
       } else {
-        focusFirstError(formRef.current, { ...errors, birthDay: errors.birthDate }, ["firstName", "lastName", "email", "birthDay"]);
+        focusFirstError(formRef.current, { ...errors, birthDay: errors.birthDate }, ["firstName", "lastName", "email", "phone", "birthDay"]);
       }
       return;
     }
@@ -236,6 +239,7 @@ export default function GeneralApplicationModal({ isOpen, onClose }) {
           recaptchaToken,
           fullName: `${form.firstName.trim()} ${form.lastName.trim()}`.trim(),
           email: form.email,
+          phone: formatUaeMobile(form.phone),
           birthDate,
           hearAbout: form.hearAbout,
           jobTitle: "General Application",
@@ -464,6 +468,19 @@ export default function GeneralApplicationModal({ isOpen, onClose }) {
                       className={`${inputClass} ${fieldErrors.email ? errorInputClass : ""}`}
                     />
                     <FieldError message={fieldErrors.email} />
+                  </div>
+
+                  <div>
+                    <label className="mb-1 block text-[11px] font-medium text-slate-700 sm:mb-1.5 sm:text-xs">
+                      Mobile Number <span className="text-red-500">*</span>
+                    </label>
+                    <UaePhoneInput
+                      size="sm"
+                      value={form.phone}
+                      onChange={(v) => onChange({ target: { name: "phone", value: v } })}
+                      invalid={Boolean(fieldErrors.phone)}
+                    />
+                    <FieldError message={fieldErrors.phone} />
                   </div>
 
                   <div>

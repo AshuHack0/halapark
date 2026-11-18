@@ -1828,7 +1828,7 @@ function TrustSection({ trust }) {
         </motion.div>
 
         {/* 5 cards — 2 col mobile, 3 col md, 5 col lg */}
-        <div className="grid grid-cols-2 gap-4 sm:gap-5 md:grid-cols-3 lg:grid-cols-5">
+        <div className="grid auto-rows-fr grid-cols-2 gap-4 sm:gap-5 md:grid-cols-3 lg:grid-cols-5">
           {trustItems.map((item, i) => {
             const { Icon } = item;
             return (
@@ -1840,7 +1840,11 @@ function TrustSection({ trust }) {
               transition={{ duration: 0.5, ease, delay: i * 0.07 }}
               whileHover={reduced ? undefined : { y: -6, transition: springSoft }}
               className={`group/trust relative flex flex-col items-center overflow-hidden rounded-[20px] border border-slate-100 bg-white px-5 py-7 text-center shadow-[0_2px_14px_rgba(6,6,22,0.05)] transition-shadow duration-300 hover:shadow-[0_8px_28px_rgba(0,136,255,0.12)] ${
-                i === 4 ? "col-span-2 md:col-span-1" : ""
+                // Phones (2 columns): an odd last card sits centred on its own
+                // row at the same width as the cards above, not stretched.
+                i === trustItems.length - 1 && trustItems.length % 2 === 1
+                  ? "col-span-2 w-[calc(50%-0.5rem)] justify-self-center sm:w-[calc(50%-0.625rem)] md:col-span-1 md:w-auto md:justify-self-stretch"
+                  : ""
               }`}
             >
               {/* Hover glow */}
