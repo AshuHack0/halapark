@@ -70,7 +70,7 @@ function PhonePreview({ image, video }) {
               preload="metadata"
               onContextMenu={(e) => e.preventDefault()}
               aria-label="HalaPark payment screen"
-              className="h-full w-full object-contain object-center"
+              className="h-full w-full object-cover object-center"
             />
           ) : (
             <Image
@@ -78,7 +78,7 @@ function PhonePreview({ image, video }) {
               alt="HalaPark payment screen"
               fill
               sizes="(min-width: 1280px) 325px, (min-width: 1024px) 300px, (min-width: 640px) 270px, 230px"
-              className="object-contain object-center"
+              className="object-cover object-center"
             />
           )}
         </div>
