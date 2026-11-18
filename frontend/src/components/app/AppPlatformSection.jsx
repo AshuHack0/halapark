@@ -213,7 +213,7 @@ function PhonePreview({ screen, alt = "HalaPark app screen" }) {
 
       <div className="relative isolate aspect-[1439/2920] drop-shadow-[0_28px_58px_rgba(15,23,42,0.18)]">
         <div className="absolute left-[4.2%] right-[4.2%] top-[1.05%] bottom-[1.05%] z-30 overflow-hidden bg-white [border-radius:16.4%/7.6%]">
-          <div className="absolute inset-[2.5%] overflow-hidden [border-radius:13%/6%]">
+          <div className="absolute inset-0">
             <Image
               src={src}
               alt={alt}

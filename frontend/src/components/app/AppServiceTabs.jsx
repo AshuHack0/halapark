@@ -28,7 +28,7 @@ function PhonePreview({ screen, label }) {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -12, scale: 0.985 }}
                 transition={{ duration: 0.45, ease: "easeOut" }}
-                className="absolute inset-[2.5%] overflow-hidden [border-radius:13%/6%]"
+                className="absolute inset-0"
               >
                 <Image
                   src={screen}

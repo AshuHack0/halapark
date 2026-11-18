@@ -107,7 +107,7 @@ function PhoneFrame({ screen, index, prefersReducedMotion }) {
         <div
           className={`absolute z-30 overflow-hidden bg-white ${screenBounds}`}
         >
-          <div className="absolute inset-[2.5%] overflow-hidden [border-radius:13%/6%]">
+          <div className="absolute inset-0">
             <Image
               src={screen.image || phoneFrameSrc}
               alt={screen.title || ""}
