@@ -211,7 +211,7 @@ export default function Footer() {
                 </p>
               ) : null}
               {appDownloadUrl || hasStoreLinks ? (
-                <div className="mt-4 flex flex-col gap-4 min-[420px]:flex-row min-[420px]:items-start lg:justify-end">
+                <div className="mt-4 flex flex-row items-start gap-3 sm:gap-4 lg:justify-end">
                   {appDownloadUrl && qrCodeSrc ? (
                     <Link
                       href={appDownloadUrl}
@@ -222,7 +222,7 @@ export default function Footer() {
                       <img
                         src={qrCodeSrc}
                         alt="QR code for HalaPark app download"
-                        className="h-36 w-36 rounded-xl border border-[#D7E5F6] bg-white p-2.5 shadow-[0_10px_24px_rgba(15,23,42,0.05)]"
+                        className="h-32 w-32 rounded-xl border border-[#D7E5F6] bg-white p-2.5 min-[360px]:h-36 min-[360px]:w-36 shadow-[0_10px_24px_rgba(15,23,42,0.05)]"
                       />
                     </Link>
                   ) : null}

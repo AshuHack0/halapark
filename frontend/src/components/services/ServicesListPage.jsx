@@ -639,7 +639,7 @@ function QuoteModal({ isOpen, onClose, quoteForm, services }) {
                             value={serviceSearch}
                             onChange={(e) => setServiceSearch(e.target.value)}
                             autoFocus
-                            className="w-full rounded-t-lg border-b border-slate-200 px-3 py-2 text-sm outline-none focus:ring-0 sm:px-4 sm:py-2.5"
+                            className="w-full rounded-t-lg border-b border-slate-200 bg-white px-3 py-2 text-sm text-[#050A13] outline-none placeholder:text-slate-400 focus:ring-0 sm:px-4 sm:py-2.5"
                           />
                           {/* data-lenis-prevent + overscroll-contain: wheel/touch
                               over the list scrolls the LIST, not the page. */}

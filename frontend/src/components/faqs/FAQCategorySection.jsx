@@ -276,7 +276,7 @@ export default function FAQCategorySection({ categories: rawCategories = [] }) {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               dir={language === "ar" ? "rtl" : "ltr"}
-              className="mx-auto block w-full max-w-md rounded-full border border-[#E7EAF0] bg-white px-5 py-3 text-sm placeholder-slate-400 outline-none transition focus:border-[#0088FF] focus:ring-2 focus:ring-[#0088FF]/20"
+              className="mx-auto block w-full max-w-md rounded-full border border-[#E7EAF0] bg-white px-5 py-3 text-sm text-[#050A13] caret-[#0088FF] placeholder-slate-400 outline-none transition focus:border-[#0088FF] focus:ring-2 focus:ring-[#0088FF]/20"
               aria-label={t(searchHeader, "searchPlaceholder", language) || undefined}
             />
           </div>
