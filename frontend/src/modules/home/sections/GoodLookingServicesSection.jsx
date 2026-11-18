@@ -34,10 +34,11 @@ function toCard(svc) {
 // takes over, so the active card cannot oscillate between two neighbours.
 const SWITCH_MARGIN_PX = 40;
 
-// Phones and tablets get this section completely static: no fade/slide on
+// Phones get this section completely static: no fade/slide on
 // scroll and no scroll-focus effect (the blur/dim/glow that followed whichever
-// card sat nearest the middle of the screen). Desktop keeps both.
-const MOBILE_QUERY = "(max-width: 1023px)";
+// card sat nearest the middle of the screen). Tablets (iPad mini and up) and
+// desktop use the desktop layout and keep both.
+const MOBILE_QUERY = "(max-width: 743px)";
 
 function subscribeToViewport(onChange) {
   const mq = window.matchMedia(MOBILE_QUERY);
@@ -86,7 +87,7 @@ function ServiceCard({ service, index, cardRef, isActive, language }) {
     <motion.article
       ref={cardRef}
       {...scrollMotion}
-      className={`group relative rounded-[22px] transition-shadow duration-300 sm:rounded-[26px] lg:rounded-[30px] ${
+      className={`group relative rounded-[22px] transition-shadow duration-300 sm:rounded-[26px] min-[744px]:rounded-[30px] ${
         isActive && !noMotion
           ? "shadow-[0_0_34px_rgba(0,136,255,0.42)]"
           : ""
@@ -97,10 +98,10 @@ function ServiceCard({ service, index, cardRef, isActive, language }) {
         // link the card renders static (and the arrow is hidden below).
         const href = (service.href || "").trim();
         const shellCls =
-          "block overflow-hidden rounded-[22px] bg-[#fbfdff] shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_1px_4px_rgba(6,6,22,0.1),0_10px_24px_-6px_rgba(6,6,22,0.14)] transition-[transform,box-shadow] duration-300 ease-out sm:rounded-[26px] lg:rounded-[30px]";
+          "block overflow-hidden rounded-[22px] bg-[#fbfdff] shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_1px_4px_rgba(6,6,22,0.1),0_10px_24px_-6px_rgba(6,6,22,0.14)] transition-[transform,box-shadow] duration-300 ease-out sm:rounded-[26px] min-[744px]:rounded-[30px]";
         const inner = (
         <>
-        <div className="relative w-full aspect-[16/10] bg-[#d2dae2] lg:aspect-auto lg:h-[260px]">
+        <div className="relative w-full aspect-[16/10] bg-[#d2dae2] min-[744px]:aspect-auto min-[744px]:h-[260px]">
           {/* Scroll focus effect: the in-focus service's media is sharp; others
               blur + dim. Reduced-motion users always see it sharp. */}
           <div
@@ -129,7 +130,7 @@ function ServiceCard({ service, index, cardRef, isActive, language }) {
                   alt={service.name}
                   width={1600}
                   height={900}
-                  sizes="(min-width: 1024px) 50vw, 100vw"
+                  sizes="(min-width: 744px) 50vw, 100vw"
                   className="absolute inset-0 block h-full w-full object-cover object-center"
                 />
               </MobilePicture>
@@ -342,9 +343,9 @@ export default function GoodLookingServicesSection() {
           </h2>
         </div>
 
-        <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start lg:gap-12 lg:pb-10">
+        <div className="grid gap-10 min-[744px]:grid-cols-[0.85fr_1.15fr] min-[744px]:items-start min-[744px]:gap-8 min-[744px]:pb-10 lg:gap-12">
           <motion.div
-            className="order-last w-full sm:order-none sm:w-auto sm:max-w-xl lg:sticky lg:top-28 lg:self-start"
+            className="order-last w-full sm:order-none sm:w-auto sm:max-w-xl min-[744px]:sticky min-[744px]:top-28 min-[744px]:self-start"
             {...(noMotion
               ? {}
               : {
@@ -418,7 +419,7 @@ export default function GoodLookingServicesSection() {
           </motion.div>
 
           <motion.div
-            className="flex flex-col gap-5 sm:grid sm:grid-cols-2 lg:flex lg:grid-cols-none lg:gap-6"
+            className="flex flex-col gap-5 sm:grid sm:grid-cols-2 min-[744px]:flex min-[744px]:grid-cols-none min-[744px]:gap-6"
           >
             {featuredServices.map((service, index) => (
               <ServiceCard
