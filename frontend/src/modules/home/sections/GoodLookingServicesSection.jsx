@@ -87,7 +87,7 @@ function ServiceCard({ service, index, cardRef, isActive, language }) {
     <motion.article
       ref={cardRef}
       {...scrollMotion}
-      className={`group relative rounded-[22px] transition-shadow duration-300 sm:rounded-[26px] min-[744px]:rounded-[30px] ${
+      className={`group relative rounded-[22px] transition-shadow duration-300 sm:max-[743px]:rounded-[26px] min-[744px]:rounded-[30px] ${
         isActive && !noMotion
           ? "shadow-[0_0_34px_rgba(0,136,255,0.42)]"
           : ""
@@ -98,7 +98,7 @@ function ServiceCard({ service, index, cardRef, isActive, language }) {
         // link the card renders static (and the arrow is hidden below).
         const href = (service.href || "").trim();
         const shellCls =
-          "block overflow-hidden rounded-[22px] bg-[#fbfdff] shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_1px_4px_rgba(6,6,22,0.1),0_10px_24px_-6px_rgba(6,6,22,0.14)] transition-[transform,box-shadow] duration-300 ease-out sm:rounded-[26px] min-[744px]:rounded-[30px]";
+          "block overflow-hidden rounded-[22px] bg-[#fbfdff] shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_1px_4px_rgba(6,6,22,0.1),0_10px_24px_-6px_rgba(6,6,22,0.14)] transition-[transform,box-shadow] duration-300 ease-out sm:max-[743px]:rounded-[26px] min-[744px]:rounded-[30px]";
         const inner = (
         <>
         <div className="relative w-full aspect-[16/10] bg-[#d2dae2] min-[744px]:aspect-auto min-[744px]:h-[260px]">
@@ -419,7 +419,7 @@ export default function GoodLookingServicesSection() {
           </motion.div>
 
           <motion.div
-            className="flex flex-col gap-5 sm:grid sm:grid-cols-2 min-[744px]:flex min-[744px]:grid-cols-none min-[744px]:gap-6"
+            className="flex flex-col gap-5 sm:max-[743px]:grid sm:max-[743px]:grid-cols-2 min-[744px]:gap-6"
           >
             {featuredServices.map((service, index) => (
               <ServiceCard
