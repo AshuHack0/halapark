@@ -6,13 +6,15 @@ import { useLanguage, t } from "@/context/LanguageContext";
 import RichText from "@/components/common/RichText";
 
 import { ICON_BY_KEY } from "./contactData";
+import { parseMapPin, pinOpenUrl } from "@/lib/mapPin";
 
 const MAP_HOST = /(^|\.)google\.[a-z.]+$|^maps\.app\.goo\.gl$|^goo\.gl$|^maps\.apple\.com$/i;
 
 // Office address cards always open a map in a new tab. An admin link that is
-// already a map link is used as is; otherwise (empty, or e.g. the site's own
-// homepage) a Google Maps search for the card's address text is built.
-function addressMapHref(item) {
+// already a map link is used as is; otherwise the office pin from the Map
+// section (exact coordinates → red pin on the office); otherwise a Google Maps
+// search for the card's address text (an area name shows no pin).
+function addressMapHref(item, mapPin) {
   const href = (item.href || "").trim();
   try {
     const u = new URL(href);
@@ -20,6 +22,8 @@ function addressMapHref(item) {
   } catch {
     /* not an absolute URL — fall through */
   }
+  const pin = parseMapPin(mapPin);
+  if (pin) return pinOpenUrl(pin);
   const place = [item.description, item.value].map((v) => (v || "").trim()).find(Boolean) || "";
   return place ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place)}` : href || undefined;
 }
@@ -74,7 +78,7 @@ function ContactDetailItem({ detail }) {
   );
 }
 
-export default function ContactInfoPanel({ details }) {
+export default function ContactInfoPanel({ details, mapPin }) {
   const { language } = useLanguage();
 
   // CMS-only: items deleted from the database simply don't render.
@@ -86,7 +90,7 @@ export default function ContactInfoPanel({ details }) {
       titleAr: item.ar?.title,
       value: item.value,
       valueAr: item.ar?.value,
-      href: item.key === "address" ? addressMapHref(item) : item.href || undefined,
+      href: item.key === "address" ? addressMapHref(item, mapPin) : item.href || undefined,
       newTab: item.key === "address",
       description: item.description,
       descriptionAr: item.ar?.description,

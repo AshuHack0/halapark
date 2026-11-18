@@ -3,6 +3,7 @@
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
 
 import { useLanguage, t } from "@/context/LanguageContext";
+import { parseMapPin, pinEmbedUrl, pinOpenUrl } from "@/lib/mapPin";
 
 // Fixed UI chrome only (field labels) — the content itself is CMS-only.
 const LABELS = {
@@ -28,13 +29,18 @@ export default function ContactMapSection({ map }) {
     return null;
   }
 
-  // Map pinned to the office: Google Maps searches the admin's (English)
-  // address, so the embed shows a marker on the office and its "Open in Maps"
-  // link opens that same pinned location. (The previous URL used a dummy place
-  // id + fixed city-centre coordinates, so no office marker was shown.)
+  // Office pin: the admin's "Office pin location" (coordinates or a full
+  // Google Maps link) puts a red pin on the exact office in both the embedded
+  // map and "Open in Maps". Without it Google searches the address text — an
+  // area like "Media City, Dubai" then shows the district with no pin.
+  const pin = parseMapPin(map?.pin);
   const mapQuery = (map?.address || "").trim() || "HalaPark, Dubai";
-  const mapEmbedUrl = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&z=15&output=embed`;
-  const mapOpenUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`;
+  const mapEmbedUrl = pin
+    ? pinEmbedUrl(pin)
+    : `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&z=15&output=embed`;
+  const mapOpenUrl = pin
+    ? pinOpenUrl(pin)
+    : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`;
 
   return (
     <section className="mt-8 overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.08)]">

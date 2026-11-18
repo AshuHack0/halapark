@@ -65,7 +65,7 @@ export default function ContactSection() {
         {(sections?.details?.enabled !== false || sections?.form?.enabled !== false) ? (
           <div className="mt-12 grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
             {sections?.details?.enabled !== false && (
-              <ContactInfoPanel details={sections?.details} />
+              <ContactInfoPanel details={sections?.details} mapPin={sections?.map?.pin} />
             )}
             {sections?.form?.enabled !== false && (
               <ContactFormPanel form={sections?.form} />
