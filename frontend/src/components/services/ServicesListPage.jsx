@@ -1587,7 +1587,7 @@ function ServicesGrid({ onServiceClick, cmsServices, gridHeader, detailSlugs, ca
           // scroll cut tabs off with no scroll cue). Phones: an even 2-column
           // grid of equal-width buttons; from sm up: wrapping pills.
           ref={tabsRef}
-          className="mb-8 grid scroll-mt-[96px] grid-cols-2 gap-2 max-sm:[&>*:first-child]:col-span-2 max-sm:[&>*:first-child]:justify-center max-sm:[&>*:last-child:nth-child(even)]:col-span-2 sm:flex sm:flex-wrap sm:gap-3"
+          className="mb-8 grid scroll-mt-[96px] grid-cols-2 gap-2 max-sm:[&>*:first-child]:col-span-2 max-sm:[&>*:first-child]:w-auto max-sm:[&>*:first-child]:min-w-[11rem] max-sm:[&>*:first-child]:justify-self-center max-sm:[&>*:first-child]:justify-center max-sm:[&>*:first-child]:px-5 max-sm:[&>*:first-child]:mb-1 max-sm:[&>*:last-child:nth-child(even)]:col-span-2 sm:flex sm:flex-wrap sm:gap-3"
         >
           {visibleFilters.map((f, i) => {
             const isActive = effectiveFilter === f.id;
