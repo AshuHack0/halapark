@@ -218,7 +218,7 @@ function PhonePreview({ screen, alt = "HalaPark app screen" }) {
             alt={alt}
             fill
             sizes="(min-width: 1024px) 260px, (min-width: 640px) 240px, 205px"
-            className="object-cover object-center"
+            className="object-contain object-center"
           />
         </div>
 

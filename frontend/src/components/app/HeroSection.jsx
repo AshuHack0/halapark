@@ -151,7 +151,7 @@ function HeroPhone({ phoneImage, phoneVideo }) {
               playsInline
               preload="metadata"
               onContextMenu={(e) => e.preventDefault()}
-              className="h-full w-full object-cover object-center"
+              className="h-full w-full object-contain object-center"
             />
           ) : (
             <Image
@@ -159,7 +159,7 @@ function HeroPhone({ phoneImage, phoneVideo }) {
               alt="HalaPark booking screen"
               fill
               sizes="(min-width: 1280px) 365px, (min-width: 1024px) 340px, (min-width: 640px) 290px, 235px"
-              className="object-cover object-center"
+              className="object-contain object-center"
               priority
             />
           )}

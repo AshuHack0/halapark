@@ -28,14 +28,14 @@ function PhonePreview({ screen, label }) {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -12, scale: 0.985 }}
                 transition={{ duration: 0.45, ease: "easeOut" }}
-                className="absolute top-0 -bottom-[2.5%] left-0 right-0"
+                className="absolute inset-0"
               >
                 <Image
                   src={screen}
                   alt={`${label} screen preview`}
                   fill
                   sizes="(min-width: 1024px) 320px, (min-width: 640px) 228px, 205px"
-                  className="object-cover object-center"
+                  className="object-contain object-center"
                   priority
                 />
               </motion.div>

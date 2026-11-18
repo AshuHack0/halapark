@@ -112,7 +112,7 @@ function PhoneFrame({ screen, index, prefersReducedMotion }) {
             alt={screen.title || ""}
             fill
             sizes="(min-width: 1280px) 260px, (min-width: 1024px) 220px, (min-width: 640px) 250px, 230px"
-            className="object-cover object-center"
+            className="object-contain object-center"
             priority={index === 2}
           />
         </div>
