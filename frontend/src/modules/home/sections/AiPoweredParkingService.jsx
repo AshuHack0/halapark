@@ -189,7 +189,7 @@ function AudienceCard({
             pointerEvents: !isDesktop || active ? "auto" : "none",
           }}
         >
-          <RichText text={description} className="max-w-none text-[0.84rem] leading-[1.45] tracking-[-0.015em] text-black [overflow-wrap:anywhere] sm:text-[0.88rem] lg:max-w-[420px] lg:text-[14px] lg:leading-[1.38] block" />
+          <RichText text={description} className="max-w-none text-[0.84rem] leading-[1.45] tracking-[-0.015em] text-black [overflow-wrap:anywhere] sm:text-[0.88rem] lg:text-[14px] lg:leading-[1.38] block" />
 
           <Link
             href={href}
